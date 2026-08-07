@@ -1,11 +1,1250 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockLog</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockLog · Dashboard</title>
+
+  <!-- Fontes e ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <style>
+    /* ============================================================
+       VARIÁVEIS E RESET
+       ============================================================ */
+    :root {
+      --bg-body: #f2f6fb;
+      --bg-card: #ffffff;
+      --bg-soft: #f7faff;
+      --border: #e3ecf5;
+      --border-hover: #c8dcec;
+
+      --primary: #0077be;
+      --primary-dark: #005a8c;
+      --primary-light: #e6f1fa;
+
+      --text-main: #0a1e2f;
+      --text-secondary: #3d5f7a;
+      --text-muted: #7a96b0;
+
+      --shadow: 0 2px 8px rgba(0, 40, 80, 0.05), 0 8px 24px rgba(0, 40, 80, 0.04);
+      --shadow-hover: 0 4px 16px rgba(0, 40, 80, 0.08), 0 12px 32px rgba(0, 40, 80, 0.06);
+
+      --green: #1d9c73;
+      --green-bg: #e2f3ea;
+      --amber: #c9781f;
+      --amber-bg: #fbeed9;
+      --red: #c23b3b;
+      --red-bg: #fbe2df;
+      --purple: #7a4fb0;
+      --purple-bg: #eee3f8;
+    }
+
+    /* Modo escuro */
+    body.dark {
+      --bg-body: #0d1b2a;
+      --bg-card: #15273b;
+      --bg-soft: #0f1e30;
+      --border: #1f3a52;
+      --border-hover: #2f4f6a;
+
+      --text-main: #e8f0fa;
+      --text-secondary: #a9c1d6;
+      --text-muted: #7492ac;
+
+      --primary-light: #1b3a54;
+
+      --green-bg: #123526;
+      --amber-bg: #3a2a12;
+      --red-bg: #3a1c1c;
+      --purple-bg: #2a1f3d;
+
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ============================================================
+       SIDEBAR
+       ============================================================ */
+    .sidebar {
+      width: 76px;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 0 20px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+      transition: width 0.25s ease, background 0.25s;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.02);
+      z-index: 100;
+    }
+    .sidebar.open {
+      width: 220px;
+      align-items: stretch;
+      padding: 28px 16px 20px;
+    }
+
+    /* Logo */
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 36px;
+      padding: 0 4px;
+    }
+    .sidebar-logo .logo-icon {
+      font-size: 24px;
+      color: var(--primary);
+      width: 40px;
+      height: 40px;
+      background: var(--primary-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .sidebar-logo .logo-text {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text-main);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .sidebar.open .sidebar-logo .logo-text {
+      opacity: 1;
+      transition: opacity 0.2s ease 0.05s;
+    }
+    .sidebar-logo .logo-text span {
+      color: var(--primary);
+    }
+
+    /* Botão toggle */
+    .sidebar-toggle {
+      margin-left: auto;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      flex-shrink: 0;
+      transition: 0.2s;
+    }
+    .sidebar.open .sidebar-toggle {
+      display: flex;
+    }
+    .sidebar-toggle:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .sidebar-open-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: 0.2s;
+    }
+    .sidebar.open .sidebar-open-btn {
+      display: none;
+    }
+    .sidebar-open-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Navegação */
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      width: 100%;
+    }
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 12px;
+      border-radius: 10px;
+      white-space: nowrap;
+      transition: 0.15s;
+    }
+    .sidebar:not(.open) nav a {
+      justify-content: center;
+      padding: 10px 0;
+    }
+    .sidebar nav a i {
+      font-size: 18px;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+    .sidebar nav a:hover {
+      background: var(--bg-soft);
+      color: var(--text-main);
+    }
+    .sidebar nav a:hover i {
+      color: var(--primary);
+    }
+    .sidebar nav a.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .sidebar nav a.active i {
+      color: var(--primary);
+    }
+    .sidebar:not(.open) nav a span {
+      display: none;
+    }
+
+    /* Usuário na sidebar */
+    .sidebar-user {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 8px 0;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      width: 100%;
+    }
+    .sidebar:not(.open) .sidebar-user {
+      justify-content: center;
+    }
+    .sidebar-user i {
+      font-size: 22px;
+      color: var(--text-muted);
+    }
+    .sidebar:not(.open) .sidebar-user span {
+      display: none;
+    }
+
+    /* ============================================================
+       MAIN WRAPPER
+       ============================================================ */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      min-width: 0;
+    }
+
+    /* ============================================================
+       HEADER (limpo e minimalista)
+       ============================================================ */
+    .top-header {
+      background: var(--bg-card);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 16px;
+      transition: background 0.25s;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1 1 300px;
+    }
+
+    .header-left .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    .header-left .page-title span {
+      color: var(--primary);
+    }
+
+    /* Barra de busca ao lado do título */
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px 14px;
+      gap: 10px;
+      transition: 0.2s;
+      flex: 1;
+      max-width: 300px;
+    }
+    .search-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.12);
+    }
+    .search-box i {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .search-box input {
+      background: transparent;
+      border: none;
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+      width: 100%;
+    }
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Notificações */
+    .notif-btn {
+      position: relative;
+      font-size: 20px;
+      color: var(--text-secondary);
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      transition: 0.2s;
+    }
+    .notif-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+    .notif-btn .badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 20px;
+      border: 2px solid var(--bg-card);
+    }
+
+    /* Perfil do usuário */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    .user-profile i {
+      font-size: 28px;
+      color: var(--primary);
+    }
+
+    /* Botão modo escuro (ícone apenas) */
+    .theme-btn {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .theme-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* ============================================================
+       CONTEÚDO
+       ============================================================ */
+    .content {
+      flex: 1;
+      padding: 28px 32px 20px;
+    }
+
+    /* KPIs */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 20px 22px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .kpi-card .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .kpi-card .kpi-label i {
+      color: var(--primary);
+      font-size: 14px;
+    }
+    .kpi-card .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+    .kpi-card .kpi-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .trend-up {
+      background: var(--green-bg);
+      color: var(--green);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .trend-warn {
+      background: var(--amber-bg);
+      color: var(--amber);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    /* Linha 2 */
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 22px 24px 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: 0.25s;
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .card-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header h3 i {
+      color: var(--primary);
+      font-size: 16px;
+    }
+    .badge-soft {
+      background: var(--bg-soft);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* Alertas */
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .alert-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+    }
+    .alert-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+    .alert-title {
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 14px;
+    }
+    .alert-meta {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .alert-meta i {
+      margin-right: 4px;
+      color: var(--primary);
+      width: 14px;
+    }
+    .alert-tag {
+      background: var(--bg-soft);
+      padding: 3px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      border: 1px solid var(--border);
+    }
+    .alert-tag.critical {
+      background: var(--red-bg);
+      color: var(--red);
+      border-color: var(--red);
+    }
+    .alert-tag.warning {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+
+    /* Setores */
+    .sector-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+      margin-top: 4px;
+    }
+    .sector-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+      padding: 8px 12px;
+      background: var(--bg-soft);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .sector-name {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .sector-pct {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .colaboradores-stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 18px 0 12px;
+      background: var(--bg-soft);
+      border-radius: 10px;
+      padding: 14px 8px;
+      border: 1px solid var(--border);
+    }
+    .stat-block {
+      text-align: center;
+    }
+    .stat-block .num {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .stat-block .label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .progress-bars {
+      display: flex;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .progress-bar {
+      height: 6px;
+      flex: 1;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar .fill {
+      height: 100%;
+      border-radius: 4px;
+      animation: growBar 0.8s ease forwards;
+      transform-origin: left;
+    }
+    @keyframes growBar {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+    .fill.green {
+      background: var(--green);
+    }
+    .fill.orange {
+      background: var(--amber);
+    }
+    .fill.red {
+      background: var(--red);
+    }
+    .fill.blue {
+      background: var(--primary);
+    }
+
+    /* Tabela treinamentos */
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 8px 8px 0;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+      font-size: 11px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    td {
+      padding: 11px 8px 11px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    tr:last-child td {
+      border-bottom: 0;
+    }
+    .status-badge {
+      background: var(--bg-soft);
+      padding: 3px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* Linha 3 */
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .op-status-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin: 4px 0 14px;
+    }
+    .op-status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--bg-soft);
+      padding: 5px 14px 5px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot.planej {
+      background: #5890c0;
+    }
+    .dot.aguard {
+      background: #e6b45c;
+    }
+    .dot.prod {
+      background: var(--green);
+    }
+    .dot.cq {
+      background: var(--purple);
+    }
+    .dot.concl {
+      background: #2d7a9b;
+    }
+    .dot.canc {
+      background: var(--red);
+    }
+
+    .logbot-panel {
+      margin-top: 16px;
+      background: var(--bg-soft);
+      border-radius: 10px;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+    }
+    .logbot-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logbot-title i {
+      color: var(--primary);
+    }
+    .event-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .event-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .event-item i {
+      color: var(--primary);
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .event-item .critical {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .status-tag {
+      padding: 3px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       RODAPÉ
+       ============================================================ */
+    .footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: auto;
+      transition: background 0.25s;
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-left i {
+      color: var(--primary);
+      margin-right: 6px;
+    }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .footer-right .logout-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .footer-right .logout-link:hover {
+      color: var(--red);
+    }
+    .footer-right .logout-link i {
+      font-size: 14px;
+    }
+
+    /* ============================================================
+       RESPONSIVIDADE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .row-2 {
+        grid-template-columns: 1fr;
+      }
+      .row-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 200;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .sidebar.open {
+        width: 220px;
+      }
+      .sidebar:not(.open) {
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+        border: none;
+      }
+      .sidebar:not(.open) .sidebar-open-btn {
+        display: none;
+      }
+
+      .top-header {
+        padding: 12px 16px;
+      }
+      .header-left .page-title {
+        font-size: 17px;
+      }
+      .search-box {
+        max-width: 180px;
+      }
+      .content {
+        padding: 18px 16px;
+      }
+      .footer {
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .user-profile span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-left {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .search-box {
+        max-width: 100%;
+        flex: 1 1 100%;
+      }
+      .header-right .notif-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 17px;
+      }
+      .header-right .theme-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-    
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-cubes"></i></div>
+      <div class="logo-text">Stock<span>Log</span></div>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Fechar menu"><i class="fas fa-chevron-left"></i></button>
+    </div>
+
+    <button class="sidebar-open-btn" onclick="toggleSidebar()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
+
+    <nav>
+      <a href="#" class="active"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a href="#"><i class="fas fa-clipboard-list"></i><span>POPs</span></a>
+      <a href="#"><i class="fas fa-industry"></i><span>Produção</span></a>
+      <a href="#"><i class="fas fa-warehouse"></i><span>Estoque</span></a>
+      <a href="#"><i class="fas fa-truck"></i><span>Logística</span></a>
+      <a href="#"><i class="fas fa-robot"></i><span>LogBot</span></a>
+      <a href="#"><i class="fas fa-file-alt"></i><span>Relatórios</span></a>
+    </nav>
+
+    <div class="sidebar-user">
+      <i class="fas fa-user-circle"></i>
+      <span>Administrador</span>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN WRAPPER
+       ============================================================ -->
+  <div class="main-wrapper">
+
+    <!-- HEADER -->
+    <header class="top-header" role="banner">
+      <div class="header-left">
+        <div class="page-title">Stock<span>Log</span></div>
+        <div class="search-box" role="search">
+          <i class="fas fa-search"></i>
+          <input type="search" placeholder="Buscar..." aria-label="Buscar no sistema" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <span class="notif-btn" aria-label="Notificações">
+          <i class="fas fa-bell"></i>
+          <span class="badge">3</span>
+        </span>
+        <div class="user-profile">
+          <i class="fas fa-user-circle"></i>
+          <span>Administrador</span>
+        </div>
+        <button class="theme-btn" onclick="toggleTheme()" aria-label="Alternar modo claro/escuro">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO -->
+    <main class="content" role="main">
+
+      <!-- KPIs -->
+      <section class="kpi-grid" aria-label="Indicadores principais">
+        <div class="kpi-card">
+          <div class="kpi-label"><i class="fas fa-file-alt"></i> POPs cadastrados</div>
+          <div class="kpi-value">377</div>
+          <div class="kpi-sub"><span class="trend-up"><i class="fas fa-arrow-up"></i> 3 este mês</span> 6% vs abril</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i class="fas fa-check-circle"></i> Conformidade geral</div>
+          <div class="kpi-value">100%</div>
+          <div class="kpi-sub"><span class="trend-up"><i class="fas fa-check"></i> OK</span> 4 vencidos</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i class="fas fa-users"></i> Colaboradores ativos</div>
+          <div class="kpi-value">19</div>
+          <div class="kpi-sub">6 setores · 100% treinados</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i class="fas fa-tasks"></i> Ordens ativas</div>
+          <div class="kpi-value">9</div>
+          <div class="kpi-sub"><span class="trend-warn"><i class="fas fa-arrow-up"></i> 3 novas hoje</span> 18.450 unid.</div>
+        </div>
+      </section>
+
+      <!-- LINHA 2 -->
+      <div class="row-2">
+
+        <!-- Vencimentos críticos -->
+        <section class="card" aria-label="Vencimentos críticos">
+          <div class="card-header">
+            <h3><i class="fas fa-clock" style="color:var(--red);"></i>Vencimentos críticos</h3>
+            <span class="badge-soft">3 pendentes</span>
+          </div>
+          <div class="alert-list">
+            <div class="alert-item">
+              <div>
+                <div class="alert-title">POP-042 – Controle de pH em Linha</div>
+                <div class="alert-meta"><span><i class="fas fa-calendar-alt"></i>Venceu há 5 dias</span><span><i class="fas fa-building"></i>Qualidade · 6 colab.</span></div>
+              </div>
+              <span class="alert-tag critical">Urgente</span>
+            </div>
+            <div class="alert-item">
+              <div>
+                <div class="alert-title">POP-031 – Limpeza de Reatores</div>
+                <div class="alert-meta"><span><i class="fas fa-calendar-alt"></i>Venceu há 12 dias</span><span><i class="fas fa-industry"></i>Produção · revisão urgente</span></div>
+              </div>
+              <span class="alert-tag critical">Crítico</span>
+            </div>
+            <div class="alert-item">
+              <div>
+                <div class="alert-title">POP-018 – Recepção de Insumos</div>
+                <div class="alert-meta"><span><i class="fas fa-calendar-alt"></i>Vence em 8 dias</span><span><i class="fas fa-warehouse"></i>Almoxarifado</span></div>
+              </div>
+              <span class="alert-tag warning">Agendar</span>
+            </div>
+            <div class="alert-item" style="border-bottom:0; padding-bottom:0;">
+              <div>
+                <div class="alert-title">POP-047 – Rastreabilidade de Lotes</div>
+                <div class="alert-meta"><span><i class="fas fa-edit"></i>Em revisão documental</span><span>P&D · v03</span></div>
+              </div>
+              <span class="alert-tag">Revisão</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Conformidade por setor -->
+        <section class="card" aria-label="Conformidade por setor">
+          <div class="card-header">
+            <h3><i class="fas fa-chart-pie"></i>Conformidade por setor</h3>
+            <span class="badge-soft">6 setores</span>
+          </div>
+
+          <div class="sector-grid">
+            <div class="sector-item"><span class="sector-name">Desenv. embalagens</span><span class="sector-pct">100%</span></div>
+            <div class="sector-item"><span class="sector-name">Financeiro</span><span class="sector-pct">100%</span></div>
+            <div class="sector-item"><span class="sector-name">Geral</span><span class="sector-pct">100%</span></div>
+            <div class="sector-item"><span class="sector-name">Marketing</span><span class="sector-pct">0%</span></div>
+            <div class="sector-item"><span class="sector-name">Produção</span><span class="sector-pct">100%</span></div>
+            <div class="sector-item"><span class="sector-name">Trade MKT</span><span class="sector-pct">0%</span></div>
+          </div>
+
+          <div class="colaboradores-stats">
+            <div class="stat-block"><div class="num">19</div><div class="label">Colaboradores</div></div>
+            <div class="stat-block"><div class="num">6</div><div class="label">Setores</div></div>
+            <div class="stat-block"><div class="num">100%</div><div class="label">Ativos</div></div>
+          </div>
+
+          <div class="progress-bars">
+            <div class="progress-bar"><div class="fill green" style="width:100%"></div></div>
+            <div class="progress-bar"><div class="fill blue" style="width:100%"></div></div>
+            <div class="progress-bar"><div class="fill green" style="width:100%"></div></div>
+            <div class="progress-bar"><div class="fill red" style="width:0%"></div></div>
+            <div class="progress-bar"><div class="fill green" style="width:100%"></div></div>
+            <div class="progress-bar"><div class="fill red" style="width:0%"></div></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ÚLTIMOS TREINAMENTOS -->
+      <section class="card" style="margin-bottom:28px;" aria-label="Últimos treinamentos">
+        <div class="card-header">
+          <h3><i class="fas fa-graduation-cap"></i>Últimos treinamentos</h3>
+          <span class="badge-soft">3 registros</span>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Colaborador</th><th>POP</th><th>Setor</th><th>Data</th><th>Status</th><th>Evidência</th></tr></thead>
+            <tbody>
+              <tr><td>Bruno Pessoa Ferreira</td><td>MN 003</td><td>Geral</td><td>15/05/2026</td><td><span class="status-badge">Concluído</span></td><td><i class="fas fa-check-circle" style="color:var(--green);"></i></td></tr>
+              <tr><td>Vinícius Alves de Carvalho</td><td>GQ 001</td><td>Produção</td><td>15/05/2026</td><td><span class="status-badge">Pendente</span></td><td><i class="fas fa-clock" style="color:var(--amber);"></i></td></tr>
+              <tr><td>Ricardo Badeca Ribeiro</td><td>GQ 008</td><td>Produção</td><td>15/05/2026</td><td><span class="status-badge">Em andamento</span></td><td><i class="fas fa-spinner" style="color:var(--primary);"></i></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- LINHA 3 -->
+      <div class="row-3">
+
+        <!-- Distribuição de status das OPs + LogBot -->
+        <section class="card" aria-label="Distribuição de status das ordens de produção">
+          <div class="card-header">
+            <h3><i class="fas fa-tasks"></i>Distribuição de status (O.P.)</h3>
+            <span class="badge-soft">9 ativas</span>
+          </div>
+          <div class="op-status-list">
+            <span class="op-status-item"><span class="dot planej"></span>Planejamento</span>
+            <span class="op-status-item"><span class="dot aguard"></span>Aguard. Mat.</span>
+            <span class="op-status-item"><span class="dot prod"></span>Em Produção</span>
+            <span class="op-status-item"><span class="dot cq"></span>Controle QA</span>
+            <span class="op-status-item"><span class="dot concl"></span>Concluído</span>
+            <span class="op-status-item"><span class="dot canc"></span>Cancelado</span>
+          </div>
+
+          <div class="logbot-panel">
+            <div class="logbot-title"><i class="fas fa-robot"></i>LogBot · alertas ativos</div>
+            <div class="event-feed">
+              <div class="event-item"><i class="fas fa-exclamation-circle"></i><span class="critical">Estoque crítico:</span> Chapa Inox 304</div>
+              <div class="event-item"><i class="fas fa-exclamation-circle"></i><span class="critical">Estoque crítico:</span> Luva Nitrílica</div>
+              <div class="event-item"><i class="fas fa-clock"></i>Prazo crítico: OP-2025-007</div>
+              <div class="event-item"><i class="fas fa-plus-circle"></i>OP-2025-002 criada por Ana Ferre</div>
+              <div class="event-item"><i class="fas fa-plus-circle"></i>OP-2025-001 criada por Gustavo</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Últimas ordens de produção -->
+        <section class="card" aria-label="Últimas ordens de produção">
+          <div class="card-header">
+            <h3><i class="fas fa-clipboard"></i>Últimas ordens de produção</h3>
+            <span class="badge-soft">2 emitidas</span>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Cód. OP</th><th>Item / Produto</th><th>Qtd.</th><th>Operador</th><th>Status</th><th>Data limite</th></tr></thead>
+              <tbody>
+                <tr><td><strong>OP-2025-001</strong></td><td>Flange Aço ABNT 1020 ø50mm</td><td>500</td><td>Gustavo</td><td><span class="status-tag" style="background:var(--green-bg); color:var(--green);">Em Produção</span></td><td>09/06/2025</td></tr>
+                <tr><td><strong>OP-2025-002</strong></td><td>Eixo Vazado 420mm</td><td>120</td><td>Ana Ferre</td><td><span class="status-tag" style="background:var(--purple-bg); color:var(--purple);">Controle QA</span></td><td>11/06/2025</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:14px; display:flex; gap:16px; justify-content:flex-end; font-size:13px; color:var(--text-secondary);">
+            <span><i class="fas fa-arrow-right"></i> 3 novas hoje</span>
+            <span><i class="fas fa-robot"></i> IA prevê gargalo em OP-2025-001</span>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="footer" role="contentinfo">
+      <div class="footer-left">
+        <span><i class="fas fa-cube"></i>StockLog · v2.4 · IoT integrado</span>
+        <span><i class="fas fa-microchip"></i>ESP32/Arduino</span>
+        <span><i class="fas fa-cloud"></i>Firebase Realtime</span>
+      </div>
+      <div class="footer-right">
+        <span class="admin-badge" style="background:var(--bg-soft); padding:4px 14px; border-radius:20px; font-weight:500; font-size:12px; border:1px solid var(--border);">
+          <i class="fas fa-shield-alt"></i> Sessão segura
+        </span>
+        <!-- Botão que redireciona para login.html -->
+        <button class="logout-link" onclick="window.location.href='login.html'">
+          <i class="fas fa-sign-out-alt"></i> Sair do sistema
+        </button>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // INTERAÇÕES
+    // ============================================================
+
+    // Abrir/fechar sidebar
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // Alternar modo escuro
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+    }
+
+    // Fechar sidebar ao clicar fora (mobile)
+    document.addEventListener('click', function(e) {
+      const sidebar = document.getElementById('sidebar');
+      const isOpen = sidebar.classList.contains('open');
+      const isClickInside = sidebar.contains(e.target);
+      if (isOpen && !isClickInside && window.innerWidth < 768) {
+        sidebar.classList.remove('open');
+      }
+    });
+  </script>
+
 </body>
 </html>
