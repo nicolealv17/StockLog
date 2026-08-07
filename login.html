@@ -3,18 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockLog - Gestão de Pedidos de Produção</title>
+  <title>StockLog - Login</title>
   
-  <!-- Fontes Google & Ícones FontAwesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* ==========================================
-       VARIÁVEIS DE TEMA (CLARO / ESCURO)
-       ========================================== */
     :root[data-theme="light"] {
       --bg-page: #eef2f6;
       --card-bg: #ffffff;
@@ -63,9 +59,6 @@
       overflow: hidden;
     }
 
-    /* ==========================================
-       BACKGROUND ANIMADO COM ORBES & MOUSE GLOW
-       ========================================== */
     .bg-orbs {
       position: absolute;
       width: 100%;
@@ -105,7 +98,6 @@
       100% { transform: translate(50px, 60px) scale(1.15) rotate(15deg); }
     }
 
-    /* Brilho dinâmico que segue o mouse */
     .mouse-glow {
       position: absolute;
       width: 500px;
@@ -118,9 +110,6 @@
       transition: left 0.1s ease-out, top 0.1s ease-out;
     }
 
-    /* ==========================================
-       BOTÃO DE ALTERNAR TEMA (DARK/LIGHT)
-       ========================================== */
     .theme-toggle {
       position: absolute;
       top: 25px;
@@ -147,12 +136,8 @@
 
     .theme-toggle i {
       font-size: 1.2rem;
-      /* Sem animações de rotação ou transição no ícone */
     }
 
-    /* ==========================================
-       CONTAINER PRINCIPAL E PAINÉIS
-       ========================================== */
     .login-container {
       position: relative;
       z-index: 10;
@@ -164,8 +149,6 @@
       border-radius: 24px;
       box-shadow: var(--card-shadow);
       overflow: hidden;
-
-      /* Entrada suave */
       opacity: 0;
       transform: translateY(40px) scale(0.95);
       animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -178,7 +161,6 @@
       }
     }
 
-    /* Painel Esquerdo */
     .left-panel {
       flex: 1.1;
       background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%);
@@ -237,7 +219,6 @@
       font-weight: 300;
     }
 
-    /* Painel Direito */
     .right-panel {
       flex: 1;
       padding: 45px;
@@ -260,9 +241,6 @@
       margin-bottom: 28px;
     }
 
-    /* ==========================================
-       INPUTS & ANIMAÇÕES DE FOCO
-       ========================================== */
     .input-group {
       position: relative;
       margin-bottom: 20px;
@@ -294,7 +272,6 @@
       opacity: 0.7;
     }
 
-    /* Efeitos de foco interativos */
     .input-group input:focus {
       border-color: var(--accent-blue);
       box-shadow: 0 0 0 4px var(--accent-glow);
@@ -319,7 +296,6 @@
       color: var(--text-dark);
     }
 
-    /* Opções */
     .form-options {
       display: flex;
       justify-content: space-between;
@@ -353,9 +329,23 @@
       text-decoration: underline;
     }
 
-    /* ==========================================
-       BOTÃO DE LOGIN COM PULSE E GLOW
-       ========================================== */
+    .login-link {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    }
+
+    .login-link a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
     .btn-login {
       width: 100%;
       padding: 15px;
@@ -399,7 +389,6 @@
       transform: translateY(0);
     }
 
-    /* Spinner */
     .spinner {
       display: none;
       width: 22px;
@@ -414,7 +403,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Erro Shake */
     .shake {
       animation: shake 0.4s ease-in-out;
     }
@@ -425,7 +413,6 @@
       40%, 80% { transform: translateX(8px); }
     }
 
-    /* Responsivo */
     @media (max-width: 768px) {
       .login-container {
         flex-direction: column;
@@ -439,24 +426,19 @@
 </head>
 <body>
 
-  <!-- Glow do Mouse -->
   <div class="mouse-glow" id="mouseGlow"></div>
 
-  <!-- Orbes do Fundo -->
   <div class="bg-orbs">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
   </div>
 
-  <!-- Botão Mudar Tema -->
   <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
     <i class="fa-solid fa-moon"></i>
   </button>
 
-  <!-- Card do Login -->
   <main class="login-container" id="cardContainer">
     
-    <!-- Lado Esquerdo -->
     <section class="left-panel">
       <div class="brand">
         <i class="fa-solid fa-boxes-stacked brand-icon"></i>
@@ -473,7 +455,6 @@
       </div>
     </section>
 
-    <!-- Lado Direito -->
     <section class="right-panel">
       <div class="form-header">
         <h2>Login</h2>
@@ -505,6 +486,10 @@
           <span id="btnText">Entrar</span>
           <div class="spinner" id="btnSpinner"></div>
         </button>
+
+        <div class="login-link">
+            Não tem uma conta? <a href="cadastro.html">Criar</a>
+        </div>
 
       </form>
     </section>
