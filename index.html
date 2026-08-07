@@ -41,9 +41,17 @@
       --red-bg: #fbe2df;
       --purple: #7a4fb0;
       --purple-bg: #eee3f8;
+
+      /* Cores fixas da sidebar (azul industrial) */
+      --sidebar-bg: #0a2540;
+      --sidebar-text: #b6d0e8;
+      --sidebar-icon: #8aaec9;
+      --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+      --sidebar-active-bg: #1d5c8c;
+      --sidebar-active-color: #ffffff;
     }
 
-    /* Modo escuro */
+    /* Modo escuro (apenas conteúdo, sidebar mantém azul fixo) */
     body.dark {
       --bg-body: #0d1b2a;
       --bg-card: #15273b;
@@ -87,29 +95,28 @@
     }
 
     /* ============================================================
-       SIDEBAR
+       SIDEBAR — AZUL INDUSTRIAL
        ============================================================ */
     .sidebar {
       width: 76px;
-      background: var(--bg-card);
-      border-right: 1px solid var(--border);
+      background: var(--sidebar-bg);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 28px 0 20px;
+      padding: 24px 0 20px;
       flex-shrink: 0;
       position: sticky;
       top: 0;
       height: 100vh;
       overflow: hidden;
-      transition: width 0.25s ease, background 0.25s;
-      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.02);
+      transition: width 0.25s ease;
+      box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
       z-index: 100;
     }
     .sidebar.open {
       width: 220px;
       align-items: stretch;
-      padding: 28px 16px 20px;
+      padding: 24px 16px 20px;
     }
 
     /* Logo */
@@ -117,25 +124,32 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 36px;
+      margin-bottom: 32px;
       padding: 0 4px;
+      width: 100%;
     }
+    .sidebar:not(.open) .sidebar-logo {
+      justify-content: center;
+      padding: 0;
+    }
+
     .sidebar-logo .logo-icon {
-      font-size: 24px;
-      color: var(--primary);
+      font-size: 22px;
+      color: #fff;
       width: 40px;
       height: 40px;
-      background: var(--primary-light);
+      background: var(--primary);
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 119, 190, 0.3);
     }
     .sidebar-logo .logo-text {
       font-weight: 700;
       font-size: 18px;
-      color: var(--text-main);
+      color: #fff;
       white-space: nowrap;
       opacity: 0;
       transition: opacity 0.2s;
@@ -148,12 +162,12 @@
       color: var(--primary);
     }
 
-    /* Botão toggle */
+    /* Botões de toggle */
     .sidebar-toggle {
       margin-left: auto;
-      background: var(--bg-soft);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--sidebar-text);
       width: 28px;
       height: 28px;
       border-radius: 8px;
@@ -169,30 +183,31 @@
       display: flex;
     }
     .sidebar-toggle:hover {
-      background: var(--primary-light);
-      color: var(--primary);
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
     }
 
     .sidebar-open-btn {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
-      background: var(--bg-soft);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--sidebar-text);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       transition: 0.2s;
+      font-size: 18px;
     }
     .sidebar.open .sidebar-open-btn {
       display: none;
     }
     .sidebar-open-btn:hover {
-      background: var(--primary-light);
-      color: var(--primary);
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
     }
 
     /* Navegação */
@@ -207,7 +222,7 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      color: var(--text-secondary);
+      color: var(--sidebar-text);
       text-decoration: none;
       font-size: 14px;
       font-weight: 500;
@@ -225,22 +240,24 @@
       width: 22px;
       text-align: center;
       flex-shrink: 0;
-      color: var(--text-muted);
+      color: var(--sidebar-icon);
+      transition: 0.15s;
     }
     .sidebar nav a:hover {
-      background: var(--bg-soft);
-      color: var(--text-main);
+      background: var(--sidebar-hover-bg);
+      color: #fff;
     }
     .sidebar nav a:hover i {
-      color: var(--primary);
+      color: #fff;
     }
     .sidebar nav a.active {
-      background: var(--primary-light);
-      color: var(--primary);
+      background: var(--sidebar-active-bg);
+      color: var(--sidebar-active-color);
       font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
     }
     .sidebar nav a.active i {
-      color: var(--primary);
+      color: #fff;
     }
     .sidebar:not(.open) nav a span {
       display: none;
@@ -253,10 +270,10 @@
       align-items: center;
       gap: 10px;
       padding: 12px 8px 0;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       padding-top: 16px;
       font-size: 13px;
-      color: var(--text-secondary);
+      color: var(--sidebar-text);
       width: 100%;
     }
     .sidebar:not(.open) .sidebar-user {
@@ -264,7 +281,7 @@
     }
     .sidebar-user i {
       font-size: 22px;
-      color: var(--text-muted);
+      color: var(--sidebar-icon);
     }
     .sidebar:not(.open) .sidebar-user span {
       display: none;
@@ -282,7 +299,7 @@
     }
 
     /* ============================================================
-       HEADER (limpo e minimalista)
+       HEADER (limpo)
        ============================================================ */
     .top-header {
       background: var(--bg-card);
@@ -302,7 +319,6 @@
       gap: 20px;
       flex: 1 1 300px;
     }
-
     .header-left .page-title {
       font-size: 20px;
       font-weight: 600;
@@ -313,7 +329,6 @@
       color: var(--primary);
     }
 
-    /* Barra de busca ao lado do título */
     .search-box {
       display: flex;
       align-items: center;
@@ -354,7 +369,6 @@
       flex-shrink: 0;
     }
 
-    /* Notificações */
     .notif-btn {
       position: relative;
       font-size: 20px;
@@ -387,7 +401,6 @@
       border: 2px solid var(--bg-card);
     }
 
-    /* Perfil do usuário */
     .user-profile {
       display: flex;
       align-items: center;
@@ -401,7 +414,6 @@
       color: var(--primary);
     }
 
-    /* Botão modo escuro (ícone apenas) */
     .theme-btn {
       background: var(--bg-soft);
       border: 1px solid var(--border);
@@ -903,7 +915,7 @@
         top: 0;
         height: 100vh;
         z-index: 200;
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
       }
       .sidebar.open {
         width: 220px;
@@ -913,9 +925,15 @@
         padding: 0;
         overflow: hidden;
         border: none;
+        box-shadow: none;
       }
       .sidebar:not(.open) .sidebar-open-btn {
         display: none;
+      }
+
+      /* Barra flutuante para abrir em mobile (opcional, mas mantido) */
+      .mobile-menu-trigger {
+        display: none; /* poderia ser implementado, mas por enquanto mantemos o comportamento padrão */
       }
 
       .top-header {
@@ -968,7 +986,7 @@
 <body>
 
   <!-- ============================================================
-       SIDEBAR
+       SIDEBAR — AZUL ESCURO E ELEGANTE
        ============================================================ -->
   <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">
     <div class="sidebar-logo">
@@ -977,6 +995,7 @@
       <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Fechar menu"><i class="fas fa-chevron-left"></i></button>
     </div>
 
+    <!-- Botão hambúrguer (visível apenas quando fechado) -->
     <button class="sidebar-open-btn" onclick="toggleSidebar()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
 
     <nav>
@@ -991,7 +1010,7 @@
 
     <div class="sidebar-user">
       <i class="fas fa-user-circle"></i>
-      <span>Administrador</span>
+      
     </div>
   </aside>
 
@@ -1017,7 +1036,7 @@
         </span>
         <div class="user-profile">
           <i class="fas fa-user-circle"></i>
-          <span>Administrador</span>
+          
         </div>
         <button class="theme-btn" onclick="toggleTheme()" aria-label="Alternar modo claro/escuro">
           <i class="fas fa-sun" id="themeIcon"></i>
@@ -1201,15 +1220,9 @@
     <!-- RODAPÉ -->
     <footer class="footer" role="contentinfo">
       <div class="footer-left">
-        <span><i class="fas fa-cube"></i>StockLog · v2.4 · IoT integrado</span>
-        <span><i class="fas fa-microchip"></i>ESP32/Arduino</span>
-        <span><i class="fas fa-cloud"></i>Firebase Realtime</span>
+        <span><i class="fas fa-cube"></i>StockLog · v2.4 </span>
       </div>
       <div class="footer-right">
-        <span class="admin-badge" style="background:var(--bg-soft); padding:4px 14px; border-radius:20px; font-weight:500; font-size:12px; border:1px solid var(--border);">
-          <i class="fas fa-shield-alt"></i> Sessão segura
-        </span>
-        <!-- Botão que redireciona para login.html -->
         <button class="logout-link" onclick="window.location.href='login.html'">
           <i class="fas fa-sign-out-alt"></i> Sair do sistema
         </button>
