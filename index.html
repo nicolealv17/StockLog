@@ -4,74 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StockLog · Dashboard</title>
-
-  <!-- Fontes e ícones -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
   <style>
-    /* ============================================================
-       VARIÁVEIS E RESET
-       ============================================================ */
+    /* ================================================================
+       TOKENS / VARIÁVEIS
+       ================================================================ */
     :root {
-      --bg-body: #f2f6fb;
+      --bg-body: #f0f5fc;
       --bg-card: #ffffff;
-      --bg-soft: #f7faff;
-      --border: #e3ecf5;
-      --border-hover: #c8dcec;
+      --bg-soft: #f5faff;
+      --border: #e2ecf6;
+      --border-hover: #c6daea;
 
-      --primary: #0077be;
-      --primary-dark: #005a8c;
-      --primary-light: #e6f1fa;
+      --primary: #006bb3;
+      --primary-dark: #004d80;
+      --primary-light: #e1eefb;
+      --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
 
-      --text-main: #0a1e2f;
-      --text-secondary: #3d5f7a;
-      --text-muted: #7a96b0;
+      --text-main: #0a1f33;
+      --text-secondary: #3d5f7e;
+      --text-muted: #7b97b2;
 
-      --shadow: 0 2px 8px rgba(0, 40, 80, 0.05), 0 8px 24px rgba(0, 40, 80, 0.04);
-      --shadow-hover: 0 4px 16px rgba(0, 40, 80, 0.08), 0 12px 32px rgba(0, 40, 80, 0.06);
+      --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
+      --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
 
-      --green: #1d9c73;
-      --green-bg: #e2f3ea;
-      --amber: #c9781f;
-      --amber-bg: #fbeed9;
-      --red: #c23b3b;
-      --red-bg: #fbe2df;
-      --purple: #7a4fb0;
-      --purple-bg: #eee3f8;
+      --green: #1a9b72;
+      --green-bg: #e0f2ea;
+      --amber: #c47a1f;
+      --amber-bg: #faecd6;
+      --red: #b93a3a;
+      --red-bg: #fae2e0;
+      --purple: #6f4c9e;
+      --purple-bg: #ede6f5;
 
-      /* Cores fixas da sidebar (azul industrial) */
-      --sidebar-bg: #0a2540;
-      --sidebar-text: #b6d0e8;
-      --sidebar-icon: #8aaec9;
-      --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
-      --sidebar-active-bg: #1d5c8c;
+      --sidebar-bg: #0a2137;
+      --sidebar-text: #b2cee8;
+      --sidebar-icon: #8baecb;
+      --sidebar-active-bg: #1c5079;
       --sidebar-active-color: #ffffff;
     }
 
-    /* Modo escuro (apenas conteúdo, sidebar mantém azul fixo) */
     body.dark {
-      --bg-body: #0d1b2a;
-      --bg-card: #15273b;
-      --bg-soft: #0f1e30;
-      --border: #1f3a52;
-      --border-hover: #2f4f6a;
+      --bg-body: #0d1927;
+      --bg-card: #14293e;
+      --bg-soft: #0f1f30;
+      --border: #1d344b;
+      --border-hover: #2a4866;
 
-      --text-main: #e8f0fa;
-      --text-secondary: #a9c1d6;
-      --text-muted: #7492ac;
+      --text-main: #e2edf8;
+      --text-secondary: #a5bed6;
+      --text-muted: #6f8daa;
 
-      --primary-light: #1b3a54;
+      --primary-light: #1d3a55;
 
-      --green-bg: #123526;
-      --amber-bg: #3a2a12;
-      --red-bg: #3a1c1c;
+      --green-bg: #123a2a;
+      --amber-bg: #3a2f15;
+      --red-bg: #3a1f1f;
       --purple-bg: #2a1f3d;
 
-      --shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
-      --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.4);
+      --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
+      --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
     }
 
     * {
@@ -79,52 +74,55 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg-body);
       color: var(--text-main);
       display: flex;
       min-height: 100vh;
-      transition: background 0.25s, color 0.25s;
+      transition: background 0.3s, color 0.3s;
     }
-
     a {
       text-decoration: none;
       color: inherit;
     }
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      background: none;
+    }
 
-    /* ============================================================
-       SIDEBAR — AZUL INDUSTRIAL
-       ============================================================ */
+    /* ================================================================
+       SIDEBAR
+       ================================================================ */
     .sidebar {
       width: 76px;
       background: var(--sidebar-bg);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 0 20px;
+      padding: 24px 0 18px;
       flex-shrink: 0;
       position: sticky;
       top: 0;
       height: 100vh;
       overflow: hidden;
-      transition: width 0.25s ease;
-      box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
-      z-index: 100;
+      transition: width 0.28s ease;
+      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.12);
+      z-index: 200;
     }
     .sidebar.open {
       width: 220px;
       align-items: stretch;
-      padding: 24px 16px 20px;
+      padding: 24px 16px 18px;
     }
 
-    /* Logo */
     .sidebar-logo {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 32px;
+      margin-bottom: 36px;
       padding: 0 4px;
       width: 100%;
     }
@@ -132,23 +130,22 @@
       justify-content: center;
       padding: 0;
     }
-
     .sidebar-logo .logo-icon {
-      font-size: 22px;
+      font-size: 24px;
       color: #fff;
-      width: 40px;
-      height: 40px;
-      background: var(--primary);
-      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      background: var(--primary-gradient);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0, 119, 190, 0.3);
+      box-shadow: 0 4px 14px rgba(0, 119, 190, 0.35);
     }
     .sidebar-logo .logo-text {
       font-weight: 700;
-      font-size: 18px;
+      font-size: 19px;
       color: #fff;
       white-space: nowrap;
       opacity: 0;
@@ -156,61 +153,56 @@
     }
     .sidebar.open .sidebar-logo .logo-text {
       opacity: 1;
-      transition: opacity 0.2s ease 0.05s;
+      transition: opacity 0.2s ease 0.08s;
     }
     .sidebar-logo .logo-text span {
       color: var(--primary);
     }
 
-    /* Botões de toggle */
     .sidebar-toggle {
       margin-left: auto;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--sidebar-text);
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
       display: none;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-      flex-shrink: 0;
+      font-size: 13px;
       transition: 0.2s;
     }
     .sidebar.open .sidebar-toggle {
       display: flex;
     }
     .sidebar-toggle:hover {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.14);
       color: #fff;
     }
 
     .sidebar-open-btn {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       color: var(--sidebar-text);
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       transition: 0.2s;
-      font-size: 18px;
+      font-size: 20px;
     }
     .sidebar.open .sidebar-open-btn {
       display: none;
     }
     .sidebar-open-btn:hover {
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
     }
 
-    /* Navegação */
     .sidebar nav {
       display: flex;
       flex-direction: column;
@@ -223,7 +215,6 @@
       align-items: center;
       gap: 14px;
       color: var(--sidebar-text);
-      text-decoration: none;
       font-size: 14px;
       font-weight: 500;
       padding: 10px 12px;
@@ -236,15 +227,15 @@
       padding: 10px 0;
     }
     .sidebar nav a i {
-      font-size: 18px;
-      width: 22px;
+      font-size: 19px;
+      width: 24px;
       text-align: center;
       flex-shrink: 0;
       color: var(--sidebar-icon);
       transition: 0.15s;
     }
     .sidebar nav a:hover {
-      background: var(--sidebar-hover-bg);
+      background: rgba(255, 255, 255, 0.06);
       color: #fff;
     }
     .sidebar nav a:hover i {
@@ -254,7 +245,7 @@
       background: var(--sidebar-active-bg);
       color: var(--sidebar-active-color);
       font-weight: 600;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     }
     .sidebar nav a.active i {
       color: #fff;
@@ -263,14 +254,13 @@
       display: none;
     }
 
-    /* Usuário na sidebar */
     .sidebar-user {
       margin-top: auto;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 12px 8px 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 8px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
       padding-top: 16px;
       font-size: 13px;
       color: var(--sidebar-text);
@@ -280,16 +270,16 @@
       justify-content: center;
     }
     .sidebar-user i {
-      font-size: 22px;
+      font-size: 24px;
       color: var(--sidebar-icon);
     }
     .sidebar:not(.open) .sidebar-user span {
       display: none;
     }
 
-    /* ============================================================
+    /* ================================================================
        MAIN WRAPPER
-       ============================================================ */
+       ================================================================ */
     .main-wrapper {
       flex: 1;
       display: flex;
@@ -298,26 +288,26 @@
       min-width: 0;
     }
 
-    /* ============================================================
-       HEADER (limpo)
-       ============================================================ */
+    /* ================================================================
+       HEADER
+       ================================================================ */
     .top-header {
       background: var(--bg-card);
-      padding: 16px 32px;
+      padding: 14px 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
-      gap: 16px;
-      transition: background 0.25s;
+      gap: 12px;
+      transition: background 0.3s;
     }
 
     .header-left {
       display: flex;
       align-items: center;
       gap: 20px;
-      flex: 1 1 300px;
+      flex: 1 1 280px;
     }
     .header-left .page-title {
       font-size: 20px;
@@ -335,19 +325,19 @@
       background: var(--bg-soft);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 4px 14px;
+      padding: 6px 16px;
       gap: 10px;
-      transition: 0.2s;
+      transition: 0.25s;
       flex: 1;
       max-width: 300px;
     }
     .search-box:focus-within {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.12);
+      box-shadow: 0 0 0 3px rgba(0, 107, 179, 0.12);
     }
     .search-box i {
       color: var(--text-muted);
-      font-size: 14px;
+      font-size: 15px;
     }
     .search-box input {
       background: transparent;
@@ -365,7 +355,7 @@
     .header-right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-shrink: 0;
     }
 
@@ -375,13 +365,12 @@
       color: var(--text-secondary);
       background: var(--bg-soft);
       border: 1px solid var(--border);
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: default;
       transition: 0.2s;
     }
     .notif-btn:hover {
@@ -401,31 +390,40 @@
       border: 2px solid var(--bg-card);
     }
 
-    .user-profile {
+    .user-profile-link {
       display: flex;
       align-items: center;
       gap: 10px;
       font-weight: 500;
       color: var(--text-secondary);
       font-size: 14px;
+      padding: 6px 10px 6px 6px;
+      border-radius: 10px;
+      transition: 0.2s;
+      background: transparent;
+      border: 1px solid transparent;
     }
-    .user-profile i {
-      font-size: 28px;
+    .user-profile-link:hover {
+      background: var(--bg-soft);
+      border-color: var(--border);
+      color: var(--primary);
+    }
+    .user-profile-link i {
+      font-size: 30px;
       color: var(--primary);
     }
 
     .theme-btn {
       background: var(--bg-soft);
       border: 1px solid var(--border);
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 18px;
       color: var(--text-secondary);
-      cursor: pointer;
       transition: 0.2s;
     }
     .theme-btn:hover {
@@ -434,15 +432,15 @@
       color: var(--primary);
     }
 
-    /* ============================================================
-       CONTEÚDO
-       ============================================================ */
+    /* ================================================================
+       CONTEÚDO (DASHBOARD)
+       ================================================================ */
     .content {
       flex: 1;
       padding: 28px 32px 20px;
     }
 
-    /* KPIs */
+    /* KPI Cards */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -454,8 +452,8 @@
       border-radius: 14px;
       padding: 20px 22px;
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      transition: 0.25s;
+      box-shadow: var(--shadow-card);
+      transition: 0.3s;
       position: relative;
       overflow: hidden;
     }
@@ -464,28 +462,38 @@
       box-shadow: var(--shadow-hover);
       transform: translateY(-2px);
     }
-    .kpi-card .kpi-label {
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary-gradient);
+      opacity: 0.6;
+    }
+    .kpi-label {
       font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .kpi-card .kpi-label i {
+    .kpi-label i {
       color: var(--primary);
       font-size: 14px;
     }
-    .kpi-card .kpi-value {
-      font-size: 32px;
+    .kpi-value {
+      font-size: 34px;
       font-weight: 700;
       color: var(--text-main);
       line-height: 1.1;
     }
-    .kpi-card .kpi-sub {
+    .kpi-sub {
       font-size: 13px;
       color: var(--text-secondary);
       margin-top: 8px;
@@ -497,7 +505,7 @@
     .trend-up {
       background: var(--green-bg);
       color: var(--green);
-      padding: 2px 10px;
+      padding: 2px 12px;
       border-radius: 20px;
       font-weight: 600;
       font-size: 12px;
@@ -505,13 +513,13 @@
     .trend-warn {
       background: var(--amber-bg);
       color: var(--amber);
-      padding: 2px 10px;
+      padding: 2px 12px;
       border-radius: 20px;
       font-weight: 600;
       font-size: 12px;
     }
 
-    /* Linha 2 */
+    /* Row 2 */
     .row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -524,19 +532,18 @@
       border-radius: 14px;
       padding: 22px 24px 24px;
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      transition: 0.25s;
+      box-shadow: var(--shadow-card);
+      transition: 0.3s;
     }
     .card:hover {
       border-color: var(--border-hover);
       box-shadow: var(--shadow-hover);
     }
-
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     .card-header h3 {
       font-size: 15px;
@@ -679,7 +686,7 @@
     .progress-bar .fill {
       height: 100%;
       border-radius: 4px;
-      animation: growBar 0.8s ease forwards;
+      animation: growBar 0.9s ease forwards;
       transform-origin: left;
     }
     @keyframes growBar {
@@ -703,7 +710,7 @@
       background: var(--primary);
     }
 
-    /* Tabela treinamentos */
+    /* Tabela */
     .table-wrapper {
       overflow-x: auto;
       margin-top: 6px;
@@ -741,7 +748,7 @@
       border: 1px solid var(--border);
     }
 
-    /* Linha 3 */
+    /* Row 3 */
     .row-3 {
       display: grid;
       grid-template-columns: 1fr 1.2fr;
@@ -841,9 +848,9 @@
       font-weight: 500;
     }
 
-    /* ============================================================
+    /* ================================================================
        RODAPÉ
-       ============================================================ */
+       ================================================================ */
     .footer {
       background: var(--bg-card);
       border-top: 1px solid var(--border);
@@ -856,7 +863,7 @@
       color: var(--text-muted);
       font-size: 13px;
       margin-top: auto;
-      transition: background 0.25s;
+      transition: background 0.3s;
     }
     .footer-left {
       display: flex;
@@ -879,23 +886,25 @@
       gap: 6px;
       color: var(--text-secondary);
       font-weight: 500;
-      cursor: pointer;
       transition: 0.2s;
       background: none;
       border: none;
       font-size: 13px;
       font-family: inherit;
+      padding: 4px 8px;
+      border-radius: 6px;
     }
     .footer-right .logout-link:hover {
+      background: var(--red-bg);
       color: var(--red);
     }
     .footer-right .logout-link i {
       font-size: 14px;
     }
 
-    /* ============================================================
+    /* ================================================================
        RESPONSIVIDADE
-       ============================================================ */
+       ================================================================ */
     @media (max-width: 1200px) {
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -914,8 +923,8 @@
         left: 0;
         top: 0;
         height: 100vh;
-        z-index: 200;
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+        z-index: 300;
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.2);
       }
       .sidebar.open {
         width: 220px;
@@ -931,11 +940,6 @@
         display: none;
       }
 
-      /* Barra flutuante para abrir em mobile (opcional, mas mantido) */
-      .mobile-menu-trigger {
-        display: none; /* poderia ser implementado, mas por enquanto mantemos o comportamento padrão */
-      }
-
       .top-header {
         padding: 12px 16px;
       }
@@ -943,7 +947,7 @@
         font-size: 17px;
       }
       .search-box {
-        max-width: 180px;
+        max-width: 160px;
       }
       .content {
         padding: 18px 16px;
@@ -956,7 +960,7 @@
       .kpi-grid {
         grid-template-columns: 1fr;
       }
-      .user-profile span {
+      .user-profile-link span {
         display: none;
       }
     }
@@ -971,33 +975,33 @@
         flex: 1 1 100%;
       }
       .header-right .notif-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 17px;
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
       }
       .header-right .theme-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
+        width: 38px;
+        height: 38px;
+        font-size: 17px;
+      }
+      .user-profile-link i {
+        font-size: 26px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- ============================================================
-       SIDEBAR — AZUL ESCURO E ELEGANTE
-       ============================================================ -->
-  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">
+  <!-- ================================================================
+       SIDEBAR
+       ================================================================ -->
+  <aside class="sidebar" id="sidebar" role="navigation">
     <div class="sidebar-logo">
       <div class="logo-icon"><i class="fas fa-cubes"></i></div>
       <div class="logo-text">Stock<span>Log</span></div>
-      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Fechar menu"><i class="fas fa-chevron-left"></i></button>
+      <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
     </div>
-
-    <!-- Botão hambúrguer (visível apenas quando fechado) -->
-    <button class="sidebar-open-btn" onclick="toggleSidebar()" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
-
+    <button class="sidebar-open-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
     <nav>
       <a href="#" class="active"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
       <a href="#"><i class="fas fa-clipboard-list"></i><span>POPs</span></a>
@@ -1007,16 +1011,15 @@
       <a href="#"><i class="fas fa-robot"></i><span>LogBot</span></a>
       <a href="#"><i class="fas fa-file-alt"></i><span>Relatórios</span></a>
     </nav>
-
     <div class="sidebar-user">
       <i class="fas fa-user-circle"></i>
-      
+     
     </div>
   </aside>
 
-  <!-- ============================================================
+  <!-- ================================================================
        MAIN WRAPPER
-       ============================================================ -->
+       ================================================================ -->
   <div class="main-wrapper">
 
     <!-- HEADER -->
@@ -1025,20 +1028,19 @@
         <div class="page-title">Stock<span>Log</span></div>
         <div class="search-box" role="search">
           <i class="fas fa-search"></i>
-          <input type="search" placeholder="Buscar..." aria-label="Buscar no sistema" />
+          <input type="search" placeholder="Buscar..." aria-label="Buscar" />
         </div>
       </div>
-
       <div class="header-right">
         <span class="notif-btn" aria-label="Notificações">
           <i class="fas fa-bell"></i>
           <span class="badge">3</span>
         </span>
-        <div class="user-profile">
+        <button class="user-profile-link" onclick="window.location.href='minha-conta.html'">
           <i class="fas fa-user-circle"></i>
           
-        </div>
-        <button class="theme-btn" onclick="toggleTheme()" aria-label="Alternar modo claro/escuro">
+        </button>
+        <button class="theme-btn" onclick="toggleTheme()" aria-label="Alternar tema">
           <i class="fas fa-sun" id="themeIcon"></i>
         </button>
       </div>
@@ -1048,7 +1050,7 @@
     <main class="content" role="main">
 
       <!-- KPIs -->
-      <section class="kpi-grid" aria-label="Indicadores principais">
+      <section class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label"><i class="fas fa-file-alt"></i> POPs cadastrados</div>
           <div class="kpi-value">377</div>
@@ -1071,11 +1073,11 @@
         </div>
       </section>
 
-      <!-- LINHA 2 -->
+      <!-- Row 2 -->
       <div class="row-2">
 
         <!-- Vencimentos críticos -->
-        <section class="card" aria-label="Vencimentos críticos">
+        <section class="card">
           <div class="card-header">
             <h3><i class="fas fa-clock" style="color:var(--red);"></i>Vencimentos críticos</h3>
             <span class="badge-soft">3 pendentes</span>
@@ -1113,12 +1115,11 @@
         </section>
 
         <!-- Conformidade por setor -->
-        <section class="card" aria-label="Conformidade por setor">
+        <section class="card">
           <div class="card-header">
             <h3><i class="fas fa-chart-pie"></i>Conformidade por setor</h3>
             <span class="badge-soft">6 setores</span>
           </div>
-
           <div class="sector-grid">
             <div class="sector-item"><span class="sector-name">Desenv. embalagens</span><span class="sector-pct">100%</span></div>
             <div class="sector-item"><span class="sector-name">Financeiro</span><span class="sector-pct">100%</span></div>
@@ -1127,13 +1128,11 @@
             <div class="sector-item"><span class="sector-name">Produção</span><span class="sector-pct">100%</span></div>
             <div class="sector-item"><span class="sector-name">Trade MKT</span><span class="sector-pct">0%</span></div>
           </div>
-
           <div class="colaboradores-stats">
             <div class="stat-block"><div class="num">19</div><div class="label">Colaboradores</div></div>
             <div class="stat-block"><div class="num">6</div><div class="label">Setores</div></div>
             <div class="stat-block"><div class="num">100%</div><div class="label">Ativos</div></div>
           </div>
-
           <div class="progress-bars">
             <div class="progress-bar"><div class="fill green" style="width:100%"></div></div>
             <div class="progress-bar"><div class="fill blue" style="width:100%"></div></div>
@@ -1145,8 +1144,8 @@
         </section>
       </div>
 
-      <!-- ÚLTIMOS TREINAMENTOS -->
-      <section class="card" style="margin-bottom:28px;" aria-label="Últimos treinamentos">
+      <!-- Últimos treinamentos -->
+      <section class="card" style="margin-bottom:28px;">
         <div class="card-header">
           <h3><i class="fas fa-graduation-cap"></i>Últimos treinamentos</h3>
           <span class="badge-soft">3 registros</span>
@@ -1163,11 +1162,11 @@
         </div>
       </section>
 
-      <!-- LINHA 3 -->
+      <!-- Row 3 -->
       <div class="row-3">
 
-        <!-- Distribuição de status das OPs + LogBot -->
-        <section class="card" aria-label="Distribuição de status das ordens de produção">
+        <!-- Distribuição de status + LogBot -->
+        <section class="card">
           <div class="card-header">
             <h3><i class="fas fa-tasks"></i>Distribuição de status (O.P.)</h3>
             <span class="badge-soft">9 ativas</span>
@@ -1180,7 +1179,6 @@
             <span class="op-status-item"><span class="dot concl"></span>Concluído</span>
             <span class="op-status-item"><span class="dot canc"></span>Cancelado</span>
           </div>
-
           <div class="logbot-panel">
             <div class="logbot-title"><i class="fas fa-robot"></i>LogBot · alertas ativos</div>
             <div class="event-feed">
@@ -1193,8 +1191,8 @@
           </div>
         </section>
 
-        <!-- Últimas ordens de produção -->
-        <section class="card" aria-label="Últimas ordens de produção">
+        <!-- Últimas OP -->
+        <section class="card">
           <div class="card-header">
             <h3><i class="fas fa-clipboard"></i>Últimas ordens de produção</h3>
             <span class="badge-soft">2 emitidas</span>
@@ -1221,8 +1219,12 @@
     <footer class="footer" role="contentinfo">
       <div class="footer-left">
         <span><i class="fas fa-cube"></i>StockLog · v2.4 </span>
+
       </div>
       <div class="footer-right">
+        <span style="background:var(--bg-soft); padding:4px 14px; border-radius:20px; font-weight:500; font-size:12px; border:1px solid var(--border);">
+          
+        </span>
         <button class="logout-link" onclick="window.location.href='login.html'">
           <i class="fas fa-sign-out-alt"></i> Sair do sistema
         </button>
@@ -1232,23 +1234,14 @@
   </div>
 
   <script>
-    // ============================================================
-    // INTERAÇÕES
-    // ============================================================
-
-    // Abrir/fechar sidebar
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
     }
-
-    // Alternar modo escuro
     function toggleTheme() {
       const isDark = document.body.classList.toggle('dark');
       const icon = document.getElementById('themeIcon');
       icon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
     }
-
-    // Fechar sidebar ao clicar fora (mobile)
     document.addEventListener('click', function(e) {
       const sidebar = document.getElementById('sidebar');
       const isOpen = sidebar.classList.contains('open');
@@ -1258,6 +1251,5 @@
       }
     });
   </script>
-
 </body>
 </html>
