@@ -137,20 +137,17 @@
       align-items: center;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, border-color 0.3s ease;
     }
 
     .theme-toggle:hover {
-      transform: scale(1.1);
+      transform: scale(1.05);
       border-color: var(--accent-blue);
     }
 
     .theme-toggle i {
       font-size: 1.2rem;
-      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    }
-
-    .theme-toggle.rotate i {
-      transform: rotate(360deg) scale(1.2);
+      /* Sem animações de rotação ou transição no ícone */
     }
 
     /* ==========================================
@@ -529,18 +526,13 @@
       const btnSpinner = document.getElementById('btnSpinner');
       const cardContainer = document.getElementById('cardContainer');
 
-      // 1. GERENCIAMENTO DE TEMA (CLARO/ESCURO)
+      // 1. GERENCIAMENTO DE TEMA (CLARO/ESCURO - TROCA DIRETA)
       const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
       setTheme(savedTheme);
 
       themeToggle.addEventListener('click', () => {
         const currentTheme = htmlElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        // Animação de rotação do botão
-        themeToggle.classList.add('rotate');
-        setTimeout(() => themeToggle.classList.remove('rotate'), 500);
-
         setTheme(newTheme);
       });
 
@@ -550,10 +542,8 @@
 
         if (theme === 'dark') {
           themeIcon.className = 'fa-solid fa-sun';
-          themeIcon.style.color = '#f59e0b'; // Amarelo do Sol
         } else {
           themeIcon.className = 'fa-solid fa-moon';
-          themeIcon.style.color = 'inherit';
         }
       }
 
@@ -571,7 +561,7 @@
         togglePassword.classList.toggle('fa-eye-slash', isPassword);
       });
 
-      // 4. SUBMISSÃO COM ANIMAÇÕES
+      // 4. SUBMISSÃO COM ANIMAÇÕES DE BOTÃO E ERRO
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
