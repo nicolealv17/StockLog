@@ -255,8 +255,9 @@
       background-color: var(--card-bg);
     }
 
+    /* ESTILO DO CRIAR CONTA AUMENTADO */
     .form-header h2 {
-      font-size: 1.75rem;
+      font-size: 2rem; /* <-- Título ampliado */
       color: var(--text-dark);
       font-weight: 700;
     }
@@ -495,7 +496,7 @@
 
     <section class="right-panel">
       <div class="form-header">
-        Criar Conta
+        <h2>Criar Conta</h2> <!-- Tag <h2> adicionada aqui! -->
         <p>Preencha os dados abaixo para solicitar o seu acesso</p>
       </div>
 
@@ -623,7 +624,6 @@
 
         setTimeout(() => {
           if (registerForm.checkValidity()) {
-            // Sucesso
             btnSpinner.style.display = 'none';
             btnText.style.display = 'inline';
             btnText.textContent = 'Conta Criada com Sucesso!';
@@ -636,7 +636,6 @@
             }, 600);
 
           } else {
-            // Erro
             btnSpinner.style.display = 'none';
             btnText.style.display = 'inline';
             btnRegister.style.pointerEvents = 'auto';
