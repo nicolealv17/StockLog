@@ -1,98 +1,163 @@
-/**
- * SIDEBAR FUNCTIONS — StockLog
- */
+/* ================================================================
+   COMPONENTE: SIDEBAR (StockLog)
+   Injeta o menu lateral no lugar de <div id="sidebar-root"></div>,
+   marca o link da página atual como ativo e controla abrir/fechar
+   (tanto no modo desktop — trilho recolhido/expandido — quanto no
+   modo mobile — hambúrguer com overlay).
 
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  const hamburger = document.getElementById('sidebarHamburger');
+   Requer: components/sidebar.css
+   Uso: <div id="sidebar-root"></div>  +  <script src="components/js/sidebar.js"></script>
+   ================================================================ */
+(function () {
+  "use strict";
 
-  if (!sidebar) return;
+  // Itens do menu. Para adicionar/remover/reordenar uma opção,
+  // basta editar esta lista — ela é a única fonte de verdade.
+  var NAV_ITEMS = [
+    { href: "index.html", icon: "fa-chart-pie", label: "Dashboard" },
+    { href: "#", icon: "fa-clipboard-list", label: "POPs" },
+    { href: "#", icon: "fa-industry", label: "Produção" },
+    { href: "#", icon: "fa-warehouse", label: "Estoque" },
+    { href: "#", icon: "fa-truck", label: "Logística" },
+    { href: "#", icon: "fa-robot", label: "LogBot" },
+    { href: "#", icon: "fa-file-alt", label: "Relatórios" },
+  ];
 
-  sidebar.classList.toggle('open');
-
-  if (overlay) {
-    overlay.classList.toggle('active');
+  function currentFile() {
+    var path = window.location.pathname.split("/").pop();
+    return path === "" ? "index.html" : path;
   }
 
-  if (hamburger) {
-    hamburger.classList.toggle('active');
+  function buildNavHTML() {
+    var current = currentFile();
+    return NAV_ITEMS.map(function (item) {
+      var isActive = item.href !== "#" && item.href === current;
+      return (
+        '<a href="' +
+        item.href +
+        '"' +
+        (isActive ? ' class="active" aria-current="page"' : "") +
+        ">" +
+        '<i class="fas ' +
+        item.icon +
+        '"></i><span>' +
+        item.label +
+        "</span>" +
+        "</a>"
+      );
+    }).join("");
   }
-}
 
-function closeSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  const hamburger = document.getElementById('sidebarHamburger');
-
-  if (window.innerWidth <= 768) {
-    if (sidebar) sidebar.classList.remove('open');
-    if (overlay) overlay.classList.remove('active');
-    if (hamburger) hamburger.classList.remove('active');
+  function buildSidebarHTML() {
+    return (
+      '<aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">' +
+      '<div class="sidebar-logo">' +
+      '<div class="logo-icon"><i class="fas fa-cubes"></i></div>' +
+      '<div class="logo-text">Stock<span>Log</span></div>' +
+      '<button class="sidebar-toggle" type="button" aria-label="Recolher menu"><i class="fas fa-chevron-left"></i></button>' +
+      "</div>" +
+      '<button class="sidebar-open-btn" type="button" aria-label="Expandir menu"><i class="fas fa-bars"></i></button>' +
+      "<nav>" +
+      buildNavHTML() +
+      "</nav>" +
+      '<div class="sidebar-user">' +
+      '<i class="fas fa-user-circle"></i><span></span>' +
+      "</div>" +
+      "</aside>"
+    );
   }
-}
 
-function toggleTheme() {
-  const isDark = document.body.classList.toggle('dark');
-  const icon = document.getElementById('themeIcon');
-  if (icon) {
-    icon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
-  }
-  localStorage.setItem('stocklog-theme', isDark ? 'dark' : 'light');
-}
+  function mount() {
+    var placeholder = document.getElementById("sidebar-root");
+    var wrapper = document.createElement("div");
+    wrapper.innerHTML = buildSidebarHTML();
+    var asideEl = wrapper.firstElementChild;
 
-function initTheme() {
-  const savedTheme = localStorage.getItem('stocklog-theme');
-  const icon = document.getElementById('themeIcon');
-
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark');
-    if (icon) icon.className = 'fas fa-moon';
-  } else {
-    document.body.classList.remove('dark');
-    if (icon) icon.className = 'fas fa-sun';
-  }
-}
-
-function initSidebar() {
-  const hamburger = document.getElementById('sidebarHamburger');
-
-  if (window.innerWidth > 768) {
-    if (hamburger) hamburger.style.display = 'none';
-  } else {
-    if (hamburger) hamburger.style.display = 'flex';
-  }
-}
-
-// Fechar sidebar ao redimensionar para desktop
-window.addEventListener('resize', function() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  const hamburger = document.getElementById('sidebarHamburger');
-
-  if (window.innerWidth > 768) {
-    if (sidebar) sidebar.classList.remove('open');
-    if (overlay) overlay.classList.remove('active');
-    if (hamburger) {
-      hamburger.style.display = 'none';
-      hamburger.classList.remove('active');
+    if (placeholder) {
+      placeholder.replaceWith(asideEl);
+    } else {
+      console.warn(
+        '[sidebar.js] Não encontrei <div id="sidebar-root"></div> na página. ' +
+          "Inserindo o menu no início do <body> como alternativa — confira se o HTML da página tem esse elemento.",
+      );
+      document.body.insertBefore(asideEl, document.body.firstChild);
     }
-  } else {
-    if (hamburger) {
-      hamburger.style.display = 'flex';
+
+    var overlay = document.createElement("div");
+    overlay.className = "sidebar-overlay";
+    overlay.id = "sidebarOverlay";
+    asideEl.insertAdjacentElement("afterend", overlay);
+
+    return { sidebar: asideEl, overlay: overlay };
+  }
+
+  function init() {
+    var refs = mount();
+    var sidebar = refs.sidebar;
+    var overlay = refs.overlay;
+
+    function isMobile() {
+      return window.innerWidth <= 768;
     }
-  }
-});
 
-// Fechar sidebar com ESC
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    closeSidebar();
-  }
-});
+    function openSidebar() {
+      sidebar.classList.add("open");
+      overlay.classList.add("visible");
+      if (isMobile()) document.body.style.overflow = "hidden";
+    }
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', function() {
-  initTheme();
-  initSidebar();
-});
+    function closeSidebar() {
+      sidebar.classList.remove("open");
+      overlay.classList.remove("visible");
+      document.body.style.overflow = "";
+    }
+
+    // Mantido global para compatibilidade com onclick="toggleSidebar()"
+    // que possa existir em outras partes da página.
+    window.toggleSidebar = function () {
+      if (sidebar.classList.contains("open")) closeSidebar();
+      else openSidebar();
+    };
+
+    var toggleBtn = sidebar.querySelector(".sidebar-toggle");
+    var openBtn = sidebar.querySelector(".sidebar-open-btn");
+    if (toggleBtn) toggleBtn.addEventListener("click", window.toggleSidebar);
+    if (openBtn) openBtn.addEventListener("click", window.toggleSidebar);
+
+    // Botão hambúrguer do cabeçalho (mobile) — cada página só
+    // precisa ter um elemento com id="mobileMenuBtn".
+    var mobileBtn = document.getElementById("mobileMenuBtn");
+    if (mobileBtn) {
+      mobileBtn.addEventListener("click", window.toggleSidebar);
+    } else {
+      console.warn(
+        '[sidebar.js] Não encontrei o botão com id="mobileMenuBtn" nesta página. ' +
+          "O menu hambúrguer do cabeçalho não vai funcionar até esse botão existir no HTML.",
+      );
+    }
+
+    // Clicar no overlay fecha o menu.
+    overlay.addEventListener("click", closeSidebar);
+
+    // Clicar fora do menu (mobile) também fecha.
+    document.addEventListener("click", function (e) {
+      var isOpen = sidebar.classList.contains("open");
+      var isClickInside =
+        sidebar.contains(e.target) ||
+        (mobileBtn && mobileBtn.contains(e.target));
+      if (isOpen && !isClickInside && isMobile()) closeSidebar();
+    });
+
+    // Fecha o menu (e o overlay/scroll-lock) se a tela crescer
+    // para desktop enquanto ele estava aberto no modo mobile.
+    window.addEventListener("resize", function () {
+      if (!isMobile()) closeSidebar();
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();

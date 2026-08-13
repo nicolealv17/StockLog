@@ -1,0 +1,287 @@
+/* ================================================================
+   COMPONENTE: SIDEBAR (StockLog)
+   Usado em: index.html (Dashboard), perfil.html (Minha Conta)
+   Requer: components/sidebar.js (injeta o HTML e controla os eventos)
+
+   Antes esse CSS estava duplicado dentro de cada página. Agora é
+   um componente único: qualquer ajuste visual no menu lateral é
+   feito aqui e reflete em todas as páginas que o usam.
+   ================================================================ */
+
+:root {
+  --sidebar-bg: #0a2137;
+  --sidebar-text: #b2cee8;
+  --sidebar-icon: #8baecb;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
+  --sidebar-active-bg: #1c5079;
+  --sidebar-active-color: #ffffff;
+}
+
+.sidebar {
+  width: 76px;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 18px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width 0.28s ease;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.12);
+  z-index: 200;
+}
+.sidebar.open {
+  width: 220px;
+  align-items: stretch;
+  padding: 24px 16px 18px;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 36px;
+  padding: 0 4px;
+  width: 100%;
+  flex-shrink: 0;
+}
+.sidebar:not(.open) .sidebar-logo {
+  justify-content: center;
+  padding: 0;
+}
+.sidebar-logo .logo-icon {
+  font-size: 24px;
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  background: var(--primary-gradient, linear-gradient(145deg, #0077be, #005a8c));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 119, 190, 0.35);
+}
+.sidebar-logo .logo-text {
+  font-weight: 700;
+  font-size: 19px;
+  color: #fff;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sidebar.open .sidebar-logo .logo-text {
+  opacity: 1;
+  transition: opacity 0.2s ease 0.05s;
+}
+.sidebar-logo .logo-text span {
+  color: var(--primary, #006bb3);
+}
+
+.sidebar-toggle {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--sidebar-text);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: 0.2s;
+}
+.sidebar.open .sidebar-toggle {
+  display: flex;
+}
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.sidebar-open-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--sidebar-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.sidebar.open .sidebar-open-btn {
+  display: none;
+}
+.sidebar-open-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 10px;
+  white-space: nowrap;
+  transition: 0.15s;
+}
+.sidebar:not(.open) nav a {
+  justify-content: center;
+  padding: 10px 0;
+}
+.sidebar nav a i {
+  font-size: 19px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--sidebar-icon);
+  transition: 0.15s;
+}
+.sidebar nav a:hover {
+  background: var(--sidebar-hover-bg);
+  color: #fff;
+}
+.sidebar nav a:hover i {
+  color: #fff;
+}
+.sidebar nav a.active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-color);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.sidebar nav a.active i {
+  color: #fff;
+}
+.sidebar:not(.open) nav a span {
+  display: none;
+}
+
+.sidebar-user {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 16px;
+  font-size: 13px;
+  color: var(--sidebar-text);
+  width: 100%;
+  flex-shrink: 0;
+}
+.sidebar:not(.open) .sidebar-user {
+  justify-content: center;
+}
+.sidebar-user i {
+  font-size: 24px;
+  color: var(--sidebar-icon);
+  flex-shrink: 0;
+}
+.sidebar:not(.open) .sidebar-user span {
+  display: none;
+}
+
+/* ---------------------------------------------------------------
+   Overlay (escurece o conteúdo atrás do menu quando aberto no mobile)
+   --------------------------------------------------------------- */
+.sidebar-overlay {
+  display: none;
+}
+
+/* ---------------------------------------------------------------
+   Botão hambúrguer do cabeçalho — só aparece no mobile.
+   Fica FORA do <aside>, então nunca é cortado quando o sidebar
+   colapsa para width: 0 (esse era o bug do menu sumindo).
+   --------------------------------------------------------------- */
+.mobile-menu-btn {
+  display: none;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--bg-soft, #f5faff);
+  border: 1px solid var(--border, #e2ecf6);
+  color: var(--text-secondary, #3d5f7e);
+  font-size: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.mobile-menu-btn:hover {
+  background: var(--primary-light, #e1eefb);
+  border-color: var(--primary, #006bb3);
+  color: var(--primary, #006bb3);
+}
+
+/* ================================================================
+   RESPONSIVIDADE
+   ================================================================ */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 300;
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
+  }
+  .sidebar.open {
+    width: min(220px, 78vw);
+    align-items: stretch;
+  }
+  .sidebar:not(.open) {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+    box-shadow: none;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 12, 24, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 250;
+    transition: opacity 0.25s ease;
+  }
+  .sidebar-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

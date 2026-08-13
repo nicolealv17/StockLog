@@ -1,24 +1,18 @@
-<!-- HEADER -->
-<header class="top-header" role="banner">
+<header class="main-header">
   <div class="header-left">
-    <div class="page-title">Stock<span>Log</span></div>
-    <div class="search-box" role="search">
-      <i class="fas fa-search"></i>
-      <input type="search" placeholder="Buscar..." aria-label="Buscar no sistema" />
-    </div>
+    <button id="hamburger-btn" class="hamburger-btn" aria-label="Menu">
+      <i class="bi bi-list"></i>
+    </button>
+    <div class="logo">StockLog</div>
   </div>
-
+  
   <div class="header-right">
-    <span class="notif-btn" aria-label="Notificações">
-      <i class="fas fa-bell"></i>
-      <span class="badge">3</span>
-    </span>
-    <button class="user-profile-link" onclick="window.location.href='perfil.html'">
-      <i class="fas fa-user-circle"></i>
-      <span>Admin</span>
+    <button id="theme-toggle" class="theme-btn" aria-label="Modo Escuro">
+      <i class="bi bi-moon-fill"></i>
     </button>
-    <button class="theme-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-      <i class="fas fa-sun" id="themeIcon"></i>
-    </button>
+    <a href="/pages/perfil.html" class="user-profile">
+      <i class="bi bi-person-circle"></i>
+      <span class="user-name">Usuário</span>
+    </a>
   </div>
 </header>
