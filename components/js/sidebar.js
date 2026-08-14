@@ -14,7 +14,7 @@
   // Itens do menu. Para adicionar/remover/reordenar uma opção,
   // basta editar esta lista — ela é a única fonte de verdade.
   var NAV_ITEMS = [
-    { href: "index.html", icon: "fa-chart-pie", label: "Dashboard" },
+    { href: "/index.html", icon: "fa-chart-pie", label: "Dashboard" },
     { href: "#", icon: "fa-clipboard-list", label: "POPs" },
     { href: "#", icon: "fa-industry", label: "Produção" },
     { href: "#", icon: "fa-warehouse", label: "Estoque" },
@@ -24,11 +24,13 @@
   ];
 
   // Caminho da logo usada no lugar do ícone genérico no topo do menu.
-  var LOGO_SRC = "IMG/logo.png";
+  // Absoluto (a partir da raiz do site) para funcionar em qualquer página,
+  // inclusive dentro de /pages/ — mesma correção já aplicada ao link do perfil.
+  var LOGO_SRC = "/IMG/logo.png";
 
   function currentFile() {
-    var path = window.location.pathname.split("/").pop();
-    return path === "" ? "index.html" : path;
+    var path = window.location.pathname;
+    return path === "" ? "/index.html" : path;
   }
 
   function buildNavHTML() {

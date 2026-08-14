@@ -25,12 +25,12 @@
           "
         >
         </span>
-        <button
-          class="logout-link"
-          onclick="window.location.href = 'login.html'"
-        >
-          <i class="fas fa-sign-out-alt"></i> Sair do sistema
-        </button>
+<button
+  class="logout-link"
+  onclick="window.location.href = 'pages/login.html'"
+>
+  <i class="fas fa-sign-out-alt"></i> Sair do sistema
+</button>
       </div>
     </footer>
   `;

@@ -40,7 +40,7 @@
         </span>
         <button
           class="user-profile-link"
-          onclick="window.location.href = 'perfil.html'"
+          onclick="window.location.href = 'pages/perfil.html'"
         >
           <i class="fas fa-user-circle"></i>
         </button>
