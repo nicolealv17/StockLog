@@ -3,9 +3,9 @@
    Injeta o menu lateral no lugar de <div id="sidebar-root"></div>,
    marca o link da página atual como ativo e controla abrir/fechar
    (tanto no modo desktop — trilho recolhido/expandido — quanto no
-   modo mobile — hambúrguer com overlay).
+   modo mobile — hambúrguer com overlay, abrindo como "gaveta").
 
-   Requer: components/sidebar.css
+   Requer: components/css/sidebar.css
    Uso: <div id="sidebar-root"></div>  +  <script src="components/js/sidebar.js"></script>
    ================================================================ */
 (function () {
@@ -22,6 +22,9 @@
     { href: "#", icon: "fa-robot", label: "LogBot" },
     { href: "#", icon: "fa-file-alt", label: "Relatórios" },
   ];
+
+  // Caminho da logo usada no lugar do ícone genérico no topo do menu.
+  var LOGO_SRC = "IMG/logo.png";
 
   function currentFile() {
     var path = window.location.pathname.split("/").pop();
@@ -52,7 +55,9 @@
     return (
       '<aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">' +
       '<div class="sidebar-logo">' +
-      '<div class="logo-icon"><i class="fas fa-cubes"></i></div>' +
+      '<img class="logo-icon" src="' +
+      LOGO_SRC +
+      '" alt="StockLog" />' +
       '<div class="logo-text">Stock<span>Log</span></div>' +
       '<button class="sidebar-toggle" type="button" aria-label="Recolher menu"><i class="fas fa-chevron-left"></i></button>' +
       "</div>" +
@@ -146,6 +151,13 @@
         sidebar.contains(e.target) ||
         (mobileBtn && mobileBtn.contains(e.target));
       if (isOpen && !isClickInside && isMobile()) closeSidebar();
+    });
+
+    // Tecla Esc fecha o menu no mobile — melhora a navegação por teclado.
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && isMobile() && sidebar.classList.contains("open")) {
+        closeSidebar();
+      }
     });
 
     // Fecha o menu (e o overlay/scroll-lock) se a tela crescer
