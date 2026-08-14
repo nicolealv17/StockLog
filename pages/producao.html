@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Controle de Produção</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --bg-body: #edf3f8;
+        --bg-card: #ffffff;
+        --bg-soft: #f4f8fc;
+        --border: #d4e2f0;
+
+        --text-main: #0c1e2e;
+        --text-secondary: #3b5a75;
+        --text-muted: #718da8;
+
+        --primary: #006bb3;
+        --primary-light: #e3f0fb;
+
+        --green: #15803d;
+        --green-bg: #dcfce7;
+        --green-bar: #16a34a;
+
+        --amber: #b45309;
+        --amber-bg: #fef3c7;
+        --amber-bar: #d97706;
+
+        --red: #b91c1c;
+        --red-bg: #fee2e2;
+
+        --purple: #6b21a8;
+        --purple-bg: #f3e8ff;
+        --purple-bar: #8b5cf6;
+
+        --blue: #0369a1;
+        --blue-bg: #e0f2fe;
+        --blue-bar: #0284c7;
+
+        --row-stripe: #f5f9fd;
+        --shadow: 0 2px 8px rgba(12, 30, 46, 0.04);
+      }
+
+      body.dark {
+        --bg-body: #0a131d;
+        --bg-card: #111f2e;
+        --bg-soft: #16283b;
+        --border: #1e364f;
+
+        --text-main: #e2edf8;
+        --text-secondary: #9cb5cd;
+        --text-muted: #6482a0;
+
+        --primary: #38bdf8;
+        --primary-light: #17324d;
+
+        --green: #4ade80;
+        --green-bg: #143823;
+        --green-bar: #22c55e;
+
+        --amber: #fbbf24;
+        --amber-bg: #3d2d11;
+        --amber-bar: #f59e0b;
+
+        --red: #f87171;
+        --red-bg: #3e1919;
+
+        --purple: #c084fc;
+        --purple-bg: #331d48;
+        --purple-bar: #a855f7;
+
+        --blue: #38bdf8;
+        --blue-bg: #123147;
+        --blue-bar: #38bdf8;
+
+        --row-stripe: #152638;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        padding: 16px 24px;
+        min-height: 100vh;
+        transition: background-color 0.2s, color 0.2s;
+        font-size: 13px;
+      }
+
+      .dashboard-container {
+        max-width: 1550px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      /* HEADER */
+      .top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-title-group h1 {
+        font-size: 19px;
+        font-weight: 700;
+      }
+
+      .header-title-group h1 span {
+        color: var(--primary);
+      }
+
+      .status-pill-live {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background-color: var(--green-bg);
+        color: var(--green);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+
+      .status-pill-live .dot {
+        width: 6px;
+        height: 6px;
+        background-color: var(--green);
+        border-radius: 50%;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        cursor: pointer;
+        position: relative;
+        transition: 0.15s;
+      }
+
+      .icon-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--bg-soft);
+      }
+
+      .icon-btn .badge {
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        background-color: var(--red);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 1px 4px;
+        border-radius: 8px;
+        border: 1.5px solid var(--bg-card);
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .card-header-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .card-header-title .title-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card-header-title i {
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .count-badge {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      .kpi-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 12px 16px;
+      }
+
+      .kpi-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .kpi-value-group {
+        margin: 6px 0;
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
+
+      .kpi-value {
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .kpi-unit {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .kpi-footer {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11.5px;
+        color: var(--text-secondary);
+      }
+
+      .badge-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 6px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 10.5px;
+      }
+
+      .badge-tag.green { background: var(--green-bg); color: var(--green); }
+      .badge-tag.amber { background: var(--amber-bg); color: var(--amber); }
+      .badge-tag.red { background: var(--red-bg); color: var(--red); }
+
+      .progress-bar-bg {
+        width: 100%;
+        height: 6px;
+        background: var(--bg-soft);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 6px;
+      }
+
+      .middle-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1fr;
+        gap: 16px;
+      }
+
+      .machines-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .machine-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .machine-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .machine-name {
+        font-size: 12.5px;
+        font-weight: 700;
+      }
+
+      .machine-operator {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .status-pill {
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 12px;
+        white-space: nowrap;
+      }
+
+      .status-pill.operando { background: var(--green-bg); color: var(--green); }
+      .status-pill.parada { background: var(--red-bg); color: var(--red); }
+      .status-pill.manutencao { background: var(--amber-bg); color: var(--amber); }
+
+      .machine-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11.5px;
+      }
+
+      .op-code { font-weight: 600; color: var(--text-secondary); }
+      .op-qty { font-weight: 700; }
+
+      .problems-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .problem-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+      }
+
+      .problem-info .problem-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+
+      .problem-info .problem-meta {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        display: flex;
+        gap: 10px;
+      }
+
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 12.5px;
+      }
+
+      th {
+        text-align: left;
+        padding: 8px 10px;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        border-bottom: 1.5px solid var(--border);
+      }
+
+      td {
+        padding: 8px 10px;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border);
+      }
+
+      tbody tr:nth-child(even) td {
+        background-color: var(--row-stripe);
+      }
+
+      tbody tr:hover td {
+        background-color: var(--primary-light);
+      }
+
+      .table-progress-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 160px;
+      }
+
+      .table-progress-cell .progress-bar-bg {
+        margin-bottom: 0;
+      }
+
+      .progress-perc {
+        font-size: 11.5px;
+        font-weight: 700;
+        min-width: 28px;
+      }
+
+      @media (max-width: 1100px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        .middle-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- HEADER -->
+      <header class="top-header">
+        <div class="header-title-group">
+          <h1>Controle de <span>Produção</span></h1>
+          <span class="status-pill-live"><span class="dot"></span> Ao vivo · Turno 2</span>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">
+            <i class="fas fa-moon" id="themeIcon"></i>
+          </button>
+          <!-- ADICIONADO: onclick="atualizar()" -->
+          <button class="icon-btn" onclick="atualizar()" title="Atualizar"><i class="fas fa-arrows-rotate"></i></button>
+          <button class="icon-btn" title="Notificações">
+            <i class="fas fa-bell"></i><span class="badge">2</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="kpi-grid">
+        <div class="card kpi-card">
+          <div class="kpi-label"><i class="fas fa-box-archive"></i> Produzido Hoje</div>
+          <div class="kpi-value-group">
+            <span class="kpi-value">3.240</span>
+            <span class="kpi-unit">/ 4.000 unid.</span>
+          </div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 81%; background: var(--green-bar);"></div></div>
+          <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-check"></i> 81%</span> da meta</div>
+        </div>
+
+        <div class="card kpi-card">
+          <div class="kpi-label"><i class="fas fa-chart-line"></i> Eficiência (OEE)</div>
+          <div class="kpi-value-group"><span class="kpi-value">87%</span></div>
+          <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-arrow-up"></i> +3pp</span> vs média</div>
+        </div>
+
+        <div class="card kpi-card">
+          <div class="kpi-label"><i class="fas fa-clock"></i> Tempo Médio/Lote</div>
+          <div class="kpi-value-group">
+            <span class="kpi-value">42</span>
+            <span class="kpi-unit">min</span>
+          </div>
+          <div class="kpi-footer"><span class="badge-tag amber"><i class="fas fa-plus"></i> +4min</span> vs padrão</div>
+        </div>
+
+        <div class="card kpi-card">
+          <div class="kpi-label"><i class="fas fa-gears"></i> Máquinas Operando</div>
+          <div class="kpi-value-group">
+            <span class="kpi-value">5</span>
+            <span class="kpi-unit">/ 7</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="badge-tag red">1 parada</span>
+            <span class="badge-tag amber">1 manut.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="middle-grid">
+        <div class="card">
+          <div class="card-header-title">
+            <span class="title-text"><i class="fas fa-industry"></i> Máquinas em operação</span>
+            <span class="count-badge">7 no total</span>
+          </div>
+          <div class="machines-grid">
+            <div class="machine-card">
+              <div class="machine-top">
+                <div>
+                  <div class="machine-name">Prensa Hidráulica 01</div>
+                  <div class="machine-operator">Op: Gustavo Lima</div>
+                </div>
+                <span class="status-pill operando">● Operando</span>
+              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 77.5%; background: var(--green-bar);"></div></div>
+              <div class="machine-bottom"><span class="op-code">OP-2025-001</span><span class="op-qty">620/800 pçs</span></div>
+            </div>
+
+            <div class="machine-card">
+              <div class="machine-top">
+                <div>
+                  <div class="machine-name">Torno CNC 02</div>
+                  <div class="machine-operator">Op: Ana Ferreira</div>
+                </div>
+                <span class="status-pill operando">● Operando</span>
+              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 79%; background: var(--green-bar);"></div></div>
+              <div class="machine-bottom"><span class="op-code">OP-2025-002</span><span class="op-qty">95/120 pçs</span></div>
+            </div>
+
+            <div class="machine-card">
+              <div class="machine-top">
+                <div>
+                  <div class="machine-name">Solda Robotizada 03</div>
+                  <div class="machine-operator">Op: Ricardo Ribeiro</div>
+                </div>
+                <span class="status-pill parada">● Parada</span>
+              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%; background: var(--border);"></div></div>
+              <div class="machine-bottom"><span class="op-code">Sem OP</span><span class="op-qty">0/0 pçs</span></div>
+            </div>
+
+            <div class="machine-card">
+              <div class="machine-top">
+                <div>
+                  <div class="machine-name">Injetora Plástica 04</div>
+                  <div class="machine-operator">Op: Vinicius Carvalho</div>
+                </div>
+                <span class="status-pill operando">● Operando</span>
+              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 74%; background: var(--green-bar);"></div></div>
+              <div class="machine-bottom"><span class="op-code">OP-2025-004</span><span class="op-qty">1.480/2.000 pçs</span></div>
+            </div>
+
+            <div class="machine-card">
+              <div class="machine-top">
+                <div>
+                  <div class="machine-name">Corte a Laser 05</div>
+                  <div class="machine-operator">Op: Bruno Ferreira</div>
+                </div>
+                <span class="status-pill manutencao">● Manutenção</span>
+              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 30%; background: var(--amber-bar);"></div></div>
+              <div class="machine-bottom"><span class="op-code">Preventiva</span><span class="op-qty">—</span></div>
+            </div>
+
+            <div class="machine-card">
+              <div class="machine-top">
+                <div>
+                  <div class="machine-name">Embaladora 06</div>
+                  <div class="machine-operator">Op: Camila Souza</div>
+                </div>
+                <span class="status-pill operando">● Operando</span>
+              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%; background: var(--green-bar);"></div></div>
+              <div class="machine-bottom"><span class="op-code">OP-2025-005</span><span class="op-qty">270/300 pçs</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-title">
+            <span class="title-text"><i class="fas fa-triangle-exclamation"></i> Problemas ativos</span>
+            <span class="count-badge">3</span>
+          </div>
+          <div class="problems-list">
+            <div class="problem-item">
+              <div class="problem-info">
+                <div class="problem-title">Falha elétrica na Solda 03</div>
+                <div class="problem-meta"><span><i class="far fa-clock"></i> 38 min</span><span>Ricardo</span></div>
+              </div>
+              <span class="badge-tag red">Crítico</span>
+            </div>
+
+            <div class="problem-item">
+              <div class="problem-info">
+                <div class="problem-title">Vibração fora do padrão</div>
+                <div class="problem-meta"><span>Torno CNC 02</span><span><i class="far fa-clock"></i> 1h12</span></div>
+              </div>
+              <span class="badge-tag amber">Atenção</span>
+            </div>
+
+            <div class="problem-item">
+              <div class="problem-info">
+                <div class="problem-title">Falta de insumo (chapa)</div>
+                <div class="problem-meta"><span>OP-2025-003</span><span><i class="far fa-clock"></i> 2h05</span></div>
+              </div>
+              <span class="badge-tag amber">Atenção</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TABELA DE ORDENS -->
+      <section class="card">
+        <div class="card-header-title">
+          <span class="title-text"><i class="fas fa-list-check"></i> Progresso das ordens ativas</span>
+          <span class="count-badge">5 ativas</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Cód. OP</th>
+                <th>Produto</th>
+                <th>Máquina</th>
+                <th>Meta</th>
+                <th>Progresso</th>
+                <th>Tempo</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>OP-2025-001</strong></td>
+                <td>Flange Aço ABNT 1020 ø50mm</td>
+                <td>Prensa Hidráulica 01</td>
+                <td>800 pçs</td>
+                <td>
+                  <div class="table-progress-cell">
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 77%; background: var(--green-bar);"></div></div>
+                    <span class="progress-perc">77%</span>
+                  </div>
+                </td>
+                <td>3h20</td>
+                <td><span class="status-pill operando">● Em produção</span></td>
+              </tr>
+              <tr>
+                <td><strong>OP-2025-002</strong></td>
+                <td>Eixo Vazado 420mm</td>
+                <td>Torno CNC 02</td>
+                <td>120 pçs</td>
+                <td>
+                  <div class="table-progress-cell">
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 79%; background: var(--purple-bar);"></div></div>
+                    <span class="progress-perc">79%</span>
+                  </div>
+                </td>
+                <td>2h05</td>
+                <td><span class="status-pill" style="background: var(--purple-bg); color: var(--purple);">● Controle QA</span></td>
+              </tr>
+              <tr>
+                <td><strong>OP-2025-003</strong></td>
+                <td>Chapa Inox 304 2mm</td>
+                <td>Sem máquina</td>
+                <td>800 pçs</td>
+                <td>
+                  <div class="table-progress-cell">
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 12%; background: var(--amber-bar);"></div></div>
+                    <span class="progress-perc">12%</span>
+                  </div>
+                </td>
+                <td>0h40</td>
+                <td><span class="status-pill manutencao">● Aguard. material</span></td>
+              </tr>
+              <tr>
+                <td><strong>OP-2025-004</strong></td>
+                <td>Luva Nitrílica Reforçada</td>
+                <td>Injetora Plástica 04</td>
+                <td>2.000 pçs</td>
+                <td>
+                  <div class="table-progress-cell">
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 74%; background: var(--green-bar);"></div></div>
+                    <span class="progress-perc">74%</span>
+                  </div>
+                </td>
+                <td>4h50</td>
+                <td><span class="status-pill operando">● Em produção</span></td>
+              </tr>
+              <tr>
+                <td><strong>OP-2025-005</strong></td>
+                <td>Suporte de Fixação L-40</td>
+                <td>Embaladora 06</td>
+                <td>300 pçs</td>
+                <td>
+                  <div class="table-progress-cell">
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%; background: var(--blue-bar);"></div></div>
+                    <span class="progress-perc">90%</span>
+                  </div>
+                </td>
+                <td>1h55</td>
+                <td><span class="status-pill" style="background: var(--blue-bg); color: var(--blue);">● Finalizando</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        const themeIcon = document.getElementById("themeIcon");
+        themeIcon.className = document.body.classList.contains("dark")
+          ? "fas fa-sun"
+          : "fas fa-moon";
+      }
+
+      //Função para o botão de atualizar
+      function atualizar() {
+        alert("Dados atualizados com sucesso!");
+      }
+    </script>
+  </body>
+</html>
