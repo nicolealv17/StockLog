@@ -11,7 +11,7 @@
   var basePath = inPagesFolder ? "../" : "./";
 
   // 2. Caminho dinâmico da imagem da logo (funciona tanto na raiz quanto em /pages/)
-  var LOGO_SRC = basePath + "IMG/logo.png";
+  var LOGO_SRC = basePath + "IMG/logoo.png";
 
   // 3. Itens do menu com caminhos relativos ajustados dinamicamente
   var NAV_ITEMS = [

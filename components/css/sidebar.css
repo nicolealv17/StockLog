@@ -56,11 +56,10 @@
   padding: 0;
 }
 .sidebar-logo .logo-icon {
-  width: 44px;
-  height: 44px;
-  background: #ffffff;
+  width: 49px;
+  height: 49px;
   border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(0, 119, 190, 0.35);
+  
   flex-shrink: 0;
   object-fit: contain;
   padding: 6px;
