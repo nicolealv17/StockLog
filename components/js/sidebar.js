@@ -1,20 +1,21 @@
 /* ================================================================
    COMPONENTE: SIDEBAR (StockLog)
    Injeta o menu lateral no lugar de <div id="sidebar-root"></div>,
-   marca o link da página atual como ativo e controla abrir/fechar
-   (tanto no modo desktop — trilho recolhido/expandido — quanto no
-   modo mobile — hambúrguer com overlay, abrindo como "gaveta").
-
-   Requer: components/css/sidebar.css
-   Uso: <div id="sidebar-root"></div>  +  <script src="components/js/sidebar.js"></script>
+   marca o link da página atual como ativo e controla abrir/fechar.
    ================================================================ */
 (function () {
   "use strict";
 
-  // Itens do menu. Para adicionar/remover/reordenar uma opção,
-  // basta editar esta lista — ela é a única fonte de verdade.
+  // 1. Detecta se a página atual está dentro da pasta /pages/
+  var inPagesFolder = window.location.pathname.includes("/pages/");
+  var basePath = inPagesFolder ? "../" : "./";
+
+  // 2. Caminho dinâmico da imagem da logo (funciona tanto na raiz quanto em /pages/)
+  var LOGO_SRC = basePath + "IMG/logo.png";
+
+  // 3. Itens do menu com caminhos relativos ajustados dinamicamente
   var NAV_ITEMS = [
-    { href: "/index.html", icon: "fa-chart-pie", label: "Dashboard" },
+    { href: basePath + "index.html", icon: "fa-chart-pie", label: "Dashboard" },
     { href: "#", icon: "fa-clipboard-list", label: "POPs" },
     { href: "#", icon: "fa-industry", label: "Produção" },
     { href: "#", icon: "fa-warehouse", label: "Estoque" },
@@ -23,20 +24,17 @@
     { href: "#", icon: "fa-file-alt", label: "Relatórios" },
   ];
 
-  // Caminho da logo usada no lugar do ícone genérico no topo do menu.
-  // Absoluto (a partir da raiz do site) para funcionar em qualquer página,
-  // inclusive dentro de /pages/ — mesma correção já aplicada ao link do perfil.
-  var LOGO_SRC = "/IMG/logo.png";
-
-  function currentFile() {
-    var path = window.location.pathname;
-    return path === "" ? "/index.html" : path;
+  // Identifica o nome do arquivo da página atual para marcar o menu como ativo
+  function isCurrentPage(href) {
+    if (href === "#") return false;
+    var currentFile = window.location.pathname.split("/").pop() || "index.html";
+    var targetFile = href.split("/").pop();
+    return currentFile === targetFile;
   }
 
   function buildNavHTML() {
-    var current = currentFile();
     return NAV_ITEMS.map(function (item) {
-      var isActive = item.href !== "#" && item.href === current;
+      var isActive = isCurrentPage(item.href);
       return (
         '<a href="' +
         item.href +
@@ -85,7 +83,7 @@
     } else {
       console.warn(
         '[sidebar.js] Não encontrei <div id="sidebar-root"></div> na página. ' +
-          "Inserindo o menu no início do <body> como alternativa — confira se o HTML da página tem esse elemento.",
+          "Inserindo o menu no início do <body> como alternativa."
       );
       document.body.insertBefore(asideEl, document.body.firstChild);
     }
@@ -119,8 +117,6 @@
       document.body.style.overflow = "";
     }
 
-    // Mantido global para compatibilidade com onclick="toggleSidebar()"
-    // que possa existir em outras partes da página.
     window.toggleSidebar = function () {
       if (sidebar.classList.contains("open")) closeSidebar();
       else openSidebar();
@@ -131,22 +127,13 @@
     if (toggleBtn) toggleBtn.addEventListener("click", window.toggleSidebar);
     if (openBtn) openBtn.addEventListener("click", window.toggleSidebar);
 
-    // Botão hambúrguer do cabeçalho (mobile) — cada página só
-    // precisa ter um elemento com id="mobileMenuBtn".
     var mobileBtn = document.getElementById("mobileMenuBtn");
     if (mobileBtn) {
       mobileBtn.addEventListener("click", window.toggleSidebar);
-    } else {
-      console.warn(
-        '[sidebar.js] Não encontrei o botão com id="mobileMenuBtn" nesta página. ' +
-          "O menu hambúrguer do cabeçalho não vai funcionar até esse botão existir no HTML.",
-      );
     }
 
-    // Clicar no overlay fecha o menu.
     overlay.addEventListener("click", closeSidebar);
 
-    // Clicar fora do menu (mobile) também fecha.
     document.addEventListener("click", function (e) {
       var isOpen = sidebar.classList.contains("open");
       var isClickInside =
@@ -155,15 +142,12 @@
       if (isOpen && !isClickInside && isMobile()) closeSidebar();
     });
 
-    // Tecla Esc fecha o menu no mobile — melhora a navegação por teclado.
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && isMobile() && sidebar.classList.contains("open")) {
         closeSidebar();
       }
     });
 
-    // Fecha o menu (e o overlay/scroll-lock) se a tela crescer
-    // para desktop enquanto ele estava aberto no modo mobile.
     window.addEventListener("resize", function () {
       if (!isMobile()) closeSidebar();
     });

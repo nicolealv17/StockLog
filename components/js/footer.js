@@ -27,7 +27,7 @@
         </span>
 <button
   class="logout-link"
-  onclick="window.location.href = 'pages/login.html'"
+  onclick="window.location.href = 'login.html'"
 >
   <i class="fas fa-sign-out-alt"></i> Sair do sistema
 </button>
