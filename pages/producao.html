@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Controle de Produção</title>
+    <title>StockLog · Controle de Produção</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -471,7 +471,8 @@
           <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">
             <i class="fas fa-moon" id="themeIcon"></i>
           </button>
-          <button class="icon-btn" title="Atualizar"><i class="fas fa-arrows-rotate"></i></button>
+          <!-- ADICIONADO: onclick="atualizar()" -->
+          <button class="icon-btn" onclick="atualizar()" title="Atualizar"><i class="fas fa-arrows-rotate"></i></button>
           <button class="icon-btn" title="Notificações">
             <i class="fas fa-bell"></i><span class="badge">2</span>
           </button>
@@ -516,7 +517,6 @@
           </div>
         </div>
       </section>
-
 
       <section class="middle-grid">
         <div class="card">
@@ -736,6 +736,11 @@
         themeIcon.className = document.body.classList.contains("dark")
           ? "fas fa-sun"
           : "fas fa-moon";
+      }
+
+      //Função para o botão de atualizar
+      function atualizar() {
+        alert("Dados atualizados com sucesso!");
       }
     </script>
   </body>
