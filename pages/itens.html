@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Itens em Estoque</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --bg-body: #edf3f8;
+        --bg-card: #ffffff;
+        --bg-soft: #f4f8fc;
+        --border: #d4e2f0;
+
+        --text-main: #0c1e2e;
+        --text-secondary: #3b5a75;
+        --text-muted: #718da8;
+
+        --primary: #006bb3;
+        --primary-light: #e3f0fb;
+
+        --green: #15803d;
+        --green-bg: #dcfce7;
+        --green-bar: #16a34a;
+
+        --amber: #b45309;
+        --amber-bg: #fef3c7;
+        --amber-bar: #d97706;
+
+        --red: #b91c1c;
+        --red-bg: #fee2e2;
+        --red-bar: #dc2626;
+
+        --purple: #6b21a8;
+        --purple-bg: #f3e8ff;
+        --purple-bar: #8b5cf6;
+
+        --blue: #0369a1;
+        --blue-bg: #e0f2fe;
+        --blue-bar: #0284c7;
+
+        --teal: #0f766e;
+        --teal-bg: #ccfbf1;
+        --teal-bar: #14b8a6;
+
+        --row-stripe: #f5f9fd;
+        --shadow: 0 2px 8px rgba(12, 30, 46, 0.04);
+      }
+
+      body.dark {
+        --bg-body: #0a131d;
+        --bg-card: #111f2e;
+        --bg-soft: #16283b;
+        --border: #1e364f;
+
+        --text-main: #e2edf8;
+        --text-secondary: #9cb5cd;
+        --text-muted: #6482a0;
+
+        --primary: #38bdf8;
+        --primary-light: #17324d;
+
+        --green: #4ade80;
+        --green-bg: #143823;
+        --green-bar: #22c55e;
+
+        --amber: #fbbf24;
+        --amber-bg: #3d2d11;
+        --amber-bar: #f59e0b;
+
+        --red: #f87171;
+        --red-bg: #3e1919;
+        --red-bar: #ef4444;
+
+        --purple: #c084fc;
+        --purple-bg: #331d48;
+        --purple-bar: #a855f7;
+
+        --blue: #38bdf8;
+        --blue-bg: #123147;
+        --blue-bar: #38bdf8;
+
+        --teal: #2dd4bf;
+        --teal-bg: #0e3733;
+        --teal-bar: #2dd4bf;
+
+        --row-stripe: #152638;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        padding: 16px 24px;
+        min-height: 100vh;
+        transition: background-color 0.2s, color 0.2s;
+        font-size: 13px;
+      }
+
+      .dashboard-container {
+        max-width: 1550px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      /* HEADER */
+      .top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .header-title-group h1 {
+        font-size: 19px;
+        font-weight: 700;
+      }
+
+      .header-title-group h1 span {
+        color: var(--primary);
+      }
+
+      .status-pill-live {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background-color: var(--green-bg);
+        color: var(--green);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+
+      .status-pill-live .dot {
+        width: 6px;
+        height: 6px;
+        background-color: var(--green);
+        border-radius: 50%;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        cursor: pointer;
+        position: relative;
+        transition: 0.15s;
+      }
+
+      .icon-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--bg-soft);
+      }
+
+      .icon-btn .badge {
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        background-color: var(--red);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 1px 4px;
+        border-radius: 8px;
+        border: 1.5px solid var(--bg-card);
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .card-header-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .card-header-title .title-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card-header-title i {
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      /* GRID SECUNDÁRIO (2 CARDS INFERIORES) */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 16px;
+      }
+
+      @media (max-width: 992px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* RESUMO POR CATEGORIA */
+      .cat-progress-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .cat-progress-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .cat-progress-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .cat-progress-info span {
+        color: var(--text-secondary);
+      }
+
+      .cat-progress-info strong {
+        color: var(--text-main);
+      }
+
+      .progress-bar-bg {
+        width: 100%;
+        height: 6px;
+        background: var(--bg-soft);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.3s;
+      }
+
+      /* ALERTAS DE REPOSIÇÃO */
+      .alert-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .alert-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 12px;
+      }
+
+      .alert-item-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .alert-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+
+      .alert-icon.critico { background: var(--red-bg); color: var(--red); }
+      .alert-icon.baixo { background: var(--amber-bg); color: var(--amber); }
+
+      .alert-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .alert-title {
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .alert-sub {
+        font-size: 10.5px;
+        color: var(--text-muted);
+      }
+
+      .alert-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+      }
+
+      .alert-badge.critico { background: var(--red-bg); color: var(--red); }
+      .alert-badge.baixo { background: var(--amber-bg); color: var(--amber); }
+
+      /* TABLE CONTROLS */
+      .table-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 6px 10px;
+        min-width: 200px;
+      }
+
+      .search-box i {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .search-box input {
+        border: none;
+        background: transparent;
+        outline: none;
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 12.5px;
+        width: 100%;
+      }
+
+      .search-box input::placeholder {
+        color: var(--text-muted);
+      }
+
+      select.filter-select {
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        color: var(--text-secondary);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 7px 10px;
+        border-radius: 8px;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        color: var(--text-secondary);
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 6px 11px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+
+      .filter-chip:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .filter-chip.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      /* TABLE */
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 12.5px;
+      }
+
+      th {
+        text-align: left;
+        padding: 8px 10px;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        border-bottom: 1.5px solid var(--border);
+        white-space: nowrap;
+        user-select: none;
+      }
+
+      td {
+        padding: 8px 10px;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border);
+      }
+
+      tbody tr:nth-child(even) td {
+        background-color: var(--row-stripe);
+      }
+
+      tbody tr:hover td {
+        background-color: var(--primary-light);
+      }
+
+      .item-code {
+        font-weight: 700;
+        color: var(--text-secondary);
+        font-size: 11.5px;
+      }
+
+      .item-name {
+        font-weight: 600;
+      }
+
+      .item-sub {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+
+      .cat-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+
+      .loc-cell {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 11.5px;
+      }
+
+      .loc-cell i {
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+
+      .qty-cell {
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .qty-min {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 11px;
+      }
+
+      .table-progress-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 130px;
+      }
+
+      .progress-perc {
+        font-size: 11px;
+        font-weight: 700;
+        min-width: 30px;
+        color: var(--text-secondary);
+      }
+
+      .flow-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .flow-in { color: var(--green); }
+      .flow-out { color: var(--red); }
+
+      .status-pill {
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 12px;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .status-pill.ok { background: var(--green-bg); color: var(--green); }
+      .status-pill.baixo { background: var(--amber-bg); color: var(--amber); }
+      .status-pill.critico { background: var(--red-bg); color: var(--red); }
+
+      .qty-btns {
+        display: flex;
+        gap: 4px;
+      }
+
+      .qty-btn {
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+
+      .qty-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 30px 10px;
+        color: var(--text-muted);
+        font-size: 12.5px;
+      }
+
+      .empty-state i {
+        font-size: 22px;
+        margin-bottom: 8px;
+        display: block;
+        color: var(--border);
+      }
+
+      .results-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+      }
+
+      /* POP-UP / TOAST NOTIFICATION */
+      .toast-popup {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--green-bar);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 9999;
+      }
+
+      .toast-popup.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 640px) {
+        body { padding: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- HEADER -->
+      <header class="top-header">
+        <div class="header-title-group">
+          <h1>Itens em <span>Estoque</span></h1>
+          <span class="status-pill-live"><span class="dot"></span> Sincronizado</span>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">
+            <i class="fas fa-moon" id="themeIcon"></i>
+          </button>
+          <button class="icon-btn" onclick="atualizar()" title="Atualizar">
+            <i class="fas fa-arrows-rotate"></i>
+          </button>
+          <button class="icon-btn" title="Notificações">
+            <i class="fas fa-bell"></i><span class="badge" id="notifBadge">4</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- CARDS INFERIORES -->
+      <section class="charts-grid">
+        <div class="card">
+          <div class="card-header-title">
+            <span class="title-text"><i class="fas fa-chart-pie"></i> Capacidade por Categoria</span>
+          </div>
+          <div class="cat-progress-list" id="catProgressList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-title">
+            <span class="title-text"><i class="fas fa-triangle-exclamation" style="color:var(--amber);"></i> Alertas de Reposição</span>
+            <span id="alertCountBadge" style="font-size: 11px; color: var(--red); font-weight: 700;">4 pendentes</span>
+          </div>
+          <div class="alert-list" id="alertList"></div>
+        </div>
+      </section>
+
+      <!-- TABELA PRINCIPAL DE CONSULTA -->
+      <section class="card">
+        <div class="card-header-title">
+          <span class="title-text"><i class="fas fa-warehouse"></i> Consulta de itens</span>
+          <div class="table-controls">
+            <div class="search-box">
+              <i class="fas fa-magnifying-glass"></i>
+              <input type="text" id="searchInput" placeholder="Buscar por código ou nome..." oninput="renderAll()" />
+            </div>
+            <select class="filter-select" id="categoryFilter" onchange="renderAll()">
+              <option value="todas">Todas categorias</option>
+              <option value="Matéria-Prima">Matéria-Prima</option>
+              <option value="Componentes">Componentes</option>
+              <option value="Embalagens">Embalagens</option>
+              <option value="Consumíveis">Consumíveis</option>
+              <option value="Ferramental">Ferramental</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+          <button class="filter-chip active" data-status="todos" onclick="setStatusFilter('todos', this)">Todos</button>
+          <button class="filter-chip" data-status="ok" onclick="setStatusFilter('ok', this)"><i class="fas fa-circle" style="color:var(--green); font-size:7px;"></i> Normal</button>
+          <button class="filter-chip" data-status="baixo" onclick="setStatusFilter('baixo', this)"><i class="fas fa-circle" style="color:var(--amber); font-size:7px;"></i> Baixo</button>
+          <button class="filter-chip" data-status="critico" onclick="setStatusFilter('critico', this)"><i class="fas fa-circle" style="color:var(--red); font-size:7px;"></i> Crítico</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Cód.</th>
+                <th>Item</th>
+                <th>Categoria</th>
+                <th>Localização</th>
+                <th>Qtd. Atual</th>
+                <th>Nível</th>
+                <th>Entradas/Saídas (hoje)</th>
+                <th>Status</th>
+                <th>Ação rápida</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="results-footer">
+          <span id="resultsCount">Mostrando 12 de 12 itens</span>
+          <span>Última sincronização: <span id="lastSync">agora</span></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- POP-UP / TOAST -->
+    <div id="toastPopup" class="toast-popup">
+      <i class="fas fa-circle-check" style="font-size: 16px;"></i>
+      <span>Dados atualizados com sucesso!</span>
+    </div>
+
+    <script>
+      let items = [
+        { id: 1, codigo: "MP-1042", nome: "Chapa de Aço Inox 304", sub: "Espessura 2mm - 1200x2400mm", categoria: "Matéria-Prima", local: "A-01-04", atual: 450, minimo: 200, maximo: 1000, entradas: 50, saidas: 12, status: "ok" },
+        { id: 2, codigo: "MP-1088", nome: "Polímero ABS Virgem", sub: "Granulado - Sacos 25kg", categoria: "Matéria-Prima", local: "A-02-01", atual: 80, minimo: 150, maximo: 500, entradas: 0, saidas: 35, status: "baixo" },
+        { id: 3, codigo: "CP-3011", nome: "Rolamento Blindado 6204-2RS", sub: "Diâmetro 20x47x14mm", categoria: "Componentes", local: "B-04-02", atual: 15, minimo: 100, maximo: 400, entradas: 0, saidas: 45, status: "critico" },
+        { id: 4, codigo: "CP-3045", nome: "Parafuso Sextavado M8x30", sub: "Inox A2 - Caixa 500 un", categoria: "Componentes", local: "B-02-05", atual: 620, minimo: 300, maximo: 1200, entradas: 100, saidas: 80, status: "ok" },
+        { id: 5, codigo: "EM-5012", nome: "Caixa Papelão Duplo 40x30x30", sub: "Onda BC Alta Resistência", categoria: "Embalagens", local: "C-01-01", atual: 310, minimo: 250, maximo: 800, entradas: 200, saidas: 110, status: "ok" },
+        { id: 6, codigo: "EM-5089", nome: "Filme Stretch Manual 500mm", sub: "Bobina 3.5kg 25 micras", categoria: "Embalagens", local: "C-03-02", atual: 28, minimo: 50, maximo: 200, entradas: 0, saidas: 14, status: "baixo" },
+        { id: 7, codigo: "CS-7023", nome: "Óleo Lubrificante ISO VG 68", sub: "Tambor 200 Litros", categoria: "Consumíveis", local: "D-01-03", atual: 2, minimo: 5, maximo: 15, entradas: 0, saidas: 1, status: "critico" },
+        { id: 8, codigo: "CS-7050", nome: "Luva Nitrílica Tam. L", sub: "Caixa c/ 100 unidades", categoria: "Consumíveis", local: "D-02-01", atual: 140, minimo: 80, maximo: 300, entradas: 50, saidas: 22, status: "ok" },
+        { id: 9, codigo: "FR-9010", nome: "Broca Metal Duro Ø8mm", sub: "Revestimento TiAlN", categoria: "Ferramental", local: "E-01-02", atual: 18, minimo: 10, maximo: 40, entradas: 5, saidas: 2, status: "ok" },
+        { id: 10, codigo: "MP-1095", nome: "Tubo Alumínio Estrutural", sub: "Diâmetro 50mm x 3m", categoria: "Matéria-Prima", local: "A-03-05", atual: 95, minimo: 100, maximo: 300, entradas: 0, saidas: 18, status: "baixo" },
+        { id: 11, codigo: "CP-3099", nome: "Sensor Indutivo M12 PNP", sub: "Alcance 4mm - Cabo 2m", categoria: "Componentes", local: "B-01-03", atual: 42, minimo: 20, maximo: 80, entradas: 10, saidas: 4, status: "ok" },
+        { id: 12, codigo: "MP-1102", nome: "Resina Epóxi Industrial", sub: "Galão 5 Litros + Endurecedor", categoria: "Matéria-Prima", local: "A-04-01", atual: 5, minimo: 20, maximo: 60, entradas: 0, saidas: 8, status: "critico" }
+      ];
+
+      let currentStatus = 'todos';
+
+      function renderCatProgress() {
+        const catListEl = document.getElementById('catProgressList');
+        if (!catListEl) return;
+
+        const categories = ["Matéria-Prima", "Componentes", "Embalagens", "Consumíveis", "Ferramental"];
+        const colors = {
+          "Matéria-Prima": "var(--blue-bar)",
+          "Componentes": "var(--purple-bar)",
+          "Embalagens": "var(--teal-bar)",
+          "Consumíveis": "var(--amber-bar)",
+          "Ferramental": "var(--green-bar)"
+        };
+
+        catListEl.innerHTML = categories.map(cat => {
+          const catItems = items.filter(i => i.categoria === cat);
+          const totalAtual = catItems.reduce((acc, i) => acc + i.atual, 0);
+          const totalMax = catItems.reduce((acc, i) => acc + i.maximo, 0);
+          const perc = totalMax > 0 ? Math.min(100, Math.round((totalAtual / totalMax) * 100)) : 0;
+
+          return `
+            <div class="cat-progress-item">
+              <div class="cat-progress-info">
+                <span>${cat} (${catItems.length} itens)</span>
+                <strong>${perc}% (${totalAtual.toLocaleString()} / ${totalMax.toLocaleString()})</strong>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: ${perc}%; background: ${colors[cat] || 'var(--primary)'};"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderAlerts() {
+        const alertListEl = document.getElementById('alertList');
+        const badgeEl = document.getElementById('notifBadge');
+        const alertCountBadge = document.getElementById('alertCountBadge');
+        if (!alertListEl) return;
+
+        const alerts = items.filter(i => i.status === 'critico' || i.status === 'baixo');
+        
+        if (badgeEl) badgeEl.innerText = alerts.length;
+        if (alertCountBadge) alertCountBadge.innerText = `${alerts.length} pendentes`;
+
+        if (alerts.length === 0) {
+          alertListEl.innerHTML = `<div class="empty-state" style="padding:15px;"><i class="fas fa-circle-check" style="color:var(--green); font-size:18px;"></i> Nenhum alerta de reposição no momento.</div>`;
+          return;
+        }
+
+        alertListEl.innerHTML = alerts.slice(0, 4).map(item => {
+          const isCrit = item.status === 'critico';
+          return `
+            <div class="alert-item">
+              <div class="alert-item-left">
+                <div class="alert-icon ${isCrit ? 'critico' : 'baixo'}">
+                  <i class="fas ${isCrit ? 'fa-triangle-exclamation' : 'fa-circle-exclamation'}"></i>
+                </div>
+                <div class="alert-info">
+                  <span class="alert-title">${item.nome} (${item.codigo})</span>
+                  <span class="alert-sub">Mínimo: ${item.minimo} | Local: ${item.local}</span>
+                </div>
+              </div>
+              <span class="alert-badge ${isCrit ? 'critico' : 'baixo'}">${item.atual} un</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderTable() {
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const search = searchInput ? searchInput.value.toLowerCase() : '';
+        const category = categoryFilter ? categoryFilter.value : 'todas';
+
+        let filtered = items.filter(item => {
+          const matchesSearch = item.codigo.toLowerCase().includes(search) || 
+                                item.nome.toLowerCase().includes(search) || 
+                                item.sub.toLowerCase().includes(search);
+          const matchesCategory = category === 'todas' || item.categoria === category;
+          const matchesStatus = currentStatus === 'todos' || item.status === currentStatus;
+          return matchesSearch && matchesCategory && matchesStatus;
+        });
+
+        const tbody = document.getElementById('tableBody');
+        if (!tbody) return;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="9">
+                <div class="empty-state">
+                  <i class="fas fa-box-open"></i>
+                  Nenhum item encontrado com os filtros selecionados.
+                </div>
+              </td>
+            </tr>`;
+        } else {
+          tbody.innerHTML = filtered.map(item => {
+            const perc = Math.min(100, Math.round((item.atual / item.maximo) * 100));
+            let barColor = 'var(--green-bar)';
+            if (item.status === 'baixo') barColor = 'var(--amber-bar)';
+            if (item.status === 'critico') barColor = 'var(--red-bar)';
+
+            let catStyle = 'background:var(--blue-bg); color:var(--blue);';
+            if (item.categoria === 'Componentes') catStyle = 'background:var(--purple-bg); color:var(--purple);';
+            if (item.categoria === 'Embalagens') catStyle = 'background:var(--teal-bg); color:var(--teal);';
+            if (item.categoria === 'Consumíveis') catStyle = 'background:var(--amber-bg); color:var(--amber);';
+            if (item.categoria === 'Ferramental') catStyle = 'background:var(--green-bg); color:var(--green);';
+
+            let statusPill = `<span class="status-pill ok"><i class="fas fa-check-circle"></i> Normal</span>`;
+            if (item.status === 'baixo') statusPill = `<span class="status-pill baixo"><i class="fas fa-triangle-exclamation"></i> Baixo</span>`;
+            if (item.status === 'critico') statusPill = `<span class="status-pill critico"><i class="fas fa-circle-exclamation"></i> Crítico</span>`;
+
+            return `
+              <tr>
+                <td><span class="item-code">${item.codigo}</span></td>
+                <td>
+                  <div class="item-name">${item.nome}</div>
+                  <div class="item-sub">${item.sub}</div>
+                </td>
+                <td><span class="cat-tag" style="${catStyle}">${item.categoria}</span></td>
+                <td><div class="loc-cell"><i class="fas fa-location-dot"></i> ${item.local}</div></td>
+                <td>
+                  <span class="qty-cell">${item.atual}</span> 
+                  <span class="qty-min">/ min ${item.minimo}</span>
+                </td>
+                <td>
+                  <div class="table-progress-cell">
+                    <div class="progress-bar-bg">
+                      <div class="progress-bar-fill" style="width: ${perc}%; background: ${barColor};"></div>
+                    </div>
+                    <span class="progress-perc">${perc}%</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="flow-cell">
+                    <span class="flow-in">+${item.entradas} entradas</span>
+                    <span class="flow-out">-${item.saidas} saídas</span>
+                  </div>
+                </td>
+                <td>${statusPill}</td>
+                <td>
+                  <div class="qty-btns">
+                    <button class="qty-btn" onclick="changeQty(${item.id}, -1)" title="Diminuir 1">-</button>
+                    <button class="qty-btn" onclick="changeQty(${item.id}, 1)" title="Aumentar 1">+</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        const resultsCount = document.getElementById('resultsCount');
+        if (resultsCount) {
+          resultsCount.innerText = `Mostrando ${filtered.length} de ${items.length} itens`;
+        }
+      }
+
+      function renderAll() {
+        renderCatProgress();
+        renderAlerts();
+        renderTable();
+      }
+
+      function changeQty(id, delta) {
+        const item = items.find(i => i.id === id);
+        if (!item) return;
+        item.atual = Math.max(0, item.atual + delta);
+        if (delta > 0) item.entradas++;
+        if (delta < 0) item.saidas++;
+
+        if (item.atual <= Math.round(item.minimo * 0.3)) {
+          item.status = 'critico';
+        } else if (item.atual <= item.minimo) {
+          item.status = 'baixo';
+        } else {
+          item.status = 'ok';
+        }
+        renderAll();
+      }
+
+      function setStatusFilter(status, btn) {
+        currentStatus = status;
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderTable();
+      }
+
+      function toggleTheme() {
+        document.body.classList.toggle('dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) {
+          icon.className = document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+        }
+      }
+
+      function atualizar() {
+        const lastSync = document.getElementById('lastSync');
+        if (lastSync) {
+          const now = new Date();
+          lastSync.innerText = now.toLocaleTimeString('pt-BR');
+        }
+        renderAll();
+        showToast();
+      }
+
+      function showToast() {
+        const toast = document.getElementById('toastPopup');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 3000);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', renderAll);
+    </script>
+  </body>
+</html>
