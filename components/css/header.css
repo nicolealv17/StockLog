@@ -1,5 +1,6 @@
 /* ================================================================
    COMPONENTE: HEADER (StockLog)
+   Cabeçalho superior com título, logo mobile, busca e ações.
    ================================================================ */
 
 :root {
@@ -57,15 +58,16 @@ body.dark {
   color: var(--primary, #006bb3);
 }
 
-/* Título da página (desktop) */
 .header-title {
   font-size: 18px;
   font-weight: 700;
   color: var(--header-text);
   white-space: nowrap;
 }
+.header-title span {
+  color: var(--primary, #006bb3);
+}
 
-/* Busca */
 .header-search {
   display: flex;
   align-items: center;
@@ -168,19 +170,17 @@ body.dark {
 }
 
 /* ================================================================
-   RESPONSIVIDADE - MOBILE
+   RESPONSIVIDADE
    ================================================================ */
 @media (max-width: 768px) {
   .header {
     padding: 8px 12px;
   }
 
-  /* Mostra a logo mobile ao lado do hambúrguer */
   .header-logo-mobile {
     display: flex;
   }
 
-  /* Esconde o título da página no mobile */
   .header-title {
     display: none;
   }

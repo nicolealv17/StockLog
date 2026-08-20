@@ -34,44 +34,54 @@
     var title = getPageTitle();
     return (
       '<header class="header" role="banner">' +
-        '<div class="header-left">' +
-          // Botão hambúrguer (mobile)
-          '<button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu">' +
-            '<i class="fas fa-bars"></i>' +
-          '</button>' +
-          // Logo mobile (aparece apenas em telas pequenas)
-          '<a href="' + basePath + 'index.html" class="header-logo-mobile" aria-label="StockLog - Página inicial">' +
-            '<img src="' + LOGO_SRC + '" alt="StockLog" />' +
-            'Stock<span>Log</span>' +
-          '</a>' +
-          // Título da página (desktop)
-          '<div class="header-title">' + title + '</div>' +
-        '</div>' +
-        '<div class="header-right">' +
-          '<div class="header-search" role="search">' +
-            '<i class="fas fa-search"></i>' +
-            '<input type="search" placeholder="Buscar..." aria-label="Buscar" />' +
-          '</div>' +
-          '<button class="header-btn" id="themeToggleBtn" aria-label="Alternar tema">' +
-            '<i class="fas fa-moon"></i>' +
-          '</button>' +
-          '<button class="header-btn" aria-label="Notificações">' +
-            '<i class="fas fa-bell"></i>' +
-            '<span class="badge">3</span>' +
-          '</button>' +
-          '<a href="' + basePath + 'perfil.html" class="user-profile" aria-label="Perfil">' +
-            '<i class="fas fa-user-circle"></i>' +
-            '<span>Usuário</span>' +
-          '</a>' +
-        '</div>' +
-      '</header>'
+      '<div class="header-left">' +
+      // Botão hambúrguer (mobile)
+      '<button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu">' +
+      '<i class="fas fa-bars"></i>' +
+      "</button>" +
+      // Logo mobile (aparece apenas em telas pequenas)
+      '<a href="' +
+      basePath +
+      'index.html" class="header-logo-mobile" aria-label="StockLog - Página inicial">' +
+      '<img src="' +
+      LOGO_SRC +
+      '" alt="StockLog" />' +
+      'Stock<span>Log</span>' +
+      "</a>" +
+      // Título da página (desktop)
+      '<div class="header-title">' +
+      title +
+      "</div>" +
+      "</div>" +
+      '<div class="header-right">' +
+      '<div class="header-search" role="search">' +
+      '<i class="fas fa-search"></i>' +
+      '<input type="search" placeholder="Buscar..." aria-label="Buscar" />' +
+      "</div>" +
+      '<button class="header-btn" id="themeToggleBtn" aria-label="Alternar tema">' +
+      '<i class="fas fa-moon"></i>' +
+      "</button>" +
+      '<button class="header-btn" aria-label="Notificações">' +
+      '<i class="fas fa-bell"></i>' +
+      '<span class="badge">3</span>' +
+      "</button>" +
+      '<a href="' +
+      basePath +
+      'perfil.html" class="user-profile" aria-label="Perfil">' +
+      '<i class="fas fa-user-circle"></i>' +
+      "<span>Usuário</span>" +
+      "</a>" +
+      "</div>" +
+      "</header>"
     );
   }
 
   function mount() {
     var placeholder = document.getElementById("header-root");
     if (!placeholder) {
-      console.warn('[header.js] Não encontrei <div id="header-root"></div> na página.');
+      console.warn(
+        '[header.js] Não encontrei <div id="header-root"></div> na página.'
+      );
       return null;
     }
 
@@ -118,6 +128,7 @@
           var query = this.value.trim();
           if (query) {
             console.log("[StockLog] Busca:", query);
+            // Você pode redirecionar para uma página de resultados ou filtrar algo
           }
         }
       });

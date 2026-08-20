@@ -1,5 +1,11 @@
 /* ================================================================
    COMPONENTE: SIDEBAR (StockLog)
+   Usado em: index.html (Dashboard), perfil.html (Minha Conta)
+   Requer: components/js/sidebar.js (injeta o HTML e controla os eventos)
+
+   Antes esse CSS estava duplicado dentro de cada página. Agora é
+   um componente único: qualquer ajuste visual no menu lateral é
+   feito aqui e reflete em todas as páginas que o usam.
    ================================================================ */
 
 :root {
@@ -53,6 +59,7 @@
   width: 49px;
   height: 49px;
   border-radius: 12px;
+  
   flex-shrink: 0;
   object-fit: contain;
   padding: 6px;
@@ -200,10 +207,18 @@
   display: none;
 }
 
+/* ---------------------------------------------------------------
+   Overlay (escurece o conteúdo atrás do menu quando aberto no mobile)
+   --------------------------------------------------------------- */
 .sidebar-overlay {
   display: none;
 }
 
+/* ---------------------------------------------------------------
+   Botão hambúrguer do cabeçalho — só aparece no mobile.
+   Fica FORA do <aside>, então nunca é cortado quando o sidebar
+   colapsa (esse era o bug do menu sumindo).
+   --------------------------------------------------------------- */
 .mobile-menu-btn {
   display: none;
   width: 38px;
@@ -226,7 +241,24 @@
 }
 
 /* ================================================================
-   RESPONSIVIDADE - MOBILE
+   RESPONSIVIDADE
+   ================================================================
+   No desktop o menu funciona como "trilho": ele muda de LARGURA
+   (76px ↔ 220px) e os ícones recolhem porque o texto some junto
+   (.sidebar:not(.open) nav a span { display:none }).
+
+   No mobile isso não pode se repetir: era exatamente essa mistura
+   de "encolher a largura" + "esconder o texto" que fazia os ícones
+   parecerem espremidos/errados ao abrir e fechar o menu hambúrguer,
+   porque o conteúdo interno mudava de layout (centralizado/sem
+   texto) ENQUANTO a largura do <aside> ainda estava animando de
+   0 para a largura final.
+
+   A correção: no mobile o menu vira uma "gaveta" (drawer) de
+   largura FIXA, que desliza para dentro/fora da tela com
+   `transform: translateX()`. O conteúdo interno nunca muda de
+   layout — só a posição do menu muda — então não há mais
+   ícones/textos se reorganizando durante a animação.
    ================================================================ */
 @media (max-width: 768px) {
   .mobile-menu-btn {
@@ -240,60 +272,47 @@
     height: 100vh;
     height: 100dvh;
     z-index: 300;
-    width: 280px;
+    width: min(var(--sidebar-width-open), 78vw);
     align-items: stretch;
-    padding: 24px 0 18px;
+    padding: 24px 16px 18px;
     transform: translateX(-100%);
     transition: transform 0.28s ease;
     box-shadow: none;
-    border-radius: 0;
   }
   .sidebar.open {
-    width: 280px;
+    width: min(var(--sidebar-width-open), 78vw);
     transform: translateX(0);
     box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
   }
 
-  /* Menu sempre expandido no mobile - SEM PADDING LATERAL NOS LINKS */
+  /* No mobile o menu é sempre exibido no layout "expandido" (com
+     texto), independentemente da classe .open — porque .open agora
+     só controla se a gaveta está dentro ou fora da tela, não a
+     largura/​o layout interno. */
   .sidebar .sidebar-logo {
     justify-content: flex-start;
-    padding: 0 16px;
+    padding: 0 4px;
   }
   .sidebar .sidebar-logo .logo-text {
     opacity: 1;
   }
-  
-  .sidebar nav {
-    padding: 0;
-  }
-  
   .sidebar nav a {
     justify-content: flex-start;
-    padding: 10px 16px;
-    width: 100%;
-    border-radius: 0;
-    gap: 14px;
+    padding: 10px 12px;
   }
-  
   .sidebar nav a span {
     display: inline;
   }
-  
-  /* CORREÇÃO: fundo azul ocupa 100% da largura */
-  .sidebar nav a.active {
-    width: 100%;
-    border-radius: 0;
-    background: var(--sidebar-active-bg);
-  }
-  
   .sidebar-user {
     justify-content: flex-start;
-    padding: 14px 16px 0;
   }
   .sidebar-user span {
     display: inline;
   }
 
+  /* No trilho desktop esses botões alternam entre si; no mobile
+     quem abre/fecha o menu é sempre o hambúrguer do header
+     (#mobileMenuBtn), então os dois ficam ocultos aqui. */
   .sidebar-toggle,
   .sidebar-open-btn {
     display: none !important;
