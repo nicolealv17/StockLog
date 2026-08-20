@@ -14,17 +14,7 @@
         <span><i class="fas fa-cube"></i>StockLog · v2.4 </span>
       </div>
       <div class="footer-right">
-        <span
-          style="
-            background: var(--bg-soft);
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 12px;
-            border: 1px solid var(--border);
-          "
-        >
-        </span>
+        
 <button
   class="logout-link"
   onclick="window.location.href = 'login.html'"

@@ -97,27 +97,10 @@
     var header = mount();
     if (!header) return;
 
-    // Sincroniza o tema com o modo escuro do body
-    var themeBtn = document.getElementById("themeToggleBtn");
-    if (themeBtn) {
-      themeBtn.addEventListener("click", function () {
-        document.body.classList.toggle("dark");
-        var icon = themeBtn.querySelector("i");
-        if (document.body.classList.contains("dark")) {
-          icon.className = "fas fa-sun";
-        } else {
-          icon.className = "fas fa-moon";
-        }
-      });
-
-      // Define o ícone inicial baseado no tema atual
-      var icon = themeBtn.querySelector("i");
-      if (document.body.classList.contains("dark")) {
-        icon.className = "fas fa-sun";
-      } else {
-        icon.className = "fas fa-moon";
-      }
-    }
+    // O modo escuro (clique, ícone, localStorage) é todo controlado
+    // pelo modoescuro.js, que detecta este #themeToggleBtn sozinho.
+    // Não adicionar outro listener aqui — dois listeners no mesmo botão
+    // alternavam a classe "dark" duas vezes por clique e anulavam um ao outro.
 
     // Ações de busca
     var searchInput = header.querySelector('.header-search input');

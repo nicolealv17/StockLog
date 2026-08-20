@@ -15,7 +15,7 @@
   --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
   --sidebar-active-bg: #1c5079;
   --sidebar-active-color: #ffffff;
-  --sidebar-width-open: 220px;
+  --sidebar-width-open: 236px;
   --sidebar-width-rail: 76px;
 }
 
@@ -71,10 +71,13 @@
   color: #fff;
   white-space: nowrap;
   opacity: 0;
+  width: 0;
+  overflow: hidden;
   transition: opacity 0.2s;
 }
 .sidebar.open .sidebar-logo .logo-text {
   opacity: 1;
+  width: auto;
   transition: opacity 0.2s ease 0.05s;
 }
 .sidebar-logo .logo-text span {
@@ -149,6 +152,12 @@
   border-radius: 10px;
   white-space: nowrap;
   transition: 0.15s;
+  min-width: 0;
+}
+.sidebar nav a span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .sidebar:not(.open) nav a {
   justify-content: center;
