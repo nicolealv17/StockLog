@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockLog · Minha Conta</title>
+  <title>StockLog · Perfil do Usuário</title>
   
   <!-- Fontes e Ícones -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -234,7 +234,7 @@
       }
 
       .profile-card {
-        max-width: 720px;
+        max-width: 900px;
         margin: 0 auto;
         background: var(--bg-card);
         border-radius: 16px;
@@ -425,6 +425,38 @@
         font-size: 14px;
       }
 
+
+      .profile-stats {
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:16px;
+        margin-bottom:28px;
+      }
+      .profile-stat {
+        background:var(--bg-soft);
+        border:1px solid var(--border);
+        border-radius:12px;
+        padding:18px;
+        text-align:center;
+      }
+      .profile-stat strong {
+        display:block;
+        font-size:26px;
+        color:var(--primary);
+      }
+      .profile-stat span {
+        font-size:12px;
+        color:var(--text-muted);
+        text-transform:uppercase;
+      }
+      .security-box {
+        margin-top:24px;
+        padding:18px;
+        background:var(--bg-soft);
+        border:1px solid var(--border);
+        border-radius:12px;
+      }
+
       /* ============================================================
        RESPONSIVIDADE
        ============================================================ */
@@ -501,18 +533,23 @@
     <main class="content" role="main">
       <!-- Breadcrumb para navegação -->
       <div style="margin-bottom: 16px; font-size: 14px; color: var(--text-muted);">
-        <a href="../index.html" style="color: var(--primary); text-decoration: none;">Dashboard</a> / Minha Conta
       </div>
 
       <div class="profile-card">
         <div class="profile-header">
           <div class="profile-avatar"><i class="fas fa-user"></i></div>
           <div class="profile-title">
-            <h2>Administrador do Sistema</h2>
+            <h2>Carlos Almeida</h2>
             <div class="role">
-              <i class="fas fa-briefcase"></i> Gerente de Produção · StockLog
+              <i class="fas fa-briefcase"></i> Administrador · Gestão de Produção e Logística
             </div>
           </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="profile-stat"><strong>24</strong><span>Ordens criadas</span></div>
+          <div class="profile-stat"><strong>98%</strong><span>Eficiência da equipe</span></div>
+          <div class="profile-stat"><strong>12</strong><span>Alertas resolvidos</span></div>
         </div>
 
         <div class="profile-details">
@@ -520,7 +557,7 @@
             <span class="label"><i class="fas fa-envelope"></i> E-mail</span>
             <span class="value">
               <i class="fas fa-envelope" style="color: var(--text-muted)"></i>
-              admin@stocklog.com
+              carlos.almeida@stocklog.com
             </span>
           </div>
           <div class="detail-item">
@@ -537,7 +574,7 @@
           </div>
           <div class="detail-item">
             <span class="label"><i class="fas fa-id-badge"></i> Matrícula</span>
-            <span class="value"><i class="fas fa-hashtag"></i> #ADM-0001</span>
+            <span class="value"><i class="fas fa-hashtag"></i> #ADM-0248</span>
           </div>
           <div class="detail-item">
             <span class="label"><i class="fas fa-shield-alt"></i> Nível de acesso</span>
@@ -546,6 +583,13 @@
               Administrador total
             </span>
           </div>
+        </div>
+
+        <div class="security-box">
+          <strong><i class="fas fa-shield-alt"></i> Segurança da conta</strong>
+          <p style="margin-top:8px;color:var(--text-secondary);font-size:14px;">
+            Último acesso: hoje às 14:32 · Autenticação ativa · Permissão de administrador
+          </p>
         </div>
 
         <div class="profile-actions">
