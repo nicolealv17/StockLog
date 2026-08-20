@@ -17,7 +17,7 @@
   var NAV_ITEMS = [
     { href: basePath + "index.html", icon: "fa-chart-pie", label: "Dashboard" },
     { href: "#", icon: "fa-clipboard-list", label: "POPs" },
-    { href: "#", icon: "fa-industry", label: "Produção" },
+    { href: "pages/producao.html", icon: "fa-industry", label: "Produção" },
     { href: "#", icon: "fa-warehouse", label: "Estoque" },
     { href: "#", icon: "fa-truck", label: "Logística" },
     { href: "#", icon: "fa-robot", label: "LogBot" },
