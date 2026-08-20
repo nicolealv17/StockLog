@@ -13,15 +13,19 @@
   // 2. Caminho dinâmico da imagem da logo (funciona tanto na raiz quanto em /pages/)
   var LOGO_SRC = basePath + "IMG/logoo.png";
 
-  // 3. Itens do menu com caminhos relativos ajustados dinamicamente
+  // 3. Itens do menu — todas as páginas ficam na RAIZ do projeto (junto
+  //    com index.html), então usam o mesmo basePath dele.
   var NAV_ITEMS = [
     { href: basePath + "index.html", icon: "fa-chart-pie", label: "Dashboard" },
-    { href: "#", icon: "fa-clipboard-list", label: "POPs" },
-    { href: "pages/producao.html", icon: "fa-industry", label: "Produção" },
-    { href: "#", icon: "fa-warehouse", label: "Estoque" },
-    { href: "#", icon: "fa-truck", label: "Logística" },
-    { href: "#", icon: "fa-robot", label: "LogBot" },
-    { href: "#", icon: "fa-file-alt", label: "Relatórios" },
+    { href: basePath + "pedidos.html", icon: "fa-clipboard-list", label: "Pedidos de Produção" },
+    { href: basePath + "kanban.html", icon: "fa-columns", label: "Kanban" },
+    { href: basePath + "producao.html", icon: "fa-industry", label: "Controle de Produção" },
+    { href: basePath + "calendario.html", icon: "fa-calendar-alt", label: "Calendário de Planejamento" },
+    { href: basePath + "itens.html", icon: "fa-warehouse", label: "Itens em Estoque" },
+    { href: basePath + "logistica.html", icon: "fa-truck", label: "Logística" },
+    { href: basePath + "relatorios.html", icon: "fa-file-download", label: "Baixar Relatórios" },
+    { href: basePath + "fornecedores.html", icon: "fa-handshake", label: "Fornecedores" },
+    { href: basePath + "rastreamento.html", icon: "fa-route", label: "Rastreamento de Entregas" },
   ];
 
   // Identifica o nome do arquivo da página atual para marcar o menu como ativo

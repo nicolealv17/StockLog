@@ -14,6 +14,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
 
     <style>
       :root {
@@ -98,21 +102,30 @@
         font-family: "Inter", sans-serif;
         background-color: var(--bg-body);
         color: var(--text-main);
-        padding: 16px 24px;
+        display: flex;
         min-height: 100vh;
         transition: background-color 0.2s, color 0.2s;
         font-size: 13px;
       }
 
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-width: 0;
+      }
+
       .dashboard-container {
         max-width: 1550px;
         margin: 0 auto;
+        padding: 16px 24px;
         display: flex;
         flex-direction: column;
         gap: 16px;
+        width: 100%;
       }
 
-      /* HEADER */
       .top-header {
         display: flex;
         align-items: center;
@@ -457,277 +470,287 @@
         .kpi-grid { grid-template-columns: repeat(2, 1fr); }
         .middle-grid { grid-template-columns: 1fr; }
       }
+
+      @media (max-width: 640px) {
+        .dashboard-container { padding: 12px; }
+        .machines-grid { grid-template-columns: 1fr; }
+      }
     </style>
   </head>
   <body>
-    <div class="dashboard-container">
-      <!-- HEADER -->
-      <header class="top-header">
-        <div class="header-title-group">
-          <h1>Controle de <span>Produção</span></h1>
-          <span class="status-pill-live"><span class="dot"></span> Ao vivo · Turno 2</span>
-        </div>
-        <div class="header-actions">
-          <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">
-            <i class="fas fa-moon" id="themeIcon"></i>
-          </button>
-          <!-- ADICIONADO: onclick="atualizar()" -->
-          <button class="icon-btn" onclick="atualizar()" title="Atualizar"><i class="fas fa-arrows-rotate"></i></button>
-          <button class="icon-btn" title="Notificações">
-            <i class="fas fa-bell"></i><span class="badge">2</span>
-          </button>
-        </div>
-      </header>
+    <div id="sidebar-root"></div>
 
-      <section class="kpi-grid">
-        <div class="card kpi-card">
-          <div class="kpi-label"><i class="fas fa-box-archive"></i> Produzido Hoje</div>
-          <div class="kpi-value-group">
-            <span class="kpi-value">3.240</span>
-            <span class="kpi-unit">/ 4.000 unid.</span>
+    <div class="main-wrapper">
+      <div class="dashboard-container">
+        <header class="top-header">
+          <div class="header-title-group">
+            <h1>Controle de <span>Produção</span></h1>
+            <span class="status-pill-live"><span class="dot"></span> Ao vivo · Turno 2</span>
           </div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 81%; background: var(--green-bar);"></div></div>
-          <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-check"></i> 81%</span> da meta</div>
-        </div>
-
-        <div class="card kpi-card">
-          <div class="kpi-label"><i class="fas fa-chart-line"></i> Eficiência (OEE)</div>
-          <div class="kpi-value-group"><span class="kpi-value">87%</span></div>
-          <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-arrow-up"></i> +3pp</span> vs média</div>
-        </div>
-
-        <div class="card kpi-card">
-          <div class="kpi-label"><i class="fas fa-clock"></i> Tempo Médio/Lote</div>
-          <div class="kpi-value-group">
-            <span class="kpi-value">42</span>
-            <span class="kpi-unit">min</span>
+          <div class="header-actions">
+            <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">
+              <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+            <button class="icon-btn" onclick="atualizar()" title="Atualizar">
+              <i class="fas fa-arrows-rotate"></i>
+            </button>
+            <button class="icon-btn" title="Notificações">
+              <i class="fas fa-bell"></i><span class="badge">2</span>
+            </button>
           </div>
-          <div class="kpi-footer"><span class="badge-tag amber"><i class="fas fa-plus"></i> +4min</span> vs padrão</div>
-        </div>
+        </header>
 
-        <div class="card kpi-card">
-          <div class="kpi-label"><i class="fas fa-gears"></i> Máquinas Operando</div>
-          <div class="kpi-value-group">
-            <span class="kpi-value">5</span>
-            <span class="kpi-unit">/ 7</span>
+        <section class="kpi-grid">
+          <div class="card kpi-card">
+            <div class="kpi-label"><i class="fas fa-box-archive"></i> Produzido Hoje</div>
+            <div class="kpi-value-group">
+              <span class="kpi-value">3.240</span>
+              <span class="kpi-unit">/ 4.000 unid.</span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 81%; background: var(--green-bar);"></div></div>
+            <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-check"></i> 81%</span> da meta</div>
           </div>
-          <div class="kpi-footer">
-            <span class="badge-tag red">1 parada</span>
-            <span class="badge-tag amber">1 manut.</span>
-          </div>
-        </div>
-      </section>
 
-      <section class="middle-grid">
-        <div class="card">
+          <div class="card kpi-card">
+            <div class="kpi-label"><i class="fas fa-chart-line"></i> Eficiência (OEE)</div>
+            <div class="kpi-value-group"><span class="kpi-value">87%</span></div>
+            <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-arrow-up"></i> +3pp</span> vs média</div>
+          </div>
+
+          <div class="card kpi-card">
+            <div class="kpi-label"><i class="fas fa-clock"></i> Tempo Médio/Lote</div>
+            <div class="kpi-value-group">
+              <span class="kpi-value">42</span>
+              <span class="kpi-unit">min</span>
+            </div>
+            <div class="kpi-footer"><span class="badge-tag amber"><i class="fas fa-plus"></i> +4min</span> vs padrão</div>
+          </div>
+
+          <div class="card kpi-card">
+            <div class="kpi-label"><i class="fas fa-gears"></i> Máquinas Operando</div>
+            <div class="kpi-value-group">
+              <span class="kpi-value">5</span>
+              <span class="kpi-unit">/ 7</span>
+            </div>
+            <div class="kpi-footer">
+              <span class="badge-tag red">1 parada</span>
+              <span class="badge-tag amber">1 manut.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="middle-grid">
+          <div class="card">
+            <div class="card-header-title">
+              <span class="title-text"><i class="fas fa-industry"></i> Máquinas em operação</span>
+              <span class="count-badge">7 no total</span>
+            </div>
+            <div class="machines-grid">
+              <div class="machine-card">
+                <div class="machine-top">
+                  <div>
+                    <div class="machine-name">Prensa Hidráulica 01</div>
+                    <div class="machine-operator">Op: Gustavo Lima</div>
+                  </div>
+                  <span class="status-pill operando">● Operando</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 77.5%; background: var(--green-bar);"></div></div>
+                <div class="machine-bottom"><span class="op-code">OP-2025-001</span><span class="op-qty">620/800 pçs</span></div>
+              </div>
+
+              <div class="machine-card">
+                <div class="machine-top">
+                  <div>
+                    <div class="machine-name">Torno CNC 02</div>
+                    <div class="machine-operator">Op: Ana Ferreira</div>
+                  </div>
+                  <span class="status-pill operando">● Operando</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 79%; background: var(--green-bar);"></div></div>
+                <div class="machine-bottom"><span class="op-code">OP-2025-002</span><span class="op-qty">95/120 pçs</span></div>
+              </div>
+
+              <div class="machine-card">
+                <div class="machine-top">
+                  <div>
+                    <div class="machine-name">Solda Robotizada 03</div>
+                    <div class="machine-operator">Op: Ricardo Ribeiro</div>
+                  </div>
+                  <span class="status-pill parada">● Parada</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%; background: var(--border);"></div></div>
+                <div class="machine-bottom"><span class="op-code">Sem OP</span><span class="op-qty">0/0 pçs</span></div>
+              </div>
+
+              <div class="machine-card">
+                <div class="machine-top">
+                  <div>
+                    <div class="machine-name">Injetora Plástica 04</div>
+                    <div class="machine-operator">Op: Vinicius Carvalho</div>
+                  </div>
+                  <span class="status-pill operando">● Operando</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 74%; background: var(--green-bar);"></div></div>
+                <div class="machine-bottom"><span class="op-code">OP-2025-004</span><span class="op-qty">1.480/2.000 pçs</span></div>
+              </div>
+
+              <div class="machine-card">
+                <div class="machine-top">
+                  <div>
+                    <div class="machine-name">Corte a Laser 05</div>
+                    <div class="machine-operator">Op: Bruno Ferreira</div>
+                  </div>
+                  <span class="status-pill manutencao">● Manutenção</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 30%; background: var(--amber-bar);"></div></div>
+                <div class="machine-bottom"><span class="op-code">Preventiva</span><span class="op-qty">—</span></div>
+              </div>
+
+              <div class="machine-card">
+                <div class="machine-top">
+                  <div>
+                    <div class="machine-name">Embaladora 06</div>
+                    <div class="machine-operator">Op: Camila Souza</div>
+                  </div>
+                  <span class="status-pill operando">● Operando</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%; background: var(--green-bar);"></div></div>
+                <div class="machine-bottom"><span class="op-code">OP-2025-005</span><span class="op-qty">270/300 pçs</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-title">
+              <span class="title-text"><i class="fas fa-triangle-exclamation"></i> Problemas ativos</span>
+              <span class="count-badge">3</span>
+            </div>
+            <div class="problems-list">
+              <div class="problem-item">
+                <div class="problem-info">
+                  <div class="problem-title">Falha elétrica na Solda 03</div>
+                  <div class="problem-meta"><span><i class="far fa-clock"></i> 38 min</span><span>Ricardo</span></div>
+                </div>
+                <span class="badge-tag red">Crítico</span>
+              </div>
+
+              <div class="problem-item">
+                <div class="problem-info">
+                  <div class="problem-title">Vibração fora do padrão</div>
+                  <div class="problem-meta"><span>Torno CNC 02</span><span><i class="far fa-clock"></i> 1h12</span></div>
+                </div>
+                <span class="badge-tag amber">Atenção</span>
+              </div>
+
+              <div class="problem-item">
+                <div class="problem-info">
+                  <div class="problem-title">Falta de insumo (chapa)</div>
+                  <div class="problem-meta"><span>OP-2025-003</span><span><i class="far fa-clock"></i> 2h05</span></div>
+                </div>
+                <span class="badge-tag amber">Atenção</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
           <div class="card-header-title">
-            <span class="title-text"><i class="fas fa-industry"></i> Máquinas em operação</span>
-            <span class="count-badge">7 no total</span>
+            <span class="title-text"><i class="fas fa-list-check"></i> Progresso das ordens ativas</span>
+            <span class="count-badge">5 ativas</span>
           </div>
-          <div class="machines-grid">
-            <div class="machine-card">
-              <div class="machine-top">
-                <div>
-                  <div class="machine-name">Prensa Hidráulica 01</div>
-                  <div class="machine-operator">Op: Gustavo Lima</div>
-                </div>
-                <span class="status-pill operando">● Operando</span>
-              </div>
-              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 77.5%; background: var(--green-bar);"></div></div>
-              <div class="machine-bottom"><span class="op-code">OP-2025-001</span><span class="op-qty">620/800 pçs</span></div>
-            </div>
 
-            <div class="machine-card">
-              <div class="machine-top">
-                <div>
-                  <div class="machine-name">Torno CNC 02</div>
-                  <div class="machine-operator">Op: Ana Ferreira</div>
-                </div>
-                <span class="status-pill operando">● Operando</span>
-              </div>
-              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 79%; background: var(--green-bar);"></div></div>
-              <div class="machine-bottom"><span class="op-code">OP-2025-002</span><span class="op-qty">95/120 pçs</span></div>
-            </div>
-
-            <div class="machine-card">
-              <div class="machine-top">
-                <div>
-                  <div class="machine-name">Solda Robotizada 03</div>
-                  <div class="machine-operator">Op: Ricardo Ribeiro</div>
-                </div>
-                <span class="status-pill parada">● Parada</span>
-              </div>
-              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%; background: var(--border);"></div></div>
-              <div class="machine-bottom"><span class="op-code">Sem OP</span><span class="op-qty">0/0 pçs</span></div>
-            </div>
-
-            <div class="machine-card">
-              <div class="machine-top">
-                <div>
-                  <div class="machine-name">Injetora Plástica 04</div>
-                  <div class="machine-operator">Op: Vinicius Carvalho</div>
-                </div>
-                <span class="status-pill operando">● Operando</span>
-              </div>
-              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 74%; background: var(--green-bar);"></div></div>
-              <div class="machine-bottom"><span class="op-code">OP-2025-004</span><span class="op-qty">1.480/2.000 pçs</span></div>
-            </div>
-
-            <div class="machine-card">
-              <div class="machine-top">
-                <div>
-                  <div class="machine-name">Corte a Laser 05</div>
-                  <div class="machine-operator">Op: Bruno Ferreira</div>
-                </div>
-                <span class="status-pill manutencao">● Manutenção</span>
-              </div>
-              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 30%; background: var(--amber-bar);"></div></div>
-              <div class="machine-bottom"><span class="op-code">Preventiva</span><span class="op-qty">—</span></div>
-            </div>
-
-            <div class="machine-card">
-              <div class="machine-top">
-                <div>
-                  <div class="machine-name">Embaladora 06</div>
-                  <div class="machine-operator">Op: Camila Souza</div>
-                </div>
-                <span class="status-pill operando">● Operando</span>
-              </div>
-              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%; background: var(--green-bar);"></div></div>
-              <div class="machine-bottom"><span class="op-code">OP-2025-005</span><span class="op-qty">270/300 pçs</span></div>
-            </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cód. OP</th>
+                  <th>Produto</th>
+                  <th>Máquina</th>
+                  <th>Meta</th>
+                  <th>Progresso</th>
+                  <th>Tempo</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>OP-2025-001</strong></td>
+                  <td>Flange Aço ABNT 1020 ø50mm</td>
+                  <td>Prensa Hidráulica 01</td>
+                  <td>800 pçs</td>
+                  <td>
+                    <div class="table-progress-cell">
+                      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 77%; background: var(--green-bar);"></div></div>
+                      <span class="progress-perc">77%</span>
+                    </div>
+                  </td>
+                  <td>3h20</td>
+                  <td><span class="status-pill operando">● Em produção</span></td>
+                </tr>
+                <tr>
+                  <td><strong>OP-2025-002</strong></td>
+                  <td>Eixo Vazado 420mm</td>
+                  <td>Torno CNC 02</td>
+                  <td>120 pçs</td>
+                  <td>
+                    <div class="table-progress-cell">
+                      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 79%; background: var(--purple-bar);"></div></div>
+                      <span class="progress-perc">79%</span>
+                    </div>
+                  </td>
+                  <td>2h05</td>
+                  <td><span class="status-pill" style="background: var(--purple-bg); color: var(--purple);">● Controle QA</span></td>
+                </tr>
+                <tr>
+                  <td><strong>OP-2025-003</strong></td>
+                  <td>Chapa Inox 304 2mm</td>
+                  <td>Sem máquina</td>
+                  <td>800 pçs</td>
+                  <td>
+                    <div class="table-progress-cell">
+                      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 12%; background: var(--amber-bar);"></div></div>
+                      <span class="progress-perc">12%</span>
+                    </div>
+                  </td>
+                  <td>0h40</td>
+                  <td><span class="status-pill manutencao">● Aguard. material</span></td>
+                </tr>
+                <tr>
+                  <td><strong>OP-2025-004</strong></td>
+                  <td>Luva Nitrílica Reforçada</td>
+                  <td>Injetora Plástica 04</td>
+                  <td>2.000 pçs</td>
+                  <td>
+                    <div class="table-progress-cell">
+                      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 74%; background: var(--green-bar);"></div></div>
+                      <span class="progress-perc">74%</span>
+                    </div>
+                  </td>
+                  <td>4h50</td>
+                  <td><span class="status-pill operando">● Em produção</span></td>
+                </tr>
+                <tr>
+                  <td><strong>OP-2025-005</strong></td>
+                  <td>Suporte de Fixação L-40</td>
+                  <td>Embaladora 06</td>
+                  <td>300 pçs</td>
+                  <td>
+                    <div class="table-progress-cell">
+                      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%; background: var(--blue-bar);"></div></div>
+                      <span class="progress-perc">90%</span>
+                    </div>
+                  </td>
+                  <td>1h55</td>
+                  <td><span class="status-pill" style="background: var(--blue-bg); color: var(--blue);">● Finalizando</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header-title">
-            <span class="title-text"><i class="fas fa-triangle-exclamation"></i> Problemas ativos</span>
-            <span class="count-badge">3</span>
-          </div>
-          <div class="problems-list">
-            <div class="problem-item">
-              <div class="problem-info">
-                <div class="problem-title">Falha elétrica na Solda 03</div>
-                <div class="problem-meta"><span><i class="far fa-clock"></i> 38 min</span><span>Ricardo</span></div>
-              </div>
-              <span class="badge-tag red">Crítico</span>
-            </div>
-
-            <div class="problem-item">
-              <div class="problem-info">
-                <div class="problem-title">Vibração fora do padrão</div>
-                <div class="problem-meta"><span>Torno CNC 02</span><span><i class="far fa-clock"></i> 1h12</span></div>
-              </div>
-              <span class="badge-tag amber">Atenção</span>
-            </div>
-
-            <div class="problem-item">
-              <div class="problem-info">
-                <div class="problem-title">Falta de insumo (chapa)</div>
-                <div class="problem-meta"><span>OP-2025-003</span><span><i class="far fa-clock"></i> 2h05</span></div>
-              </div>
-              <span class="badge-tag amber">Atenção</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TABELA DE ORDENS -->
-      <section class="card">
-        <div class="card-header-title">
-          <span class="title-text"><i class="fas fa-list-check"></i> Progresso das ordens ativas</span>
-          <span class="count-badge">5 ativas</span>
-        </div>
-
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Cód. OP</th>
-                <th>Produto</th>
-                <th>Máquina</th>
-                <th>Meta</th>
-                <th>Progresso</th>
-                <th>Tempo</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>OP-2025-001</strong></td>
-                <td>Flange Aço ABNT 1020 ø50mm</td>
-                <td>Prensa Hidráulica 01</td>
-                <td>800 pçs</td>
-                <td>
-                  <div class="table-progress-cell">
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 77%; background: var(--green-bar);"></div></div>
-                    <span class="progress-perc">77%</span>
-                  </div>
-                </td>
-                <td>3h20</td>
-                <td><span class="status-pill operando">● Em produção</span></td>
-              </tr>
-              <tr>
-                <td><strong>OP-2025-002</strong></td>
-                <td>Eixo Vazado 420mm</td>
-                <td>Torno CNC 02</td>
-                <td>120 pçs</td>
-                <td>
-                  <div class="table-progress-cell">
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 79%; background: var(--purple-bar);"></div></div>
-                    <span class="progress-perc">79%</span>
-                  </div>
-                </td>
-                <td>2h05</td>
-                <td><span class="status-pill" style="background: var(--purple-bg); color: var(--purple);">● Controle QA</span></td>
-              </tr>
-              <tr>
-                <td><strong>OP-2025-003</strong></td>
-                <td>Chapa Inox 304 2mm</td>
-                <td>Sem máquina</td>
-                <td>800 pçs</td>
-                <td>
-                  <div class="table-progress-cell">
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 12%; background: var(--amber-bar);"></div></div>
-                    <span class="progress-perc">12%</span>
-                  </div>
-                </td>
-                <td>0h40</td>
-                <td><span class="status-pill manutencao">● Aguard. material</span></td>
-              </tr>
-              <tr>
-                <td><strong>OP-2025-004</strong></td>
-                <td>Luva Nitrílica Reforçada</td>
-                <td>Injetora Plástica 04</td>
-                <td>2.000 pçs</td>
-                <td>
-                  <div class="table-progress-cell">
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 74%; background: var(--green-bar);"></div></div>
-                    <span class="progress-perc">74%</span>
-                  </div>
-                </td>
-                <td>4h50</td>
-                <td><span class="status-pill operando">● Em produção</span></td>
-              </tr>
-              <tr>
-                <td><strong>OP-2025-005</strong></td>
-                <td>Suporte de Fixação L-40</td>
-                <td>Embaladora 06</td>
-                <td>300 pçs</td>
-                <td>
-                  <div class="table-progress-cell">
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%; background: var(--blue-bar);"></div></div>
-                    <span class="progress-perc">90%</span>
-                  </div>
-                </td>
-                <td>1h55</td>
-                <td><span class="status-pill" style="background: var(--blue-bg); color: var(--blue);">● Finalizando</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
+
+    <div id="footer-root"></div>
 
     <script>
       function toggleTheme() {
@@ -738,10 +761,14 @@
           : "fas fa-moon";
       }
 
-      //Função para o botão de atualizar
       function atualizar() {
         alert("Dados atualizados com sucesso!");
       }
     </script>
+
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
   </body>
 </html>

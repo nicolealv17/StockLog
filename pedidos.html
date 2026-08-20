@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -14,40 +14,43 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+
     <style>
-    :root {
-      --bg-body: #f0f5fc;
-      --bg-card: #ffffff;
-      --bg-soft: #f5faff;
-      --border: #c3d6e8;
-      --border-hover: #9fbcd8;
+      :root {
+        --bg-body: #f0f5fc;
+        --bg-card: #ffffff;
+        --bg-soft: #f5faff;
+        --border: #c3d6e8;
+        --border-hover: #9fbcd8;
 
-      --primary: #006bb3;
-      --primary-dark: #004d80;
-      --primary-light: #dbeeff;
-      --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
+        --primary: #006bb3;
+        --primary-dark: #004d80;
+        --primary-light: #dbeeff;
+        --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
 
-      --text-main: #0a1f33;
-      --text-secondary: #3d5f7e;
-      --text-muted: #7b97b2;
+        --text-main: #0a1f33;
+        --text-secondary: #3d5f7e;
+        --text-muted: #7b97b2;
 
-      --shadow-card:
-        0 2px 6px rgba(0, 40, 80, 0.04), 0 6px 16px rgba(0, 40, 80, 0.02);
-      --shadow-hover:
-        0 4px 12px rgba(0, 40, 80, 0.08), 0 8px 24px rgba(0, 40, 80, 0.04);
+        --shadow-card: 0 2px 6px rgba(0, 40, 80, 0.04), 0 6px 16px rgba(0, 40, 80, 0.02);
+        --shadow-hover: 0 4px 12px rgba(0, 40, 80, 0.08), 0 8px 24px rgba(0, 40, 80, 0.04);
 
-      --green: #1a9b72;
-      --green-bg: #e0f2ea;
-      --amber: #c47a1f;
-      --amber-bg: #faecd6;
-      --red: #b93a3a;
-      --red-bg: #fae2e0;
-      --purple: #6f4c9e;
-      --purple-bg: #ede6f5;
-      --blue2: #2d7a9b;
-      --blue2-bg: #dcedf5;
-      --row-stripe: #eff2ff;
-    }
+        --green: #1a9b72;
+        --green-bg: #e0f2ea;
+        --amber: #c47a1f;
+        --amber-bg: #faecd6;
+        --red: #b93a3a;
+        --red-bg: #fae2e0;
+        --purple: #6f4c9e;
+        --purple-bg: #ede6f5;
+        --blue2: #2d7a9b;
+        --blue2-bg: #dcedf5;
+        --row-stripe: #eff2ff;
+      }
 
       body.dark {
         --bg-body: #0d1927;
@@ -70,10 +73,8 @@
 
         --row-stripe: #182f45;
 
-        --shadow-card:
-          0 2px 6px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
-        --shadow-hover:
-          0 4px 12px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.2);
+        --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
+        --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.2);
       }
 
       * {
@@ -88,9 +89,7 @@
         display: flex;
         min-height: 100vh;
         font-size: 13px;
-        transition:
-          background 0.3s,
-          color 0.3s;
+        transition: background 0.3s, color 0.3s;
       }
       a {
         text-decoration: none;
@@ -111,9 +110,6 @@
         min-width: 0;
       }
 
-      /* ================================================================
-        HEADER
-       ================================================================ */
       .top-header {
         background: var(--bg-card);
         padding: 8px 20px;
@@ -217,25 +213,21 @@
         color: var(--primary);
       }
 
-      /* ================================================================
-        CONTEÚDO
-       ================================================================ */
       .content {
         flex: 1;
         padding: 16px 20px 14px;
       }
 
-      /* KPI Cards */
       .kpi-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 16px; 
-        margin-bottom: 20px; 
+        gap: 16px;
+        margin-bottom: 20px;
       }
       .kpi-card {
         background: var(--bg-card);
         border-radius: 10px;
-        padding: 18px 20px; 
+        padding: 18px 20px;
         border: 1px solid var(--border);
         box-shadow: var(--shadow-card);
         transition: 0.3s;
@@ -270,10 +262,10 @@
       }
       .kpi-label i {
         color: var(--primary);
-        font-size: 13px; 
+        font-size: 13px;
       }
       .kpi-value {
-        font-size: 26px; 
+        font-size: 26px;
         font-weight: 700;
         color: var(--text-main);
         line-height: 1.1;
@@ -281,7 +273,7 @@
       .kpi-sub {
         font-size: 11px;
         color: var(--text-secondary);
-        margin-top: 6px; 
+        margin-top: 6px;
         display: flex;
         align-items: center;
         gap: 6px;
@@ -310,18 +302,10 @@
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 10px;
-        padding: 20px 24px; 
-        box-shadow: var(--shadow);
+        padding: 20px 24px;
+        box-shadow: var(--shadow-card);
       }
 
-      .card-header-title {
-        font-size: 13.5px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
-      }
       .card-header {
         display: flex;
         justify-content: space-between;
@@ -441,7 +425,6 @@
         color: var(--primary);
       }
 
-      /* Tabela */
       .table-wrapper {
         overflow-x: auto;
         margin-top: 4px;
@@ -546,9 +529,6 @@
         display: block;
       }
 
-      /* ================================================================
-        MODAL
-       ================================================================ */
       .modal-overlay {
         position: fixed;
         inset: 0;
@@ -729,18 +709,12 @@
         color: var(--red);
       }
 
-      /* ================================================================
-        RESPONSIVIDADE
-       ================================================================ */
       @media (max-width: 1200px) {
         .kpi-grid {
           grid-template-columns: repeat(2, 1fr);
         }
       }
       @media (max-width: 900px) {
-        .sidebar {
-          display: none;
-        }
         .modal-body {
           grid-template-columns: 1fr;
         }
@@ -772,9 +746,9 @@
     </style>
   </head>
   <body>
+    <div id="sidebar-root"></div>
 
     <div class="main-wrapper">
-      <!-- HEADER -->
       <header class="top-header" role="banner">
         <div class="header-left">
           <div class="page-title">Pedidos de <span>Produção</span></div>
@@ -784,7 +758,7 @@
             <i class="fas fa-bell"></i>
             <span class="badge">3</span>
           </span>
-          <button class="user-profile-link" onclick="window.location.href = 'perfil.html'">
+          <button class="user-profile-link">
             <i class="fas fa-user-circle"></i>
           </button>
           <button class="theme-btn" onclick="toggleTheme()" aria-label="Alternar tema">
@@ -793,7 +767,6 @@
         </div>
       </header>
 
-      <!-- CONTEÚDO -->
       <main class="content" role="main">
         <section class="kpi-grid">
           <div class="kpi-card">
@@ -818,7 +791,6 @@
           </div>
         </section>
 
-        <!-- Lista de pedidos -->
         <section class="card">
           <div class="card-header">
             <h3><i class="fas fa-clipboard"></i>Todos os pedidos</h3>
@@ -876,9 +848,6 @@
       </main>
     </div>
 
-    <!-- ================================================================
-        MODAL — CRIAR / EDITAR / VISUALIZAR
-       ================================================================ -->
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal">
         <div class="modal-header">
@@ -956,12 +925,9 @@
 
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
 
-
+    <div id="footer-root"></div>
 
     <script>
-      /* ============================================================
-         TEMA
-         ============================================================ */
       function toggleTheme() {
         const isDark = document.body.classList.toggle("dark");
         document.getElementById("themeIcon").className = isDark ? "fas fa-moon" : "fas fa-sun";
@@ -991,12 +957,9 @@
         { id: "OP-2025-006", produto: "Válvula Esfera 1/2\"", quantidade: 150, prioridade: "media", responsavel: "Ana Ferreira", prazo: "2026-05-20", status: "cancelado", obs: "Pedido cancelado a pedido do cliente." },
       ];
       let nextSeq = 7;
-      let editingId = null; // null = criando
+      let editingId = null;
       let viewMode = false;
 
-      /* ============================================================
-         RENDER
-         ============================================================ */
       function fmtDate(iso) {
         if (!iso) return "—";
         const [y, m, d] = iso.split("-");
@@ -1014,6 +977,12 @@
         document.getElementById("kpiProducao").textContent = orders.filter((o) => o.status === "producao").length;
         document.getElementById("kpiAtrasados").textContent = orders.filter(isLate).length;
         document.getElementById("kpiConcluidos").textContent = orders.filter((o) => o.status === "concluido").length;
+      }
+
+      function escapeHtml(str) {
+        const d = document.createElement("div");
+        d.textContent = str;
+        return d.innerHTML;
       }
 
       function renderTable() {
@@ -1064,20 +1033,11 @@
         });
       }
 
-      function escapeHtml(str) {
-        const d = document.createElement("div");
-        d.textContent = str;
-        return d.innerHTML;
-      }
-
       function renderAll() {
         renderKPIs();
         renderTable();
       }
 
-      /* ============================================================
-         MODAL — abrir / fechar
-         ============================================================ */
       const overlay = document.getElementById("modalOverlay");
       const form = document.getElementById("orderForm");
 
@@ -1168,9 +1128,6 @@
         if (e.key === "Escape" && overlay.classList.contains("open")) closeModal();
       });
 
-      /* ============================================================
-         SALVAR / EXCLUIR
-         ============================================================ */
       function validate() {
         let valid = true;
         const checks = [
@@ -1227,9 +1184,6 @@
         renderAll();
       }
 
-      /* ============================================================
-         TOAST
-         ============================================================ */
       let toastTimer;
       function showToast(msg, danger = false) {
         const toast = document.getElementById("toast");
@@ -1241,14 +1195,16 @@
         toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
       }
 
-      /* ============================================================
-         FILTROS
-         ============================================================ */
       document.getElementById("searchInput").addEventListener("input", renderTable);
       document.getElementById("statusFilter").addEventListener("change", renderTable);
       document.getElementById("priorityFilter").addEventListener("change", renderTable);
 
       renderAll();
     </script>
+
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
   </body>
 </html>
