@@ -1,34 +1,27 @@
 /* ================================================================
    COMPONENTE: SIDEBAR (StockLog)
-   Injeta o menu lateral no lugar de <div id="sidebar-root"></div>,
-   marca o link da página atual como ativo e controla abrir/fechar.
+   Injeta o menu lateral no lugar de <div id="sidebar-root"></div>
    ================================================================ */
 (function () {
   "use strict";
 
-  // 1. Detecta se a página atual está dentro da pasta /pages/
   var inPagesFolder = window.location.pathname.includes("/pages/");
   var basePath = inPagesFolder ? "../" : "./";
-
-  // 2. Caminho dinâmico da imagem da logo (funciona tanto na raiz quanto em /pages/)
   var LOGO_SRC = basePath + "IMG/logoo.png";
 
-  // 3. Itens do menu — todas as páginas ficam na RAIZ do projeto (junto
-  //    com index.html), então usam o mesmo basePath dele.
   var NAV_ITEMS = [
     { href: basePath + "index.html", icon: "fa-chart-pie", label: "Dashboard" },
     { href: basePath + "pedidos.html", icon: "fa-clipboard-list", label: "Pedidos de Produção" },
     { href: basePath + "kanban.html", icon: "fa-columns", label: "Kanban" },
     { href: basePath + "producao.html", icon: "fa-industry", label: "Controle de Produção" },
-    { href: basePath + "calendario.html", icon: "fa-calendar-alt", label: "Calendário de Planejamento" },
     { href: basePath + "itens.html", icon: "fa-warehouse", label: "Itens em Estoque" },
     { href: basePath + "logistica.html", icon: "fa-truck", label: "Logística" },
     { href: basePath + "relatorios.html", icon: "fa-file-download", label: "Baixar Relatórios" },
     { href: basePath + "fornecedores.html", icon: "fa-handshake", label: "Fornecedores" },
-    { href: basePath + "rastreamento.html", icon: "fa-route", label: "Rastreamento de Entregas" },
+    { href: basePath + "rastreamento.html", icon: "fa-route", label: "Rastreamento" },
+    { href: basePath + "calendario.html", icon: "fa-calendar-alt", label: "Calendário" },
   ];
 
-  // Identifica o nome do arquivo da página atual para marcar o menu como ativo
   function isCurrentPage(href) {
     if (href === "#") return false;
     var currentFile = window.location.pathname.split("/").pop() || "index.html";
@@ -85,10 +78,7 @@
     if (placeholder) {
       placeholder.replaceWith(asideEl);
     } else {
-      console.warn(
-        '[sidebar.js] Não encontrei <div id="sidebar-root"></div> na página. ' +
-          "Inserindo o menu no início do <body> como alternativa."
-      );
+      console.warn('[sidebar.js] Não encontrei <div id="sidebar-root"></div> na página.');
       document.body.insertBefore(asideEl, document.body.firstChild);
     }
 
@@ -140,9 +130,7 @@
 
     document.addEventListener("click", function (e) {
       var isOpen = sidebar.classList.contains("open");
-      var isClickInside =
-        sidebar.contains(e.target) ||
-        (mobileBtn && mobileBtn.contains(e.target));
+      var isClickInside = sidebar.contains(e.target) || (mobileBtn && mobileBtn.contains(e.target));
       if (isOpen && !isClickInside && isMobile()) closeSidebar();
     });
 
