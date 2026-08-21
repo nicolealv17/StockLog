@@ -15,7 +15,7 @@
   --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
   --sidebar-active-bg: #1c5079;
   --sidebar-active-color: #ffffff;
-  --sidebar-width-open: 236px;
+  --sidebar-width-open: 252px;
   --sidebar-width-rail: 76px;
 }
 
@@ -155,9 +155,8 @@
   min-width: 0;
 }
 .sidebar nav a span {
-  overflow: hidden;
-  text-overflow: ellipsis;
   min-width: 0;
+  white-space: nowrap;
 }
 .sidebar:not(.open) nav a {
   justify-content: center;

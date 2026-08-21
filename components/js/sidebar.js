@@ -100,6 +100,9 @@
     return { sidebar: asideEl, overlay: overlay };
   }
 
+  // Chave usada para lembrar se a sidebar estava aberta/fechada entre páginas.
+  var STORAGE_KEY = "stocklog_sidebar_open";
+
   function init() {
     var refs = mount();
     var sidebar = refs.sidebar;
@@ -109,16 +112,30 @@
       return window.innerWidth <= 768;
     }
 
+    // Restaura a preferência do usuário ANTES de qualquer animação,
+    // para a sidebar já abrir no estado correto sem "piscar" fechada.
+    var savedOpen = false;
+    try { savedOpen = localStorage.getItem(STORAGE_KEY) === "1"; } catch (e) { /* sem storage disponível */ }
+    if (savedOpen && !isMobile()) {
+      sidebar.classList.add("open");
+    }
+
+    function persistState(isOpen) {
+      try { localStorage.setItem(STORAGE_KEY, isOpen ? "1" : "0"); } catch (e) { /* sem storage disponível */ }
+    }
+
     function openSidebar() {
       sidebar.classList.add("open");
       overlay.classList.add("visible");
       if (isMobile()) document.body.style.overflow = "hidden";
+      persistState(true);
     }
 
     function closeSidebar() {
       sidebar.classList.remove("open");
       overlay.classList.remove("visible");
       document.body.style.overflow = "";
+      persistState(false);
     }
 
     window.toggleSidebar = function () {
@@ -152,8 +169,20 @@
       }
     });
 
+    // Ao redimensionar a janela:
+    //   - se entrou no mobile → fecha a gaveta (ela passa a ser controlada
+    //     pelo botão hambúrguer, não pela largura do <aside>);
+    //   - se voltou pro desktop → restaura a preferência salva, em vez de
+    //     forçar a sidebar a fechar (era isso que "fechava toda vez que
+    //     eu trocava de tela" — o resize após o carregamento).
     window.addEventListener("resize", function () {
-      if (!isMobile()) closeSidebar();
+      if (isMobile()) {
+        closeSidebar();
+      } else {
+        var shouldBeOpen = false;
+        try { shouldBeOpen = localStorage.getItem(STORAGE_KEY) === "1"; } catch (e) {}
+        if (shouldBeOpen) sidebar.classList.add("open");
+      }
     });
   }
 
