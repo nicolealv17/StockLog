@@ -1,0 +1,1163 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Logística</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+    <style>
+      /* ================================================================
+         TOKENS / VARIÁVEIS (mesmo padrão do restante do StockLog)
+         ================================================================ */
+      :root {
+        --bg-body: #f0f5fc;
+        --bg-card: #ffffff;
+        --bg-soft: #f5faff;
+        --border: #e2ecf6;
+        --border-hover: #c6daea;
+
+        --primary: #006bb3;
+        --primary-dark: #004d80;
+        --primary-light: #e1eefb;
+        --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
+
+        --text-main: #0a1f33;
+        --text-secondary: #3d5f7e;
+        --text-muted: #7b92b2;
+
+        --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
+        --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
+
+        --green: #1a7b72;
+        --green-bg: #e0f2ea;
+        --amber: #c47a1f;
+        --amber-bg: #faecd6;
+        --red: #b2433a;
+        --red-bg: #fae2e0;
+        --purple: #6f4c4e;
+        --purple-bg: #ede6f5;
+        --blue: #2f81f7;
+        --blue-bg: rgba(47,129,247,.15);
+        --teal: #1a7b72;
+        --teal-bg: #e0f2ea;
+      }
+
+      body.dark {
+        --bg-body: #0d1727;
+        --bg-card: #14243e;
+        --bg-soft: #0f1f30;
+        --border: #1d344b;
+        --border-hover: #2a4866;
+
+        --text-main: #e2edf8;
+        --text-secondary: #a5bed6;
+        --text-muted: #6f8daa;
+
+        --primary-light: #1d3a55;
+
+        --green-bg: #123a2a;
+        --amber-bg: #3a2f15;
+        --red-bg: #3a1f1f;
+        --purple-bg: #2a1f3d;
+        --blue-bg: rgba(47,129,247,.22);
+        --teal-bg: #123a2a;
+
+        --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
+        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+      }
+      a { text-decoration: none; color: inherit; }
+      button { cursor: pointer; font-family: inherit; border: none; background: none; }
+      input, select, textarea { font-family: inherit; color: var(--text-main); }
+
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-width: 0;
+      }
+      .content {
+        flex: 1;
+        padding: 28px 32px 20px;
+        min-width: 0;
+      }
+
+      /* ============ BOTÕES GERAIS ============ */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: 0.2s;
+        white-space: nowrap;
+      }
+      .btn i { font-size: 13px; }
+      .btn.btn-primary {
+        background: var(--primary-gradient);
+        color: #fff;
+        box-shadow: var(--shadow-card);
+      }
+      .btn.btn-primary:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+      .btn.btn-secondary {
+        background: var(--bg-soft);
+        color: var(--text-main);
+        border-color: var(--border);
+      }
+      .btn.btn-secondary:hover { border-color: var(--border-hover); }
+      .btn.btn-danger {
+        background: var(--red-bg);
+        color: var(--red);
+        border-color: var(--red);
+      }
+      .btn.btn-danger:hover { background: var(--red); color: #fff; }
+      .btn.btn-icon {
+        padding: 7px 10px;
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+      }
+      .btn.btn-icon:hover { background: var(--bg-soft); color: var(--text-main); }
+      .btn.btn-sm { padding: 6px 11px; font-size: 12px; }
+      .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+      /* ============ TOOLBAR ============ */
+      .log-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px 18px;
+        box-shadow: var(--shadow-card);
+      }
+      .log-toolbar-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .log-toolbar-right { display: flex; align-items: center; gap: 8px; }
+      .log-search {
+        font-size: 13px;
+        padding: 9px 12px 9px 34px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg-soft);
+        color: var(--text-main);
+        width: 220px;
+        position: relative;
+      }
+      .log-search-wrap { position: relative; display: flex; align-items: center; }
+      .log-search-wrap i {
+        position: absolute;
+        left: 12px;
+        color: var(--text-muted);
+        font-size: 12px;
+        pointer-events: none;
+      }
+
+      /* ============ STATS ============ */
+      .log-stats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .log-stat {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px 18px;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: 0.2s;
+      }
+      .log-stat:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); }
+      .log-stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .log-stat-num { font-size: 20px; font-weight: 700; color: var(--text-main); line-height: 1.1; }
+      .log-stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+
+      /* ============ KANBAN DE EXPEDIÇÃO ============ */
+      .log-kanban-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 12px;
+      }
+      .log-kanban {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(220px, 1fr));
+        gap: 14px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        margin-bottom: 28px;
+      }
+      .log-col {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+      }
+      .log-col-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 0 2px;
+      }
+      .log-col-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .log-col-count {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .log-col-body { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+      .log-col-empty {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 11.5px;
+        font-style: italic;
+        padding: 18px 6px;
+      }
+
+      .log-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 13px;
+        box-shadow: var(--shadow-card);
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .log-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+      .log-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .log-card-num { font-size: 12.5px; font-weight: 700; color: var(--primary); }
+      .log-badge-urgente {
+        font-size: 9.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--red);
+        background: var(--red-bg);
+        padding: 2px 7px;
+        border-radius: 20px;
+        letter-spacing: 0.03em;
+      }
+      .log-card-cliente {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 6px;
+        line-height: 1.3;
+      }
+      .log-card-meta {
+        font-size: 11px;
+        color: var(--text-muted);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        margin-bottom: 10px;
+      }
+      .log-card-meta span { display: flex; align-items: center; gap: 6px; }
+      .log-card-foot { display: flex; gap: 6px; }
+      .log-card-foot .btn { flex: 1; justify-content: center; }
+
+      /* ============ VEÍCULOS E MOTORISTAS ============ */
+      .card {
+        background: var(--bg-card);
+        border-radius: 14px;
+        padding: 20px 22px 22px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-card);
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .card-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+      }
+
+      .log-vehicles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+      }
+      .log-vehicle-card {
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        border-radius: 12px;
+        padding: 14px 16px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .log-vehicle-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); }
+      .log-vehicle-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .log-vehicle-plate {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .log-vehicle-plate i { color: var(--primary); }
+      .log-status-pill {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 3px 9px;
+        border-radius: 20px;
+        letter-spacing: 0.03em;
+      }
+      .status-disponivel { background: var(--teal-bg); color: var(--teal); }
+      .status-em_rota { background: var(--blue-bg); color: var(--blue); }
+      .status-manutencao { background: var(--amber-bg); color: var(--amber); }
+      .log-vehicle-model { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+      .log-vehicle-driver {
+        font-size: 12px;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 3px;
+      }
+      .log-vehicle-phone { font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+
+      /* ============ MODAL ============ */
+      .modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(10, 20, 35, 0.55);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+      }
+      .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .modal {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-hover);
+        animation: slideUp 0.25s ease;
+      }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+      .modal-head {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+      }
+      .modal-body { padding: 22px 24px; }
+      .modal-foot {
+        padding: 16px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      /* ============ FORMULÁRIO ============ */
+      .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .form-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+      .form-group label {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .form-input, .form-textarea, .form-select {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 13.5px;
+        outline: none;
+        width: 100%;
+        transition: 0.2s;
+        color: var(--text-main);
+      }
+      .form-input:focus, .form-textarea:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+      }
+      .form-textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+      .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b92b2' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 14px;
+        padding-right: 32px;
+      }
+
+      .log-type-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+      .log-type-btn {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        padding: 7px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s;
+      }
+      .log-type-btn:hover { border-color: var(--border-hover); color: var(--text-main); }
+      .log-type-btn.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      /* ============ TOAST ============ */
+      .toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+      }
+      .toast {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--primary);
+        border-radius: 10px;
+        padding: 12px 16px;
+        box-shadow: var(--shadow-hover);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 240px;
+        max-width: 360px;
+        pointer-events: auto;
+        color: var(--text-main);
+        font-size: 13.5px;
+        font-weight: 500;
+        animation: slideInRight 0.3s ease;
+      }
+      .toast.success { border-left-color: var(--green); }
+      .toast.error { border-left-color: var(--red); }
+      .toast.warning { border-left-color: var(--amber); }
+      .toast i { font-size: 16px; }
+      .toast.success i { color: var(--green); }
+      .toast.error i { color: var(--red); }
+      .toast.warning i { color: var(--amber); }
+      .toast.info i { color: var(--primary); }
+      @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+      /* ============ RESPONSIVIDADE ============ */
+      @media (max-width: 1300px) {
+        .log-stats { grid-template-columns: repeat(3, 1fr); }
+        .log-kanban { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+      }
+      @media (max-width: 900px) {
+        .log-stats { grid-template-columns: repeat(2, 1fr); }
+        .log-kanban { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      }
+      @media (max-width: 768px) {
+        .content { padding: 18px 16px; }
+        .log-toolbar { flex-direction: column; align-items: stretch; }
+        .log-toolbar-left, .log-toolbar-right { justify-content: center; }
+        .log-search { width: 100%; }
+        .log-stats { grid-template-columns: repeat(2, 1fr); }
+        .log-kanban { grid-template-columns: minmax(220px, 1fr); }
+        .form-row, .form-row.cols-3 { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div id="sidebar-root"></div>
+
+    <div class="main-wrapper">
+      <!-- HEADER -->
+      <div id="header-root"></div>
+
+      <main class="content" role="main">
+
+        <!-- Estatísticas -->
+        <div class="log-stats" id="log-stats"></div>
+
+        <!-- Toolbar -->
+        <div class="log-toolbar">
+          <div class="log-toolbar-left">
+            <button class="btn btn-primary" onclick="logOpenNewOrder()">
+              <i class="fa-solid fa-plus"></i> Novo pedido de expedição
+            </button>
+            <div class="log-search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" class="log-search" id="log-search" placeholder="Buscar cliente ou nº do pedido..." oninput="logRenderKanban()">
+            </div>
+          </div>
+          <div class="log-toolbar-right">
+            <button class="btn btn-secondary" onclick="logOpenNewVehicle()">
+              <i class="fa-solid fa-truck"></i> Novo veículo
+            </button>
+          </div>
+        </div>
+
+        <!-- Kanban de expedição -->
+        <div class="log-kanban-title">
+          <i class="fa-solid fa-boxes-packing" style="color:var(--primary)"></i>
+          Fluxo de separação e expedição
+        </div>
+        <div class="log-kanban" id="log-kanban"></div>
+
+        <!-- Veículos e motoristas -->
+        <section class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <i class="fa-solid fa-truck-fast" style="color:var(--primary);margin-right:8px"></i>
+              Veículos e motoristas
+            </span>
+          </div>
+          <div class="log-vehicles-grid" id="log-vehicles-grid"></div>
+        </section>
+      </main>
+
+      <!-- FOOTER -->
+      <div id="footer-root"></div>
+    </div>
+
+    <!-- MODAL: NOVO / EDITAR PEDIDO DE EXPEDIÇÃO -->
+    <div class="modal-overlay" id="modal-logPedido">
+      <div class="modal">
+        <div class="modal-head">
+          <span class="modal-title" id="log-modal-title">
+            <i class="fa-solid fa-box" style="color:var(--primary);margin-right:8px"></i>
+            Novo pedido de expedição
+          </span>
+          <button class="btn btn-icon" onclick="closeModal('logPedido')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="log-ord-id">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nº do pedido <span style="color:var(--red)">*</span></label>
+              <input type="text" class="form-input" id="log-ord-numero" placeholder="Ex: 1050">
+            </div>
+            <div class="form-group">
+              <label>Prioridade</label>
+              <select class="form-select" id="log-ord-prioridade">
+                <option value="normal" selected>Normal</option>
+                <option value="urgente">Urgente</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Cliente / Destino <span style="color:var(--red)">*</span></label>
+            <input type="text" class="form-input" id="log-ord-cliente" placeholder="Ex: Supermercado Boa Vista">
+          </div>
+
+          <div class="form-group">
+            <label>Endereço de entrega</label>
+            <input type="text" class="form-input" id="log-ord-endereco" placeholder="Rua, número, bairro, cidade">
+          </div>
+
+          <div class="form-row cols-3">
+            <div class="form-group">
+              <label>Qtd. de itens</label>
+              <input type="number" min="0" class="form-input" id="log-ord-itens" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Data prevista</label>
+              <input type="date" class="form-input" id="log-ord-data">
+            </div>
+            <div class="form-group">
+              <label>Etapa</label>
+              <select class="form-select" id="log-ord-status">
+                <option value="aguardando">Aguardando Separação</option>
+                <option value="separacao">Em Separação</option>
+                <option value="embalagem">Embalagem</option>
+                <option value="expedicao">Em Expedição</option>
+                <option value="entregue">Entregue</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Veículo / motorista designado</label>
+            <select class="form-select" id="log-ord-veiculo">
+              <option value="">Nenhum designado ainda</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Observações</label>
+            <textarea class="form-textarea" id="log-ord-obs" placeholder="Instruções de separação, embalagem especial, etc."></textarea>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeModal('logPedido')">
+            <i class="fa-solid fa-xmark"></i> Cancelar
+          </button>
+          <button class="btn btn-danger" id="log-ord-btn-delete" onclick="logDeleteOrder()" style="display:none">
+            <i class="fa-solid fa-trash"></i> Excluir
+          </button>
+          <button class="btn btn-primary" onclick="logSaveOrder()">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: NOVO / EDITAR VEÍCULO -->
+    <div class="modal-overlay" id="modal-logVeiculo">
+      <div class="modal">
+        <div class="modal-head">
+          <span class="modal-title" id="log-veh-modal-title">
+            <i class="fa-solid fa-truck" style="color:var(--primary);margin-right:8px"></i>
+            Novo veículo
+          </span>
+          <button class="btn btn-icon" onclick="closeModal('logVeiculo')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="log-veh-id">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Placa <span style="color:var(--red)">*</span></label>
+              <input type="text" class="form-input" id="log-veh-placa" placeholder="Ex: ABC-1234">
+            </div>
+            <div class="form-group">
+              <label>Modelo</label>
+              <input type="text" class="form-input" id="log-veh-modelo" placeholder="Ex: Fiorino, Sprinter...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Motorista <span style="color:var(--red)">*</span></label>
+            <input type="text" class="form-input" id="log-veh-motorista" placeholder="Nome do motorista">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Telefone</label>
+              <input type="text" class="form-input" id="log-veh-telefone" placeholder="(00) 00000-0000">
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select class="form-select" id="log-veh-status">
+                <option value="disponivel">Disponível</option>
+                <option value="em_rota">Em rota</option>
+                <option value="manutencao">Manutenção</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeModal('logVeiculo')">
+            <i class="fa-solid fa-xmark"></i> Cancelar
+          </button>
+          <button class="btn btn-danger" id="log-veh-btn-delete" onclick="logDeleteVehicle()" style="display:none">
+            <i class="fa-solid fa-trash"></i> Excluir
+          </button>
+          <button class="btn btn-primary" onclick="logSaveVehicle()">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts dos componentes -->
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
+
+    <!-- Lógica da Logística -->
+    <script>
+      /* =========================================================
+         StockLog — Logística (separação, embalagem, expedição)
+         ========================================================= */
+      const LOG_STORAGE_ORDERS = "stocklog_log_orders_v1";
+      const LOG_STORAGE_VEHICLES = "stocklog_log_vehicles_v1";
+
+      const STATUS_ORDER = ["aguardando", "separacao", "embalagem", "expedicao", "entregue"];
+      const STATUS_LABELS = {
+        aguardando: "Aguardando Separação",
+        separacao: "Em Separação",
+        embalagem: "Embalagem",
+        expedicao: "Em Expedição",
+        entregue: "Entregue",
+      };
+      const STATUS_ICONS = {
+        aguardando: "fa-hourglass-half",
+        separacao: "fa-people-carry-box",
+        embalagem: "fa-box-open",
+        expedicao: "fa-truck-ramp-box",
+        entregue: "fa-circle-check",
+      };
+      const STATUS_COLORS = {
+        aguardando: "amber",
+        separacao: "blue",
+        embalagem: "purple",
+        expedicao: "primary",
+        entregue: "teal",
+      };
+      const VEHICLE_STATUS_LABELS = { disponivel: "Disponível", em_rota: "Em rota", manutencao: "Manutenção" };
+
+      let logState = { orders: [], vehicles: [] };
+
+      function logLoad() {
+        try {
+          const savedOrders = localStorage.getItem(LOG_STORAGE_ORDERS);
+          logState.orders = savedOrders ? JSON.parse(savedOrders) : logDefaultOrders();
+          if (!savedOrders) logSaveOrders();
+        } catch (e) { logState.orders = logDefaultOrders(); }
+
+        try {
+          const savedVehicles = localStorage.getItem(LOG_STORAGE_VEHICLES);
+          logState.vehicles = savedVehicles ? JSON.parse(savedVehicles) : logDefaultVehicles();
+          if (!savedVehicles) logSaveVehicles();
+        } catch (e) { logState.vehicles = logDefaultVehicles(); }
+      }
+      function logSaveOrders() { localStorage.setItem(LOG_STORAGE_ORDERS, JSON.stringify(logState.orders)); }
+      function logSaveVehicles() { localStorage.setItem(LOG_STORAGE_VEHICLES, JSON.stringify(logState.vehicles)); }
+
+      function logDefaultVehicles() {
+        return [
+          { id: "v1", placa: "ABC-1234", modelo: "Fiorino Furgão", motorista: "João Silva", telefone: "(11) 98888-1234", status: "em_rota" },
+          { id: "v2", placa: "XYZ-5678", modelo: "VW Delivery 9.170", motorista: "Marcos Souza", telefone: "(11) 97777-5678", status: "disponivel" },
+          { id: "v3", placa: "JKL-9012", modelo: "Sprinter Van", motorista: "Ana Paula Rocha", telefone: "(11) 96666-9012", status: "manutencao" },
+        ];
+      }
+
+      function logDefaultOrders() {
+        return [
+          { id: "o1", numero: "1043", cliente: "Supermercado Boa Vista", endereco: "Av. Central, 900 - Centro", itens: 300, prioridade: "urgente", status: "aguardando", veiculoId: "", data: "2026-08-21", obs: "Cliente pediu conferência dupla antes da separação." },
+          { id: "o2", numero: "1042", cliente: "Restaurante Sabor & Cia", endereco: "Rua das Flores, 120", itens: 120, prioridade: "normal", status: "separacao", veiculoId: "", data: "2026-08-22", obs: "" },
+          { id: "o3", numero: "1039", cliente: "Padaria Pão Quente", endereco: "Rua Dez, 45", itens: 60, prioridade: "normal", status: "embalagem", veiculoId: "", data: "2026-08-22", obs: "Embalagem térmica." },
+          { id: "o4", numero: "1035", cliente: "Distribuidora Nordeste", endereco: "Rod. BR-101, km 12", itens: 500, prioridade: "urgente", status: "expedicao", veiculoId: "v1", data: "2026-08-21", obs: "" },
+          { id: "o5", numero: "1030", cliente: "Mercadinho Ipê", endereco: "Travessa Ipê, 8", itens: 80, prioridade: "normal", status: "entregue", veiculoId: "v2", data: "2026-08-20", obs: "" },
+        ];
+      }
+
+      function logNextStatus(status) {
+        const idx = STATUS_ORDER.indexOf(status);
+        return idx >= 0 && idx < STATUS_ORDER.length - 1 ? STATUS_ORDER[idx + 1] : null;
+      }
+
+      /* ============ RENDER ============ */
+      function logRender() {
+        logRenderStats();
+        logRenderKanban();
+        logRenderVehicles();
+      }
+
+      function logRenderStats() {
+        const counts = { aguardando: 0, separacao: 0, embalagem: 0, expedicao: 0, entregue: 0 };
+        logState.orders.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
+        const disponiveis = logState.vehicles.filter(v => v.status === "disponivel").length;
+
+        const tiles = [
+          { label: "Aguardando Separação", num: counts.aguardando, icon: "fa-hourglass-half", color: "amber" },
+          { label: "Em Separação", num: counts.separacao, icon: "fa-people-carry-box", color: "blue" },
+          { label: "Embalagem", num: counts.embalagem, icon: "fa-box-open", color: "purple" },
+          { label: "Em Expedição", num: counts.expedicao, icon: "fa-truck-ramp-box", color: "primary" },
+          { label: "Veículos disponíveis", num: disponiveis, icon: "fa-truck", color: "teal" },
+        ];
+
+        document.getElementById("log-stats").innerHTML = tiles.map(t => `
+          <div class="log-stat">
+            <div class="log-stat-icon" style="background:var(--${t.color}-light, var(--primary-light));color:var(--${t.color}, var(--primary))">
+              <i class="fa-solid ${t.icon}"></i>
+            </div>
+            <div>
+              <div class="log-stat-num">${t.num}</div>
+              <div class="log-stat-label">${t.label}</div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      function logRenderKanban() {
+        const term = (document.getElementById("log-search")?.value || "").toLowerCase().trim();
+        const filtered = logState.orders.filter(o =>
+          !term || o.cliente.toLowerCase().includes(term) || o.numero.toLowerCase().includes(term)
+        );
+
+        const kanban = document.getElementById("log-kanban");
+        kanban.innerHTML = STATUS_ORDER.map(status => {
+          const items = filtered.filter(o => o.status === status).sort((a, b) => {
+            if (a.prioridade !== b.prioridade) return a.prioridade === "urgente" ? -1 : 1;
+            return a.data.localeCompare(b.data);
+          });
+          const color = STATUS_COLORS[status];
+
+          return `
+            <div class="log-col">
+              <div class="log-col-head">
+                <span class="log-col-title" style="color:var(--${color}, var(--primary))">
+                  <i class="fa-solid ${STATUS_ICONS[status]}"></i> ${STATUS_LABELS[status]}
+                </span>
+                <span class="log-col-count">${items.length}</span>
+              </div>
+              <div class="log-col-body">
+                ${items.length === 0
+                  ? '<div class="log-col-empty">Nenhum pedido aqui.</div>'
+                  : items.map(o => logCardHtml(o)).join("")}
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function logCardHtml(o) {
+        const veh = logState.vehicles.find(v => v.id === o.veiculoId);
+        const next = logNextStatus(o.status);
+        return `
+          <div class="log-card" onclick="logEditOrder('${o.id}')">
+            <div class="log-card-top">
+              <span class="log-card-num">#${escapeHtml(o.numero)}</span>
+              ${o.prioridade === "urgente" ? '<span class="log-badge-urgente">Urgente</span>' : ""}
+            </div>
+            <div class="log-card-cliente">${escapeHtml(o.cliente)}</div>
+            <div class="log-card-meta">
+              <span><i class="fa-solid fa-boxes-stacked"></i> ${o.itens || 0} itens</span>
+              <span><i class="fa-solid fa-calendar"></i> ${logFmtBR(o.data)}</span>
+              ${veh ? `<span><i class="fa-solid fa-truck"></i> ${escapeHtml(veh.placa)} · ${escapeHtml(veh.motorista)}</span>` : ""}
+            </div>
+            ${next ? `
+              <div class="log-card-foot" onclick="event.stopPropagation()">
+                <button class="btn btn-secondary btn-sm" onclick="logAdvanceStatus('${o.id}')">
+                  <i class="fa-solid fa-arrow-right"></i> Avançar
+                </button>
+              </div>` : ""}
+          </div>
+        `;
+      }
+
+      function logRenderVehicles() {
+        const grid = document.getElementById("log-vehicles-grid");
+        if (logState.vehicles.length === 0) {
+          grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:24px;font-style:italic">Nenhum veículo cadastrado.</div>`;
+          return;
+        }
+        grid.innerHTML = logState.vehicles.map(v => `
+          <div class="log-vehicle-card" onclick="logEditVehicle('${v.id}')">
+            <div class="log-vehicle-top">
+              <span class="log-vehicle-plate"><i class="fa-solid fa-truck"></i> ${escapeHtml(v.placa)}</span>
+              <span class="log-status-pill status-${v.status}">${VEHICLE_STATUS_LABELS[v.status]}</span>
+            </div>
+            <div class="log-vehicle-model">${escapeHtml(v.modelo || "—")}</div>
+            <div class="log-vehicle-driver"><i class="fa-solid fa-user" style="color:var(--text-muted)"></i> ${escapeHtml(v.motorista)}</div>
+            ${v.telefone ? `<div class="log-vehicle-phone"><i class="fa-solid fa-phone"></i> ${escapeHtml(v.telefone)}</div>` : ""}
+          </div>
+        `).join("");
+      }
+
+      /* ============ AÇÕES: PEDIDOS ============ */
+      function logAdvanceStatus(id) {
+        const o = logState.orders.find(x => x.id === id);
+        if (!o) return;
+        const next = logNextStatus(o.status);
+        if (!next) return;
+        o.status = next;
+        logSaveOrders();
+        logRender();
+        showToast(`Pedido #${o.numero} avançou para "${STATUS_LABELS[next]}".`, "success");
+      }
+
+      function logPopulateVehicleSelect(selectedId) {
+        const sel = document.getElementById("log-ord-veiculo");
+        sel.innerHTML = '<option value="">Nenhum designado ainda</option>' +
+          logState.vehicles.map(v => `<option value="${v.id}">${escapeHtml(v.placa)} · ${escapeHtml(v.motorista)}</option>`).join("");
+        sel.value = selectedId || "";
+      }
+
+      function logOpenNewOrder() {
+        document.getElementById("log-ord-id").value = "";
+        document.getElementById("log-ord-numero").value = "";
+        document.getElementById("log-ord-cliente").value = "";
+        document.getElementById("log-ord-endereco").value = "";
+        document.getElementById("log-ord-itens").value = "";
+        document.getElementById("log-ord-data").value = "";
+        document.getElementById("log-ord-status").value = "aguardando";
+        document.getElementById("log-ord-prioridade").value = "normal";
+        document.getElementById("log-ord-obs").value = "";
+        logPopulateVehicleSelect("");
+        document.getElementById("log-modal-title").innerHTML =
+          '<i class="fa-solid fa-box" style="color:var(--primary);margin-right:8px"></i>Novo pedido de expedição';
+        document.getElementById("log-ord-btn-delete").style.display = "none";
+        openModal("logPedido");
+      }
+
+      function logEditOrder(id) {
+        const o = logState.orders.find(x => x.id === id);
+        if (!o) return;
+        document.getElementById("log-ord-id").value = o.id;
+        document.getElementById("log-ord-numero").value = o.numero;
+        document.getElementById("log-ord-cliente").value = o.cliente;
+        document.getElementById("log-ord-endereco").value = o.endereco || "";
+        document.getElementById("log-ord-itens").value = o.itens || "";
+        document.getElementById("log-ord-data").value = o.data || "";
+        document.getElementById("log-ord-status").value = o.status;
+        document.getElementById("log-ord-prioridade").value = o.prioridade || "normal";
+        document.getElementById("log-ord-obs").value = o.obs || "";
+        logPopulateVehicleSelect(o.veiculoId);
+        document.getElementById("log-modal-title").innerHTML =
+          '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar pedido';
+        document.getElementById("log-ord-btn-delete").style.display = "inline-flex";
+        openModal("logPedido");
+      }
+
+      function logSaveOrder() {
+        const id = document.getElementById("log-ord-id").value;
+        const numero = document.getElementById("log-ord-numero").value.trim();
+        const cliente = document.getElementById("log-ord-cliente").value.trim();
+        if (!numero || !cliente) { showToast("Preencha o número do pedido e o cliente.", "error"); return; }
+
+        const data = {
+          numero,
+          cliente,
+          endereco: document.getElementById("log-ord-endereco").value.trim(),
+          itens: parseInt(document.getElementById("log-ord-itens").value) || 0,
+          data: document.getElementById("log-ord-data").value,
+          status: document.getElementById("log-ord-status").value,
+          prioridade: document.getElementById("log-ord-prioridade").value,
+          veiculoId: document.getElementById("log-ord-veiculo").value,
+          obs: document.getElementById("log-ord-obs").value.trim(),
+        };
+
+        if (id) {
+          const o = logState.orders.find(x => x.id === id);
+          if (o) Object.assign(o, data);
+          showToast("Pedido atualizado.", "success");
+        } else {
+          logState.orders.push({ id: "o" + Date.now().toString(36), ...data });
+          showToast("Pedido de expedição criado.", "success");
+        }
+        logSaveOrders();
+        closeModal("logPedido");
+        logRender();
+      }
+
+      function logDeleteOrder() {
+        const id = document.getElementById("log-ord-id").value;
+        if (!id) return;
+        if (!confirm("Excluir este pedido de expedição?")) return;
+        logState.orders = logState.orders.filter(o => o.id !== id);
+        logSaveOrders();
+        closeModal("logPedido");
+        logRender();
+        showToast("Pedido excluído.", "warning");
+      }
+
+      /* ============ AÇÕES: VEÍCULOS ============ */
+      function logOpenNewVehicle() {
+        document.getElementById("log-veh-id").value = "";
+        document.getElementById("log-veh-placa").value = "";
+        document.getElementById("log-veh-modelo").value = "";
+        document.getElementById("log-veh-motorista").value = "";
+        document.getElementById("log-veh-telefone").value = "";
+        document.getElementById("log-veh-status").value = "disponivel";
+        document.getElementById("log-veh-modal-title").innerHTML =
+          '<i class="fa-solid fa-truck" style="color:var(--primary);margin-right:8px"></i>Novo veículo';
+        document.getElementById("log-veh-btn-delete").style.display = "none";
+        openModal("logVeiculo");
+      }
+
+      function logEditVehicle(id) {
+        const v = logState.vehicles.find(x => x.id === id);
+        if (!v) return;
+        document.getElementById("log-veh-id").value = v.id;
+        document.getElementById("log-veh-placa").value = v.placa;
+        document.getElementById("log-veh-modelo").value = v.modelo || "";
+        document.getElementById("log-veh-motorista").value = v.motorista;
+        document.getElementById("log-veh-telefone").value = v.telefone || "";
+        document.getElementById("log-veh-status").value = v.status;
+        document.getElementById("log-veh-modal-title").innerHTML =
+          '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar veículo';
+        document.getElementById("log-veh-btn-delete").style.display = "inline-flex";
+        openModal("logVeiculo");
+      }
+
+      function logSaveVehicle() {
+        const id = document.getElementById("log-veh-id").value;
+        const placa = document.getElementById("log-veh-placa").value.trim();
+        const motorista = document.getElementById("log-veh-motorista").value.trim();
+        if (!placa || !motorista) { showToast("Preencha a placa e o motorista.", "error"); return; }
+
+        const data = {
+          placa,
+          modelo: document.getElementById("log-veh-modelo").value.trim(),
+          motorista,
+          telefone: document.getElementById("log-veh-telefone").value.trim(),
+          status: document.getElementById("log-veh-status").value,
+        };
+
+        if (id) {
+          const v = logState.vehicles.find(x => x.id === id);
+          if (v) Object.assign(v, data);
+          showToast("Veículo atualizado.", "success");
+        } else {
+          logState.vehicles.push({ id: "v" + Date.now().toString(36), ...data });
+          showToast("Veículo cadastrado.", "success");
+        }
+        logSaveVehicles();
+        closeModal("logVeiculo");
+        logRender();
+      }
+
+      function logDeleteVehicle() {
+        const id = document.getElementById("log-veh-id").value;
+        if (!id) return;
+        if (!confirm("Excluir este veículo?")) return;
+        logState.vehicles = logState.vehicles.filter(v => v.id !== id);
+        logState.orders.forEach(o => { if (o.veiculoId === id) o.veiculoId = ""; });
+        logSaveVehicles();
+        logSaveOrders();
+        closeModal("logVeiculo");
+        logRender();
+        showToast("Veículo excluído.", "warning");
+      }
+
+      /* ============ UTILITÁRIOS ============ */
+      function logFmtBR(iso) {
+        if (!iso) return "—";
+        const [y, m, d] = iso.split("-");
+        return `${d}/${m}/${y}`;
+      }
+      function escapeHtml(str) {
+        if (str == null) return "";
+        return String(str).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+      }
+      function openModal(id) { document.getElementById("modal-" + id).classList.add("open"); }
+      function closeModal(id) { document.getElementById("modal-" + id).classList.remove("open"); }
+
+      function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        const icons = { success: "fa-circle-check", error: "fa-circle-xmark", warning: "fa-triangle-exclamation", info: "fa-circle-info" };
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${icons[type] || "fa-circle-info"}"></i><span>${escapeHtml(message)}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 300); }, 3200);
+      }
+
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") {
+          closeModal("logPedido");
+          closeModal("logVeiculo");
+        }
+      });
+
+      /* Inicialização */
+      logLoad();
+      logRender();
+    </script>
+  </body>
+</html>

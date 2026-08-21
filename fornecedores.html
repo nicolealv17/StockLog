@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Fornecedores</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+
+    <style>
+      :root {
+        --bg-body: #edf3f8;
+        --bg-card: #ffffff;
+        --bg-soft: #f4f8fc;
+        --border: #d4e2f0;
+
+        --text-main: #0c1e2e;
+        --text-secondary: #3b5a75;
+        --text-muted: #718da8;
+
+        --primary: #006bb3;
+        --primary-light: #e3f0fb;
+
+        --green: #15803d;
+        --green-bg: #dcfce7;
+        --green-bar: #16a34a;
+
+        --amber: #b45309;
+        --amber-bg: #fef3c7;
+        --amber-bar: #d97706;
+
+        --red: #b91c1c;
+        --red-bg: #fee2e2;
+        --red-bar: #dc2626;
+
+        --purple: #6b21a8;
+        --purple-bg: #f3e8ff;
+        --purple-bar: #8b5cf6;
+
+        --blue: #0369a1;
+        --blue-bg: #e0f2fe;
+        --blue-bar: #0284c7;
+
+        --teal: #0f766e;
+        --teal-bg: #ccfbf1;
+        --teal-bar: #14b8a6;
+
+        --row-stripe: #f5f9fd;
+        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
+
+        --fs-base: clamp(14px, 0.9vw + 12px, 16px);
+        --fs-h1: clamp(19px, 1.2vw + 14px, 24px);
+        --fs-title: clamp(15px, 1vw + 12px, 18px);
+        --fs-table: clamp(12.5px, 0.5vw + 11.5px, 14px);
+
+        --pad-content: 16px 20px;
+        --gap-grid: clamp(14px, 1vw, 22px);
+        --pad-card: clamp(18px, 1.4vw, 28px);
+      }
+
+      body.dark {
+        --bg-body: #0a131d;
+        --bg-card: #111f2e;
+        --bg-soft: #16283b;
+        --border: #1e364f;
+
+        --text-main: #e2edf8;
+        --text-secondary: #9cb5cd;
+        --text-muted: #6482a0;
+
+        --primary: #38bdf8;
+        --primary-light: #17324d;
+
+        --green: #4ade80;
+        --green-bg: #143823;
+
+        --amber: #fbbf24;
+        --amber-bg: #3d2d11;
+
+        --red: #f87171;
+        --red-bg: #3e1919;
+
+        --purple: #c084fc;
+        --purple-bg: #331d48;
+
+        --blue: #38bdf8;
+        --blue-bg: #123147;
+
+        --teal: #2dd4bf;
+        --teal-bg: #0e3733;
+
+        --row-stripe: #152638;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html { font-size: var(--fs-base); }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        transition: background-color 0.2s, color 0.2s;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      #sidebar-root {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        align-self: flex-start;
+        z-index: 100;
+      }
+
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-width: 0;
+      }
+
+      .dashboard-container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+        padding: var(--pad-content);
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap-grid);
+      }
+
+      .top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .header-title-group h1 {
+        font-size: var(--fs-h1);
+        font-weight: 700;
+      }
+
+      .header-title-group h1 span {
+        color: var(--primary);
+      }
+
+      .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--bg-card);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+
+      .btn-action:hover {
+        background-color: var(--bg-soft);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .btn-action.btn-primary {
+        background-color: var(--primary);
+        color: #ffffff;
+        border-color: var(--primary);
+      }
+
+      .btn-action.btn-primary:hover {
+        opacity: 0.9;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: var(--gap-grid);
+      }
+
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .stat-info h3 {
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+
+      .stat-info p {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-top: 2px;
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: var(--pad-card);
+        box-shadow: var(--shadow);
+        width: 100%;
+      }
+
+      .card-header-title {
+        font-size: var(--fs-title);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .card-header-title .title-text {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .table-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        min-width: 260px;
+        flex: 1;
+      }
+
+      .search-box i {
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .search-box input {
+        border: none;
+        background: transparent;
+        outline: none;
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 13.5px;
+        width: 100%;
+      }
+
+      select.filter-select {
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        color: var(--text-secondary);
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 8px;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        color: var(--text-secondary);
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 7px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+
+      .filter-chip:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .filter-chip.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: var(--fs-table);
+        min-width: 900px;
+      }
+
+      th {
+        text-align: left;
+        padding: 10px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        border-bottom: 2px solid var(--border);
+        white-space: nowrap;
+      }
+
+      td {
+        padding: 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border);
+      }
+
+      tbody tr:nth-child(even) td {
+        background-color: var(--row-stripe);
+      }
+
+      tbody tr:hover td {
+        background-color: var(--primary-light);
+      }
+
+      .supplier-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .supplier-name {
+        font-weight: 700;
+        color: var(--text-main);
+        font-size: 0.95em;
+      }
+
+      .supplier-cnpj {
+        font-size: 0.82em;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .contact-box {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 0.85em;
+      }
+
+      .contact-box .rep {
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .contact-box .details {
+        color: var(--text-muted);
+      }
+
+      .products-badge-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .product-tag {
+        font-size: 0.78em;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 6px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      .status-pill {
+        font-size: 0.82em;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 12px;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .status-pill.ativo { background: var(--green-bg); color: var(--green); }
+      .status-pill.homologado { background: var(--blue-bg); color: var(--blue); }
+      .status-pill.analise { background: var(--amber-bg); color: var(--amber); }
+      .status-pill.bloqueado { background: var(--red-bg); color: var(--red); }
+
+      .action-btn-group {
+        display: flex;
+        gap: 6px;
+      }
+
+      .icon-btn-sm {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+
+      .icon-btn-sm:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--bg-soft);
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(12, 30, 46, 0.5);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.25s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        width: 100%;
+        max-width: 650px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px);
+        transition: transform 0.25s ease;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-overlay.active .modal-container {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 12px;
+      }
+
+      .modal-header h2 {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .close-modal-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .close-modal-btn:hover { color: var(--red); }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-group.full {
+        grid-column: span 2;
+      }
+
+      .form-group label {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text-secondary);
+      }
+
+      .form-group input, .form-group select {
+        padding: 9px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-soft);
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 13.5px;
+        outline: none;
+      }
+
+      .form-group input:focus, .form-group select:focus {
+        border-color: var(--primary);
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        border-top: 1px solid var(--border);
+        padding-top: 14px;
+      }
+
+      .results-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        font-size: 0.88em;
+        color: var(--text-muted);
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .toast-popup {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--green-bar);
+        color: #ffffff;
+        padding: 14px 22px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 9999;
+      }
+
+      .toast-popup.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-container { padding: 12px; }
+        .table-controls { flex-direction: column; align-items: stretch; }
+        .search-box { width: 100%; }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-group.full { grid-column: span 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sidebar-root"></div>
+
+    <div class="main-wrapper">
+      <div id="header-root"></div>
+
+      <div class="dashboard-container">
+        <div class="top-header">
+          <div class="header-title-group">
+            <h1>Gestão de <span>Fornecedores</span></h1>
+          </div>
+          <div class="header-actions">
+            <button class="btn-action btn-primary" onclick="openModal()">
+              <i class="fas fa-plus"></i> Novo Fornecedor
+            </button>
+          </div>
+        </div>
+
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--blue-bg); color: var(--blue);">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="statTotal">6</h3>
+              <p>Fornecedores Cadastrados</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--green-bg); color: var(--green);">
+              <i class="fas fa-circle-check"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="statAtivos">4</h3>
+              <p>Ativos / Homologados</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--purple-bg); color: var(--purple);">
+              <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-info">
+              <h3>R$ 142.800</h3>
+              <p>Compras do Mês</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--amber-bg); color: var(--amber);">
+              <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-info">
+              <h3>3 Pedidos</h3>
+              <p>Em Transito / Pendentes</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header-title">
+            <span class="title-text"><i class="fas fa-address-book"></i> Consulta de Parceiros e Fornecedores</span>
+            <div class="table-controls">
+              <div class="search-box">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por Razão Social, CNPJ ou produto..." oninput="renderTable()" />
+              </div>
+              <select class="filter-select" id="categoryFilter" onchange="renderTable()">
+                <option value="todas">Todas as categorias</option>
+                <option value="Siderurgia">Siderurgia & Metais</option>
+                <option value="Usinagem">Componentes & Usinagem</option>
+                <option value="Química">Química & Polímeros</option>
+                <option value="Embalagens">Embalagens</option>
+                <option value="Ferramentas">Ferramental</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+            <button class="filter-chip active" data-status="todos" onclick="setStatusFilter('todos', this)">Todos</button>
+            <button class="filter-chip" data-status="ativo" onclick="setStatusFilter('ativo', this)"><i class="fas fa-circle" style="color:var(--green); font-size:7px;"></i> Ativos</button>
+            <button class="filter-chip" data-status="homologado" onclick="setStatusFilter('homologado', this)"><i class="fas fa-circle" style="color:var(--blue); font-size:7px;"></i> Homologados</button>
+            <button class="filter-chip" data-status="analise" onclick="setStatusFilter('analise', this)"><i class="fas fa-circle" style="color:var(--amber); font-size:7px;"></i> Em Análise</button>
+            <button class="filter-chip" data-status="bloqueado" onclick="setStatusFilter('bloqueado', this)"><i class="fas fa-circle" style="color:var(--red); font-size:7px;"></i> Bloqueados</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Razão Social / CNPJ</th>
+                  <th>Contato / Representante</th>
+                  <th>Produtos Fornecidos</th>
+                  <th>Histórico de Compras</th>
+                  <th>Situação</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="supplierTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="results-footer">
+            <span id="resultsCount">Mostrando 6 de 6 fornecedores</span>
+            <span>Cadastro centralizado StockLog</span>
+          </div>
+        </section>
+      </div>
+
+      <div id="footer-root"></div>
+    </div>
+
+    <!-- Modal para Cadastro / Edição -->
+    <div class="modal-overlay" id="supplierModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2 id="modalTitle"><i class="fas fa-truck-field"></i> Cadastrar Novo Fornecedor</h2>
+          <button class="close-modal-btn" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <form id="supplierForm" onsubmit="handleSaveSupplier(event)">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Razão Social / Nome Fantasia *</label>
+              <input type="text" id="formName" placeholder="Ex: Metalúrgica Silva Ltda" required />
+            </div>
+            <div class="form-group">
+              <label>CNPJ *</label>
+              <input type="text" id="formCnpj" placeholder="00.000.000/0001-00" required />
+            </div>
+            <div class="form-group">
+              <label>Categoria Principal</label>
+              <select id="formCategory">
+                <option value="Siderurgia">Siderurgia & Metais</option>
+                <option value="Usinagem">Componentes & Usinagem</option>
+                <option value="Química">Química & Polímeros</option>
+                <option value="Embalagens">Embalagens</option>
+                <option value="Ferramentas">Ferramental</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Representante / Contato *</label>
+              <input type="text" id="formContact" placeholder="Ex: Roberto Alves" required />
+            </div>
+            <div class="form-group">
+              <label>Telefone / WhatsApp *</label>
+              <input type="text" id="formPhone" placeholder="(11) 98765-4321" required />
+            </div>
+            <div class="form-group full">
+              <label>E-mail Comercial *</label>
+              <input type="email" id="formEmail" placeholder="vendas@fornecedor.com.br" required />
+            </div>
+            <div class="form-group full">
+              <label>Produtos / Insumos Fornecidos (separados por vírgula)</label>
+              <input type="text" id="formProducts" placeholder="Ex: Chapa de Inox, Perfil Alumínio, Barra Roscada" />
+            </div>
+            <div class="form-group">
+              <label>Situação Cadastral</label>
+              <select id="formStatus">
+                <option value="ativo">Ativo</option>
+                <option value="homologado">Homologado</option>
+                <option value="analise">Em Análise</option>
+                <option value="bloqueado">Bloqueado</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-action" onclick="closeModal()">Cancelar</button>
+            <button type="submit" class="btn-action btn-primary"><i class="fas fa-check"></i> Salvar Fornecedor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de Abrir / Detalhes do Fornecedor e Histórico -->
+    <div class="modal-overlay" id="detailsModal">
+      <div class="modal-container" style="max-width: 700px;">
+        <div class="modal-header">
+          <h2 id="detailsTitle"><i class="fas fa-building"></i> Detalhes do Fornecedor</h2>
+          <button class="close-modal-btn" onclick="closeDetailsModal()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div id="detailsContent">
+          <!-- Conteúdo gerado dinamicamente -->
+        </div>
+        <div class="modal-footer">
+          <button class="btn-action btn-primary" onclick="closeDetailsModal()">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toastPopup" class="toast-popup">
+      <i class="fas fa-circle-check" style="font-size: 18px;"></i>
+      <span id="toastMessage">Operação realizada com sucesso!</span>
+    </div>
+
+    <script>
+      let suppliers = [
+        {
+          id: 1,
+          name: "Metalúrgica Silva Ltda",
+          cnpj: "12.345.678/0001-90",
+          category: "Siderurgia",
+          representative: "Carlos Eduardo",
+          email: "vendas@metalsilva.com.br",
+          phone: "(11) 98765-4321",
+          products: ["Chapa Aço Inox 304", "Perfil de Alumínio"],
+          totalOrders: 28,
+          totalSpent: "R$ 84.500",
+          status: "ativo"
+        },
+        {
+          id: 2,
+          name: "Rolamentos & Cia Indústria",
+          cnpj: "98.765.432/0001-10",
+          category: "Usinagem",
+          representative: "Fernanda Lima",
+          email: "contato@rolamentoscia.com",
+          phone: "(19) 3412-8800",
+          products: ["Rolamento 6204-ZZ", "Retentor de Borracha"],
+          totalOrders: 14,
+          totalSpent: "R$ 32.100",
+          status: "homologado"
+        },
+        {
+          id: 3,
+          name: "Química Industrial Nordeste",
+          cnpj: "45.123.890/0001-55",
+          category: "Química",
+          representative: "Ricardo Santos",
+          email: "atendimento@quinordeste.com.br",
+          phone: "(81) 99123-0044",
+          products: ["Resina Epóxi", "Solvente Degraxe"],
+          totalOrders: 5,
+          totalSpent: "R$ 18.200",
+          status: "analise"
+        },
+        {
+          id: 4,
+          name: "Embalagens Express S.A.",
+          cnpj: "33.444.555/0001-22",
+          category: "Embalagens",
+          representative: "Juliana Rocha",
+          email: "juliana@embexpress.com",
+          phone: "(11) 4004-9911",
+          products: ["Caixas Papelão G", "Plástico Bolha 100m"],
+          totalOrders: 42,
+          totalSpent: "R$ 45.900",
+          status: "ativo"
+        },
+        {
+          id: 5,
+          name: "Ferramentas & Moldes Brasil",
+          cnpj: "66.777.888/0001-33",
+          category: "Ferramentas",
+          representative: "Márcio Souza",
+          email: "marcio@fmbrasil.com.br",
+          phone: "(41) 3322-1100",
+          products: ["Brocas Widea M8", "Fresa Cilíndrica"],
+          totalOrders: 9,
+          totalSpent: "R$ 15.400",
+          status: "ativo"
+        },
+        {
+          id: 6,
+          name: "Importadora Global Insumos",
+          cnpj: "77.888.999/0001-44",
+          category: "Siderurgia",
+          representative: "Sérgio Mendes",
+          email: "smendes@globalinsumos.com",
+          phone: "(11) 97112-3344",
+          products: ["Tubos Galvanizados"],
+          totalOrders: 2,
+          totalSpent: "R$ 8.000",
+          status: "bloqueado"
+        }
+      ];
+
+      let currentStatusFilter = "todos";
+      let editingSupplierId = null;
+
+      function setStatusFilter(status, element) {
+        currentStatusFilter = status;
+        document.querySelectorAll(".filter-chip").forEach((chip) => chip.classList.remove("active"));
+        element.classList.add("active");
+        renderTable();
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toastPopup");
+        document.getElementById("toastMessage").innerText = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3000);
+      }
+
+      function openModal() {
+        editingSupplierId = null;
+        document.getElementById("supplierForm").reset();
+        document.getElementById("modalTitle").innerHTML = '<i class="fas fa-truck-field"></i> Cadastrar Novo Fornecedor';
+        document.getElementById("supplierModal").classList.add("active");
+      }
+
+      function closeModal() {
+        document.getElementById("supplierModal").classList.remove("active");
+        document.getElementById("supplierForm").reset();
+        editingSupplierId = null;
+      }
+
+      /* Abre o modal com os detalhes e o histórico do fornecedor */
+      function openDetailsModal(id) {
+        const supplier = suppliers.find(s => s.id === id);
+        if (!supplier) return;
+
+        const statusLabels = {
+          ativo: 'Ativo',
+          homologado: 'Homologado',
+          analise: 'Em Análise',
+          bloqueado: 'Bloqueado'
+        };
+
+        document.getElementById("detailsTitle").innerHTML = `<i class="fas fa-building"></i> ${supplier.name}`;
+        
+        document.getElementById("detailsContent").innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; background: var(--bg-soft); padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
+              <div><strong style="color:var(--text-secondary);">CNPJ:</strong> ${supplier.cnpj}</div>
+              <div><strong style="color:var(--text-secondary);">Categoria:</strong> ${supplier.category}</div>
+              <div><strong style="color:var(--text-secondary);">Representante:</strong> ${supplier.representative}</div>
+              <div><strong style="color:var(--text-secondary);">Telefone:</strong> ${supplier.phone}</div>
+              <div style="grid-column: span 2;"><strong style="color:var(--text-secondary);">E-mail:</strong> ${supplier.email}</div>
+              <div><strong style="color:var(--text-secondary);">Situação:</strong> <span class="status-pill ${supplier.status}">${statusLabels[supplier.status]}</span></div>
+              <div><strong style="color:var(--text-secondary);">Total Comprado:</strong> ${supplier.totalSpent} (${supplier.totalOrders} pedidos)</div>
+            </div>
+
+            <div>
+              <h4 style="margin-bottom: 8px; font-weight: 700; font-size:14px;"><i class="fas fa-boxes-stacked"></i> Produtos / Insumos Fornecidos</h4>
+              <div class="products-badge-list">
+                ${supplier.products.map(p => `<span class="product-tag">${p}</span>`).join('')}
+              </div>
+            </div>
+
+            <div>
+              <h4 style="margin-bottom: 8px; font-weight: 700; font-size:14px;"><i class="fas fa-clock-rotate-left"></i> Histórico Recente de Pedidos</h4>
+              <table style="min-width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Nº Pedido</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#PED-2026-089</td>
+                    <td>14/02/2026</td>
+                    <td>R$ 12.400,00</td>
+                    <td><span class="status-pill ativo">Entregue</span></td>
+                  </tr>
+                  <tr>
+                    <td>#PED-2026-041</td>
+                    <td>28/01/2026</td>
+                    <td>R$ 8.150,00</td>
+                    <td><span class="status-pill ativo">Entregue</span></td>
+                  </tr>
+                  <tr>
+                    <td>#PED-2025-912</td>
+                    <td>10/12/2025</td>
+                    <td>R$ 15.300,00</td>
+                    <td><span class="status-pill ativo">Entregue</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+
+        document.getElementById("detailsModal").classList.add("active");
+      }
+
+      function closeDetailsModal() {
+        document.getElementById("detailsModal").classList.remove("active");
+      }
+
+      function editSupplier(id) {
+        const item = suppliers.find(s => s.id === id);
+        if (!item) return;
+
+        editingSupplierId = id;
+        document.getElementById("modalTitle").innerHTML = '<i class="fas fa-pen"></i> Editar Fornecedor';
+        
+        document.getElementById("formName").value = item.name;
+        document.getElementById("formCnpj").value = item.cnpj;
+        document.getElementById("formCategory").value = item.category;
+        document.getElementById("formContact").value = item.representative;
+        document.getElementById("formPhone").value = item.phone;
+        document.getElementById("formEmail").value = item.email;
+        document.getElementById("formProducts").value = item.products.join(", ");
+        document.getElementById("formStatus").value = item.status;
+
+        document.getElementById("supplierModal").classList.add("active");
+      }
+
+      function handleSaveSupplier(e) {
+        e.preventDefault();
+        const productsArr = document.getElementById("formProducts").value
+          .split(",")
+          .map(p => p.trim())
+          .filter(p => p.length > 0);
+
+        if (editingSupplierId) {
+          const index = suppliers.findIndex(s => s.id === editingSupplierId);
+          if (index !== -1) {
+            suppliers[index] = {
+              ...suppliers[index],
+              name: document.getElementById("formName").value,
+              cnpj: document.getElementById("formCnpj").value,
+              category: document.getElementById("formCategory").value,
+              representative: document.getElementById("formContact").value,
+              email: document.getElementById("formEmail").value,
+              phone: document.getElementById("formPhone").value,
+              products: productsArr.length > 0 ? productsArr : ["Geral"],
+              status: document.getElementById("formStatus").value
+            };
+            showToast("Fornecedor atualizado com sucesso!");
+          }
+        } else {
+          const newSupplier = {
+            id: suppliers.length ? Math.max(...suppliers.map(s => s.id)) + 1 : 1,
+            name: document.getElementById("formName").value,
+            cnpj: document.getElementById("formCnpj").value,
+            category: document.getElementById("formCategory").value,
+            representative: document.getElementById("formContact").value,
+            email: document.getElementById("formEmail").value,
+            phone: document.getElementById("formPhone").value,
+            products: productsArr.length > 0 ? productsArr : ["Geral"],
+            totalOrders: 0,
+            totalSpent: "R$ 0",
+            status: document.getElementById("formStatus").value
+          };
+          suppliers.unshift(newSupplier);
+          showToast("Fornecedor cadastrado com sucesso!");
+        }
+
+        closeModal();
+        renderTable();
+      }
+
+      function deleteSupplier(id) {
+        suppliers = suppliers.filter(s => s.id !== id);
+        showToast("Fornecedor removido.");
+        renderTable();
+      }
+
+      function updateStats() {
+        document.getElementById("statTotal").innerText = suppliers.length;
+        const activeCount = suppliers.filter(s => s.status === 'ativo' || s.status === 'homologado').length;
+        document.getElementById("statAtivos").innerText = activeCount;
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById("supplierTableBody");
+        const searchVal = document.getElementById("searchInput").value.toLowerCase();
+        const catVal = document.getElementById("categoryFilter").value;
+
+        const filtered = suppliers.filter(s => {
+          if (currentStatusFilter !== "todos" && s.status !== currentStatusFilter) return false;
+          if (catVal !== "todas" && s.category !== catVal) return false;
+
+          return (
+            s.name.toLowerCase().includes(searchVal) ||
+            s.cnpj.toLowerCase().includes(searchVal) ||
+            s.representative.toLowerCase().includes(searchVal) ||
+            s.products.some(p => p.toLowerCase().includes(searchVal))
+          );
+        });
+
+        updateStats();
+        document.getElementById("resultsCount").innerText = `Mostrando ${filtered.length} de ${suppliers.length} fornecedores`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">
+                <i class="fas fa-folder-open" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+                Nenhum fornecedor encontrado com os termos pesquisados.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        const statusLabels = {
+          ativo: 'Ativo',
+          homologado: 'Homologado',
+          analise: 'Em Análise',
+          bloqueado: 'Bloqueado'
+        };
+
+        tbody.innerHTML = filtered.map(s => `
+          <tr>
+            <td>
+              <div class="supplier-info">
+                <span class="supplier-name">${s.name}</span>
+                <span class="supplier-cnpj"><i class="far fa-id-card"></i> ${s.cnpj}</span>
+              </div>
+            </td>
+            <td>
+              <div class="contact-box">
+                <span class="rep"><i class="far fa-user"></i> ${s.representative}</span>
+                <span class="details"><i class="far fa-envelope"></i> ${s.email}</span>
+                <span class="details"><i class="fas fa-phone"></i> ${s.phone}</span>
+              </div>
+            </td>
+            <td>
+              <div class="products-badge-list">
+                ${s.products.map(p => `<span class="product-tag">${p}</span>`).join('')}
+              </div>
+            </td>
+            <td>
+              <div style="display:flex; flex-direction:column; font-size:0.85em;">
+                <strong style="color:var(--text-main);">${s.totalSpent}</strong>
+                <span style="color:var(--text-muted);">${s.totalOrders} pedidos realizados</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-pill ${s.status}">
+                <i class="fas fa-circle" style="font-size:6px;"></i> ${statusLabels[s.status]}
+              </span>
+            </td>
+            <td>
+              <div class="action-btn-group">
+                <button class="icon-btn-sm" onclick="editSupplier(${s.id})" title="Editar"><i class="fas fa-pen"></i></button>
+                <button class="icon-btn-sm" onclick="openDetailsModal(${s.id})" title="Abrir Detalhes / Histórico"><i class="fas fa-folder-open"></i></button>
+                <button class="icon-btn-sm" onclick="deleteSupplier(${s.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        renderTable();
+      });
+    </script>
+
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
+  </body>
+</html>

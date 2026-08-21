@@ -110,12 +110,9 @@ body.dark {
 }
 
 .header-btn {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 8px;
-  border: 1px solid var(--header-border);
-  background: var(--bg-soft, #f5faff);
-  color: var(--header-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,6 +120,9 @@ body.dark {
   cursor: pointer;
   transition: 0.2s;
   position: relative;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
 }
 .header-btn:hover {
   border-color: var(--primary, #006bb3);

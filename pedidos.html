@@ -1,1600 +1,677 @@
 
-
 <html lang="pt-BR">
-
   <head>
-
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>StockLog · Pedidos de Produção</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
-
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
-
       rel="stylesheet"
-
     />
 
     <link
-
       rel="stylesheet"
-
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-
     />
 
     <link rel="stylesheet" href="components/css/sidebar.css" />
-
     <link rel="stylesheet" href="components/css/header.css" />
-
     <link rel="stylesheet" href="components/css/footer.css" />
-
     <link rel="stylesheet" href="components/css/modoescuro.css" />
 
-
-
     <style>
-
       :root {
-
         --bg-body: #f0f5fc;
-
         --bg-card: #ffffff;
-
         --bg-soft: #f5faff;
-
         --border: #c3d6e8;
-
         --border-hover: #9fbcd8;
 
-
-
         --primary: #006bb3;
-
         --primary-dark: #004d80;
-
         --primary-light: #dbeeff;
-
         --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
 
-
-
         --text-main: #0a1f33;
-
         --text-secondary: #3d5f7e;
-
         --text-muted: #7b97b2;
 
-
-
         --shadow-card: 0 2px 6px rgba(0, 40, 80, 0.04), 0 6px 16px rgba(0, 40, 80, 0.02);
-
         --shadow-hover: 0 4px 12px rgba(0, 40, 80, 0.08), 0 8px 24px rgba(0, 40, 80, 0.04);
 
-
-
         --green: #1a9b72;
-
         --green-bg: #e0f2ea;
-
         --amber: #c47a1f;
-
         --amber-bg: #faecd6;
-
         --red: #b93a3a;
-
         --red-bg: #fae2e0;
-
         --purple: #6f4c9e;
-
         --purple-bg: #ede6f5;
-
         --blue2: #2d7a9b;
-
         --blue2-bg: #dcedf5;
-
         --row-stripe: #eff2ff;
 
+        /* Tipografia fluida */
+        --fs-base: clamp(14px, 0.9vw + 12px, 16px);
+        --fs-kpi: clamp(28px, 2.4vw, 38px);
+        --fs-h3: clamp(15px, 1vw + 12px, 18px);
+        --fs-table: clamp(12.5px, 0.5vw + 11.5px, 14px);
+        --fs-label: clamp(12px, 0.4vw + 11px, 13px);
+
+        /* Espaçamentos fluidos */
+        --pad-content: 16px 20px;
+        --gap-grid: clamp(14px, 1vw, 22px);
+        --pad-card: clamp(18px, 1.4vw, 28px);
       }
-
-
 
       body.dark {
-
         --bg-body: #0d1927;
-
         --bg-card: #14293e;
-
         --bg-soft: #0f1f30;
-
         --border: #1d344b;
-
         --border-hover: #2a4866;
-
-
-
         --text-main: #e2edf8;
-
         --text-secondary: #a5bed6;
-
         --text-muted: #6f8daa;
-
-
-
         --primary-light: #1d3a55;
-
-
-
         --green-bg: #123a2a;
-
         --amber-bg: #3a2f15;
-
         --red-bg: #3a1f1f;
-
         --purple-bg: #2a1f3d;
-
         --blue2-bg: #12303f;
-
-
-
         --row-stripe: #182f45;
-
-
-
         --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
-
         --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.2);
-
       }
 
+      * { margin: 0; padding: 0; box-sizing: border-box; }
 
-
-      * {
-
-        margin: 0;
-
-        padding: 0;
-
-        box-sizing: border-box;
-
-      }
+      html { font-size: var(--fs-base); }
 
       body {
-
         font-family: "Inter", sans-serif;
-
         background: var(--bg-body);
-
         color: var(--text-main);
-
         display: flex;
-
         min-height: 100vh;
-
-        font-size: 13px;
-
+        font-size: 1rem;
+        line-height: 1.5;
         transition: background 0.3s, color 0.3s;
-
       }
 
-      a {
-
-        text-decoration: none;
-
-        color: inherit;
-
-      }
-
-      button {
-
-        cursor: pointer;
-
-        font-family: inherit;
-
-        border: none;
-
-        background: none;
-
-      }
-
-
+      a { text-decoration: none; color: inherit; }
+      button { cursor: pointer; font-family: inherit; border: none; background: none; }
 
       .main-wrapper {
-
         flex: 1;
-
         display: flex;
-
         flex-direction: column;
-
         min-height: 100vh;
-
         min-width: 0;
-
       }
-
-
 
       .content {
-
         flex: 1;
-
-        padding: 16px 20px 14px;
-
+        padding: var(--pad-content);
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
       }
 
-
-
+      /* KPI */
       .kpi-grid {
-
         display: grid;
-
-        grid-template-columns: repeat(4, 1fr);
-
-        gap: 16px;
-
-        margin-bottom: 20px;
-
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--gap-grid);
+        margin-bottom: clamp(18px, 1.6vw, 28px);
       }
 
       .kpi-card {
-
         background: var(--bg-card);
-
-        border-radius: 10px;
-
-        padding: 18px 20px;
-
+        border-radius: 12px;
+        padding: clamp(18px, 1.4vw, 26px) clamp(20px, 1.6vw, 28px);
         border: 1px solid var(--border);
-
         box-shadow: var(--shadow-card);
-
         transition: 0.3s;
-
         position: relative;
-
         overflow: hidden;
-
       }
-
       .kpi-card:hover {
-
         border-color: var(--border-hover);
-
         box-shadow: var(--shadow-hover);
-
-        transform: translateY(-1px);
-
+        transform: translateY(-2px);
       }
-
       .kpi-card::after {
-
         content: "";
-
-        position: absolute;
-
-        top: 0;
-
-        left: 0;
-
-        right: 0;
-
-        height: 2px;
-
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 3px;
         background: var(--primary-gradient);
-
         opacity: 0.6;
-
       }
 
       .kpi-label {
-
-        font-size: 11.5px;
-
+        font-size: var(--fs-label);
         font-weight: 600;
-
         color: var(--text-muted);
-
         text-transform: uppercase;
-
         letter-spacing: 0.4px;
-
-        margin-bottom: 6px;
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 6px;
-
+        margin-bottom: 8px;
+        display: flex; align-items: center; gap: 8px;
       }
-
-      .kpi-label i {
-
-        color: var(--primary);
-
-        font-size: 13px;
-
-      }
+      .kpi-label i { color: var(--primary); font-size: 1.1em; }
 
       .kpi-value {
-
-        font-size: 26px;
-
+        font-size: var(--fs-kpi);
         font-weight: 700;
-
         color: var(--text-main);
-
-        line-height: 1.1;
-
+        line-height: 1.15;
       }
-
       .kpi-sub {
-
-        font-size: 11px;
-
+        font-size: 0.85rem;
         color: var(--text-secondary);
-
-        margin-top: 6px;
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 6px;
-
+        margin-top: 8px;
+        display: flex; align-items: center; gap: 6px;
         flex-wrap: wrap;
-
       }
 
       .trend-up, .trend-warn, .trend-crit {
-
-        padding: 1px 8px;
-
+        padding: 2px 10px;
         border-radius: 12px;
-
         font-weight: 600;
-
-        font-size: 10.5px;
-
+        font-size: 0.78rem;
       }
+      .trend-up { background: var(--green-bg); color: var(--green); }
+      .trend-warn { background: var(--amber-bg); color: var(--amber); }
+      .trend-crit { background: var(--red-bg); color: var(--red); }
 
-      .trend-up {
-
-        background: var(--green-bg);
-
-        color: var(--green);
-
-      }
-
-      .trend-warn {
-
-        background: var(--amber-bg);
-
-        color: var(--amber);
-
-      }
-
-      .trend-crit {
-
-        background: var(--red-bg);
-
-        color: var(--red);
-
-      }
-
-
-
+      /* Card */
       .card {
-
         background: var(--bg-card);
-
         border: 1px solid var(--border);
-
-        border-radius: 10px;
-
-        padding: 20px 24px;
-
+        border-radius: 12px;
+        padding: var(--pad-card);
         box-shadow: var(--shadow-card);
-
+        width: 100%;
       }
-
-
 
       .card-header {
-
         display: flex;
-
         justify-content: space-between;
-
         align-items: center;
-
-        margin-bottom: 12px;
-
+        margin-bottom: 16px;
         flex-wrap: wrap;
-
-        gap: 8px;
-
+        gap: 10px;
       }
-
       .card-header h3 {
-
-        font-size: 13.5px;
-
+        font-size: var(--fs-h3);
         font-weight: 600;
-
         color: var(--text-main);
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 8px;
-
+        display: flex; align-items: center; gap: 10px;
       }
-
-      .card-header h3 i {
-
-        color: var(--primary);
-
-        font-size: 14px;
-
-      }
+      .card-header h3 i { color: var(--primary); font-size: 1.05em; }
 
       .badge-soft {
-
         background: var(--bg-soft);
-
-        padding: 2px 10px;
-
+        padding: 4px 12px;
         border-radius: 12px;
-
-        font-size: 11px;
-
+        font-size: 0.85rem;
         font-weight: 600;
-
         color: var(--text-secondary);
-
         border: 1px solid var(--border);
-
       }
 
-
-
+      /* Toolbar */
       .toolbar {
-
         display: flex;
-
         align-items: center;
-
-        gap: 8px;
-
+        gap: 10px;
         flex-wrap: wrap;
-
-        margin-bottom: 12px;
-
+        margin-bottom: 16px;
       }
-
       .search-box {
-
-        display: flex;
-
-        align-items: center;
-
+        display: flex; align-items: center;
         background: var(--bg-soft);
-
         border: 1px solid var(--border);
-
-        border-radius: 6px;
-
-        padding: 4px 10px;
-
-        gap: 8px;
-
+        border-radius: 8px;
+        padding: 6px 12px;
+        gap: 10px;
         transition: 0.25s;
-
         flex: 1;
-
-        min-width: 180px;
-
-        max-width: 280px;
-
+        min-width: 240px;
+        max-width: 400px;
       }
-
       .search-box:focus-within {
-
         border-color: var(--primary);
-
-        box-shadow: 0 0 0 2px rgba(0, 107, 179, 0.12);
-
+        box-shadow: 0 0 0 3px rgba(0, 107, 179, 0.12);
       }
-
-      .search-box i {
-
-        color: var(--text-muted);
-
-        font-size: 13px;
-
-      }
-
+      .search-box i { color: var(--text-muted); font-size: 0.95em; }
       .search-box input {
-
-        background: transparent;
-
-        border: none;
-
-        padding: 4px 0;
-
-        font-size: 12px;
-
-        color: var(--text-main);
-
-        outline: none;
-
-        width: 100%;
-
+        background: transparent; border: none; padding: 6px 0;
+        font-size: 0.95rem; color: var(--text-main);
+        outline: none; width: 100%;
       }
-
-      .search-box input::placeholder {
-
-        color: var(--text-muted);
-
-      }
+      .search-box input::placeholder { color: var(--text-muted); }
 
       select.filter-select {
-
         background: var(--bg-soft);
-
         border: 1px solid var(--border);
-
-        border-radius: 6px;
-
-        padding: 6px 10px;
-
-        font-size: 12px;
-
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.95rem;
         color: var(--text-secondary);
-
         font-weight: 500;
-
         outline: none;
-
         transition: 0.2s;
-
+        min-height: 38px;
       }
+      select.filter-select:hover { border-color: var(--border-hover); }
+      select.filter-select:focus { border-color: var(--primary); }
 
-      select.filter-select:hover {
-
-        border-color: var(--border-hover);
-
-      }
-
-      select.filter-select:focus {
-
-        border-color: var(--primary);
-
-      }
-
-      .spacer {
-
-        flex: 1;
-
-      }
+      .spacer { flex: 1; }
 
       .btn {
-
-        display: inline-flex;
-
-        align-items: center;
-
-        gap: 6px;
-
-        padding: 6px 12px;
-
-        border-radius: 6px;
-
-        font-size: 12px;
-
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 9px 16px;
+        border-radius: 8px;
+        font-size: 0.95rem;
         font-weight: 600;
-
         transition: 0.2s;
-
+        min-height: 38px;
       }
-
       .btn-primary {
-
         background: var(--primary-gradient);
-
         color: #fff;
-
         box-shadow: 0 2px 8px rgba(0, 107, 179, 0.2);
-
       }
-
-      .btn-primary:hover {
-
-        transform: translateY(-1px);
-
-        box-shadow: 0 4px 12px rgba(0, 107, 179, 0.3);
-
-      }
+      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 107, 179, 0.3); }
 
       .btn-ghost {
-
         background: var(--bg-soft);
-
         border: 1px solid var(--border);
-
         color: var(--text-secondary);
-
       }
+      .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
 
-      .btn-ghost:hover {
+      /* Tabela */
+      .table-wrapper { width: 100%; overflow-x: auto; margin-top: 6px; -webkit-overflow-scrolling: touch; }
 
-        border-color: var(--primary);
-
-        color: var(--primary);
-
-      }
-
-
-
-      .table-wrapper {
-
-        overflow-x: auto;
-
-        margin-top: 4px;
-
-      }
-
-      table {
-
-        width: 100%;
-
-        border-collapse: collapse;
-
-        font-size: 12px;
-
-      }
+      table { width: 100%; border-collapse: collapse; font-size: var(--fs-table); min-width: 760px; }
 
       th {
-
         text-align: left;
-
-        padding: 6px 6px 6px 0;
-
+        padding: 10px 12px;
         font-weight: 600;
-
         color: var(--text-muted);
-
         border-bottom: 2px solid var(--border);
-
-        font-size: 10px;
-
+        font-size: 0.72rem;
         letter-spacing: 0.4px;
-
         text-transform: uppercase;
-
         white-space: nowrap;
-
       }
-
       td {
-
-        padding: 8px 6px 8px 0;
-
+        padding: 12px;
         border-bottom: 1px solid var(--border);
-
         color: var(--text-main);
-
         vertical-align: middle;
-
       }
+      tr:last-child td { border-bottom: 0; }
+      tr.order-row td { background: var(--bg-card); }
+      tr.order-row:nth-child(even) td { background: var(--row-stripe); }
+      tr.order-row:hover td { background: var(--primary-light); }
 
-      tr:last-child td {
+      .prod-cell .prod-name { font-weight: 600; color: var(--text-main); }
+      .prod-cell .prod-qty { font-size: 0.85em; color: var(--text-muted); margin-top: 2px; }
 
-        border-bottom: 0;
-
-      }
-
-      tr.order-row td {
-
-        background: var(--bg-card);
-
-      }
-
-      tr.order-row:nth-child(even) td {
-
-        background: var(--row-stripe);
-
-      }
-
-      tr.order-row:hover td {
-
-        background: var(--primary-light);
-
-      }
-
-      .prod-cell .prod-name {
-
-        font-weight: 600;
-
-        color: var(--text-main);
-
-      }
-
-      .prod-cell .prod-qty {
-
-        font-size: 11px;
-
-        color: var(--text-muted);
-
-        margin-top: 1px;
-
-      }
-
-      .status-tag,
-
-      .priority-tag {
-
-        display: inline-flex;
-
-        align-items: center;
-
-        gap: 5px;
-
-        padding: 2px 8px;
-
+      .status-tag, .priority-tag {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 3px 10px;
         border-radius: 12px;
-
-        font-size: 11px;
-
+        font-size: 0.85em;
         font-weight: 600;
-
         white-space: nowrap;
-
       }
-
-      .status-tag .dot,
-
-      .priority-tag .dot {
-
-        width: 6px;
-
-        height: 6px;
-
+      .status-tag .dot, .priority-tag .dot {
+        width: 7px; height: 7px;
         border-radius: 50%;
-
         flex-shrink: 0;
-
       }
 
-      .row-actions {
-
-        display: flex;
-
-        gap: 4px;
-
-      }
-
+      .row-actions { display: flex; gap: 6px; }
       .icon-btn {
-
-        width: 26px;
-
-        height: 26px;
-
-        border-radius: 5px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
+        width: 32px; height: 32px;
+        border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
         color: var(--text-secondary);
-
         background: var(--bg-soft);
-
         border: 1px solid var(--border);
-
-        font-size: 11px;
-
+        font-size: 0.85em;
         transition: 0.2s;
-
       }
-
-      .icon-btn:hover {
-
-        border-color: var(--primary);
-
-        color: var(--primary);
-
-      }
-
-      .icon-btn.danger:hover {
-
-        border-color: var(--red);
-
-        color: var(--red);
-
-        background: var(--red-bg);
-
-      }
+      .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+      .icon-btn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
 
       .empty-state {
-
         text-align: center;
-
-        padding: 32px 16px;
-
+        padding: 40px 16px;
         color: var(--text-muted);
-
-        font-size: 12px;
-
+        font-size: 0.95rem;
       }
-
       .empty-state i {
-
-        font-size: 24px;
-
-        margin-bottom: 8px;
-
+        font-size: 28px;
+        margin-bottom: 10px;
         color: var(--border-hover);
-
         display: block;
-
       }
 
-
-
+      /* Modal */
       .modal-overlay {
-
-        position: fixed;
-
-        inset: 0;
-
+        position: fixed; inset: 0;
         background: rgba(6, 20, 36, 0.4);
-
         backdrop-filter: blur(2px);
-
         display: none;
-
         align-items: flex-start;
-
         justify-content: center;
-
         padding: 24px 16px;
-
         overflow-y: auto;
-
         z-index: 100;
-
       }
-
-      .modal-overlay.open {
-
-        display: flex;
-
-      }
-
+      .modal-overlay.open { display: flex; }
       .modal {
-
         background: var(--bg-card);
-
-        border-radius: 12px;
-
+        border-radius: 14px;
         border: 1px solid var(--border);
-
         width: 100%;
-
-        max-width: 480px;
-
+        max-width: 560px;
         box-shadow: var(--shadow-hover);
-
         animation: modalIn 0.2s ease;
-
       }
-
       @keyframes modalIn {
-
-        from {
-
-          opacity: 0;
-
-          transform: translateY(-6px) scale(0.98);
-
-        }
-
-        to {
-
-          opacity: 1;
-
-          transform: translateY(0) scale(1);
-
-        }
-
+        from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
       }
-
       .modal-header {
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        padding: 14px 18px;
-
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 22px;
         border-bottom: 1px solid var(--border);
-
       }
-
       .modal-header h3 {
-
-        font-size: 14px;
-
-        font-weight: 700;
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 8px;
-
+        font-size: 1.1rem; font-weight: 700;
+        display: flex; align-items: center; gap: 10px;
       }
-
-      .modal-header h3 i {
-
-        color: var(--primary);
-
-      }
-
+      .modal-header h3 i { color: var(--primary); }
       .modal-close {
-
-        width: 26px;
-
-        height: 26px;
-
+        width: 30px; height: 30px;
         border-radius: 6px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
+        display: flex; align-items: center; justify-content: center;
         color: var(--text-muted);
-
         background: var(--bg-soft);
-
         border: 1px solid var(--border);
-
-        font-size: 12px;
-
+        font-size: 0.9em;
         transition: 0.2s;
-
       }
-
-      .modal-close:hover {
-
-        color: var(--red);
-
-        border-color: var(--red);
-
-      }
+      .modal-close:hover { color: var(--red); border-color: var(--red); }
 
       .modal-body {
-
-        padding: 16px 18px;
-
+        padding: 20px 22px;
         display: grid;
-
         grid-template-columns: 1fr 1fr;
-
-        gap: 12px;
-
+        gap: 14px;
       }
-
-      .field {
-
-        display: flex;
-
-        flex-direction: column;
-
-        gap: 4px;
-
-      }
-
-      .field.full {
-
-        grid-column: 1 / -1;
-
-      }
-
-      .field label {
-
-        font-size: 11px;
-
-        font-weight: 600;
-
-        color: var(--text-secondary);
-
-      }
-
-      .field label .req {
-
-        color: var(--red);
-
-      }
-
-      .field input,
-
-      .field select,
-
-      .field textarea {
-
+      .field { display: flex; flex-direction: column; gap: 5px; }
+      .field.full { grid-column: 1 / -1; }
+      .field label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+      .field label .req { color: var(--red); }
+      .field input, .field select, .field textarea {
         background: var(--bg-soft);
-
         border: 1px solid var(--border);
-
-        border-radius: 6px;
-
-        padding: 6px 10px;
-
-        font-size: 12.5px;
-
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 0.95rem;
         color: var(--text-main);
-
         outline: none;
-
         font-family: inherit;
-
         transition: 0.2s;
-
+        min-height: 38px;
       }
-
-      .field input:focus,
-
-      .field select:focus,
-
-      .field textarea:focus {
-
+      .field textarea { resize: vertical; min-height: 64px; }
+      .field input:focus, .field select:focus, .field textarea:focus {
         border-color: var(--primary);
-
-        box-shadow: 0 0 0 2px rgba(0, 107, 179, 0.12);
-
+        box-shadow: 0 0 0 3px rgba(0, 107, 179, 0.12);
       }
-
-      .field textarea {
-
-        resize: vertical;
-
-        min-height: 52px;
-
+      .field input:disabled, .field select:disabled, .field textarea:disabled {
+        opacity: 0.75; cursor: not-allowed;
       }
-
-      .field input:disabled,
-
-      .field select:disabled,
-
-      .field textarea:disabled {
-
-        opacity: 0.75;
-
-        cursor: not-allowed;
-
-      }
-
-      .field .error-msg {
-
-        font-size: 10.5px;
-
-        color: var(--red);
-
-        display: none;
-
-      }
-
-      .field.has-error input,
-
-      .field.has-error select {
-
-        border-color: var(--red);
-
-      }
-
-      .field.has-error .error-msg {
-
-        display: block;
-
-      }
-
-      .view-code {
-
-        font-size: 11px;
-
-        color: var(--text-muted);
-
-        font-weight: 500;
-
-      }
+      .field .error-msg { font-size: 0.78rem; color: var(--red); display: none; }
+      .field.has-error input, .field.has-error select { border-color: var(--red); }
+      .field.has-error .error-msg { display: block; }
+      .view-code { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
 
       .modal-footer {
-
-        display: flex;
-
-        justify-content: flex-end;
-
-        gap: 8px;
-
-        padding: 12px 18px;
-
+        display: flex; justify-content: flex-end; gap: 10px;
+        padding: 14px 22px;
         border-top: 1px solid var(--border);
-
       }
 
-
-
+      /* Toast */
       .toast {
-
-        position: fixed;
-
-        bottom: 16px;
-
-        right: 16px;
-
+        position: fixed; bottom: 20px; right: 20px;
         background: var(--bg-card);
-
         border: 1px solid var(--border);
-
-        border-left: 3px solid var(--green);
-
+        border-left: 4px solid var(--green);
         box-shadow: var(--shadow-hover);
-
-        padding: 10px 14px;
-
-        border-radius: 6px;
-
-        font-size: 12px;
-
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 0.95rem;
         font-weight: 500;
-
         color: var(--text-main);
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 8px;
-
-        transform: translateY(16px);
-
+        display: flex; align-items: center; gap: 10px;
+        transform: translateY(20px);
         opacity: 0;
-
         pointer-events: none;
-
         transition: 0.25s;
-
         z-index: 200;
-
       }
+      .toast.show { transform: translateY(0); opacity: 1; }
+      .toast i { color: var(--green); }
+      .toast.danger { border-left-color: var(--red); }
+      .toast.danger i { color: var(--red); }
 
-      .toast.show {
-
-        transform: translateY(0);
-
-        opacity: 1;
-
-      }
-
-      .toast i {
-
-        color: var(--green);
-
-      }
-
-      .toast.danger {
-
-        border-left-color: var(--red);
-
-      }
-
-      .toast.danger i {
-
-        color: var(--red);
-
-      }
-
-
-
-      @media (max-width: 1200px) {
-
-        .kpi-grid {
-
-          grid-template-columns: repeat(2, 1fr);
-
-        }
-
-      }
-
-      @media (max-width: 900px) {
-
-        .modal-body {
-
-          grid-template-columns: 1fr;
-
-        }
-
-      }
-
+      /* Responsividade Adaptável */
       @media (max-width: 768px) {
-
-        .content {
-
-          padding: 12px 12px;
-
-        }
-
-        .kpi-grid {
-
-          grid-template-columns: 1fr;
-
-        }
-
-        .toolbar {
-
-          flex-direction: column;
-
-          align-items: stretch;
-
-        }
-
-        .search-box {
-
-          max-width: 100%;
-
-        }
-
+        .content { padding: 12px; }
+        .toolbar { flex-direction: column; align-items: stretch; }
+        .search-box, select.filter-select, .btn { width: 100%; max-width: 100%; }
+        .modal-body { grid-template-columns: 1fr; padding: 16px; }
+        .modal { max-width: 100%; }
+        .modal-overlay { padding: 12px; }
       }
 
+      @media (max-width: 480px) {
+        .kpi-card { padding: 16px 18px; }
+        .card { padding: 16px; }
+        .kpi-value { font-size: 26px; }
+        .row-actions { gap: 4px; }
+        .icon-btn { width: 28px; height: 28px; }
+      }
     </style>
-
   </head>
 
   <body>
-
     <div id="sidebar-root"></div>
 
-
-
     <div class="main-wrapper">
-
       <div id="header-root"></div>
 
-
-
       <main class="content" role="main">
-
         <section class="kpi-grid">
-
           <div class="kpi-card">
-
             <div class="kpi-label"><i class="fas fa-clipboard-list"></i>Pedidos ativos</div>
-
             <div class="kpi-value" id="kpiTotal">0</div>
-
             <div class="kpi-sub"><span class="trend-up"><i class="fas fa-arrow-up"></i> atualizado</span> total no sistema</div>
-
           </div>
 
           <div class="kpi-card">
-
             <div class="kpi-label"><i class="fas fa-industry"></i>Em produção</div>
-
             <div class="kpi-value" id="kpiProducao">0</div>
-
             <div class="kpi-sub">ordens em execução na linha</div>
-
           </div>
 
           <div class="kpi-card">
-
             <div class="kpi-label"><i class="fas fa-triangle-exclamation"></i>Atrasados</div>
-
             <div class="kpi-value" id="kpiAtrasados">0</div>
-
             <div class="kpi-sub"><span class="trend-crit"><i class="fas fa-clock"></i> prazo vencido</span></div>
-
           </div>
 
           <div class="kpi-card">
-
             <div class="kpi-label"><i class="fas fa-check-circle"></i>Concluídos</div>
-
             <div class="kpi-value" id="kpiConcluidos">0</div>
-
             <div class="kpi-sub">pedidos finalizados</div>
-
           </div>
-
         </section>
 
-
-
         <section class="card">
-
           <div class="card-header">
-
             <h3><i class="fas fa-clipboard"></i>Todos os pedidos</h3>
-
             <span class="badge-soft" id="countBadge">0 pedidos</span>
-
           </div>
 
-
-
           <div class="toolbar">
-
             <div class="search-box" role="search">
-
               <i class="fas fa-search"></i>
-
               <input type="search" id="searchInput" placeholder="Buscar por código, produto..." aria-label="Buscar pedidos" />
-
             </div>
 
             <select class="filter-select" id="statusFilter">
-
               <option value="">Todos os status</option>
-
               <option value="planejamento">Planejamento</option>
-
               <option value="aguardando">Aguard. Material</option>
-
               <option value="producao">Em Produção</option>
-
               <option value="qa">Controle QA</option>
-
               <option value="concluido">Concluído</option>
-
               <option value="cancelado">Cancelado</option>
-
             </select>
 
             <select class="filter-select" id="priorityFilter">
-
               <option value="">Todas as prioridades</option>
-
               <option value="baixa">Baixa</option>
-
               <option value="media">Média</option>
-
               <option value="alta">Alta</option>
-
               <option value="urgente">Urgente</option>
-
             </select>
 
             <div class="spacer"></div>
 
             <button class="btn btn-primary" onclick="openCreateModal()">
-
               <i class="fas fa-plus"></i>Novo pedido
-
             </button>
-
           </div>
 
-
-
           <div class="table-wrapper">
-
             <table>
-
               <thead>
-
                 <tr>
-
                   <th>Cód. OP</th>
-
                   <th>Produto</th>
-
                   <th>Prioridade</th>
-
                   <th>Responsável</th>
-
                   <th>Prazo</th>
-
                   <th>Status</th>
-
                   <th>Ações</th>
-
                 </tr>
-
               </thead>
-
               <tbody id="ordersTableBody"></tbody>
-
             </table>
-
           </div>
 
           <div class="empty-state" id="emptyState" style="display: none">
-
             <i class="fas fa-inbox"></i>
-
             Nenhum pedido encontrado com esses filtros.
-
           </div>
-
         </section>
-
       </main>
 
-
-
       <div id="footer-root"></div>
-
     </div>
 
-
-
     <div class="modal-overlay" id="modalOverlay">
-
       <div class="modal">
-
         <div class="modal-header">
-
           <h3 id="modalTitle"><i class="fas fa-clipboard-list"></i>Novo pedido</h3>
-
           <button class="modal-close" onclick="closeModal()" aria-label="Fechar"><i class="fas fa-times"></i></button>
-
         </div>
 
         <form id="orderForm">
-
           <div class="modal-body">
-
             <div class="field full" id="codeFieldWrap" style="display: none">
-
               <label>Código da OP</label>
-
               <span class="view-code" id="viewCode"></span>
-
             </div>
 
-
-
             <div class="field full">
-
               <label>Produto <span class="req">*</span></label>
-
               <input type="text" id="fProduto" placeholder="Ex: Flange Aço ABNT 1020 ø50mm" />
-
               <span class="error-msg">Informe o nome do produto.</span>
-
             </div>
 
-
-
             <div class="field">
-
               <label>Quantidade <span class="req">*</span></label>
-
               <input type="number" id="fQuantidade" min="1" placeholder="Ex: 500" />
-
               <span class="error-msg">Informe uma quantidade válida.</span>
-
             </div>
 
-
-
             <div class="field">
-
               <label>Prioridade <span class="req">*</span></label>
-
               <select id="fPrioridade">
-
                 <option value="baixa">Baixa</option>
-
                 <option value="media" selected>Média</option>
-
                 <option value="alta">Alta</option>
-
                 <option value="urgente">Urgente</option>
-
               </select>
-
             </div>
 
-
-
             <div class="field">
-
               <label>Responsável <span class="req">*</span></label>
-
               <input type="text" id="fResponsavel" placeholder="Ex: Ana Ferre" />
-
               <span class="error-msg">Informe o responsável.</span>
-
             </div>
-
-
 
             <div class="field">
-
               <label>Prazo <span class="req">*</span></label>
-
               <input type="date" id="fPrazo" />
-
               <span class="error-msg">Informe o prazo.</span>
-
             </div>
 
-
-
             <div class="field full">
-
               <label>Status</label>
-
               <select id="fStatus">
-
                 <option value="planejamento">Planejamento</option>
-
                 <option value="aguardando">Aguardando Material</option>
-
                 <option value="producao">Em Produção</option>
-
                 <option value="qa">Controle QA</option>
-
                 <option value="concluido">Concluído</option>
-
                 <option value="cancelado">Cancelado</option>
-
               </select>
-
             </div>
-
-
 
             <div class="field full">
-
               <label>Observações</label>
-
               <textarea id="fObs" placeholder="Detalhes adicionais sobre o pedido..."></textarea>
-
             </div>
-
           </div>
 
           <div class="modal-footer">
-
             <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-
             <button type="button" class="btn btn-ghost" id="editFromViewBtn" style="display: none" onclick="switchViewToEdit()">
-
               <i class="fas fa-pen"></i>Editar
-
             </button>
-
             <button type="submit" class="btn btn-primary" id="saveBtn"><i class="fas fa-check"></i>Salvar pedido</button>
-
           </div>
-
         </form>
-
       </div>
-
     </div>
-
-
 
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
 
@@ -2153,8 +1230,8 @@
     <script src="components/js/sidebar.js"></script>
 
     <script src="components/js/footer.js"></script>
-
-    <script src="components/js/modoescuro.js"></script>
+<script src="components/js/modoescuro.js"></script>
+    
 
   </body>
 
