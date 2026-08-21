@@ -193,16 +193,19 @@
     }
 
     .brand-icon {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
       background: rgba(255, 255, 255, 0.12);
-      padding: 12px;
+      padding: 0; /* Remove a margem interna para a imagem ocupar todo o quadrado */
+      transform: scale(1.15); /* Expande levemente a imagem dentro do quadrado */
       border-radius: 14px;
-      color: #60a5fa;
       animation: floatIcon 4s infinite ease-in-out alternate;
     }
 
     @keyframes floatIcon {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-6px); }
+      0% { transform: scale(1.15) translateY(0); }
+      100% { transform: scale(1.15) translateY(-6px); }
     }
 
     .panel-content h1 {
@@ -330,10 +333,10 @@
     }
 
     .login-link {
-    margin-top: 24px;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-muted);
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     .login-link a {
@@ -441,7 +444,7 @@
     
     <section class="left-panel">
       <div class="brand">
-        <i class="fa-solid fa-boxes-stacked brand-icon"></i>
+        <img src="IMG/semfundoo.png" alt="StockLog Logo" class="brand-icon">
         <span>StockLog</span>
       </div>
 
@@ -487,10 +490,6 @@
           <div class="spinner" id="btnSpinner"></div>
         </button>
 
-        <div class="login-link">
-            Não tem uma conta? <a href="cadastro.html">Criar</a>
-        </div>
-
       </form>
     </section>
 
@@ -511,7 +510,6 @@
       const btnSpinner = document.getElementById('btnSpinner');
       const cardContainer = document.getElementById('cardContainer');
 
-      // 1. GERENCIAMENTO DE TEMA (CLARO/ESCURO - TROCA DIRETA)
       const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
       setTheme(savedTheme);
 
@@ -532,13 +530,11 @@
         }
       }
 
-      // 2. GLOW DO MOUSE SEGUINDO O PONTEIRO
       document.addEventListener('mousemove', (e) => {
         mouseGlow.style.left = `${e.clientX}px`;
         mouseGlow.style.top = `${e.clientY}px`;
       });
 
-      // 3. MOSTRAR / OCULTAR SENHA
       togglePassword.addEventListener('click', () => {
         const isPassword = passwordInput.getAttribute('type') === 'password';
         passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
@@ -546,7 +542,6 @@
         togglePassword.classList.toggle('fa-eye-slash', isPassword);
       });
 
-      // 4. SUBMISSÃO COM ANIMAÇÕES DE BOTÃO E ERRO
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -556,7 +551,6 @@
 
         setTimeout(() => {
           if (userInput.value.trim() !== "" && passwordInput.value.length >= 4) {
-            // Sucesso
             btnSpinner.style.display = 'none';
             btnText.style.display = 'inline';
             btnText.textContent = 'Acessando...';
@@ -569,7 +563,6 @@
             }, 400);
 
           } else {
-            // Erro com Shake
             btnSpinner.style.display = 'none';
             btnText.style.display = 'inline';
             btnLogin.style.pointerEvents = 'auto';
