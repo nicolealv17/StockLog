@@ -578,6 +578,257 @@
       box-shadow: 0 4px 12px rgba(194, 59, 59, 0.3);
     }
 
+    /* Toggle Switch */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .toggle-group:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .toggle-label i {
+      font-size: 20px;
+      color: var(--primary);
+      width: 24px;
+      text-align: center;
+    }
+    
+    .toggle-text {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .toggle-text strong {
+      font-size: 14px;
+      color: var(--text-main);
+    }
+    
+    .toggle-text small {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      background: var(--border);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: 0.3s;
+      flex-shrink: 0;
+    }
+    
+    .toggle-switch.active {
+      background: var(--primary);
+    }
+    
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .toggle-switch.active::after {
+      left: 27px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 32px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    
+    .modal-close:hover {
+      background: var(--red);
+      color: white;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      color: var(--text-main);
+      font-size: 14px;
+      font-family: inherit;
+      transition: 0.2s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.1);
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
+      max-width: 400px;
+    }
+    
+    .toast.success {
+      border-left: 4px solid var(--green);
+    }
+    
+    .toast.error {
+      border-left: 4px solid var(--red);
+    }
+    
+    .toast i {
+      font-size: 24px;
+    }
+    
+    .toast.success i {
+      color: var(--green);
+    }
+    
+    .toast.error i {
+      color: var(--red);
+    }
+    
+    .toast-content {
+      flex: 1;
+    }
+    
+    .toast-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    
+    .toast-message {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
     /* Responsividade */
     @media (max-width: 1200px) {
       .profile-grid {
@@ -646,6 +897,12 @@
         justify-content: center;
         width: 100%;
       }
+      
+      .toast {
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+      }
     }
   </style>
 </head>
@@ -697,17 +954,17 @@
         <div>
           <!-- Stats -->
           <div class="profile-stats">
-            <div class="profile-stat">
+            <div class="profile-stat" onclick="showToast('success', 'Ordens criadas', 'Você criou 24 ordens de produção')">
               <i class="fas fa-clipboard-list"></i>
               <strong>24</strong>
               <span>Ordens criadas</span>
             </div>
-            <div class="profile-stat">
+            <div class="profile-stat" onclick="showToast('success', 'Eficiência da equipe', 'Sua equipe está com 98% de eficiência')">
               <i class="fas fa-chart-line"></i>
               <strong>98%</strong>
               <span>Eficiência da equipe</span>
             </div>
-            <div class="profile-stat">
+            <div class="profile-stat" onclick="showToast('success', 'Alertas resolvidos', 'Você resolveu 12 alertas')">
               <i class="fas fa-bell"></i>
               <strong>12</strong>
               <span>Alertas resolvidos</span>
@@ -727,7 +984,7 @@
                 </div>
                 <div class="detail-content">
                   <div class="label">E-mail</div>
-                  <div class="value">carlos.almeida@stocklog.com</div>
+                  <div class="value" id="profile-email">carlos.almeida@stocklog.com</div>
                 </div>
               </div>
               <div class="detail-item">
@@ -736,7 +993,7 @@
                 </div>
                 <div class="detail-content">
                   <div class="label">Cargo</div>
-                  <div class="value">Gerente de Produção</div>
+                  <div class="value" id="profile-role-text">Gerente de Produção</div>
                 </div>
               </div>
               <div class="detail-item">
@@ -796,18 +1053,18 @@
               Ações da conta
             </div>
             <div class="profile-actions">
-              <button class="btn btn-primary">
+              <button class="btn btn-primary" onclick="openEditModal()">
                 <i class="fas fa-edit"></i> Editar perfil
               </button>
-              <button class="btn btn-outline">
+              <button class="btn btn-outline" onclick="openPasswordModal()">
                 <i class="fas fa-key"></i> Alterar senha
               </button>
-              <button class="btn btn-outline">
-                <i class="fas fa-bell"></i> Preferências
+              <button class="btn btn-outline" onclick="openPreferencesModal()">
+                <i class="fas fa-sliders-h"></i> Preferências
               </button>
               <button
                 class="btn btn-danger"
-                onclick="window.location.href = 'login.html'"
+                onclick="confirmLogout()"
               >
                 <i class="fas fa-sign-out-alt"></i> Sair
               </button>
@@ -821,10 +1078,292 @@
     <div id="footer-root"></div>
   </div>
 
+  <!-- Modal de Edição de Perfil -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Perfil</h3>
+        <button class="modal-close" onclick="closeModal('editModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="editForm" onsubmit="saveProfile(event)">
+        <div class="form-group">
+          <label>Nome completo</label>
+          <input type="text" id="editName" value="Carlos Almeida" required />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="editEmail" value="carlos.almeida@stocklog.com" required />
+        </div>
+        <div class="form-group">
+          <label>Cargo</label>
+          <input type="text" id="editRole" value="Gerente de Produção" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('editModal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Alteração de Senha -->
+  <div class="modal-overlay" id="passwordModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Alterar Senha</h3>
+        <button class="modal-close" onclick="closeModal('passwordModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="passwordForm" onsubmit="changePassword(event)">
+        <div class="form-group">
+          <label>Senha atual</label>
+          <input type="password" id="currentPassword" required />
+        </div>
+        <div class="form-group">
+          <label>Nova senha</label>
+          <input type="password" id="newPassword" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label>Confirmar nova senha</label>
+          <input type="password" id="confirmPassword" required minlength="6" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('passwordModal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Alterar senha</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Preferências -->
+  <div class="modal-overlay" id="preferencesModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Preferências do Sistema</h3>
+        <button class="modal-close" onclick="closeModal('preferencesModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <i class="fas fa-bell"></i>
+          <div class="toggle-text">
+            <strong>Notificações</strong>
+            <small>Receber alertas do sistema</small>
+          </div>
+        </div>
+        <div class="toggle-switch active" id="toggleNotifications" onclick="toggleSwitch(this)"></div>
+      </div>
+      
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <i class="fas fa-envelope"></i>
+          <div class="toggle-text">
+            <strong>E-mails</strong>
+            <small>Receber atualizações por e-mail</small>
+          </div>
+        </div>
+        <div class="toggle-switch active" id="toggleEmails" onclick="toggleSwitch(this)"></div>
+      </div>
+      
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <i class="fas fa-moon"></i>
+          <div class="toggle-text">
+            <strong>Modo escuro</strong>
+            <small>Ativar tema escuro automaticamente</small>
+          </div>
+        </div>
+        <div class="toggle-switch" id="toggleDarkMode" onclick="toggleSwitch(this)"></div>
+      </div>
+      
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <i class="fas fa-chart-bar"></i>
+          <div class="toggle-text">
+            <strong>Relatórios</strong>
+            <small>Receber relatórios semanais</small>
+          </div>
+        </div>
+        <div class="toggle-switch active" id="toggleReports" onclick="toggleSwitch(this)"></div>
+      </div>
+      
+      <div class="toggle-group">
+        <div class="toggle-label">
+          <i class="fas fa-robot"></i>
+          <div class="toggle-text">
+            <strong>LogBot IA</strong>
+            <small>Sugestões automáticas da IA</small>
+          </div>
+        </div>
+        <div class="toggle-switch active" id="toggleAI" onclick="toggleSwitch(this)"></div>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal('preferencesModal')">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="savePreferences()">
+          <i class="fas fa-save"></i> Salvar preferências
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- SCRIPTS DOS COMPONENTES -->
   <script src="../components/js/header.js"></script>
   <script src="../components/js/sidebar.js"></script>
   <script src="../components/js/footer.js"></script>
   <script src="../components/js/modoescuro.js"></script>
+
+  <script>
+    // Funções dos modais
+    function openEditModal() {
+      document.getElementById('editModal').classList.add('active');
+    }
+    
+    function openPasswordModal() {
+      document.getElementById('passwordModal').classList.add('active');
+    }
+    
+    function openPreferencesModal() {
+      document.getElementById('preferencesModal').classList.add('active');
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+    
+    // Fechar modal ao clicar fora
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+    
+    // Toggle Switch
+    function toggleSwitch(element) {
+      element.classList.toggle('active');
+    }
+    
+    // Salvar preferências
+    function savePreferences() {
+      const preferences = {
+        notifications: document.getElementById('toggleNotifications').classList.contains('active'),
+        emails: document.getElementById('toggleEmails').classList.contains('active'),
+        darkMode: document.getElementById('toggleDarkMode').classList.contains('active'),
+        reports: document.getElementById('toggleReports').classList.contains('active'),
+        ai: document.getElementById('toggleAI').classList.contains('active')
+      };
+      
+      // Aplicar modo escuro se ativado
+      if (preferences.darkMode) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+      
+      closeModal('preferencesModal');
+      showToast('success', 'Preferências salvas', 'Suas preferências foram atualizadas com sucesso!');
+      
+      // Aqui você pode adicionar código para salvar no backend
+      console.log('Preferências:', preferences);
+    }
+    
+    // Salvar perfil
+    function saveProfile(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('editName').value;
+      const email = document.getElementById('editEmail').value;
+      const role = document.getElementById('editRole').value;
+      
+      // Atualizar informações na página
+      document.querySelector('.profile-name').textContent = name;
+      document.getElementById('profile-email').textContent = email;
+      document.getElementById('profile-role-text').textContent = role;
+      
+      closeModal('editModal');
+      showToast('success', 'Perfil atualizado', 'Suas informações foram salvas com sucesso!');
+    }
+    
+    // Alterar senha
+    function changePassword(event) {
+      event.preventDefault();
+      
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      // Validações
+      if (newPassword !== confirmPassword) {
+        showToast('error', 'Erro', 'As senhas não coincidem!');
+        return;
+      }
+      
+      if (newPassword.length < 6) {
+        showToast('error', 'Erro', 'A nova senha deve ter pelo menos 6 caracteres!');
+        return;
+      }
+      
+      // Simular verificação de senha atual (em produção, isso seria feito no backend)
+      if (currentPassword === '123456') { // Senha demo
+        closeModal('passwordModal');
+        document.getElementById('passwordForm').reset();
+        showToast('success', 'Senha alterada', 'Sua senha foi atualizada com sucesso!');
+      } else {
+        showToast('error', 'Erro', 'Senha atual incorreta!');
+      }
+    }
+    
+    // Confirmar logout
+    function confirmLogout() {
+      if (confirm('Tem certeza que deseja sair?')) {
+        showToast('success', 'Saindo...', 'Você será redirecionado para o login.');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1500);
+      }
+    }
+    
+    // Toast notification
+    function showToast(type, title, message) {
+      // Remover toast existente
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+      
+      // Criar novo toast
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+      
+      toast.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${message}</div>
+        </div>
+        <button class="modal-close" onclick="this.parentElement.remove()" style="width: 28px; height: 28px;">
+          <i class="fas fa-times" style="font-size: 12px;"></i>
+        </button>
+      `;
+      
+      document.body.appendChild(toast);
+      
+      // Auto remover após 3 segundos
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.remove();
+        }
+      }, 3000);
+    }
+  </script>
 </body>
 </html>
