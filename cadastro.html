@@ -154,7 +154,6 @@
       border-radius: 24px;
       box-shadow: var(--card-shadow);
       overflow: hidden;
-
       opacity: 0;
       transform: translateY(40px) scale(0.95);
       animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -255,9 +254,8 @@
       background-color: var(--card-bg);
     }
 
-    /* ESTILO DO CRIAR CONTA AUMENTADO */
     .form-header h2 {
-      font-size: 2rem; /* <-- Título ampliado */
+      font-size: 2rem;
       color: var(--text-dark);
       font-weight: 700;
     }
@@ -361,6 +359,13 @@
       gap: 16px;
     }
 
+    .mensagem-alerta {
+      font-size: 0.85rem;
+      text-align: center;
+      min-height: 20px;
+      font-weight: 500;
+    }
+
     .login-link {
       text-align: center;
       font-size: 0.85rem;
@@ -457,195 +462,123 @@
     }
   </style>
 </head>
-<body>
+  <body>
 
-  <div class="mouse-glow" id="mouseGlow"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
 
-  <div class="bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-  </div>
+    <div class="bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+    </div>
 
-  <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
-    <i class="fa-solid fa-moon"></i>
-  </button>
+    <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
+      <i class="fa-solid fa-moon"></i>
+    </button>
 
-  <main class="register-container" id="cardContainer">
-    
-    <section class="left-panel">
-      <div class="brand">
-        <i class="fa-solid fa-boxes-stacked brand-icon"></i>
-        <span>StockLog</span>
-      </div>
+    <main class="register-container" id="cardContainer">
 
-      <div class="panel-content">
-        <h1>Crie sua conta no sistema</h1>
-        <p>Cadastre-se para ter acesso ao módulo de gestão de ordens de produção, movimentações de estoque e relatórios operacionais.</p>
-
-        <ul class="features-list">
-          <li><i class="fa-solid fa-circle-check"></i> Perfil com controle de acesso por setor</li>
-          <li><i class="fa-solid fa-circle-check"></i> Rastreamento completo de pedidos</li>
-          <li><i class="fa-solid fa-circle-check"></i> Notificações de movimentação em tempo real</li>
-        </ul>
-      </div>
-
-      <div style="font-size: 0.75rem; color: #64748b;">
-        &copy; StockLog Industrial Systems
-      </div>
-    </section>
-
-    <section class="right-panel">
-      <div class="form-header">
-        <h2>Criar Conta</h2> 
-        <p>Preencha os dados abaixo para solicitar o seu acesso</p>
-      </div>
-
-      <form id="registerForm" autocomplete="off">
-        
-        <div class="form-grid">
-          
-          <div class="input-group full-width">
-            <input type="text" id="nameInput" placeholder="Nome completo" required>
-            <i class="fa-regular fa-user icon-left"></i>
-          </div>
-
-          <div class="input-group">
-            <input type="text" id="cpfInput" placeholder="CPF (000.000.000-00)" maxlength="14" required>
-            <i class="fa-regular fa-id-card icon-left"></i>
-          </div>
-
-          <div class="input-group">
-            <select id="sectorSelect" required>
-              <option value="" disabled selected>Selecione o Setor</option>
-              <option value="gestao">Gestão</option>
-              <option value="estoque">Estoque</option>
-            </select>
-            <i class="fa-solid fa-layer-group icon-left"></i>
-          </div>
-
-          <div class="input-group full-width">
-            <input type="email" id="emailInput" placeholder="E-mail" required>
-            <i class="fa-regular fa-envelope icon-left"></i>
-          </div>
-
-          <div class="input-group full-width">
-            <input type="password" id="passwordInput" placeholder="Senha" required minlength="6">
-            <i class="fa-solid fa-lock icon-left"></i>
-            <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
-          </div>
-
+      <section class="left-panel">
+        <div class="brand">
+          <i class="fa-solid fa-boxes-stacked brand-icon"></i>
+          <span>StockLog</span>
         </div>
 
-        <div class="form-footer">
-          <button type="submit" class="btn-register" id="btnRegister">
-            <span id="btnText">Concluir Cadastro</span>
-            <div class="spinner" id="btnSpinner"></div>
-          </button>
+        <div class="panel-content">
+          <h1>Crie sua conta no sistema</h1>
+          <p>Cadastre-se para ter acesso ao módulo de gestão de ordens de produção, movimentações de estoque e relatórios operacionais.</p>
 
-          <div class="login-link">
-            Já possui uma conta? <a href="login.html">Fazer Login</a>
-          </div>
+          <ul class="features-list">
+            <li><i class="fa-solid fa-circle-check"></i> Perfil com controle de acesso por setor</li>
+            <li><i class="fa-solid fa-circle-check"></i> Rastreamento completo de pedidos</li>
+            <li><i class="fa-solid fa-circle-check"></i> Notificações de movimentação em tempo real</li>
+          </ul>
         </div>
 
-      </form>
-    </section>
+        <div style="font-size: 0.75rem; color: #64748b;">
+          &copy; StockLog Industrial Systems
+        </div>
+      </section>
 
-  </main>
+      <section class="right-panel">
+        <div class="form-header">
+          <h2>Criar Conta</h2>
+          <p>Preencha os dados abaixo para solicitar o seu acesso</p>
+        </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const htmlElement = document.documentElement;
-      const themeToggle = document.getElementById('themeToggle');
-      const themeIcon = themeToggle.querySelector('i');
-      const mouseGlow = document.getElementById('mouseGlow');
-      const registerForm = document.getElementById('registerForm');
-      const cpfInput = document.getElementById('cpfInput');
-      const passwordInput = document.getElementById('passwordInput');
-      const togglePassword = document.getElementById('togglePassword');
-      const btnRegister = document.getElementById('btnRegister');
-      const btnText = document.getElementById('btnText');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const cardContainer = document.getElementById('cardContainer');
+        <form id="registerForm" autocomplete="off">
 
-      // 1. GERENCIAMENTO DE TEMA (CLARO/ESCURO)
-      const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
-      setTheme(savedTheme);
+          <div class="form-grid">
 
-      themeToggle.addEventListener('click', () => {
-        const currentTheme = htmlElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-      });
+            <div class="input-group full-width">
+              <input type="text" id="nomeInput" placeholder="Nome completo" required>
+              <i class="fa-regular fa-user icon-left"></i>
+            </div>
 
-      function setTheme(theme) {
-        htmlElement.setAttribute('data-theme', theme);
-        localStorage.setItem('stocklog-theme', theme);
+            <div class="input-group">
+              <input type="text" id="cpfInput" placeholder="CPF (000.000.000-00)" maxlength="14" inputmode="numeric" required>
+              <i class="fa-regular fa-id-card icon-left"></i>
+            </div>
 
-        if (theme === 'dark') {
-          themeIcon.className = 'fa-solid fa-sun';
-        } else {
-          themeIcon.className = 'fa-solid fa-moon';
-        }
-      }
+            <div class="input-group">
+              <select id="setorSelect" required>
+                <option value="" disabled selected>Selecione o Setor</option>
+                <option value="gestao">Gestão</option>
+                <option value="estoque">Estoque</option>
+              </select>
+              <i class="fa-solid fa-layer-group icon-left"></i>
+            </div>
 
-      // 2. GLOW DO MOUSE SEGUINDO O PONTEIRO
-      document.addEventListener('mousemove', (e) => {
-        mouseGlow.style.left = `${e.clientX}px`;
-        mouseGlow.style.top = `${e.clientY}px`;
-      });
+            <div class="input-group full-width">
+              <input type="email" id="emailInput" placeholder="E-mail" autocomplete="email" required>
+              <i class="fa-regular fa-envelope icon-left"></i>
+            </div>
 
-      // 3. MÁSCARA AUTOMÁTICA DE CPF
-      cpfInput.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 11) value = value.slice(0, 11);
+            <div class="input-group full-width">
+              <input type="password" id="passwordInput" placeholder="Senha" autocomplete="new-password" minlength="8" required>
+              <i class="fa-solid fa-lock icon-left"></i>
+              <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
+            </div>
 
-        value = value.replace(/(\d{3})(\d)/, '$1.$2');
-        value = value.replace(/(\d{3})(\d)/, '$1.$2');
-        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+          </div>
 
-        e.target.value = value;
-      });
+          <div class="form-footer">
+            <p id="mensagem" class="mensagem-alerta"></p>
 
-      // 4. MOSTRAR / OCULTAR SENHA
-      togglePassword.addEventListener('click', () => {
-        const isPassword = passwordInput.getAttribute('type') === 'password';
-        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-        togglePassword.classList.toggle('fa-eye', !isPassword);
-        togglePassword.classList.toggle('fa-eye-slash', isPassword);
-      });
+            <button type="submit" class="btn-register" id="btnRegister">
+              <span id="btnText">Concluir Cadastro</span>
+              <div class="spinner" id="btnSpinner"></div>
+            </button>
 
-      // 5. SUBMISSÃO COM ANIMAÇÕES
-      registerForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+            <div class="login-link">
+              Já possui uma conta? <a href="login.html">Fazer Login</a>
+            </div>
+          </div>
 
-        btnText.style.display = 'none';
-        btnSpinner.style.display = 'block';
-        btnRegister.style.pointerEvents = 'none';
+        </form>
+      </section>
 
-        setTimeout(() => {
-          if (registerForm.checkValidity()) {
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnText.textContent = 'Conta Criada com Sucesso!';
-            btnRegister.style.background = '#16a34a';
+    </main>
 
-            setTimeout(() => {
-              cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-              cardContainer.style.opacity = '0';
-              cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
-            }, 600);
+    <!-- 1. BIBLIOTECAS DO FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-          } else {
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnRegister.style.pointerEvents = 'auto';
+    <!-- 2. INICIALIZAÇÃO DO FIREBASE -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+        authDomain: "stocklog-ff7aa.firebaseapp.com",
+        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+        projectId: "stocklog-ff7aa",
+        storageBucket: "stocklog-ff7aa.firebasestorage.app",
+        messagingSenderId: "787537499919",
+        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+    </script>
 
-            cardContainer.classList.add('shake');
-            setTimeout(() => cardContainer.classList.remove('shake'), 400);
-          }
-        }, 1200);
-      });
-    });
-  </script>
-</body>
-</html>
+    <!-- 3. CADASTRO.JS -->
+    <script src="JS/cadastro.js"></script>
+  </body>
+  </html>
