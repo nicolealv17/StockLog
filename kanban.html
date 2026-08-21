@@ -149,28 +149,29 @@
       /* ============ KPI / STATS ============ */
       .stats-wrapper {
         display: flex;
-        align-items: center;
+        align-items: stretch;
         gap: 12px;
         margin-bottom: 24px;
         flex-wrap: wrap;
       }
       .kpi-grid {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        flex: 1 1 auto;
+        min-width: 0;
       }
       .kpi-card {
         background: var(--bg-card);
         border-radius: 12px;
-        padding: 10px 14px;
+        padding: 14px 18px;
         border: 1px solid var(--border);
         box-shadow: var(--shadow-card);
         transition: 0.3s;
         position: relative;
         overflow: hidden;
-        min-width: 90px;
-        width: auto;
-        flex: 0 0 auto;
+        min-width: 0;
+        width: 100%;
       }
       .kpi-card:hover {
         border-color: var(--border-hover);
@@ -191,19 +192,27 @@
       .kpi-card.c-green::after { background: var(--green); opacity: 0.8; }
       .kpi-card.c-purple::after { background: var(--purple); opacity: 0.8; }
       .kpi-label {
-        font-size: 9px;
+        font-size: 11px;
         font-weight: 600;
         color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 3px;
+        margin-bottom: 6px;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
         white-space: nowrap;
       }
-      .kpi-label i { color: var(--primary); font-size: 10px; }
-      .kpi-value { font-size: 20px; font-weight: 700; color: var(--text-main); line-height: 1.1; }
+      .kpi-label i { color: var(--primary); font-size: 12px; }
+      .kpi-value { font-size: 26px; font-weight: 700; color: var(--text-main); line-height: 1.1; }
+
+      /* Botão "Adicionar Tarefa" — ocupa o mesmo "andar" dos cards
+         e tem altura compatível para não ficar miúdo. */
+      .stats-wrapper > .btn.primary {
+        align-self: stretch;
+        padding: 0 22px;
+        font-size: 14px;
+      }
 
       /* ============ FILTER BAR ============ */
       .filter-bar {
@@ -411,7 +420,8 @@
       .card-title { font-size: 13.5px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; line-height: 1.35; }
       .card-desc {
         font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+        display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden; line-height: 1.45;
       }
       .card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
@@ -512,8 +522,8 @@
 
       /* ============ RESPONSIVIDADE ============ */
       @media (max-width: 1200px) {
-        .kpi-card { padding: 8px 12px; min-width: 70px; }
-        .kpi-value { font-size: 16px; }
+        .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .kpi-value { font-size: 22px; }
         .kanban-board { grid-template-columns: repeat(2, minmax(260px, 1fr)); }
       }
       @media (max-width: 900px) {
@@ -521,18 +531,16 @@
         .kanban-column { max-height: none; min-height: 0; }
         .kanban-column.collapsed .column-cards { display: none; }
         .stats-wrapper { flex-direction: column; align-items: stretch; }
-        .stats-wrapper .btn { align-self: flex-end; }
-        .kpi-grid { gap: 4px; }
-        .kpi-card { min-width: 60px; flex: 1 1 auto; }
+        .stats-wrapper > .btn.primary { width: 100%; padding: 12px 18px; }
+        .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       }
       @media (max-width: 768px) {
         .content { padding: 18px 16px; }
         .form-grid { grid-template-columns: 1fr; }
         .filter-select { min-width: 100%; }
         .search-box { min-width: 100%; }
-        .kpi-card { padding: 6px 10px; min-width: 50px; }
-        .kpi-value { font-size: 14px; }
-        .kpi-label { font-size: 8px; }
+        .kpi-grid { grid-template-columns: 1fr; }
+        .kpi-value { font-size: 22px; }
       }
     </style>
   </head>
@@ -595,7 +603,6 @@
               <span class="column-dot todo"></span>
               <span class="column-title">A Fazer</span>
               <span class="column-count" id="count-todo">0</span>
-              <button class="column-collapse-btn" onclick="toggleColumn(this)" aria-label="Recolher"><i class="fas fa-chevron-up"></i></button>
               <button class="column-add-btn" onclick="openTaskModal('todo')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
             </div>
             <div class="column-cards" id="col-todo" data-status="todo"></div>
@@ -606,7 +613,6 @@
               <span class="column-dot doing"></span>
               <span class="column-title">Em Andamento</span>
               <span class="column-count" id="count-doing">0</span>
-              <button class="column-collapse-btn" onclick="toggleColumn(this)" aria-label="Recolher"><i class="fas fa-chevron-up"></i></button>
               <button class="column-add-btn" onclick="openTaskModal('doing')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
             </div>
             <div class="column-cards" id="col-doing" data-status="doing"></div>
@@ -617,7 +623,6 @@
               <span class="column-dot review"></span>
               <span class="column-title">Em Revisão</span>
               <span class="column-count" id="count-review">0</span>
-              <button class="column-collapse-btn" onclick="toggleColumn(this)" aria-label="Recolher"><i class="fas fa-chevron-up"></i></button>
               <button class="column-add-btn" onclick="openTaskModal('review')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
             </div>
             <div class="column-cards" id="col-review" data-status="review"></div>
@@ -628,7 +633,6 @@
               <span class="column-dot done"></span>
               <span class="column-title">Concluído</span>
               <span class="column-count" id="count-done">0</span>
-              <button class="column-collapse-btn" onclick="toggleColumn(this)" aria-label="Recolher"><i class="fas fa-chevron-up"></i></button>
               <button class="column-add-btn" onclick="openTaskModal('done')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
             </div>
             <div class="column-cards" id="col-done" data-status="done"></div>
