@@ -424,172 +424,102 @@
     }
   </style>
 </head>
-<body>
+  <body>
 
-  <div class="mouse-glow" id="mouseGlow"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
 
-  <div class="bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-  </div>
+    <div class="bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+    </div>
 
-  <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
-    <i class="fa-solid fa-moon"></i>
-  </button>
+    <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
+      <i class="fa-solid fa-moon"></i>
+    </button>
 
-  <main class="login-container" id="cardContainer">
-    
-    <section class="left-panel">
-      <div class="brand">
-        <i class="fa-solid fa-boxes-stacked brand-icon"></i>
-        <span>StockLog</span>
-      </div>
+    <main class="login-container" id="cardContainer">
 
-      <div class="panel-content">
-        <h1>Bem-vindo ao sistema</h1>
-        <p>Acesse o painel central para gerenciar ordens de produção, acompanhar estoques e otimizar todo o fluxo produtivo em tempo real.</p>
-      </div>
-
-      <div style="font-size: 0.75rem; color: #64748b;">
-        &copy; StockLog Industrial Systems
-      </div>
-    </section>
-
-    <section class="right-panel">
-      <div class="form-header">
-        <h2>Login</h2>
-        <p>Entre com suas credenciais para continuar</p>
-      </div>
-
-      <form id="loginForm" autocomplete="off">
-        
-        <div class="input-group">
-          <input type="text" id="userInput" placeholder="E-mail" required>
-          <i class="fa-regular fa-envelope icon-left"></i>
+      <section class="left-panel">
+        <div class="brand">
+          <i class="fa-solid fa-boxes-stacked brand-icon"></i>
+          <span>StockLog</span>
         </div>
 
-        <div class="input-group">
-          <input type="password" id="passwordInput" placeholder="Senha" required>
-          <i class="fa-solid fa-lock icon-left"></i>
-          <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
+        <div class="panel-content">
+          <h1>Bem-vindo ao sistema</h1>
+          <p>Acesse o painel central para gerenciar ordens de produção, acompanhar estoques e otimizar todo o fluxo produtivo em tempo real.</p>
         </div>
 
-        <div class="form-options">
-          <label class="remember-me">
-            <input type="checkbox" id="rememberMe">
-            <span>Lembrar-me</span>
-          </label>
-          <a href="#" class="forgot-pass">Esqueceu a senha?</a>
+        <div style="font-size: 0.75rem; color: #64748b;">
+          &copy; StockLog Industrial Systems
+        </div>
+      </section>
+
+      <section class="right-panel">
+        <div class="form-header">
+          <h2>Login</h2>
+          <p>Entre com suas credenciais para continuar</p>
         </div>
 
-        <button type="submit" class="btn-login" id="btnLogin">
-          <span id="btnText">Entrar</span>
-          <div class="spinner" id="btnSpinner"></div>
-        </button>
+        <form id="loginForm" autocomplete="off">
 
-        <div class="login-link">
-            Não tem uma conta? <a href="cadastro.html">Criar</a>
-        </div>
+          <div class="input-group">
+            <input type="email" id="emailInput" placeholder="E-mail" autocomplete="email" required>
+            <i class="fa-regular fa-envelope icon-left"></i>
+          </div>
 
-      </form>
-    </section>
+          <div class="input-group">
+            <input type="password" id="passwordInput" placeholder="Senha" autocomplete="current-password" required>
+            <i class="fa-solid fa-lock icon-left"></i>
+            <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
+          </div>
 
-  </main>
+          <!-- Mensagem de erro/sucesso -->
+          <p id="mensagem" class="mensagem-alerta" style="margin-bottom: 16px; font-size: 0.85rem; text-align: center; min-height: 20px; font-weight: 500;"></p>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const htmlElement = document.documentElement;
-      const themeToggle = document.getElementById('themeToggle');
-      const themeIcon = themeToggle.querySelector('i');
-      const mouseGlow = document.getElementById('mouseGlow');
-      const loginForm = document.getElementById('loginForm');
-      const userInput = document.getElementById('userInput');
-      const passwordInput = document.getElementById('passwordInput');
-      const togglePassword = document.getElementById('togglePassword');
-      const btnLogin = document.getElementById('btnLogin');
-      const btnText = document.getElementById('btnText');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const cardContainer = document.getElementById('cardContainer');
+          <div class="form-options">
+            <label class="remember-me">
+              <input type="checkbox" id="rememberMe">
+              <span>Lembrar-me</span>
+            </label>
+            <a href="#" class="forgot-pass">Esqueceu a senha?</a>
+          </div>
 
-      // 1. GERENCIAMENTO DE TEMA (CLARO/ESCURO - TROCA DIRETA)
-      const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
-      setTheme(savedTheme);
+          <button type="submit" class="btn-login" id="btnLogin">
+            <span id="btnText">Entrar</span>
+            <div class="spinner" id="btnSpinner"></div>
+          </button>
 
-      themeToggle.addEventListener('click', () => {
-        const currentTheme = htmlElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-      });
+          <div class="login-link">
+              Não tem uma conta? <a href="cadastro.html">Criar</a>
+          </div>
 
-      function setTheme(theme) {
-        htmlElement.setAttribute('data-theme', theme);
-        localStorage.setItem('stocklog-theme', theme);
+        </form>
+      </section>
 
-        if (theme === 'dark') {
-          themeIcon.className = 'fa-solid fa-sun';
-        } else {
-          themeIcon.className = 'fa-solid fa-moon';
-        }
-      }
+    </main>
 
-      // 2. GLOW DO MOUSE SEGUINDO O PONTEIRO
-      document.addEventListener('mousemove', (e) => {
-        mouseGlow.style.left = `${e.clientX}px`;
-        mouseGlow.style.top = `${e.clientY}px`;
-      });
+    <!-- Firebase libs (ordem importa) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-      // 3. MOSTRAR / OCULTAR SENHA
-      togglePassword.addEventListener('click', () => {
-        const isPassword = passwordInput.getAttribute('type') === 'password';
-        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-        togglePassword.classList.toggle('fa-eye', !isPassword);
-        togglePassword.classList.toggle('fa-eye-slash', isPassword);
-      });
+    <!-- Inicialização -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+        authDomain: "stocklog-ff7aa.firebaseapp.com",
+        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+        projectId: "stocklog-ff7aa",
+        storageBucket: "stocklog-ff7aa.firebasestorage.app",
+        messagingSenderId: "787537499919",
+        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+      const auth = firebase.auth();
+    </script>
 
-      // 4. SUBMISSÃO COM ANIMAÇÕES DE BOTÃO E ERRO
-      loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        btnText.style.display = 'none';
-        btnSpinner.style.display = 'block';
-        btnLogin.style.pointerEvents = 'none';
-
-        setTimeout(() => {
-          if (userInput.value.trim() !== "" && passwordInput.value.length >= 4) {
-            // Sucesso
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnText.textContent = 'Acessando...';
-            btnLogin.style.background = '#16a34a';
-
-            setTimeout(() => {
-              cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-              cardContainer.style.opacity = '0';
-              cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
-            }, 400);
-
-          } else {
-            // Erro com Shake
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnLogin.style.pointerEvents = 'auto';
-
-            cardContainer.classList.add('shake');
-            setTimeout(() => cardContainer.classList.remove('shake'), 400);
-          }
-        }, 1200);
-      });
-    });
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
-      authDomain: "stocklog-ff7aa.firebaseapp.com",
-      databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
-      projectId: "stocklog-ff7aa",
-      storageBucket: "stocklog-ff7aa.firebasestorage.app",
-      messagingSenderId: "787537499919",
-      appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
-    };
-  </script>
-</body>
-</html>
+    <script src="JS/login.js"></script>
+  </body>
+  </html>

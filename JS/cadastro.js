@@ -1,16 +1,15 @@
   document.addEventListener('DOMContentLoaded', () => {
       // =====================================================================
-      // MAPEAMENTO DOS ELEMENTOS DA PÁGINA
+      // MAPEAMENTO DOS ELEMENTOS
       // =====================================================================
       const htmlElement = document.documentElement;
       const themeToggle = document.getElementById('themeToggle');
       const themeIcon = themeToggle ? themeToggle.querySelector('i') : null;
       const mouseGlow = document.getElementById('mouseGlow');
 
-      // Suporta múltiplos nomes de ID para flexibilidade
-      const registerForm = document.getElementById('registerForm') || document.getElementById('form');
-      const cpfInput = document.getElementById('cpfInput') || document.getElementById('cpf');
-      const passwordInput = document.getElementById('passwordInput') || document.getElementById('senha');
+      const registerForm = document.getElementById('registerForm');
+      const cpfInput = document.getElementById('cpfInput');
+      const passwordInput = document.getElementById('passwordInput');
 
       const togglePassword = document.getElementById('togglePassword');
       const btnRegister = document.getElementById('btnRegister');
@@ -23,7 +22,7 @@
       let enviando = false;
 
       // =====================================================================
-      // A) GERENCIAMENTO DE TEMA (CLARO / ESCURO)
+      // A) GERENCIAMENTO DE TEMA
       // =====================================================================
       const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
       setTheme(savedTheme);
@@ -46,17 +45,16 @@
       }
 
       // =====================================================================
-      // B) EFEITO GLOW SEGUINDO O MOUSE (otimizado com transform)
+      // B) EFEITO GLOW NO MOUSE
       // =====================================================================
       if (mouseGlow) {
           document.addEventListener('mousemove', (e) => {
-              // Usa transform (GPU) em vez de left/top (reflow)
               mouseGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
           });
       }
 
       // =====================================================================
-      // C) MÁSCARA AUTOMÁTICA DE CPF
+      // C) MÁSCARA DE CPF
       // =====================================================================
       if (cpfInput) {
           cpfInput.addEventListener('input', (e) => {
@@ -72,7 +70,7 @@
       }
 
       // =====================================================================
-      // D) EXIBIR / OCULTAR SENHA
+      // D) MOSTRAR / OCULTAR SENHA
       // =====================================================================
       if (togglePassword && passwordInput) {
           togglePassword.addEventListener('click', () => {
@@ -90,11 +88,9 @@
           registerForm.addEventListener('submit', (e) => {
               e.preventDefault();
 
-              // Trava contra duplo envio
               if (enviando) return;
               enviando = true;
 
-              // Reseta mensagem anterior
               if (mensagem) {
                   mensagem.innerText = '';
                   mensagem.style.color = 'inherit';
@@ -104,16 +100,16 @@
               const cpfFormatado = cpfInput ? cpfInput.value.trim() : '';
               const cpfLimpo = cpfFormatado.replace(/\D/g, '');
 
-              const emailInput = document.getElementById('emailInput');
-              const emailFormatado = emailInput ? emailInput.value.trim().toLowerCase() : '';
-
-              const senha = passwordInput ? passwordInput.value : '';
-
               const nomeInput = document.getElementById('nomeInput');
               const nome = nomeInput ? nomeInput.value.trim() : '';
 
+              const emailInput = document.getElementById('emailInput');
+              const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+
               const setorInput = document.getElementById('setorSelect');
-              const setor = setorInput ? setorInput.value.trim() : '';
+              const setor = setorInput ? setorInput.value : '';
+
+              const senha = passwordInput ? passwordInput.value : '';
 
               // --- VALIDAÇÕES ---
               if (!validarCPF(cpfLimpo)) {
@@ -123,8 +119,20 @@
               }
 
               const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-              if (!regexEmail.test(emailFormatado)) {
+              if (!regexEmail.test(email)) {
                   exibirErro("Erro: Digite um e-mail válido!");
+                  enviando = false;
+                  return;
+              }
+
+              if (!nome) {
+                  exibirErro("Erro: Digite seu nome completo!");
+                  enviando = false;
+                  return;
+              }
+
+              if (!setor) {
+                  exibirErro("Erro: Selecione um setor!");
                   enviando = false;
                   return;
               }
@@ -139,26 +147,29 @@
               // Ativa estado de carregamento
               ativarCarregamento(true);
 
-              // Objeto a ser salvo
-              const funcionario = {
-                  nome: nome,
-                  cpf: cpfFormatado,
-                  setor: setor,
-                  email: emailFormatado,
-                  senha: senha,
-                  dataCadastro: new Date().toISOString()
-              };
+              // ============================================================
+              // CADASTRO COM FIREBASE AUTHENTICATION
+              // ============================================================
+              auth.createUserWithEmailAndPassword(email, senha)
+                  .then((userCredential) => {
+                      // Usuário criado no Firebase Auth (senha hasheada lá dentro)
+                      const user = userCredential.user;
 
-              // Verifica se já existe cadastro com esse CPF antes de salvar
-              db.ref('funcionarios/' + cpfLimpo).once('value')
-                  .then(snap => {
-                      if (snap.exists()) {
-                          throw new Error('CPF_DUPLICADO');
-                      }
-                      return db.ref('funcionarios/' + cpfLimpo).set(funcionario);
+                      // Salva os dados NÃO sensíveis no Realtime Database
+                      const dadosUsuario = {
+                          uid: user.uid,
+                          nome: nome,
+                          cpf: cpfFormatado,
+                          setor: setor,
+                          email: email,
+                          dataCadastro: new Date().toISOString()
+                          // senha NÃO é salva aqui
+                      };
+
+                      return db.ref('funcionarios/' + user.uid).set(dadosUsuario);
                   })
                   .then(() => {
-                      // Sucesso no salvamento
+                      // Sucesso total
                       if (btnSpinner) btnSpinner.style.display = 'none';
                       if (btnText) {
                           btnText.style.display = 'inline';
@@ -190,16 +201,28 @@
                       }, 800);
                   })
                   .catch((erro) => {
-                      console.error("Erro ao salvar:", erro);
+                      console.error("Erro no cadastro:", erro);
+                      enviando = false;
 
-                      if (erro.message === 'CPF_DUPLICADO') {
-                          exibirErro("Este CPF já possui cadastro!");
-                      } else {
-                          exibirErro("Erro ao realizar o cadastro. Tente novamente!");
+                      // Traduz erros comuns do Firebase Auth
+                      let msgErro = "Erro ao realizar o cadastro. Tente novamente!";
+
+                      switch (erro.code) {
+                          case 'auth/email-already-in-use':
+                              msgErro = "Este e-mail já está cadastrado!";
+                              break;
+                          case 'auth/invalid-email':
+                              msgErro = "E-mail inválido!";
+                              break;
+                          case 'auth/weak-password':
+                              msgErro = "Senha muito fraca! Use letras, números e símbolos.";
+                              break;
+                          case 'auth/network-request-failed':
+                              msgErro = "Erro de conexão. Verifique sua internet.";
+                              break;
                       }
 
-                      ativarCarregamento(false);
-                      enviando = false;
+                      exibirErro(msgErro);
                   });
           });
       }
@@ -208,19 +231,15 @@
       // FUNÇÕES AUXILIARES
       // =====================================================================
 
-      // Validação real de CPF (com dígitos verificadores)
       function validarCPF(cpf) {
           cpf = cpf.replace(/\D/g, '');
 
           if (cpf.length !== 11) return false;
-
-          // Rejeita CPFs com todos os dígitos iguais (000.000.000-00, 111.111.111-11, etc.)
           if (/^(\d)\1+$/.test(cpf)) return false;
 
           let soma = 0;
           let resto;
 
-          // Valida primeiro dígito verificador
           for (let i = 1; i <= 9; i++) {
               soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
           }
@@ -228,7 +247,6 @@
           if (resto === 10 || resto === 11) resto = 0;
           if (resto !== parseInt(cpf.substring(9, 10))) return false;
 
-          // Valida segundo dígito verificador
           soma = 0;
           for (let i = 1; i <= 10; i++) {
               soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);

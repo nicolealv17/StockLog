@@ -559,26 +559,25 @@
 
     </main>
 
-    <!-- 1. BIBLIOTECAS DO FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    <!-- 2. INICIALIZAÇÃO DO FIREBASE -->
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
-        authDomain: "stocklog-ff7aa.firebaseapp.com",
-        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
-        projectId: "stocklog-ff7aa",
-        storageBucket: "stocklog-ff7aa.firebasestorage.app",
-        messagingSenderId: "787537499919",
-        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-    </script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+      authDomain: "stocklog-ff7aa.firebaseapp.com",
+      databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+      projectId: "stocklog-ff7aa",
+      storageBucket: "stocklog-ff7aa.firebasestorage.app",
+      messagingSenderId: "787537499919",
+      appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
+  </script>
 
-    <!-- 3. CADASTRO.JS -->
-    <script src="JS/cadastro.js"></script>
+  <script src="JS/cadastro.js"></script>
   </body>
   </html>
