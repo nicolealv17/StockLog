@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -53,7 +53,7 @@
         --blue-bar: #0284c7;
 
         --row-stripe: #f5f9fd;
-        --shadow: 0 2px 8px rgba(12, 30, 46, 0.04);
+        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
       }
 
       body.dark {
@@ -89,7 +89,7 @@
         --blue-bar: #38bdf8;
 
         --row-stripe: #152638;
-        --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
 
       * {
@@ -105,7 +105,8 @@
         display: flex;
         min-height: 100vh;
         transition: background-color 0.2s, color 0.2s;
-        font-size: 13px;
+        font-size: 14.5px;
+        line-height: 1.5;
       }
 
       .main-wrapper {
@@ -117,29 +118,33 @@
       }
 
       .dashboard-container {
-        max-width: 1550px;
-        margin: 0 auto;
-        padding: 16px 24px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 16px 20px;
         display: flex;
         flex-direction: column;
         gap: 16px;
-        width: 100%;
+        flex:1;
       }
 
       .top-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
       }
 
       .header-title-group {
         display: flex;
         align-items: center;
         gap: 12px;
+        flex-wrap: wrap;
       }
 
       .header-title-group h1 {
-        font-size: 19px;
+        font-size: 22px;
         font-weight: 700;
       }
 
@@ -153,15 +158,15 @@
         gap: 6px;
         background-color: var(--green-bg);
         color: var(--green);
-        padding: 3px 10px;
+        padding: 4px 12px;
         border-radius: 20px;
-        font-size: 11.5px;
+        font-size: 12.5px;
         font-weight: 600;
       }
 
       .status-pill-live .dot {
-        width: 6px;
-        height: 6px;
+        width: 7px;
+        height: 7px;
         background-color: var(--green);
         border-radius: 50%;
       }
@@ -169,12 +174,12 @@
       .header-actions {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
       }
 
       .icon-btn {
-        width: 34px;
-        height: 34px;
+        width: 38px;
+        height: 38px;
         border-radius: 8px;
         border: 1px solid var(--border);
         background: var(--bg-card);
@@ -182,7 +187,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 13px;
+        font-size: 14px;
         cursor: pointer;
         position: relative;
         transition: 0.15s;
@@ -196,94 +201,97 @@
 
       .icon-btn .badge {
         position: absolute;
-        top: -3px;
-        right: -3px;
+        top: -4px;
+        right: -4px;
         background-color: var(--red);
         color: #fff;
-        font-size: 9.5px;
+        font-size: 10px;
         font-weight: 700;
-        padding: 1px 4px;
-        border-radius: 8px;
+        padding: 2px 5px;
+        border-radius: 10px;
         border: 1.5px solid var(--bg-card);
       }
 
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 14px 18px;
+        border-radius: 12px;
+        padding: 18px 22px;
         box-shadow: var(--shadow);
+        width: 100%;
       }
 
       .card-header-title {
-        font-size: 13.5px;
+        font-size: 15px;
         font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       .card-header-title .title-text {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
       }
 
       .card-header-title i {
         color: var(--text-muted);
-        font-size: 13px;
+        font-size: 15px;
       }
 
       .count-badge {
         background: var(--bg-soft);
         border: 1px solid var(--border);
         color: var(--text-secondary);
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 600;
-        padding: 2px 8px;
+        padding: 3px 10px;
         border-radius: 12px;
       }
 
       .kpi-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
       }
 
       .kpi-card {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 12px 16px;
+        padding: 16px 20px;
       }
 
       .kpi-label {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         color: var(--text-muted);
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
       }
 
       .kpi-value-group {
-        margin: 6px 0;
+        margin: 8px 0;
         display: flex;
         align-items: baseline;
-        gap: 6px;
+        gap: 8px;
       }
 
       .kpi-value {
-        font-size: 26px;
+        font-size: 30px;
         font-weight: 800;
         line-height: 1;
       }
 
       .kpi-unit {
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--text-muted);
       }
@@ -291,19 +299,20 @@
       .kpi-footer {
         display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 11.5px;
+        gap: 8px;
+        font-size: 12.5px;
         color: var(--text-secondary);
+        flex-wrap: wrap;
       }
 
       .badge-tag {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
-        padding: 2px 6px;
+        gap: 5px;
+        padding: 3px 8px;
         border-radius: 12px;
         font-weight: 700;
-        font-size: 10.5px;
+        font-size: 11.5px;
       }
 
       .badge-tag.green { background: var(--green-bg); color: var(--green); }
@@ -312,11 +321,11 @@
 
       .progress-bar-bg {
         width: 100%;
-        height: 6px;
+        height: 8px;
         background: var(--bg-soft);
         border-radius: 6px;
         overflow: hidden;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
       }
 
       .progress-bar-fill {
@@ -326,46 +335,48 @@
 
       .middle-grid {
         display: grid;
-        grid-template-columns: 1.8fr 1fr;
+        grid-template-columns: 2fr 1fr;
         gap: 16px;
       }
 
       .machines-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 14px;
       }
 
       .machine-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px 12px;
+        border-radius: 10px;
+        padding: 14px 16px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
       }
 
       .machine-top {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        gap: 8px;
       }
 
       .machine-name {
-        font-size: 12.5px;
+        font-size: 14px;
         font-weight: 700;
       }
 
       .machine-operator {
-        font-size: 11px;
+        font-size: 12px;
         color: var(--text-muted);
+        margin-top: 2px;
       }
 
       .status-pill {
-        font-size: 10.5px;
+        font-size: 11.5px;
         font-weight: 700;
-        padding: 2px 7px;
+        padding: 3px 9px;
         border-radius: 12px;
         white-space: nowrap;
       }
@@ -378,7 +389,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 11.5px;
+        font-size: 12.5px;
       }
 
       .op-code { font-weight: 600; color: var(--text-secondary); }
@@ -387,56 +398,60 @@
       .problems-list {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 12px;
       }
 
       .problem-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 10px;
+        padding: 12px 16px;
         border-radius: 8px;
         background: var(--bg-soft);
         border: 1px solid var(--border);
+        gap: 10px;
       }
 
       .problem-info .problem-title {
-        font-size: 12px;
+        font-size: 13.5px;
         font-weight: 700;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
       }
 
       .problem-info .problem-meta {
-        font-size: 10.5px;
+        font-size: 12px;
         color: var(--text-muted);
         display: flex;
-        gap: 10px;
+        gap: 12px;
       }
 
       .table-wrapper {
         width: 100%;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
-        font-size: 12.5px;
+        font-size: 14px;
+        min-width: 750px;
       }
 
       th {
         text-align: left;
-        padding: 8px 10px;
-        font-size: 10.5px;
+        padding: 12px 16px;
+        font-size: 11.5px;
         font-weight: 700;
         text-transform: uppercase;
         color: var(--text-muted);
-        border-bottom: 1.5px solid var(--border);
+        border-bottom: 2px solid var(--border);
+        white-space: nowrap;
       }
 
       td {
-        padding: 8px 10px;
+        padding: 12px 16px;
         vertical-align: middle;
         border-bottom: 1px solid var(--border);
       }
@@ -452,8 +467,9 @@
       .table-progress-cell {
         display: flex;
         align-items: center;
-        gap: 8px;
-        width: 160px;
+        gap: 12px;
+        width: 100%;
+        max-width: 220px;
       }
 
       .table-progress-cell .progress-bar-bg {
@@ -461,19 +477,54 @@
       }
 
       .progress-perc {
-        font-size: 11.5px;
+        font-size: 12px;
         font-weight: 700;
-        min-width: 28px;
+        min-width: 32px;
       }
 
-      @media (max-width: 1100px) {
-        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-        .middle-grid { grid-template-columns: 1fr; }
+      /* Responsividade Adaptável */
+      @media (max-width: 1280px) {
+        .middle-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
-      @media (max-width: 640px) {
-        .dashboard-container { padding: 12px; }
-        .machines-grid { grid-template-columns: 1fr; }
+      @media (max-width: 768px) {
+        .dashboard-container {
+          padding: 12px;
+          gap: 12px;
+        }
+
+        .card {
+          padding: 14px 16px;
+        }
+
+        .machines-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          font-size: 13.5px;
+        }
+
+        .header-title-group h1 {
+          font-size: 19px;
+        }
+
+        .kpi-value {
+          font-size: 24px;
+        }
+
+        .problem-item {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .badge-tag {
+          align-self: flex-start;
+        }
       }
     </style>
   </head>
@@ -484,62 +535,7 @@
       <div id="header-root"></div>
 
       <div class="dashboard-container">
-        <header class="top-header">
-          <div class="header-title-group">
-            <h1>Controle de <span>Produção</span></h1>
-            <span class="status-pill-live"><span class="dot"></span> Ao vivo · Turno 2</span>
-          </div>
-          <div class="header-actions">
-            <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">
-              <i class="fas fa-moon" id="themeIcon"></i>
-            </button>
-            <button class="icon-btn" onclick="atualizar()" title="Atualizar">
-              <i class="fas fa-arrows-rotate"></i>
-            </button>
-            <button class="icon-btn" title="Notificações">
-              <i class="fas fa-bell"></i><span class="badge">2</span>
-            </button>
-          </div>
-        </header>
 
-        <section class="kpi-grid">
-          <div class="card kpi-card">
-            <div class="kpi-label"><i class="fas fa-box-archive"></i> Produzido Hoje</div>
-            <div class="kpi-value-group">
-              <span class="kpi-value">3.240</span>
-              <span class="kpi-unit">/ 4.000 unid.</span>
-            </div>
-            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 81%; background: var(--green-bar);"></div></div>
-            <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-check"></i> 81%</span> da meta</div>
-          </div>
-
-          <div class="card kpi-card">
-            <div class="kpi-label"><i class="fas fa-chart-line"></i> Eficiência (OEE)</div>
-            <div class="kpi-value-group"><span class="kpi-value">87%</span></div>
-            <div class="kpi-footer"><span class="badge-tag green"><i class="fas fa-arrow-up"></i> +3pp</span> vs média</div>
-          </div>
-
-          <div class="card kpi-card">
-            <div class="kpi-label"><i class="fas fa-clock"></i> Tempo Médio/Lote</div>
-            <div class="kpi-value-group">
-              <span class="kpi-value">42</span>
-              <span class="kpi-unit">min</span>
-            </div>
-            <div class="kpi-footer"><span class="badge-tag amber"><i class="fas fa-plus"></i> +4min</span> vs padrão</div>
-          </div>
-
-          <div class="card kpi-card">
-            <div class="kpi-label"><i class="fas fa-gears"></i> Máquinas Operando</div>
-            <div class="kpi-value-group">
-              <span class="kpi-value">5</span>
-              <span class="kpi-unit">/ 7</span>
-            </div>
-            <div class="kpi-footer">
-              <span class="badge-tag red">1 parada</span>
-              <span class="badge-tag amber">1 manut.</span>
-            </div>
-          </div>
-        </section>
 
         <section class="middle-grid">
           <div class="card">

@@ -58,7 +58,18 @@
         --teal-bar: #14b8a6;
 
         --row-stripe: #f5f9fd;
-        --shadow: 0 2px 8px rgba(12, 30, 46, 0.04);
+        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
+
+        /* Tipografia fluida */
+        --fs-base: clamp(14px, 0.9vw + 12px, 16px);
+        --fs-h1: clamp(19px, 1.2vw + 14px, 24px);
+        --fs-title: clamp(15px, 1vw + 12px, 18px);
+        --fs-table: clamp(12.5px, 0.5vw + 11.5px, 14px);
+
+        /* Espaçamentos fluidos */
+        --pad-content: 16px 20px;
+        --gap-grid: clamp(14px, 1vw, 22px);
+        --pad-card: clamp(18px, 1.4vw, 28px);
       }
 
       body.dark {
@@ -99,7 +110,7 @@
         --teal-bar: #2dd4bf;
 
         --row-stripe: #152638;
-        --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
 
       * {
@@ -108,6 +119,8 @@
         box-sizing: border-box;
       }
 
+      html { font-size: var(--fs-base); }
+
       body {
         font-family: "Inter", sans-serif;
         background-color: var(--bg-body);
@@ -115,7 +128,8 @@
         display: flex;
         min-height: 100vh;
         transition: background-color 0.2s, color 0.2s;
-        font-size: 13px;
+        font-size: 1rem;
+        line-height: 1.5;
       }
 
       .main-wrapper {
@@ -127,13 +141,13 @@
       }
 
       .dashboard-container {
-        max-width: 1550px;
-        margin: 0 auto;
-        padding: 16px 24px;
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+        padding: var(--pad-content);
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        width: 100%;
+        gap: var(--gap-grid);
       }
 
       .top-header {
@@ -141,7 +155,7 @@
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 12px;
       }
 
       .header-title-group {
@@ -152,7 +166,7 @@
       }
 
       .header-title-group h1 {
-        font-size: 19px;
+        font-size: var(--fs-h1);
         font-weight: 700;
       }
 
@@ -166,15 +180,15 @@
         gap: 6px;
         background-color: var(--green-bg);
         color: var(--green);
-        padding: 3px 10px;
+        padding: 4px 12px;
         border-radius: 20px;
-        font-size: 11.5px;
+        font-size: 12.5px;
         font-weight: 600;
       }
 
       .status-pill-live .dot {
-        width: 6px;
-        height: 6px;
+        width: 7px;
+        height: 7px;
         background-color: var(--green);
         border-radius: 50%;
       }
@@ -182,12 +196,12 @@
       .header-actions {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
       }
 
       .icon-btn {
-        width: 34px;
-        height: 34px;
+        width: 38px;
+        height: 38px;
         border-radius: 8px;
         border: 1px solid var(--border);
         background: var(--bg-card);
@@ -195,7 +209,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 13px;
+        font-size: 14px;
         cursor: pointer;
         position: relative;
         transition: 0.15s;
@@ -209,75 +223,70 @@
 
       .icon-btn .badge {
         position: absolute;
-        top: -3px;
-        right: -3px;
+        top: -4px;
+        right: -4px;
         background-color: var(--red);
         color: #fff;
-        font-size: 9.5px;
+        font-size: 10px;
         font-weight: 700;
-        padding: 1px 4px;
-        border-radius: 8px;
+        padding: 2px 5px;
+        border-radius: 10px;
         border: 1.5px solid var(--bg-card);
       }
 
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 14px 18px;
+        border-radius: 12px;
+        padding: var(--pad-card);
         box-shadow: var(--shadow);
+        width: 100%;
       }
 
       .card-header-title {
-        font-size: 13.5px;
+        font-size: var(--fs-title);
         font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 16px;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
       }
 
       .card-header-title .title-text {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
       }
 
       .card-header-title i {
         color: var(--text-muted);
-        font-size: 13px;
+        font-size: 1em;
       }
 
       .charts-grid {
         display: grid;
         grid-template-columns: 2fr 1fr;
-        gap: 16px;
-      }
-
-      @media (max-width: 992px) {
-        .charts-grid {
-          grid-template-columns: 1fr;
-        }
+        gap: var(--gap-grid);
       }
 
       .cat-progress-list {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
       }
 
       .cat-progress-item {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 6px;
       }
 
       .cat-progress-info {
         display: flex;
         justify-content: space-between;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
       }
 
@@ -291,7 +300,7 @@
 
       .progress-bar-bg {
         width: 100%;
-        height: 6px;
+        height: 8px;
         background: var(--bg-soft);
         border-radius: 6px;
         overflow: hidden;
@@ -306,34 +315,34 @@
       .alert-list {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
       }
 
       .alert-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 8px 10px;
+        padding: 10px 12px;
         background: var(--bg-soft);
         border: 1px solid var(--border);
         border-radius: 8px;
-        font-size: 12px;
+        font-size: 13px;
       }
 
       .alert-item-left {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
       }
 
       .alert-icon {
-        width: 26px;
-        height: 26px;
+        width: 30px;
+        height: 30px;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 11px;
+        font-size: 12px;
         flex-shrink: 0;
       }
 
@@ -351,14 +360,14 @@
       }
 
       .alert-sub {
-        font-size: 10.5px;
+        font-size: 11.5px;
         color: var(--text-muted);
       }
 
       .alert-badge {
-        font-size: 11px;
+        font-size: 11.5px;
         font-weight: 700;
-        padding: 2px 7px;
+        padding: 3px 8px;
         border-radius: 10px;
       }
 
@@ -368,24 +377,25 @@
       .table-controls {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         flex-wrap: wrap;
       }
 
       .search-box {
         display: flex;
         align-items: center;
-        gap: 7px;
+        gap: 8px;
         background: var(--bg-soft);
         border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 6px 10px;
-        min-width: 200px;
+        padding: 8px 12px;
+        min-width: 240px;
+        flex: 1;
       }
 
       .search-box i {
         color: var(--text-muted);
-        font-size: 12px;
+        font-size: 13px;
       }
 
       .search-box input {
@@ -394,7 +404,7 @@
         outline: none;
         color: var(--text-main);
         font-family: inherit;
-        font-size: 12.5px;
+        font-size: 13.5px;
         width: 100%;
       }
 
@@ -407,9 +417,9 @@
         background: var(--bg-soft);
         color: var(--text-secondary);
         font-family: inherit;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
-        padding: 7px 10px;
+        padding: 8px 12px;
         border-radius: 8px;
         outline: none;
         cursor: pointer;
@@ -422,9 +432,9 @@
         border: 1px solid var(--border);
         background: var(--bg-soft);
         color: var(--text-secondary);
-        font-size: 11.5px;
+        font-size: 12.5px;
         font-weight: 600;
-        padding: 6px 11px;
+        padding: 7px 14px;
         border-radius: 20px;
         cursor: pointer;
         transition: 0.15s;
@@ -444,29 +454,31 @@
       .table-wrapper {
         width: 100%;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
-        font-size: 12.5px;
+        font-size: var(--fs-table);
+        min-width: 750px;
       }
 
       th {
         text-align: left;
-        padding: 8px 10px;
-        font-size: 10.5px;
+        padding: 10px 12px;
+        font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
         color: var(--text-muted);
-        border-bottom: 1.5px solid var(--border);
+        border-bottom: 2px solid var(--border);
         white-space: nowrap;
         user-select: none;
       }
 
       td {
-        padding: 8px 10px;
+        padding: 10px 12px;
         vertical-align: middle;
         border-bottom: 1px solid var(--border);
       }
@@ -482,7 +494,7 @@
       .item-code {
         font-weight: 700;
         color: var(--text-secondary);
-        font-size: 11.5px;
+        font-size: 0.9em;
       }
 
       .item-name {
@@ -490,18 +502,18 @@
       }
 
       .item-sub {
-        font-size: 10.5px;
+        font-size: 0.82em;
         color: var(--text-muted);
-        margin-top: 1px;
+        margin-top: 2px;
       }
 
       .cat-tag {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-        font-size: 10.5px;
+        gap: 6px;
+        font-size: 0.82em;
         font-weight: 700;
-        padding: 2px 8px;
+        padding: 3px 10px;
         border-radius: 12px;
       }
 
@@ -511,23 +523,23 @@
         gap: 6px;
         color: var(--text-secondary);
         font-weight: 600;
-        font-size: 11.5px;
+        font-size: 0.9em;
       }
 
       .loc-cell i {
         color: var(--text-muted);
-        font-size: 11px;
+        font-size: 0.9em;
       }
 
       .qty-cell {
         font-weight: 700;
-        font-size: 13px;
+        font-size: 1rem;
       }
 
       .qty-min {
         color: var(--text-muted);
         font-weight: 600;
-        font-size: 11px;
+        font-size: 0.82em;
       }
 
       .table-progress-cell {
@@ -538,9 +550,9 @@
       }
 
       .progress-perc {
-        font-size: 11px;
+        font-size: 0.82em;
         font-weight: 700;
-        min-width: 30px;
+        min-width: 32px;
         color: var(--text-secondary);
       }
 
@@ -548,7 +560,7 @@
         display: flex;
         flex-direction: column;
         gap: 2px;
-        font-size: 11px;
+        font-size: 0.82em;
         font-weight: 700;
       }
 
@@ -556,14 +568,14 @@
       .flow-out { color: var(--red); }
 
       .status-pill {
-        font-size: 10.5px;
+        font-size: 0.82em;
         font-weight: 700;
-        padding: 3px 8px;
+        padding: 4px 10px;
         border-radius: 12px;
         white-space: nowrap;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 5px;
       }
 
       .status-pill.ok { background: var(--green-bg); color: var(--green); }
@@ -572,17 +584,17 @@
 
       .qty-btns {
         display: flex;
-        gap: 4px;
+        gap: 5px;
       }
 
       .qty-btn {
-        width: 22px;
-        height: 22px;
-        border-radius: 5px;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
         border: 1px solid var(--border);
         background: var(--bg-card);
         color: var(--text-secondary);
-        font-size: 11px;
+        font-size: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -597,13 +609,13 @@
 
       .empty-state {
         text-align: center;
-        padding: 30px 10px;
+        padding: 36px 12px;
         color: var(--text-muted);
-        font-size: 12.5px;
+        font-size: 0.95rem;
       }
 
       .empty-state i {
-        font-size: 22px;
+        font-size: 26px;
         margin-bottom: 8px;
         display: block;
         color: var(--border);
@@ -613,9 +625,11 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 10px;
-        font-size: 11.5px;
+        margin-top: 14px;
+        font-size: 0.88em;
         color: var(--text-muted);
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       .toast-popup {
@@ -624,11 +638,11 @@
         right: 24px;
         background: var(--green-bar);
         color: #ffffff;
-        padding: 12px 20px;
+        padding: 14px 22px;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 13px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+        font-size: 14px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         display: flex;
         align-items: center;
         gap: 10px;
@@ -645,9 +659,50 @@
         transform: translateY(0);
       }
 
-      @media (max-width: 640px) {
-        body { padding: 0; }
-        .dashboard-container { padding: 12px; }
+      /* Responsividade Avançada */
+      @media (max-width: 1024px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-container {
+          padding: 12px;
+        }
+
+        .table-controls {
+          flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+        }
+
+        .search-box {
+          width: 100%;
+        }
+
+        select.filter-select {
+          width: 100%;
+        }
+
+        .toast-popup {
+          left: 16px;
+          right: 16px;
+          bottom: 16px;
+          text-align: center;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .card-header-title {
+          font-size: 14px;
+        }
+
+        .filter-chip {
+          padding: 6px 10px;
+          font-size: 11.5px;
+        }
       }
     </style>
   </head>
@@ -658,24 +713,6 @@
       <div id="header-root"></div>
 
       <div class="dashboard-container">
-        <header class="top-header">
-          <div class="header-title-group">
-            <h1>Itens em <span>Estoque</span></h1>
-            <span class="status-pill-live"><span class="dot"></span> Sincronizado</span>
-          </div>
-          <div class="header-actions">
-            <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">
-              <i class="fas fa-moon" id="themeIcon"></i>
-            </button>
-            <button class="icon-btn" onclick="atualizar()" title="Atualizar">
-              <i class="fas fa-arrows-rotate"></i>
-            </button>
-            <button class="icon-btn" title="Notificações">
-              <i class="fas fa-bell"></i><span class="badge" id="notifBadge">4</span>
-            </button>
-          </div>
-        </header>
-
         <section class="charts-grid">
           <div class="card">
             <div class="card-header-title">
@@ -687,7 +724,7 @@
           <div class="card">
             <div class="card-header-title">
               <span class="title-text"><i class="fas fa-triangle-exclamation" style="color:var(--amber);"></i> Alertas de Reposição</span>
-              <span id="alertCountBadge" style="font-size: 11px; color: var(--red); font-weight: 700;">4 pendentes</span>
+              <span id="alertCountBadge" style="font-size: 12px; color: var(--red); font-weight: 700;">4 pendentes</span>
             </div>
             <div class="alert-list" id="alertList"></div>
           </div>
@@ -712,7 +749,7 @@
             </div>
           </div>
 
-          <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+          <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
             <button class="filter-chip active" data-status="todos" onclick="setStatusFilter('todos', this)">Todos</button>
             <button class="filter-chip" data-status="ok" onclick="setStatusFilter('ok', this)"><i class="fas fa-circle" style="color:var(--green); font-size:7px;"></i> Normal</button>
             <button class="filter-chip" data-status="baixo" onclick="setStatusFilter('baixo', this)"><i class="fas fa-circle" style="color:var(--amber); font-size:7px;"></i> Baixo</button>
@@ -749,7 +786,7 @@
     </div>
 
     <div id="toastPopup" class="toast-popup">
-      <i class="fas fa-circle-check" style="font-size: 16px;"></i>
+      <i class="fas fa-circle-check" style="font-size: 18px;"></i>
       <span>Dados atualizados com sucesso!</span>
     </div>
 
