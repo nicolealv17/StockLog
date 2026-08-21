@@ -193,16 +193,19 @@
     }
 
     .brand-icon {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
       background: rgba(255, 255, 255, 0.12);
-      padding: 12px;
+      padding: 0; /* Remove a margem interna para a imagem ocupar todo o quadrado */
+      transform: scale(1.15); /* Expande levemente a imagem dentro do quadrado */
       border-radius: 14px;
-      color: #60a5fa;
       animation: floatIcon 4s infinite ease-in-out alternate;
     }
 
     @keyframes floatIcon {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-6px); }
+      0% { transform: scale(1.15) translateY(0); }
+      100% { transform: scale(1.15) translateY(-6px); }
     }
 
     .panel-content h1 {
@@ -330,10 +333,10 @@
     }
 
     .login-link {
-    margin-top: 24px;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-muted);
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     .login-link a {
@@ -437,7 +440,17 @@
       <i class="fa-solid fa-moon"></i>
     </button>
 
+<<<<<<< HEAD
     <main class="login-container" id="cardContainer">
+=======
+  <main class="login-container" id="cardContainer">
+    
+    <section class="left-panel">
+      <div class="brand">
+        <img src="IMG/semfundoo.png" alt="StockLog Logo" class="brand-icon">
+        <span>StockLog</span>
+      </div>
+>>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17
 
       <section class="left-panel">
         <div class="brand">
@@ -463,6 +476,7 @@
 
         <form id="loginForm" autocomplete="off">
 
+<<<<<<< HEAD
           <div class="input-group">
             <input type="email" id="emailInput" placeholder="E-mail" autocomplete="email" required>
             <i class="fa-regular fa-envelope icon-left"></i>
@@ -473,6 +487,10 @@
             <i class="fa-solid fa-lock icon-left"></i>
             <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
           </div>
+=======
+      </form>
+    </section>
+>>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17
 
           <!-- Mensagem de erro/sucesso -->
           <p id="mensagem" class="mensagem-alerta" style="margin-bottom: 16px; font-size: 0.85rem; text-align: center; min-height: 20px; font-weight: 500;"></p>
@@ -485,10 +503,15 @@
             <a href="#" class="forgot-pass">Esqueceu a senha?</a>
           </div>
 
+<<<<<<< HEAD
           <button type="submit" class="btn-login" id="btnLogin">
             <span id="btnText">Entrar</span>
             <div class="spinner" id="btnSpinner"></div>
           </button>
+=======
+      const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
+      setTheme(savedTheme);
+>>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17
 
           <div class="login-link">
               Não tem uma conta? <a href="cadastro.html">Criar</a>
@@ -499,6 +522,7 @@
 
     </main>
 
+<<<<<<< HEAD
     <!-- Firebase libs (ordem importa) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -523,3 +547,61 @@
     <script src="JS/login.js"></script>
   </body>
   </html>
+=======
+      document.addEventListener('mousemove', (e) => {
+        mouseGlow.style.left = `${e.clientX}px`;
+        mouseGlow.style.top = `${e.clientY}px`;
+      });
+
+      togglePassword.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        togglePassword.classList.toggle('fa-eye', !isPassword);
+        togglePassword.classList.toggle('fa-eye-slash', isPassword);
+      });
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        btnText.style.display = 'none';
+        btnSpinner.style.display = 'block';
+        btnLogin.style.pointerEvents = 'none';
+
+        setTimeout(() => {
+          if (userInput.value.trim() !== "" && passwordInput.value.length >= 4) {
+            btnSpinner.style.display = 'none';
+            btnText.style.display = 'inline';
+            btnText.textContent = 'Acessando...';
+            btnLogin.style.background = '#16a34a';
+
+            setTimeout(() => {
+              cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+              cardContainer.style.opacity = '0';
+              cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
+            }, 400);
+
+          } else {
+            btnSpinner.style.display = 'none';
+            btnText.style.display = 'inline';
+            btnLogin.style.pointerEvents = 'auto';
+
+            cardContainer.classList.add('shake');
+            setTimeout(() => cardContainer.classList.remove('shake'), 400);
+          }
+        }, 1200);
+      });
+    });
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+      authDomain: "stocklog-ff7aa.firebaseapp.com",
+      databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+      projectId: "stocklog-ff7aa",
+      storageBucket: "stocklog-ff7aa.firebasestorage.app",
+      messagingSenderId: "787537499919",
+      appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+    };
+  </script>
+</body>
+</html>
+>>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17

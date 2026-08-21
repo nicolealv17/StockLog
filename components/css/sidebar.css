@@ -9,19 +9,28 @@
    ================================================================ */
 
 :root {
-  --sidebar-bg: #0a2137;
-  --sidebar-text: #b2cee8;
-  --sidebar-icon: #8baecb;
+  --sidebar-bg: #101e34;
+  --sidebar-text: #c5dcf2;
+  --sidebar-icon: #93b6d6;
   --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
   --sidebar-active-bg: #1c5079;
   --sidebar-active-color: #ffffff;
-  --sidebar-width-open: 252px;
+  --sidebar-width-open: 265px;
   --sidebar-width-rail: 76px;
 }
 
 .sidebar {
   width: var(--sidebar-width-rail);
-  background: var(--sidebar-bg);
+  /* Cor fixa #101e34 em ambos os temas (claro e escuro),
+     com gradiente invertido sutil (um pouco mais escuro no topo
+     e clareando na base) + reflexo vindo de baixo */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0) 18%
+    ),
+    linear-gradient(180deg, #0a1424 0%, #101e34 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,13 +42,36 @@
   overflow-x: hidden;
   overflow-y: auto;
   transition: width 0.28s ease;
-  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    2px 0 20px rgba(0, 0, 0, 0.45),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06);
   z-index: 200;
+}
+/* Camada extra de "reflexo" (vidro/luz) — vem da base do menu,
+   combinando com o gradiente invertido (escuro no topo → claro embaixo) */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 220px;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120% 100% at 50% 100%,
+      rgba(120, 180, 255, 0.22) 0%,
+      rgba(120, 180, 255, 0.08) 40%,
+      rgba(0, 0, 0, 0) 75%
+    );
+  z-index: 0;
+}
+.sidebar > * {
+  position: relative;
+  z-index: 1;
 }
 .sidebar.open {
   width: var(--sidebar-width-open);
   align-items: stretch;
-  padding: 24px 16px 18px;
+  padding: 24px 18px 18px;
 }
 
 .sidebar-logo {
@@ -58,11 +90,11 @@
 .sidebar-logo .logo-icon {
   width: 49px;
   height: 49px;
-  border-radius: 12px;
-  
+  border-radius: 0;
+  background: transparent;
   flex-shrink: 0;
   object-fit: contain;
-  padding: 6px;
+  padding: 0;
   box-sizing: border-box;
 }
 .sidebar-logo .logo-text {
@@ -135,7 +167,7 @@
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
   flex: 1;
   width: 100%;
   min-height: 0;
@@ -146,10 +178,10 @@
   gap: 14px;
   color: var(--sidebar-text);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 500;
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: 14px 14px;
+  border-radius: 12px;
   white-space: nowrap;
   transition: 0.15s;
   min-width: 0;
@@ -163,8 +195,8 @@
   padding: 10px 0;
 }
 .sidebar nav a i {
-  font-size: 19px;
-  width: 24px;
+  font-size: 20px;
+  width: 26px;
   text-align: center;
   flex-shrink: 0;
   color: var(--sidebar-icon);
@@ -178,10 +210,17 @@
   color: #fff;
 }
 .sidebar nav a.active {
-  background: var(--sidebar-active-bg);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(82, 145, 220, 0.28) 0%,
+      rgba(28, 80, 121, 0.85) 100%
+    );
   color: var(--sidebar-active-color);
   font-weight: 600;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 4px 14px rgba(0, 0, 0, 0.35);
 }
 .sidebar nav a.active i {
   color: #fff;
@@ -246,6 +285,115 @@
   background: var(--primary-light, #e1eefb);
   border-color: var(--primary, #006bb3);
   color: var(--primary, #006bb3);
+}
+
+/* ================================================================
+   TEMA CLARO
+   --------------------------------------------------------------
+   O projeto controla o tema pela classe `dark` no <body>
+   (components/js/modoescuro.js aplica body.classList.toggle("dark", ...)).
+
+   Por decisão do usuário, a SIDEBAR mantém a MESMA cor (#101e34)
+   em ambos os temas — só o conteúdo (texto, ícones, item ativo)
+   se adapta levemente para continuar legível.
+   ================================================================ */
+body:not(.dark) .sidebar {
+  /* Mesma cor base do tema escuro: #101e34, com gradiente invertido sutil */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0) 18%
+    ),
+    linear-gradient(180deg, #0a1424 0%, #101e34 100%);
+  box-shadow:
+    2px 0 20px rgba(0, 0, 0, 0.45),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Reflexo da base também igual ao tema escuro */
+body:not(.dark) .sidebar::before {
+  background:
+    radial-gradient(
+      120% 100% at 50% 100%,
+      rgba(120, 180, 255, 0.22) 0%,
+      rgba(120, 180, 255, 0.08) 40%,
+      rgba(0, 0, 0, 0) 75%
+    );
+}
+
+/* Texto e ícones no claro: cores um pouco mais vivas (azul-céu)
+   para continuar legível sobre o azul-escuro do menu */
+body:not(.dark) .sidebar {
+  --sidebar-text: #d6e7f8;
+  --sidebar-icon: #a8c8e6;
+}
+body:not(.dark) .sidebar-logo .logo-text {
+  color: #ffffff;
+}
+body:not(.dark) .sidebar-logo .logo-text span {
+  color: #6db4f0;
+}
+
+/* Botões de toggle / abrir no claro */
+body:not(.dark) .sidebar-toggle {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: #d6e7f8;
+}
+body:not(.dark) .sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+body:not(.dark) .sidebar-open-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d6e7f8;
+}
+body:not(.dark) .sidebar-open-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: #ffffff;
+}
+
+/* Links do menu no claro */
+body:not(.dark) .sidebar nav a {
+  color: #d6e7f8;
+}
+body:not(.dark) .sidebar nav a i {
+  color: #a8c8e6;
+}
+body:not(.dark) .sidebar nav a:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+body:not(.dark) .sidebar nav a:hover i {
+  color: #ffffff;
+}
+
+/* Item ativo no claro: mesmo destaque do tema escuro */
+body:not(.dark) .sidebar nav a.active {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(82, 145, 220, 0.28) 0%,
+      rgba(28, 80, 121, 0.85) 100%
+    );
+  color: #ffffff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 4px 14px rgba(0, 0, 0, 0.35);
+}
+body:not(.dark) .sidebar nav a.active i {
+  color: #ffffff;
+}
+
+/* Área do usuário no claro */
+body:not(.dark) .sidebar-user {
+  color: #d6e7f8;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+body:not(.dark) .sidebar-user i {
+  color: #a8c8e6;
 }
 
 /* ================================================================
