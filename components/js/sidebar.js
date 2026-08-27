@@ -26,6 +26,7 @@
     { href: basePath + "fornecedores.html", icon: "fa-handshake", label: "Fornecedores" },
     { href: basePath + "rastreamento.html", icon: "fa-route", label: "Rastreamento" },
     { href: basePath + "calendario.html", icon: "fa-calendar-alt", label: "Calendário" },
+    { href: basePath + "cadastro.html", icon:"", label: "Cadastro" },
   ];
 
   // Identifica o nome do arquivo da página atual para marcar o menu como ativo

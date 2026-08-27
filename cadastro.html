@@ -7,12 +7,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <link rel="stylesheet" href="components/css/sidebar.css" />
     <link rel="stylesheet" href="components/css/header.css" />
@@ -20,67 +20,74 @@
     <link rel="stylesheet" href="components/css/modoescuro.css" />
     <style>
       :root {
-        --bg-body: #edf3f8;
+        --bg-body: #f1f5f9;
         --bg-card: #ffffff;
-        --bg-soft: #f4f8fc;
-        --border: #d4e2f0;
+        --bg-soft: #f8fafc;
+        --border: #e2e8f0;
+        --border-hover: #cbd5e1;
 
-        --text-main: #0c1e2e;
-        --text-secondary: #3b5a75;
-        --text-muted: #718da8;
+        --text-main: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #94a3b8;
 
-        --primary: #006bb3;
-        --primary-hover: #005691;
-        --primary-light: #e3f0fb;
+        --primary: #0284c7;
+        --primary-hover: #0369a1;
+        --primary-light: #e0f2fe;
+        --primary-glow: rgba(2, 132, 199, 0.15);
 
         --green: #15803d;
-        --green-bg: #dcfce7;
-        --green-bar: #16a34a;
+        --green-bg: #f0fdf4;
+        --green-bar: #22c55e;
 
-        --amber-bar: #d97706;
+        --orange-bar: #f97316;
+        --amber-bar: #eab308;
 
         --red: #b91c1c;
-        --red-bg: #fee2e2;
-        --red-bar: #dc2626;
+        --red-bg: #fef2f2;
+        --red-bar: #ef4444;
 
-        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 
-        --fs-base: clamp(14px, 0.9vw + 12px, 16px);
-        --fs-h1: clamp(19px, 1.2vw + 14px, 24px);
-        --fs-title: clamp(15px, 1vw + 12px, 18px);
+        --fs-base: 15px;
+        --fs-h1: clamp(20px, 1.2vw + 14px, 24px);
+        --fs-title: 17px;
 
-        --pad-content: 16px 20px;
-        --gap-grid: clamp(14px, 1vw, 22px);
-        --pad-card: clamp(18px, 1.4vw, 28px);
+        --pad-content: 24px 20px;
+        --pad-card: clamp(24px, 2.5vw, 36px);
       }
 
-        [data-theme="dark"],
-        body.dark {
-          --bg-body: #0a131d;
-          --bg-card: #111f2e;
-          --bg-soft: #16283b;
-          --border: #1e364f;
+      [data-theme="dark"],
+      body.dark {
+        --bg-body: #0b1120;
+        --bg-card: #151e32;
+        --bg-soft: #1a263d;
+        --border: #283653;
+        --border-hover: #374768;
 
-          --text-main: #e2edf8;
-          --text-secondary: #9cb5cd;
-          --text-muted: #6482a0;
+        --text-main: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
 
-          --primary: #38bdf8;
-          --primary-hover: #0284c7;
-          --primary-light: #17324d;
+        --primary: #38bdf8;
+        --primary-hover: #0284c7;
+        --primary-light: #0c2a4a;
+        --primary-glow: rgba(56, 189, 248, 0.2);
 
-          --green: #4ade80;
-          --green-bg: #143823;
-          --green-bar: #22c55e;
+        --green: #4ade80;
+        --green-bg: #062e1b;
+        --green-bar: #22c55e;
 
-          --amber-bar: #f59e0b;
+        --orange-bar: #f97316;
+        --amber-bar: #eab308;
 
-          --red: #f87171;
-          --red-bg: #3e1919;
-          --red-bar: #ef4444;
+        --red: #f87171;
+        --red-bg: #3c1414;
+        --red-bar: #ef4444;
 
-          --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-        }
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 12px 30px -5px rgba(0, 0, 0, 0.4);
+      }
 
       * {
         margin: 0;
@@ -91,14 +98,14 @@
       html { font-size: var(--fs-base); }
 
       body {
-        font-family: "Inter", sans-serif;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
         background-color: var(--bg-body);
         color: var(--text-main);
         display: flex;
         min-height: 100vh;
-        transition: background-color 0.2s, color 0.2s;
-        font-size: 1rem;
+        transition: background-color 0.25s ease, color 0.25s ease;
         line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
       }
 
       .main-wrapper {
@@ -111,36 +118,27 @@
 
       .dashboard-container {
         flex: 1;
-        max-width: 100%;
         width: 100%;
-        margin: 0;
         padding: var(--pad-content);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: var(--gap-grid);
+        gap: 20px;
       }
 
       .top-header {
         width: 100%;
-        max-width: 600px;
+        max-width: 680px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .header-title-group {
-        display: flex;
-        align-items: center;
-        gap: 12px;
       }
 
       .header-title-group h1 {
         font-size: var(--fs-h1);
         font-weight: 700;
+        letter-spacing: -0.02em;
       }
 
       .header-title-group h1 span {
@@ -150,39 +148,59 @@
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 12px;
+        border-radius: 16px;
         padding: var(--pad-card);
-        box-shadow: var(--shadow);
+        box-shadow: var(--shadow-md);
         width: 100%;
-        max-width: 600px;
-        transition: transform 0.2s;
+        max-width: 680px;
+        animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), #6366f1);
       }
 
       .card-header-title {
-        font-size: var(--fs-title);
-        font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
+        padding-bottom: 14px;
         border-bottom: 1px solid var(--border);
-        padding-bottom: 12px;
       }
 
       .card-header-title .title-text {
+        font-size: var(--fs-title);
+        font-weight: 600;
         display: flex;
         align-items: center;
         gap: 10px;
       }
 
-      .card-header-title i {
+      .card-header-title .icon-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: var(--primary-light);
         color: var(--primary);
+        font-size: 15px;
       }
 
       .form-grid {
         display: flex;
         flex-direction: column;
-        gap: 18px;
+        gap: 20px;
       }
 
       .form-group {
@@ -192,9 +210,10 @@
       }
 
       .form-group label {
-        font-size: 13.5px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--text-secondary);
+        letter-spacing: 0.01em;
       }
 
       .input-wrapper {
@@ -205,10 +224,11 @@
 
       .input-wrapper i.input-icon {
         position: absolute;
-        left: 12px;
+        left: 14px;
         color: var(--text-muted);
         font-size: 14px;
         pointer-events: none;
+        transition: color 0.2s ease;
       }
 
       .input-wrapper input,
@@ -216,13 +236,22 @@
         width: 100%;
         background: var(--bg-soft);
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px 12px 10px 38px;
+        border-radius: 10px;
+        padding: 12px 14px 12px 42px;
         color: var(--text-main);
         font-family: inherit;
         font-size: 14px;
         outline: none;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      }
+
+      .input-wrapper input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .input-wrapper input:hover,
+      .input-wrapper select:hover {
+        border-color: var(--border-hover);
       }
 
       .input-wrapper select {
@@ -233,16 +262,21 @@
 
       .input-wrapper .select-arrow {
         position: absolute;
-        right: 12px;
+        right: 14px;
         color: var(--text-muted);
         pointer-events: none;
         font-size: 12px;
       }
 
+      .input-wrapper:focus-within i.input-icon {
+        color: var(--primary);
+      }
+
       .input-wrapper input:focus,
       .input-wrapper select:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-light);
+        box-shadow: 0 0 0 3.5px var(--primary-glow);
+        background: var(--bg-card);
       }
 
       .toggle-password {
@@ -253,53 +287,56 @@
         color: var(--text-muted);
         cursor: pointer;
         font-size: 14px;
-        padding: 4px;
+        padding: 6px;
+        border-radius: 6px;
+        transition: color 0.2s ease;
       }
 
       .toggle-password:hover {
         color: var(--text-main);
       }
 
-      /* Indicador de Força de Senha */
+      /* Indicador e Texto de Força de Senha */
+      .strength-meter-container {
+        margin-top: 8px;
+      }
+
       .strength-meter {
         display: flex;
-        gap: 4px;
-        margin-top: 6px;
+        gap: 6px;
       }
 
       .strength-bar {
-        height: 4px;
+        height: 5px;
         flex: 1;
         background: var(--border);
-        border-radius: 2px;
-        transition: background-color 0.3s;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
       }
-
-      .strength-bar.active.weak { background-color: var(--red-bar); }
-      .strength-bar.active.medium { background-color: var(--amber-bar); }
-      .strength-bar.active.strong { background-color: var(--green-bar); }
 
       .strength-label {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-top: 4px;
-        font-weight: 500;
+        font-size: 12.5px;
+        margin-top: 6px;
+        font-weight: 600;
+        display: block;
+        transition: color 0.3s ease;
       }
 
-      /* Alert / Mensagem */
+      /* Banner de Alerta (Informativo e Sucesso) */
       .mensagem-alerta {
-        border-radius: 8px;
-        font-size: 13.5px;
+        border-radius: 10px;
+        font-size: 14px;
         font-weight: 600;
         display: none;
+        animation: fadeIn 0.3s ease;
       }
 
       .mensagem-alerta:not(:empty) {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 10px 14px;
-        margin-bottom: 16px;
+        gap: 10px;
+        padding: 14px 16px;
+        margin-bottom: 20px;
       }
 
       .mensagem-alerta.error {
@@ -318,28 +355,35 @@
         background-color: var(--primary);
         color: #ffffff;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 12px 20px;
-        font-size: 14px;
-        font-weight: 700;
+        font-size: 14.5px;
+        font-weight: 600;
         font-family: inherit;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: background-color 0.2s, transform 0.1s;
-        margin-top: 10px;
-        min-height: 44px;
+        transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+        margin-top: 8px;
+        min-height: 48px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
       }
 
       .btn-submit:hover {
         background-color: var(--primary-hover);
+        box-shadow: 0 4px 12px var(--primary-glow);
+      }
+
+      .btn-submit:active {
+        transform: scale(0.985);
       }
 
       .btn-submit:disabled {
         opacity: 0.7;
         cursor: not-allowed;
+        transform: none;
       }
 
       .btn-spinner {
@@ -356,24 +400,39 @@
         to { transform: rotate(360deg); }
       }
 
-      /* Efeito Shake de Erro */
-      @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-6px); }
-        40%, 80% { transform: translateX(6px); }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       .shake {
-        animation: shake 0.4s ease-in-out;
+        animation: shake 0.35s ease-in-out;
       }
 
-      @media (max-width: 768px) {
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-5px); }
+        40%, 80% { transform: translateX(5px); }
+      }
+
+      @media (max-width: 720px) {
         .dashboard-container {
-          padding: 12px;
+          padding: 16px;
         }
 
         .card {
-          padding: 18px;
+          border-radius: 12px;
         }
       }
     </style>
@@ -394,15 +453,15 @@
         <section class="card" id="cardContainer">
           <div class="card-header-title">
             <span class="title-text">
-              <i class="fa-solid fa-user-plus"></i> Cadastro de Funcionário
+              <span class="icon-badge"><i class="fa-solid fa-user-plus"></i></span>
+              Novo Funcionário
             </span>
           </div>
 
-          <!-- Div para Mensagens de Alerta -->
-          <div id="mensagem" class="mensagem-alerta"></div>
+          <!-- Div para Mensagens de Erro ou Sucesso -->
+          <div id="mensagem" class="mensagem-alerta" aria-live="polite"></div>
 
-          <form id="registerForm" class="form-grid">
-            <!-- Nome Completo -->
+          <form id="registerForm" class="form-grid" novalidate>
             <div class="form-group">
               <label for="nomeInput">Nome Completo</label>
               <div class="input-wrapper">
@@ -410,13 +469,13 @@
                 <input
                   type="text"
                   id="nomeInput"
-                  placeholder="Digite o nome completo"
+                  placeholder="Ex: Roberto Silva"
+                  autocomplete="name"
                   required
                 />
               </div>
             </div>
 
-            <!-- CPF -->
             <div class="form-group">
               <label for="cpfInput">CPF</label>
               <div class="input-wrapper">
@@ -424,6 +483,7 @@
                 <input
                   type="text"
                   id="cpfInput"
+                  inputmode="numeric"
                   placeholder="000.000.000-00"
                   maxlength="14"
                   required
@@ -431,13 +491,27 @@
               </div>
             </div>
 
-            <!-- Área (Caixa Seletora) -->
+            <!-- CAMPO DE E-MAIL ADICIONADO -->
+            <div class="form-group">
+              <label for="emailInput">E-mail</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input
+                  type="email"
+                  id="emailInput"
+                  placeholder="Ex: roberto.silva@empresa.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+            </div>
+
             <div class="form-group">
               <label for="areaSelect">Área de Atuação</label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-sitemap input-icon"></i>
                 <select id="areaSelect" required>
-                  <option value="" disabled selected>Selecione a área...</option>
+                  <option value="" disabled selected>Selecione o setor...</option>
                   <option value="Gestão">Gestão</option>
                   <option value="Estoque">Estoque</option>
                 </select>
@@ -445,7 +519,6 @@
               </div>
             </div>
 
-            <!-- Senha -->
             <div class="form-group">
               <label for="passwordInput">Senha de Acesso</label>
               <div class="input-wrapper">
@@ -453,23 +526,31 @@
                 <input
                   type="password"
                   id="passwordInput"
-                  placeholder="Digite a senha"
+                  placeholder="Crie uma senha segura"
+                  autocomplete="new-password"
                   required
                 />
-                <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
+                <i
+                  class="fa-regular fa-eye toggle-password"
+                  id="togglePassword"
+                  role="button"
+                  aria-label="Mostrar ou ocultar senha"
+                  tabindex="0"
+                ></i>
               </div>
-              
-              <!-- Barra de Força da Senha -->
-              <div class="strength-meter">
-                <div class="strength-bar"></div>
-                <div class="strength-bar"></div>
-                <div class="strength-bar"></div>
-                <div class="strength-bar"></div>
+
+              <!-- Indicador e Rótulo Dinâmico da Senha -->
+              <div class="strength-meter-container">
+                <div class="strength-meter">
+                  <div class="strength-bar"></div>
+                  <div class="strength-bar"></div>
+                  <div class="strength-bar"></div>
+                  <div class="strength-bar"></div>
+                </div>
+                <span id="strengthLabel" class="strength-label"></span>
               </div>
-              <span id="strengthLabel" class="strength-label"></span>
             </div>
 
-            <!-- Botão de Envio -->
             <button type="submit" class="btn-submit" id="btnRegister">
               <span id="btnText"><i class="fa-solid fa-user-check"></i> Cadastrar Funcionário</span>
               <div id="btnSpinner" class="btn-spinner"></div>
@@ -514,36 +595,63 @@
       const togglePassword = document.getElementById('togglePassword');
       const passwordInput = document.getElementById('passwordInput');
 
-      togglePassword.addEventListener('click', () => {
+      function togglePasswordVisibility() {
         const isPassword = passwordInput.type === 'password';
         passwordInput.type = isPassword ? 'text' : 'password';
-        togglePassword.className = isPassword ? 'fa-regular fa-eye-slash toggle-password' : 'fa-regular fa-eye toggle-password';
+        togglePassword.className = isPassword
+          ? 'fa-regular fa-eye-slash toggle-password'
+          : 'fa-regular fa-eye toggle-password';
+      }
+
+      togglePassword.addEventListener('click', togglePasswordVisibility);
+      togglePassword.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          togglePasswordVisibility();
+        }
       });
 
-      // ====== Indicador de Força da Senha ======
+      // ====== Indicador Dinâmico da Força da Senha ======
       const strengthBars = document.querySelectorAll('.strength-bar');
       const strengthLabel = document.getElementById('strengthLabel');
 
       passwordInput.addEventListener('input', () => {
         const v = passwordInput.value;
+        if (!v) {
+          strengthBars.forEach(bar => {
+            bar.style.backgroundColor = '';
+          });
+          strengthLabel.textContent = '';
+          return;
+        }
+
         let score = 0;
-        if (v.length >= 8) score++;
-        if (/[A-Z]/.test(v)) score++;
+        if (v.length >= 6) score++;
+        if (v.length >= 8 && /[A-Z]/.test(v)) score++;
         if (/[0-9]/.test(v)) score++;
         if (/[^A-Za-z0-9]/.test(v)) score++;
 
+        // Definição textual e cores por nível
+        const levels = [
+          { text: '', color: '' },
+          { text: 'Senha Muito Fraca', color: 'var(--red-bar)' },
+          { text: 'Senha Fraca', color: 'var(--orange-bar)' },
+          { text: 'Senha Média', color: 'var(--amber-bar)' },
+          { text: 'Senha Forte', color: 'var(--green-bar)' }
+        ];
+
+        const currentLevel = levels[score] || levels[1];
+
         strengthBars.forEach((bar, i) => {
-          bar.classList.remove('active', 'weak', 'medium', 'strong');
           if (i < score) {
-            bar.classList.add('active');
-            if (score <= 2) bar.classList.add('weak');
-            else if (score === 3) bar.classList.add('medium');
-            else bar.classList.add('strong');
+            bar.style.backgroundColor = currentLevel.color;
+          } else {
+            bar.style.backgroundColor = 'var(--border)';
           }
         });
 
-        const labels = ['', 'Senha fraca', 'Senha fraca', 'Senha média', 'Senha forte'];
-        strengthLabel.textContent = labels[score] || '';
+        strengthLabel.textContent = currentLevel.text;
+        strengthLabel.style.color = currentLevel.color;
       });
 
       // ====== Submissão do Formulário ======
@@ -552,14 +660,15 @@
       const btnRegister = document.getElementById('btnRegister');
       const btnText = document.getElementById('btnText');
       const btnSpinner = document.getElementById('btnSpinner');
+      const emailInput = document.getElementById('emailInput');
 
       function showMessage(text, type) {
         mensagem.className = 'mensagem-alerta ' + (type || '');
         mensagem.innerHTML = type === 'error'
-          ? `<i class="fa-solid fa-circle-exclamation"></i> ${text}`
+          ? `<i class="fa-solid fa-circle-exclamation"></i> <span>${text}</span>`
           : type === 'success'
-            ? `<i class="fa-solid fa-circle-check"></i> ${text}`
-            : text;
+            ? `<i class="fa-solid fa-circle-check"></i> <span>${text}</span>`
+            : `<span>${text}</span>`;
       }
 
       form.addEventListener('submit', (e) => {
@@ -567,7 +676,17 @@
 
         const cpfVal = cpfInput.value.replace(/\D/g, '');
         if (cpfVal.length !== 11) {
-          showMessage('CPF inválido. Preencha todos os dígitos.', 'error');
+          showMessage('CPF inválido. Preencha os 11 dígitos.', 'error');
+          document.getElementById('cardContainer').classList.add('shake');
+          setTimeout(() => document.getElementById('cardContainer').classList.remove('shake'), 400);
+          return;
+        }
+
+        // Validação básica do formato de E-mail
+        const emailVal = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailVal || !emailRegex.test(emailVal)) {
+          showMessage('Informe um e-mail válido.', 'error');
           document.getElementById('cardContainer').classList.add('shake');
           setTimeout(() => document.getElementById('cardContainer').classList.remove('shake'), 400);
           return;
@@ -579,11 +698,17 @@
         showMessage('Processando cadastro...', '');
 
         setTimeout(() => {
-          btnText.style.display = 'inline';
+          btnText.style.display = 'inline-flex';
           btnSpinner.style.display = 'none';
           btnRegister.disabled = false;
+
+          // Mensagem de confirmação e reset do formulário
           showMessage('Cadastro realizado com sucesso!', 'success');
-        }, 1800);
+          
+          form.reset();
+          strengthBars.forEach(bar => bar.style.backgroundColor = 'var(--border)');
+          strengthLabel.textContent = '';
+        }, 1500);
       });
     </script>
 
@@ -593,47 +718,43 @@
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
 
-    <!-- Sincronização do Modo Escuro com a Página Inteira -->
-  <script>
-    (function () {
-      const STORAGE_KEY = 'stocklog-theme';
+    <!-- Sincronização do Modo Escuro -->
+    <script>
+      (function () {
+        const STORAGE_KEY = 'stocklog-theme';
 
-      function applyTheme(theme) {
-        const isDark = theme === 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-        document.body.classList.toggle('dark', isDark);
-        try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
-      }
-
-      // 1. Carrega tema salvo no carregamento
-      const saved = (() => {
-        try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
-      })() || 'light';
-      applyTheme(saved);
-
-      // 2. Se algum script externo mudar a classe do body, sincroniza
-      const observer = new MutationObserver(() => {
-        const bodyIsDark = document.body.classList.contains('dark');
-        const htmlIsDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (bodyIsDark !== htmlIsDark) {
-          applyTheme(bodyIsDark ? 'dark' : 'light');
+        function applyTheme(theme) {
+          const isDark = theme === 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.body.classList.toggle('dark', isDark);
+          try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
         }
-      });
-      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-      // 3. Captura cliques em qualquer botão de tema (mesmo após o DOM ser atualizado)
-      document.addEventListener('click', (e) => {
-        const btn = e.target.closest('#themeToggle, .theme-toggle, [data-theme-toggle]');
-        if (!btn) return;
-        // Pequeno delay para deixar o modo escuro.js externo agir primeiro
-        setTimeout(() => {
-          const current = document.body.classList.contains('dark') ||
-                          document.documentElement.getAttribute('data-theme') === 'dark';
-          applyTheme(current ? 'dark' : 'light');
-        }, 50);
-      });
-    })();
-  </script>
+        const saved = (() => {
+          try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+        })() || 'light';
+        applyTheme(saved);
+
+        const observer = new MutationObserver(() => {
+          const bodyIsDark = document.body.classList.contains('dark');
+          const htmlIsDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          if (bodyIsDark !== htmlIsDark) {
+            applyTheme(bodyIsDark ? 'dark' : 'light');
+          }
+        });
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+        document.addEventListener('click', (e) => {
+          const btn = e.target.closest('#themeToggle, .theme-toggle, [data-theme-toggle]');
+          if (!btn) return;
+          setTimeout(() => {
+            const current = document.body.classList.contains('dark') ||
+                            document.documentElement.getAttribute('data-theme') === 'dark';
+            applyTheme(current ? 'dark' : 'light');
+          }, 50);
+        });
+      })();
+    </script>
   </body>
 </html>
