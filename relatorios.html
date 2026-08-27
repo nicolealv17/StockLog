@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Relatórios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+
+    <!-- Bibliotecas para gerar PDF e Excel reais (download no navegador) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+      /* ================================================================
+         TOKENS / VARIÁVEIS (mesmo padrão do restante do StockLog)
+         ================================================================ */
+      :root {
+        --bg-body: #f0f5fc;
+        --bg-card: #ffffff;
+        --bg-soft: #f5faff;
+        --border: #e2ecf6;
+        --border-hover: #c6daea;
+
+        --primary: #006bb3;
+        --primary-dark: #004d80;
+        --primary-light: #e1eefb;
+        --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
+
+        --text-main: #0a1f33;
+        --text-secondary: #3d5f7e;
+        --text-muted: #7b92b2;
+
+        --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
+        --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
+
+        --green: #1a7b72;
+        --green-bg: #e0f2ea;
+        --amber: #c47a1f;
+        --amber-bg: #faecd6;
+        --red: #b2433a;
+        --red-bg: #fae2e0;
+        --purple: #6f4c4e;
+        --purple-bg: #ede6f5;
+      }
+
+      body.dark {
+        --bg-body: #0d1727;
+        --bg-card: #14243e;
+        --bg-soft: #0f1f30;
+        --border: #1d344b;
+        --border-hover: #2a4866;
+
+        --text-main: #e2edf8;
+        --text-secondary: #a5bed6;
+        --text-muted: #6f8daa;
+
+        --primary-light: #1d3a55;
+        --green-bg: #123a2a;
+        --amber-bg: #3a2f15;
+        --red-bg: #3a1f1f;
+        --purple-bg: #2a1f3d;
+
+        --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
+        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        font-family: inherit;
+        border: none;
+        background: none;
+      }
+
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-width: 0;
+      }
+
+      .content {
+        flex: 1;
+        padding: 28px 32px 20px;
+      }
+
+      /* ========== CABEÇALHO DA PÁGINA ========== */
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+      .page-header h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .page-header h1 i {
+        color: var(--primary);
+      }
+      .page-header p {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-top: 4px;
+      }
+      .periodo-info {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .periodo-info i {
+        color: var(--primary);
+      }
+
+      /* ========== CARD GENÉRICO (igual ao index) ========== */
+      .card {
+        background: var(--bg-card);
+        border-radius: 14px;
+        padding: 22px 24px 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-card);
+        transition: 0.3s;
+        margin-bottom: 24px;
+      }
+      .card:hover {
+        border-color: var(--border-hover);
+        box-shadow: var(--shadow-hover);
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .card-header h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-header h3 i {
+        color: var(--primary);
+        font-size: 16px;
+      }
+      .badge-soft {
+        background: var(--bg-soft);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+      }
+
+      /* ========== FILTROS ========== */
+      .filtros {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      .campo {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .campo label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .campo input,
+      .campo select {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-size: 14px;
+        color: var(--text-main);
+        font-family: inherit;
+        outline: none;
+        transition: 0.2s;
+      }
+      .campo input:focus,
+      .campo select:focus {
+        border-color: var(--primary);
+        background: var(--bg-card);
+      }
+
+      /* ========== GRID DE RELATÓRIOS ========== */
+      .relatorios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 18px;
+      }
+      .relatorio-card {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 22px;
+        transition: 0.25s;
+        position: relative;
+        overflow: hidden;
+      }
+      .relatorio-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--primary-gradient);
+        opacity: 0.7;
+      }
+      .relatorio-card:hover {
+        background: var(--bg-card);
+        border-color: var(--border-hover);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+      .relatorio-icone {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 14px;
+      }
+      .relatorio-card.producao .relatorio-icone {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .relatorio-card.pedidos .relatorio-icone {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+      .relatorio-card.estoque .relatorio-icone {
+        background: var(--purple-bg);
+        color: var(--purple);
+      }
+      .relatorio-card.logistica .relatorio-icone {
+        background: rgba(47, 129, 247, 0.15);
+        color: #2f81f7;
+      }
+      .relatorio-card.desempenho .relatorio-icone {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+      .relatorio-titulo {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 6px;
+      }
+      .relatorio-descricao {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        margin-bottom: 16px;
+      }
+      .relatorio-acoes {
+        display: flex;
+        gap: 8px;
+      }
+      .btn-export {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.2s;
+        border: 1px solid transparent;
+      }
+      .btn-export.pdf {
+        background: var(--red-bg);
+        color: var(--red);
+        border-color: var(--red);
+      }
+      .btn-export.pdf:hover {
+        background: var(--red);
+        color: #fff;
+      }
+      .btn-export.excel {
+        background: var(--green-bg);
+        color: var(--green);
+        border-color: var(--green);
+      }
+      .btn-export.excel:hover {
+        background: var(--green);
+        color: #fff;
+      }
+      .btn-export:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ========== PREVIEW DE DADOS ========== */
+      .preview-wrapper {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+      th {
+        text-align: left;
+        padding: 10px 8px 8px 0;
+        font-weight: 600;
+        color: var(--text-muted);
+        border-bottom: 2px solid var(--border);
+        font-size: 11px;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+      }
+      td {
+        padding: 11px 8px 11px 0;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-main);
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      .status-tag {
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+      }
+      .status-tag.ok {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .status-tag.warn {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+      .status-tag.bad {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+      .status-tag.info {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      /* ========== TOAST (feedback de download) ========== */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: var(--green);
+        color: #fff;
+        padding: 14px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: 0.3s;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast.error {
+        background: var(--red);
+      }
+
+      /* ========== BOTÃO "GERAR TODOS" ========== */
+      .gerar-todos {
+        background: var(--primary-gradient);
+        color: #fff;
+        padding: 14px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.25s;
+        box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25);
+      }
+      .gerar-todos:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 102, 179, 0.35);
+      }
+      .gerar-todos i {
+        font-size: 16px;
+      }
+
+      /* ========== TABS ========== */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        background: var(--bg-soft);
+        padding: 4px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-bottom: 18px;
+        width: fit-content;
+      }
+      .tab {
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        transition: 0.2s;
+      }
+      .tab.active {
+        background: var(--bg-card);
+        color: var(--primary);
+        box-shadow: 0 2px 6px rgba(0, 40, 80, 0.06);
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      /* ========== LOG DO RELATÓRIO ========== */
+      .log-area {
+        margin-top: 14px;
+        padding: 14px;
+        background: var(--bg-soft);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        max-height: 220px;
+        overflow-y: auto;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+      .log-area .linha {
+        padding: 4px 0;
+        display: flex;
+        gap: 10px;
+      }
+      .log-area .linha .hora {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      /* ========== RESPONSIVIDADE ========== */
+      @media (max-width: 1100px) {
+        .filtros {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 768px) {
+        .content {
+          padding: 18px 16px;
+        }
+        .filtros {
+          grid-template-columns: 1fr;
+        }
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div id="sidebar-root"></div>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+      <!-- HEADER -->
+      <div id="header-root"></div>
+
+      <!-- CONTEÚDO -->
+      <main class="content" role="main">
+        <!-- Cabeçalho da página -->
+        <div class="page-header">
+          <div>
+            <h1><i class="fas fa-file-download"></i> Central de Relatórios</h1>
+            <p>
+              Gere e baixe relatórios completos do sistema em PDF ou Excel.
+            </p>
+          </div>
+          <div class="periodo-info">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Período: <strong id="periodoLabel">—</strong></span>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <section class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-filter"></i> Filtros do relatório</h3>
+            <span class="badge-soft">Aplicam-se a todos</span>
+          </div>
+          <div class="filtros">
+            <div class="campo">
+              <label for="filtro-data-inicio">Data inicial</label>
+              <input type="date" id="filtro-data-inicio" />
+            </div>
+            <div class="campo">
+              <label for="filtro-data-fim">Data final</label>
+              <input type="date" id="filtro-data-fim" />
+            </div>
+            <div class="campo">
+              <label for="filtro-setor">Setor</label>
+              <select id="filtro-setor">
+                <option value="todos">Todos os setores</option>
+                <option value="producao">Produção</option>
+                <option value="qualidade">Qualidade</option>
+                <option value="logistica">Logística</option>
+                <option value="almoxarifado">Almoxarifado</option>
+                <option value="comercial">Comercial</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="filtro-status">Status</label>
+              <select id="filtro-status">
+                <option value="todos">Todos</option>
+                <option value="concluido">Concluído</option>
+                <option value="andamento">Em andamento</option>
+                <option value="pendente">Pendente</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabs -->
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="gerar" role="tab">
+            <i class="fas fa-bolt"></i> Gerar relatórios
+          </button>
+          <button class="tab" data-tab="preview" role="tab">
+            <i class="fas fa-table"></i> Pré-visualização
+          </button>
+          <button class="tab" data-tab="historico" role="tab">
+            <i class="fas fa-history"></i> Histórico
+          </button>
+        </div>
+
+        <!-- ABA 1: GERAR -->
+        <div class="tab-content active" id="tab-gerar">
+          <div class="relatorios-grid">
+            <!-- Produção -->
+            <div class="relatorio-card producao">
+              <div class="relatorio-icone">
+                <i class="fas fa-industry"></i>
+              </div>
+              <div class="relatorio-titulo">Relatório de Produção</div>
+              <div class="relatorio-descricao">
+                Ordens de produção, quantidades, prazos e indicadores por setor.
+              </div>
+              <div class="relatorio-acoes">
+                <button class="btn-export pdf" data-tipo="producao" data-formato="pdf">
+                  <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn-export excel" data-tipo="producao" data-formato="excel">
+                  <i class="fas fa-file-excel"></i> Excel
+                </button>
+              </div>
+            </div>
+
+            <!-- Pedidos -->
+            <div class="relatorio-card pedidos">
+              <div class="relatorio-icone">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <div class="relatorio-titulo">Relatório de Pedidos</div>
+              <div class="relatorio-descricao">
+                Pedidos em aberto, concluídos, atrasados e por cliente.
+              </div>
+              <div class="relatorio-acoes">
+                <button class="btn-export pdf" data-tipo="pedidos" data-formato="pdf">
+                  <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn-export excel" data-tipo="pedidos" data-formato="excel">
+                  <i class="fas fa-file-excel"></i> Excel
+                </button>
+              </div>
+            </div>
+
+            <!-- Estoque -->
+            <div class="relatorio-card estoque">
+              <div class="relatorio-icone">
+                <i class="fas fa-warehouse"></i>
+              </div>
+              <div class="relatorio-titulo">Relatório de Estoque</div>
+              <div class="relatorio-descricao">
+                Posição de estoque, itens críticos, mínimos e máximos.
+              </div>
+              <div class="relatorio-acoes">
+                <button class="btn-export pdf" data-tipo="estoque" data-formato="pdf">
+                  <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn-export excel" data-tipo="estoque" data-formato="excel">
+                  <i class="fas fa-file-excel"></i> Excel
+                </button>
+              </div>
+            </div>
+
+            <!-- Logística -->
+            <div class="relatorio-card logistica">
+              <div class="relatorio-icone">
+                <i class="fas fa-truck"></i>
+              </div>
+              <div class="relatorio-titulo">Relatório de Logística</div>
+              <div class="relatorio-descricao">
+                Entregas, rotas, prazos e ocorrências de transporte.
+              </div>
+              <div class="relatorio-acoes">
+                <button class="btn-export pdf" data-tipo="logistica" data-formato="pdf">
+                  <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn-export excel" data-tipo="logistica" data-formato="excel">
+                  <i class="fas fa-file-excel"></i> Excel
+                </button>
+              </div>
+            </div>
+
+            <!-- Desempenho -->
+            <div class="relatorio-card desempenho">
+              <div class="relatorio-icone">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="relatorio-titulo">Relatório de Desempenho</div>
+              <div class="relatorio-descricao">
+                KPIs operacionais, OEE, gargalos e produtividade por período.
+              </div>
+              <div class="relatorio-acoes">
+                <button class="btn-export pdf" data-tipo="desempenho" data-formato="pdf">
+                  <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button class="btn-export excel" data-tipo="desempenho" data-formato="excel">
+                  <i class="fas fa-file-excel"></i> Excel
+                </button>
+              </div>
+            </div>
+
+            <!-- Consolidado -->
+            <div class="relatorio-card" style="background: var(--bg-card);">
+              <div class="relatorio-icone" style="background: var(--primary-light); color: var(--primary);">
+                <i class="fas fa-layer-group"></i>
+              </div>
+              <div class="relatorio-titulo">Relatório Consolidado</div>
+              <div class="relatorio-descricao">
+                Um único PDF com todas as áreas — ideal para gestão e auditoria.
+              </div>
+              <div class="relatorio-acoes">
+                <button class="btn-export pdf" data-tipo="consolidado" data-formato="pdf" style="flex: 1;">
+                  <i class="fas fa-file-pdf"></i> Baixar consolidado (PDF)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão gerar todos -->
+          <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+            <button class="gerar-todos" id="gerarTodosBtn">
+              <i class="fas fa-download"></i> Gerar todos em PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- ABA 2: PRÉ-VISUALIZAÇÃO -->
+        <div class="tab-content" id="tab-preview">
+          <section class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-table"></i> Pré-visualização dos dados</h3>
+              <span class="badge-soft" id="previewContador">— registros</span>
+            </div>
+            <div class="preview-wrapper">
+              <table id="previewTabela">
+                <thead id="previewThead"></thead>
+                <tbody id="previewTbody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- ABA 3: HISTÓRICO -->
+        <div class="tab-content" id="tab-historico">
+          <section class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-history"></i> Histórico de downloads</h3>
+              <button class="badge-soft" id="limparHistoricoBtn" style="cursor: pointer; border: 1px solid var(--border);">
+                <i class="fas fa-trash"></i> Limpar
+              </button>
+            </div>
+            <div class="log-area" id="logArea">
+              <div class="linha">
+                <span class="hora">[—]</span>
+                <span>Nenhum download registrado nesta sessão ainda.</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <div id="footer-root"></div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+      <i class="fas fa-check-circle"></i>
+      <span id="toastTexto">Download iniciado</span>
+    </div>
+
+    <!-- Componentes -->
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
+
+    <!-- Lógica da página -->
+    <script src="JS/relatorios.js"></script>
+  </body>
+</html>
