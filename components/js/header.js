@@ -12,6 +12,37 @@
   // Caminho dinâmico da imagem da logo
   var LOGO_SRC = basePath + "IMG/logoo.png";
 
+  // ============================================
+  // FUNÇÕES PARA GERENCIAR A FOTO DE PERFIL
+  // ============================================
+  function getProfilePhoto() {
+    try {
+      return localStorage.getItem('stocklog_profile_photo') || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getProfileName() {
+    try {
+      var name = localStorage.getItem('stocklog_profile_name');
+      if (name && name.trim() !== '') {
+        return name;
+      }
+      return 'Usuário';
+    } catch (e) {
+      return 'Usuário';
+    }
+  }
+
+  function getProfilePhotoHTML() {
+    var photo = getProfilePhoto();
+    if (photo) {
+      return '<img src="' + photo + '" alt="Avatar" class="header-avatar-img" />';
+    }
+    return '<i class="fas fa-user-circle"></i>';
+  }
+
   // Dados iniciais das notificações
   var headerNotifications = [
     { id: 1, type: "atraso", title: "Pedido #PED-8942 atrasado", desc: "Atraso de 2 dias na entrega de Chapa Inox 304.", time: "Há 15 min", read: false },
@@ -19,6 +50,10 @@
     { id: 3, type: "estoque", title: "Estoque Baixo: Rolamento 6204", desc: "Apenas 12 unidades restantes.", time: "Há 1 hora", read: false },
     { id: 4, type: "entrega", title: "Carga agendada: Doca 02", desc: "Recebimento previsto para às 14:30.", time: "Há 2 horas", read: true }
   ];
+
+  // Prepare profile values used in template
+  var profilePhotoHTML = getProfilePhotoHTML();
+  var profileName = getProfileName();
 
   function getPageTitle() {
     var titles = {
@@ -40,6 +75,9 @@
 
   function buildHeaderHTML() {
     var title = getPageTitle();
+    var profileName = getProfileName();
+    var profilePhotoHTML = getProfilePhotoHTML();
+    
     return (
       '<header class="header" role="banner">' +
         '<div class="header-left">' +
@@ -78,8 +116,8 @@
             '</div>' +
           '</div>' +
           '<a href="' + basePath + 'perfil.html" class="user-profile" aria-label="Perfil">' +
-            '<i class="fas fa-user-circle"></i>' +
-            '<span>Usuário</span>' +
+            '<span class="user-avatar-wrapper">' + profilePhotoHTML + '</span>' +
+            '<span class="user-profile-name">' + profileName + '</span>' +
           '</a>' +
         '</div>' +
       '</header>'
@@ -221,7 +259,6 @@
 
     // Renderiza a lista inicial
     renderHeaderNotifs();
-
     // Ações de busca
     var searchInput = header.querySelector('.header-search input');
     if (searchInput) {
@@ -235,6 +272,33 @@
         }
       });
     }
+
+    // Atualiza o header quando o perfil for atualizado
+    window.addEventListener('profileUpdated', function() {
+      var oldHeader = document.querySelector('.header');
+      if (oldHeader) {
+        var placeholder = document.createElement('div');
+        placeholder.id = 'header-root';
+        oldHeader.replaceWith(placeholder);
+        mount();
+        // Reaplica os listeners
+        var newHeader = document.querySelector('.header');
+        if (newHeader) {
+          var newSearchInput = newHeader.querySelector('.header-search input');
+          if (newSearchInput) {
+            newSearchInput.addEventListener("keydown", function (e) {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                var query = this.value.trim();
+                if (query) {
+                  console.log("[StockLog] Busca:", query);
+                }
+              }
+            });
+          }
+        }
+      }
+    });
   }
 
   if (document.readyState === "loading") {

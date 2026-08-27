@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="components/css/modoescuro.css" />
     <style>
       /* ================================================================
-         TOKENS / VARIÁVEIS (mesmo padrão do restante do StockLog)
+         TOKENS / VARIÁVEIS
          ================================================================ */
       :root {
         --bg-body: #f0f5fc;
@@ -32,27 +32,36 @@
         --primary: #006bb3;
         --primary-dark: #004d80;
         --primary-light: #e1eefb;
-        --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
+        --primary-gradient: linear-gradient(135deg, #0077be 0%, #005a8c 100%);
 
         --text-main: #0a1f33;
         --text-secondary: #3d5f7e;
         --text-muted: #7b92b2;
 
-        --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
-        --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
+        --shadow-card: 0 1px 2px rgba(0, 40, 80, 0.04), 0 4px 12px rgba(0, 40, 80, 0.04);
+        --shadow-hover: 0 4px 8px rgba(0, 40, 80, 0.06), 0 12px 28px rgba(0, 40, 80, 0.08);
+        --shadow-lift: 0 8px 20px rgba(0, 40, 80, 0.10), 0 20px 40px rgba(0, 40, 80, 0.06);
 
-        --green: #1a7b72;
-        --green-bg: #e0f2ea;
+        /* Cores semânticas (status logístico) */
         --amber: #c47a1f;
         --amber-bg: #faecd6;
-        --red: #b2433a;
-        --red-bg: #fae2e0;
-        --purple: #6f4c4e;
-        --purple-bg: #ede6f5;
-        --blue: #2f81f7;
-        --blue-bg: rgba(47,129,247,.15);
+        --amber-strong: #f59f1a;
+
+        --blue: #2f6fdb;
+        --blue-bg: #e1ecfb;
+        --blue-strong: #2f81f7;
+
+        --brown: #8b5a2b;
+        --brown-bg: #f1e3d2;
+        --brown-strong: #b97840;
+
+        --primary-strong: #006bb3;
         --teal: #1a7b72;
         --teal-bg: #e0f2ea;
+        --teal-strong: #14a085;
+
+        --rose: #b2433a;
+        --rose-bg: #fae2e0;
       }
 
       body.dark {
@@ -67,16 +76,15 @@
         --text-muted: #6f8daa;
 
         --primary-light: #1d3a55;
-
-        --green-bg: #123a2a;
         --amber-bg: #3a2f15;
-        --red-bg: #3a1f1f;
-        --purple-bg: #2a1f3d;
-        --blue-bg: rgba(47,129,247,.22);
+        --blue-bg: #1c2c4a;
+        --brown-bg: #2f2418;
         --teal-bg: #123a2a;
+        --rose-bg: #3a1f1f;
 
-        --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
-        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
+        --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+        --shadow-hover: 0 4px 8px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.25);
+        --shadow-lift: 0 8px 20px rgba(0,0,0,.4), 0 20px 40px rgba(0,0,0,.3);
       }
 
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -87,6 +95,7 @@
         display: flex;
         min-height: 100vh;
         transition: background 0.3s, color 0.3s;
+        -webkit-font-smoothing: antialiased;
       }
       a { text-decoration: none; color: inherit; }
       button { cursor: pointer; font-family: inherit; border: none; background: none; }
@@ -105,39 +114,98 @@
         min-width: 0;
       }
 
+      /* ============ HEADER DA PÁGINA ============ */
+      .page-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 22px;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .page-head h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: -0.01em;
+      }
+      .page-head h1 i {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+      .page-head p {
+        color: var(--text-secondary);
+        font-size: 13.5px;
+        margin-top: 4px;
+        margin-left: 50px;
+      }
+      .page-head .head-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        box-shadow: var(--shadow-card);
+      }
+      .page-head .head-info i { color: var(--primary); }
+      .page-head .head-info strong { color: var(--text-main); font-weight: 600; }
+
       /* ============ BOTÕES GERAIS ============ */
       .btn {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 9px 16px;
+        padding: 10px 16px;
         border-radius: 10px;
-        font-size: 13px;
+        font-size: 13.5px;
         font-weight: 600;
         border: 1px solid transparent;
         cursor: pointer;
-        transition: 0.2s;
+        transition: all 0.2s ease;
         white-space: nowrap;
       }
-      .btn i { font-size: 13px; }
+      .btn i { font-size: 13px; transition: transform 0.2s ease; }
       .btn.btn-primary {
         background: var(--primary-gradient);
         color: #fff;
-        box-shadow: var(--shadow-card);
+        box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25);
       }
-      .btn.btn-primary:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+      .btn.btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 102, 179, 0.35);
+      }
+      .btn.btn-primary:hover i { transform: rotate(90deg); }
       .btn.btn-secondary {
-        background: var(--bg-soft);
+        background: var(--bg-card);
         color: var(--text-main);
         border-color: var(--border);
       }
-      .btn.btn-secondary:hover { border-color: var(--border-hover); }
-      .btn.btn-danger {
-        background: var(--red-bg);
-        color: var(--red);
-        border-color: var(--red);
+      .btn.btn-secondary:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
       }
-      .btn.btn-danger:hover { background: var(--red); color: #fff; }
+      .btn.btn-secondary:hover i { color: var(--primary); }
+      .btn.btn-danger {
+        background: var(--rose-bg);
+        color: var(--rose);
+        border-color: var(--rose);
+      }
+      .btn.btn-danger:hover { background: var(--rose); color: #fff; }
       .btn.btn-icon {
         padding: 7px 10px;
         background: transparent;
@@ -148,186 +216,433 @@
       .btn.btn-sm { padding: 6px 11px; font-size: 12px; }
       .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
 
-      /* ============ TOOLBAR ============ */
+      /* ============ STATS / INDICADORES ============ */
+      .log-stats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .log-stat {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .log-stat::after {
+        content: "";
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 3px;
+        background: var(--accent, var(--primary));
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+      .log-stat:hover {
+        border-color: var(--border-hover);
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-2px);
+      }
+      .log-stat:hover::after { opacity: 1; }
+      .log-stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        flex-shrink: 0;
+        transition: transform 0.25s ease;
+      }
+      .log-stat:hover .log-stat-icon { transform: scale(1.05) rotate(-3deg); }
+      .log-stat-body { flex: 1; min-width: 0; }
+      .log-stat-num {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+      }
+      .log-stat-label {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-top: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .log-stat-trend {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 10.5px;
+        font-weight: 600;
+        margin-top: 4px;
+        padding: 1px 6px;
+        border-radius: 10px;
+      }
+      .log-stat-trend.up {
+        color: var(--teal);
+        background: var(--teal-bg);
+      }
+      .log-stat-trend.down {
+        color: var(--rose);
+        background: var(--rose-bg);
+      }
+
+      /* ============ TOOLBAR / ÁREA DE AÇÕES ============ */
       .log-toolbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 16px;
         flex-wrap: wrap;
-        margin-bottom: 18px;
+        margin-bottom: 20px;
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 14px;
         padding: 14px 18px;
         box-shadow: var(--shadow-card);
       }
-      .log-toolbar-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-      .log-toolbar-right { display: flex; align-items: center; gap: 8px; }
-      .log-search {
+      .log-toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        flex: 1;
+      }
+      .log-toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .log-search-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 240px;
+        max-width: 360px;
+      }
+      .log-search-wrap i {
+        position: absolute;
+        left: 14px;
+        color: var(--text-muted);
         font-size: 13px;
-        padding: 9px 12px 9px 34px;
+        pointer-events: none;
+        transition: color 0.2s ease;
+      }
+      .log-search {
+        font-size: 13.5px;
+        padding: 10px 14px 10px 38px;
         border: 1px solid var(--border);
         border-radius: 10px;
         background: var(--bg-soft);
         color: var(--text-main);
-        width: 220px;
-        position: relative;
+        width: 100%;
+        outline: none;
+        transition: all 0.2s ease;
       }
-      .log-search-wrap { position: relative; display: flex; align-items: center; }
-      .log-search-wrap i {
-        position: absolute;
-        left: 12px;
-        color: var(--text-muted);
-        font-size: 12px;
-        pointer-events: none;
-      }
-
-      /* ============ STATS ============ */
-      .log-stats {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 14px;
-        margin-bottom: 18px;
-      }
-      .log-stat {
+      .log-search::placeholder { color: var(--text-muted); }
+      .log-search:focus {
+        border-color: var(--primary);
         background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 16px 18px;
-        box-shadow: var(--shadow-card);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transition: 0.2s;
+        box-shadow: 0 0 0 3px var(--primary-light);
       }
-      .log-stat:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); }
-      .log-stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
+      .log-search:focus + i,
+      .log-search-wrap:focus-within i {
+        color: var(--primary);
       }
-      .log-stat-num { font-size: 20px; font-weight: 700; color: var(--text-main); line-height: 1.1; }
-      .log-stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
 
-      /* ============ KANBAN DE EXPEDIÇÃO ============ */
-      .log-kanban-title {
-        display: flex;
+      .toolbar-info {
+        display: inline-flex;
         align-items: center;
         gap: 8px;
-        font-size: 15px;
+        font-size: 12.5px;
+        color: var(--text-muted);
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: var(--bg-soft);
+        border: 1px dashed var(--border);
+      }
+      .toolbar-info i { color: var(--primary); }
+      .toolbar-info strong { color: var(--text-main); font-weight: 600; }
+
+      /* ============ KANBAN DE EXPEDIÇÃO ============ */
+      .log-section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 4px 0 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .log-section-head .title {
+        font-size: 16px;
         font-weight: 700;
         color: var(--text-main);
-        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
+      .log-section-head .title i {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+      .log-section-head .subtitle {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        margin-left: 42px;
+        margin-top: -8px;
+      }
+
       .log-kanban {
         display: grid;
-        grid-template-columns: repeat(5, minmax(220px, 1fr));
+        grid-template-columns: repeat(5, minmax(230px, 1fr));
         gap: 14px;
-        overflow-x: auto;
-        padding-bottom: 6px;
         margin-bottom: 28px;
       }
       .log-col {
         background: var(--bg-soft);
         border: 1px solid var(--border);
         border-radius: 14px;
-        padding: 12px;
-        min-height: 200px;
+        padding: 0;
+        min-height: 240px;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
+        transition: border-color 0.2s ease;
       }
+      .log-col:hover { border-color: var(--border-hover); }
+
       .log-col-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 10px;
-        padding: 0 2px;
+        padding: 14px 14px 12px;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        border-top: 3px solid var(--accent, var(--primary));
       }
       .log-col-title {
         font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.04em;
         display: flex;
         align-items: center;
-        gap: 7px;
+        gap: 8px;
+        color: var(--text-main);
+      }
+      .log-col-title i {
+        width: 22px; height: 22px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        background: var(--accent-bg, var(--primary-light));
+        color: var(--accent, var(--primary));
       }
       .log-col-count {
-        background: var(--bg-card);
+        background: var(--bg-soft);
         border: 1px solid var(--border);
         color: var(--text-secondary);
         font-size: 11px;
         font-weight: 700;
         padding: 2px 8px;
         border-radius: 20px;
+        min-width: 24px;
+        text-align: center;
       }
-      .log-col-body { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+      .log-col-body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex: 1;
+        padding: 12px;
+      }
       .log-col-empty {
         text-align: center;
         color: var(--text-muted);
         font-size: 11.5px;
         font-style: italic;
-        padding: 18px 6px;
+        padding: 26px 6px;
+        opacity: 0.7;
       }
 
+      /* ============ CARDS DOS PEDIDOS ============ */
       .log-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 12px 13px;
+        padding: 14px;
         box-shadow: var(--shadow-card);
         cursor: pointer;
-        transition: 0.2s;
+        transition: all 0.2s ease;
+        position: relative;
       }
-      .log-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); transform: translateY(-1px); }
-      .log-card-top {
+      .log-card:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-lift);
+        transform: translateY(-2px);
+      }
+      .log-card-head {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         gap: 8px;
-        margin-bottom: 6px;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed var(--border);
       }
-      .log-card-num { font-size: 12.5px; font-weight: 700; color: var(--primary); }
+      .log-card-num {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+      }
+      .log-card-num small {
+        display: block;
+        font-size: 9.5px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-top: 1px;
+      }
       .log-badge-urgente {
         font-size: 9.5px;
         font-weight: 700;
         text-transform: uppercase;
-        color: var(--red);
-        background: var(--red-bg);
-        padding: 2px 7px;
+        color: var(--rose);
+        background: var(--rose-bg);
+        padding: 3px 8px;
         border-radius: 20px;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.05em;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        position: relative;
       }
+      .log-badge-urgente::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--rose);
+        animation: pulseDot 1.6s ease-in-out infinite;
+      }
+      @keyframes pulseDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.7); }
+      }
+
       .log-card-cliente {
-        font-size: 13px;
+        font-size: 13.5px;
         font-weight: 600;
         color: var(--text-main);
-        margin-bottom: 6px;
-        line-height: 1.3;
-      }
-      .log-card-meta {
-        font-size: 11px;
-        color: var(--text-muted);
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
         margin-bottom: 10px;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
-      .log-card-meta span { display: flex; align-items: center; gap: 6px; }
-      .log-card-foot { display: flex; gap: 6px; }
+
+      .log-card-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 10px;
+        margin-bottom: 12px;
+        font-size: 11.5px;
+      }
+      .log-card-info .item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-secondary);
+      }
+      .log-card-info .item i {
+        color: var(--text-muted);
+        font-size: 10.5px;
+        width: 12px;
+        text-align: center;
+      }
+      .log-card-info .item strong {
+        color: var(--text-main);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .log-card-foot {
+        display: flex;
+        gap: 6px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
       .log-card-foot .btn { flex: 1; justify-content: center; }
+
+      /* Hint quando o card está atribuído a um veículo */
+      .log-card-driver {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: var(--bg-soft);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-size: 11.5px;
+        color: var(--text-secondary);
+      }
+      .log-card-driver .avatar {
+        width: 24px; height: 24px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .log-card-driver .info { flex: 1; min-width: 0; line-height: 1.3; }
+      .log-card-driver .info strong {
+        display: block;
+        color: var(--text-main);
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .log-card-driver .info span {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+      }
 
       /* ============ VEÍCULOS E MOTORISTAS ============ */
       .card {
         background: var(--bg-card);
         border-radius: 14px;
-        padding: 20px 22px 22px;
+        padding: 22px;
         border: 1px solid var(--border);
         box-shadow: var(--shadow-card);
       }
@@ -335,68 +650,253 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
         gap: 10px;
         flex-wrap: wrap;
       }
       .card-title {
-        font-size: 15px;
+        font-size: 16px;
         font-weight: 700;
         color: var(--text-main);
         display: flex;
         align-items: center;
+        gap: 10px;
       }
+      .card-title i {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+      .card-subtitle {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        margin-left: 42px;
+      }
+      .card-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .util-info {
+        font-size: 12px;
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+      }
+      .util-info strong { color: var(--text-main); font-weight: 700; }
 
       .log-vehicles-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 14px;
       }
       .log-vehicle-card {
         border: 1px solid var(--border);
-        background: var(--bg-soft);
+        background: var(--bg-card);
         border-radius: 12px;
-        padding: 14px 16px;
+        padding: 16px;
         cursor: pointer;
-        transition: 0.2s;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
       }
-      .log-vehicle-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); }
+      .log-vehicle-card::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 4px;
+        background: var(--status-color, var(--primary));
+        transition: width 0.2s ease;
+      }
+      .log-vehicle-card:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-2px);
+      }
+      .log-vehicle-card:hover::before { width: 6px; }
+
       .log-vehicle-top {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        margin-bottom: 8px;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .log-vehicle-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: var(--bg-soft);
+        color: var(--status-color, var(--primary));
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
       }
       .log-vehicle-plate {
-        font-size: 13.5px;
+        font-size: 14.5px;
         font-weight: 700;
         color: var(--text-main);
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        letter-spacing: 0.02em;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.2;
       }
-      .log-vehicle-plate i { color: var(--primary); }
+      .log-vehicle-plate small {
+        display: block;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-muted);
+        margin-top: 2px;
+        letter-spacing: 0;
+      }
       .log-status-pill {
         font-size: 10px;
         font-weight: 700;
         text-transform: uppercase;
-        padding: 3px 9px;
+        padding: 4px 9px;
         border-radius: 20px;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.04em;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      .log-status-pill::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: pulseDot 2s ease-in-out infinite;
       }
       .status-disponivel { background: var(--teal-bg); color: var(--teal); }
       .status-em_rota { background: var(--blue-bg); color: var(--blue); }
       .status-manutencao { background: var(--amber-bg); color: var(--amber); }
-      .log-vehicle-model { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+
       .log-vehicle-driver {
-        font-size: 12px;
-        color: var(--text-main);
         display: flex;
         align-items: center;
-        gap: 6px;
-        margin-bottom: 3px;
+        gap: 10px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
       }
-      .log-vehicle-phone { font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+      .log-vehicle-driver .avatar {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .log-vehicle-driver .info { flex: 1; min-width: 0; line-height: 1.3; }
+      .log-vehicle-driver .info strong {
+        display: block;
+        color: var(--text-main);
+        font-weight: 600;
+        font-size: 12.5px;
+      }
+      .log-vehicle-driver .info span {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .log-vehicle-driver .info span i { margin-right: 3px; }
+
+      /* Barra de utilização da frota */
+      .util-bar {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 10.5px;
+        color: var(--text-muted);
+      }
+      .util-bar .bar {
+        flex: 1;
+        height: 5px;
+        background: var(--bg-soft);
+        border-radius: 3px;
+        overflow: hidden;
+        position: relative;
+      }
+      .util-bar .fill {
+        position: absolute;
+        inset: 0;
+        width: var(--w, 0%);
+        background: var(--status-color, var(--primary));
+        border-radius: 3px;
+        transition: width 0.4s ease;
+      }
+      .util-bar strong {
+        color: var(--text-main);
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ============ GRID INFERIOR: FROTA + ATIVIDADE RECENTE ============ */
+      .bottom-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 18px;
+        margin-top: 8px;
+      }
+      @media (max-width: 1100px) {
+        .bottom-grid { grid-template-columns: 1fr; }
+      }
+
+      .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 8px;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+      }
+      .activity-item:hover { background: var(--bg-soft); }
+      .activity-icon {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+      .activity-item .text { flex: 1; min-width: 0; line-height: 1.3; }
+      .activity-item .text strong {
+        display: block;
+        color: var(--text-main);
+        font-weight: 600;
+        font-size: 12.5px;
+      }
+      .activity-item .text span {
+        font-size: 11.5px;
+        color: var(--text-muted);
+      }
+      .activity-item .hora {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
 
       /* ============ MODAL ============ */
       .modal-overlay {
@@ -419,7 +919,7 @@
         max-width: 560px;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: var(--shadow-hover);
+        box-shadow: var(--shadow-lift);
         animation: slideUp 0.25s ease;
       }
       @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -475,6 +975,7 @@
       }
       .form-input:focus, .form-textarea:focus, .form-select:focus {
         border-color: var(--primary);
+        background: var(--bg-card);
         box-shadow: 0 0 0 3px var(--primary-light);
       }
       .form-textarea { resize: vertical; min-height: 70px; font-family: inherit; }
@@ -538,12 +1039,12 @@
         font-weight: 500;
         animation: slideInRight 0.3s ease;
       }
-      .toast.success { border-left-color: var(--green); }
-      .toast.error { border-left-color: var(--red); }
+      .toast.success { border-left-color: var(--teal); }
+      .toast.error { border-left-color: var(--rose); }
       .toast.warning { border-left-color: var(--amber); }
       .toast i { font-size: 16px; }
-      .toast.success i { color: var(--green); }
-      .toast.error i { color: var(--red); }
+      .toast.success i { color: var(--teal); }
+      .toast.error i { color: var(--rose); }
       .toast.warning i { color: var(--amber); }
       .toast.info i { color: var(--primary); }
       @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
@@ -551,11 +1052,11 @@
       /* ============ RESPONSIVIDADE ============ */
       @media (max-width: 1300px) {
         .log-stats { grid-template-columns: repeat(3, 1fr); }
-        .log-kanban { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+        .log-kanban { grid-template-columns: repeat(3, minmax(230px, 1fr)); }
       }
       @media (max-width: 900px) {
         .log-stats { grid-template-columns: repeat(2, 1fr); }
-        .log-kanban { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+        .log-kanban { grid-template-columns: repeat(2, minmax(230px, 1fr)); }
       }
       @media (max-width: 768px) {
         .content { padding: 18px 16px; }
@@ -563,8 +1064,11 @@
         .log-toolbar-left, .log-toolbar-right { justify-content: center; }
         .log-search { width: 100%; }
         .log-stats { grid-template-columns: repeat(2, 1fr); }
-        .log-kanban { grid-template-columns: minmax(220px, 1fr); }
+        .log-kanban { grid-template-columns: minmax(230px, 1fr); }
         .form-row, .form-row.cols-3 { grid-template-columns: 1fr; }
+        .page-head h1 { font-size: 20px; }
+        .page-head h1 i { width: 34px; height: 34px; font-size: 14px; }
+        .page-head p { margin-left: 46px; }
       }
     </style>
   </head>
@@ -578,10 +1082,22 @@
 
       <main class="content" role="main">
 
-        <!-- Estatísticas -->
+        <!-- Cabeçalho da página -->
+        <div class="page-head">
+          <div>
+            <h1></h1>
+            <p></p>
+          </div>
+          <div class="head-info">
+            <i class="fa-regular fa-calendar"></i>
+            <span> <strong id="dataHoje"></strong></span>
+          </div>
+        </div>
+
+        <!-- Estatísticas / Indicadores -->
         <div class="log-stats" id="log-stats"></div>
 
-        <!-- Toolbar -->
+        <!-- Barra de ações -->
         <div class="log-toolbar">
           <div class="log-toolbar-left">
             <button class="btn btn-primary" onclick="logOpenNewOrder()">
@@ -589,8 +1105,12 @@
             </button>
             <div class="log-search-wrap">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" class="log-search" id="log-search" placeholder="Buscar cliente ou nº do pedido..." oninput="logRenderKanban()">
+              <input type="text" class="log-search" id="log-search" placeholder="Buscar por cliente ou nº do pedido..." oninput="logRender()">
             </div>
+            <span class="toolbar-info" id="toolbarInfo">
+              <i class="fa-solid fa-circle-info"></i>
+              <span><strong id="toolbarCount">0</strong> pedidos visíveis</span>
+            </span>
           </div>
           <div class="log-toolbar-right">
             <button class="btn btn-secondary" onclick="logOpenNewVehicle()">
@@ -600,22 +1120,53 @@
         </div>
 
         <!-- Kanban de expedição -->
-        <div class="log-kanban-title">
-          <i class="fa-solid fa-boxes-packing" style="color:var(--primary)"></i>
-          Fluxo de separação e expedição
+        <div class="log-section-head">
+          <div>
+            <div class="title">
+           
+           
+            </div>
+           
+          </div>
         </div>
         <div class="log-kanban" id="log-kanban"></div>
 
-        <!-- Veículos e motoristas -->
-        <section class="card">
-          <div class="card-header">
-            <span class="card-title">
-              <i class="fa-solid fa-truck-fast" style="color:var(--primary);margin-right:8px"></i>
-              Veículos e motoristas
-            </span>
-          </div>
-          <div class="log-vehicles-grid" id="log-vehicles-grid"></div>
-        </section>
+        <!-- Grid inferior: Frota + Atividade recente -->
+        <div class="bottom-grid">
+          <!-- Veículos e motoristas -->
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i class="fa-solid fa-truck-fast"></i>
+                  Frota & Motoristas
+                </div>
+                <div class="card-subtitle"></div>
+              </div>
+              <div class="card-actions">
+                <span class="util-info">
+                  <i class="fa-solid fa-chart-simple" style="color:var(--primary)"></i>
+                  <span>Utilização da frota: <strong id="utilFrota">0%</strong></span>
+                </span>
+              </div>
+            </div>
+            <div class="log-vehicles-grid" id="log-vehicles-grid"></div>
+          </section>
+
+          <!-- Atividade recente -->
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i class="fa-solid fa-bolt"></i>
+                  Atividade recente
+                </div>
+                <div class="card-subtitle"></div>
+              </div>
+            </div>
+            <div class="activity-list" id="log-activity"></div>
+          </section>
+        </div>
       </main>
 
       <!-- FOOTER -->
@@ -639,7 +1190,7 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label>Nº do pedido <span style="color:var(--red)">*</span></label>
+              <label>Nº do pedido <span style="color:var(--rose)">*</span></label>
               <input type="text" class="form-input" id="log-ord-numero" placeholder="Ex: 1050">
             </div>
             <div class="form-group">
@@ -652,7 +1203,7 @@
           </div>
 
           <div class="form-group">
-            <label>Cliente / Destino <span style="color:var(--red)">*</span></label>
+            <label>Cliente / Destino <span style="color:var(--rose)">*</span></label>
             <input type="text" class="form-input" id="log-ord-cliente" placeholder="Ex: Supermercado Boa Vista">
           </div>
 
@@ -725,7 +1276,7 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label>Placa <span style="color:var(--red)">*</span></label>
+              <label>Placa <span style="color:var(--rose)">*</span></label>
               <input type="text" class="form-input" id="log-veh-placa" placeholder="Ex: ABC-1234">
             </div>
             <div class="form-group">
@@ -735,7 +1286,7 @@
           </div>
 
           <div class="form-group">
-            <label>Motorista <span style="color:var(--red)">*</span></label>
+            <label>Motorista <span style="color:var(--rose)">*</span></label>
             <input type="text" class="form-input" id="log-veh-motorista" placeholder="Nome do motorista">
           </div>
 
@@ -784,6 +1335,7 @@
          ========================================================= */
       const LOG_STORAGE_ORDERS = "stocklog_log_orders_v1";
       const LOG_STORAGE_VEHICLES = "stocklog_log_vehicles_v1";
+      const LOG_STORAGE_ACTIVITY = "stocklog_log_activity_v1";
 
       const STATUS_ORDER = ["aguardando", "separacao", "embalagem", "expedicao", "entregue"];
       const STATUS_LABELS = {
@@ -800,16 +1352,21 @@
         expedicao: "fa-truck-ramp-box",
         entregue: "fa-circle-check",
       };
-      const STATUS_COLORS = {
-        aguardando: "amber",
-        separacao: "blue",
-        embalagem: "purple",
-        expedicao: "primary",
-        entregue: "teal",
+      const STATUS_THEME = {
+        aguardando: { accent: "var(--amber)", bg: "var(--amber-bg)" },
+        separacao: { accent: "var(--blue)",  bg: "var(--blue-bg)" },
+        embalagem: { accent: "var(--brown)", bg: "var(--brown-bg)" },
+        expedicao: { accent: "var(--primary)", bg: "var(--primary-light)" },
+        entregue:  { accent: "var(--teal)",  bg: "var(--teal-bg)" },
       };
       const VEHICLE_STATUS_LABELS = { disponivel: "Disponível", em_rota: "Em rota", manutencao: "Manutenção" };
+      const VEHICLE_STATUS_THEME = {
+        disponivel: "var(--teal)",
+        em_rota:   "var(--blue)",
+        manutencao:"var(--amber)",
+      };
 
-      let logState = { orders: [], vehicles: [] };
+      let logState = { orders: [], vehicles: [], activity: [] };
 
       function logLoad() {
         try {
@@ -823,25 +1380,41 @@
           logState.vehicles = savedVehicles ? JSON.parse(savedVehicles) : logDefaultVehicles();
           if (!savedVehicles) logSaveVehicles();
         } catch (e) { logState.vehicles = logDefaultVehicles(); }
+
+        try {
+          const savedActivity = localStorage.getItem(LOG_STORAGE_ACTIVITY);
+          logState.activity = savedActivity ? JSON.parse(savedActivity) : logDefaultActivity();
+          if (!savedActivity) logSaveActivity();
+        } catch (e) { logState.activity = logDefaultActivity(); }
       }
-      function logSaveOrders() { localStorage.setItem(LOG_STORAGE_ORDERS, JSON.stringify(logState.orders)); }
-      function logSaveVehicles() { localStorage.setItem(LOG_STORAGE_VEHICLES, JSON.stringify(logState.vehicles)); }
+      function logSaveOrders()    { localStorage.setItem(LOG_STORAGE_ORDERS,    JSON.stringify(logState.orders)); }
+      function logSaveVehicles()  { localStorage.setItem(LOG_STORAGE_VEHICLES,  JSON.stringify(logState.vehicles)); }
+      function logSaveActivity()  { localStorage.setItem(LOG_STORAGE_ACTIVITY,  JSON.stringify(logState.activity)); }
+
+      function logDefaultActivity() {
+        return [
+          { id: "a1", icon: "fa-truck",        color: "blue",   titulo: "Veículo ABC-1234 saiu para entrega",     subtitulo: "Distribuidora Nordeste",         hora: "08:42" },
+          { id: "a2", icon: "fa-box-open",     color: "brown",  titulo: "Pedido #1039 iniciou embalagem",          subtitulo: "Padaria Pão Quente",             hora: "08:18" },
+          { id: "a3", icon: "fa-bell",         color: "rose",   titulo: "Pedido #1043 marcado como urgente",       subtitulo: "Supermercado Boa Vista",         hora: "07:55" },
+          { id: "a4", icon: "fa-circle-check", color: "teal",   titulo: "Pedido #1030 entregue",                   subtitulo: "Mercadinho Ipê",                  hora: "07:30" },
+        ];
+      }
 
       function logDefaultVehicles() {
         return [
-          { id: "v1", placa: "ABC-1234", modelo: "Fiorino Furgão", motorista: "João Silva", telefone: "(11) 98888-1234", status: "em_rota" },
-          { id: "v2", placa: "XYZ-5678", modelo: "VW Delivery 9.170", motorista: "Marcos Souza", telefone: "(11) 97777-5678", status: "disponivel" },
-          { id: "v3", placa: "JKL-9012", modelo: "Sprinter Van", motorista: "Ana Paula Rocha", telefone: "(11) 96666-9012", status: "manutencao" },
+          { id: "v1", placa: "ABC-1234", modelo: "Fiorino Furgão",      motorista: "João Silva",      telefone: "(11) 98888-1234", status: "em_rota" },
+          { id: "v2", placa: "XYZ-5678", modelo: "VW Delivery 9.170",   motorista: "Marcos Souza",    telefone: "(11) 97777-5678", status: "disponivel" },
+          { id: "v3", placa: "JKL-9012", modelo: "Sprinter Van",        motorista: "Ana Paula Rocha", telefone: "(11) 96666-9012", status: "manutencao" },
         ];
       }
 
       function logDefaultOrders() {
         return [
           { id: "o1", numero: "1043", cliente: "Supermercado Boa Vista", endereco: "Av. Central, 900 - Centro", itens: 300, prioridade: "urgente", status: "aguardando", veiculoId: "", data: "2026-08-21", obs: "Cliente pediu conferência dupla antes da separação." },
-          { id: "o2", numero: "1042", cliente: "Restaurante Sabor & Cia", endereco: "Rua das Flores, 120", itens: 120, prioridade: "normal", status: "separacao", veiculoId: "", data: "2026-08-22", obs: "" },
-          { id: "o3", numero: "1039", cliente: "Padaria Pão Quente", endereco: "Rua Dez, 45", itens: 60, prioridade: "normal", status: "embalagem", veiculoId: "", data: "2026-08-22", obs: "Embalagem térmica." },
-          { id: "o4", numero: "1035", cliente: "Distribuidora Nordeste", endereco: "Rod. BR-101, km 12", itens: 500, prioridade: "urgente", status: "expedicao", veiculoId: "v1", data: "2026-08-21", obs: "" },
-          { id: "o5", numero: "1030", cliente: "Mercadinho Ipê", endereco: "Travessa Ipê, 8", itens: 80, prioridade: "normal", status: "entregue", veiculoId: "v2", data: "2026-08-20", obs: "" },
+          { id: "o2", numero: "1042", cliente: "Restaurante Sabor & Cia", endereco: "Rua das Flores, 120",    itens: 120, prioridade: "normal",  status: "separacao",  veiculoId: "",    data: "2026-08-22", obs: "" },
+          { id: "o3", numero: "1039", cliente: "Padaria Pão Quente",    endereco: "Rua Dez, 45",             itens: 60,  prioridade: "normal",  status: "embalagem",  veiculoId: "",    data: "2026-08-22", obs: "Embalagem térmica." },
+          { id: "o4", numero: "1035", cliente: "Distribuidora Nordeste",endereco: "Rod. BR-101, km 12",      itens: 500, prioridade: "urgente", status: "expedicao",  veiculoId: "v1", data: "2026-08-21", obs: "" },
+          { id: "o5", numero: "1030", cliente: "Mercadinho Ipê",        endereco: "Travessa Ipê, 8",        itens: 80,  prioridade: "normal",  status: "entregue",   veiculoId: "v2", data: "2026-08-20", obs: "" },
         ];
       }
 
@@ -849,38 +1422,85 @@
         const idx = STATUS_ORDER.indexOf(status);
         return idx >= 0 && idx < STATUS_ORDER.length - 1 ? STATUS_ORDER[idx + 1] : null;
       }
+      function logPrevStatus(status) {
+        const idx = STATUS_ORDER.indexOf(status);
+        return idx > 0 ? STATUS_ORDER[idx - 1] : null;
+      }
+      function logAddActivity(icon, color, titulo, subtitulo) {
+        const agora = new Date();
+        const hora = `${String(agora.getHours()).padStart(2,"0")}:${String(agora.getMinutes()).padStart(2,"0")}`;
+        logState.activity.unshift({ id: "a" + Date.now().toString(36), icon, color, titulo, subtitulo, hora });
+        if (logState.activity.length > 8) logState.activity.pop();
+        logSaveActivity();
+      }
 
-      /* ============ RENDER ============ */
+      /* ============ HEADER DATA ============ */
+      function logRenderHeader() {
+        const d = new Date();
+        const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+        document.getElementById("dataHoje").textContent =
+          `${String(d.getDate()).padStart(2,"0")} ${meses[d.getMonth()]} ${d.getFullYear()}`;
+      }
+
+      /* ============ RENDER PRINCIPAL ============ */
       function logRender() {
+        logRenderHeader();
         logRenderStats();
+        logRenderToolbar();
         logRenderKanban();
         logRenderVehicles();
+        logRenderActivity();
       }
 
       function logRenderStats() {
         const counts = { aguardando: 0, separacao: 0, embalagem: 0, expedicao: 0, entregue: 0 };
         logState.orders.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
         const disponiveis = logState.vehicles.filter(v => v.status === "disponivel").length;
+        const emRota = logState.vehicles.filter(v => v.status === "em_rota").length;
+        const urgentes = logState.orders.filter(o => o.prioridade === "urgente" && o.status !== "entregue").length;
 
         const tiles = [
-          { label: "Aguardando Separação", num: counts.aguardando, icon: "fa-hourglass-half", color: "amber" },
-          { label: "Em Separação", num: counts.separacao, icon: "fa-people-carry-box", color: "blue" },
-          { label: "Embalagem", num: counts.embalagem, icon: "fa-box-open", color: "purple" },
-          { label: "Em Expedição", num: counts.expedicao, icon: "fa-truck-ramp-box", color: "primary" },
-          { label: "Veículos disponíveis", num: disponiveis, icon: "fa-truck", color: "teal" },
+          { label: "Aguardando Separação", num: counts.aguardando, icon: "fa-hourglass-half",     color: "amber",   trend: counts.aguardando > 0 ? `${counts.aguardando} pendentes` : "Em dia",     trendUp: counts.aguardando === 0 },
+          { label: "Em Separação",        num: counts.separacao,   icon: "fa-people-carry-box",   color: "blue",    trend: `${emRota} veículos em rota`,   trendUp: true },
+          { label: "Embalagem",           num: counts.embalagem,   icon: "fa-box-open",           color: "brown",   trend: "Tempo médio 35min",          trendUp: true },
+          { label: "Em Expedição",        num: counts.expedicao,   icon: "fa-truck-ramp-box",     color: "primary", trend: `${disponiveis} disponíveis`,   trendUp: true },
+          { label: "Veículos disponíveis",num: disponiveis,        icon: "fa-truck",              color: "teal",    trend: urgentes > 0 ? `${urgentes} urgentes` : "Sem urgências", trendUp: urgentes === 0 },
         ];
 
         document.getElementById("log-stats").innerHTML = tiles.map(t => `
-          <div class="log-stat">
-            <div class="log-stat-icon" style="background:var(--${t.color}-light, var(--primary-light));color:var(--${t.color}, var(--primary))">
+          <div class="log-stat" style="--accent: ${STATUS_THEME[Object.keys(STATUS_THEME).find(k => k.startsWith(t.color) || (t.color === 'primary' && k === 'expedicao') || (t.color === 'teal' && k === 'entregue'))]?.accent || "var(--primary)"}">
+            <div class="log-stat-icon" style="background:${getColor(t.color, "bg")};color:${getColor(t.color, "fg")}">
               <i class="fa-solid ${t.icon}"></i>
             </div>
-            <div>
+            <div class="log-stat-body">
               <div class="log-stat-num">${t.num}</div>
               <div class="log-stat-label">${t.label}</div>
+              <div class="log-stat-trend ${t.trendUp ? "up" : "down"}">
+                <i class="fa-solid ${t.trendUp ? "fa-arrow-up" : "fa-arrow-down"}" style="font-size:9px"></i>
+                ${t.trend}
+              </div>
             </div>
           </div>
         `).join("");
+      }
+
+      function getColor(name, kind) {
+        const map = {
+          amber:   { bg: "var(--amber-bg)",   fg: "var(--amber)" },
+          blue:    { bg: "var(--blue-bg)",    fg: "var(--blue)" },
+          brown:   { bg: "var(--brown-bg)",   fg: "var(--brown)" },
+          primary: { bg: "var(--primary-light)", fg: "var(--primary)" },
+          teal:    { bg: "var(--teal-bg)",    fg: "var(--teal)" },
+        };
+        return (map[name] || map.primary)[kind];
+      }
+
+      function logRenderToolbar() {
+        const term = (document.getElementById("log-search")?.value || "").toLowerCase().trim();
+        const count = term
+          ? logState.orders.filter(o => o.cliente.toLowerCase().includes(term) || o.numero.toLowerCase().includes(term)).length
+          : logState.orders.length;
+        document.getElementById("toolbarCount").textContent = count;
       }
 
       function logRenderKanban() {
@@ -895,12 +1515,12 @@
             if (a.prioridade !== b.prioridade) return a.prioridade === "urgente" ? -1 : 1;
             return a.data.localeCompare(b.data);
           });
-          const color = STATUS_COLORS[status];
+          const theme = STATUS_THEME[status];
 
           return `
-            <div class="log-col">
-              <div class="log-col-head">
-                <span class="log-col-title" style="color:var(--${color}, var(--primary))">
+            <div class="log-col" style="--accent: ${theme.accent}">
+              <div class="log-col-head" style="border-top-color: ${theme.accent}">
+                <span class="log-col-title" style="--accent: ${theme.accent}; --accent-bg: ${theme.bg}">
                   <i class="fa-solid ${STATUS_ICONS[status]}"></i> ${STATUS_LABELS[status]}
                 </span>
                 <span class="log-col-count">${items.length}</span>
@@ -918,24 +1538,51 @@
       function logCardHtml(o) {
         const veh = logState.vehicles.find(v => v.id === o.veiculoId);
         const next = logNextStatus(o.status);
+        const prev = logPrevStatus(o.status);
+        const nextLabel = next ? STATUS_LABELS[next] : null;
+        const nextTheme = next ? STATUS_THEME[next] : null;
+
+        const initials = (o.cliente || "?")
+          .split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
+
         return `
           <div class="log-card" onclick="logEditOrder('${o.id}')">
-            <div class="log-card-top">
-              <span class="log-card-num">#${escapeHtml(o.numero)}</span>
+            <div class="log-card-head">
+              <div class="log-card-num">
+                #${escapeHtml(o.numero)}
+                <small>Pedido</small>
+              </div>
               ${o.prioridade === "urgente" ? '<span class="log-badge-urgente">Urgente</span>' : ""}
             </div>
             <div class="log-card-cliente">${escapeHtml(o.cliente)}</div>
-            <div class="log-card-meta">
-              <span><i class="fa-solid fa-boxes-stacked"></i> ${o.itens || 0} itens</span>
-              <span><i class="fa-solid fa-calendar"></i> ${logFmtBR(o.data)}</span>
-              ${veh ? `<span><i class="fa-solid fa-truck"></i> ${escapeHtml(veh.placa)} · ${escapeHtml(veh.motorista)}</span>` : ""}
+
+            <div class="log-card-info">
+              <div class="item"><i class="fa-solid fa-boxes-stacked"></i> <strong>${o.itens || 0}</strong>&nbsp;itens</div>
+              <div class="item"><i class="fa-solid fa-calendar"></i> ${logFmtBR(o.data)}</div>
             </div>
-            ${next ? `
-              <div class="log-card-foot" onclick="event.stopPropagation()">
-                <button class="btn btn-secondary btn-sm" onclick="logAdvanceStatus('${o.id}')">
-                  <i class="fa-solid fa-arrow-right"></i> Avançar
-                </button>
+
+            ${veh ? `
+              <div class="log-card-driver">
+                <span class="avatar">${initials}</span>
+                <div class="info">
+                  <strong>${escapeHtml(veh.motorista)}</strong>
+                  <span><i class="fa-solid fa-truck"></i> ${escapeHtml(veh.placa)}</span>
+                </div>
               </div>` : ""}
+
+            <div class="log-card-foot" onclick="event.stopPropagation()">
+              ${prev ? `
+                <button class="btn btn-secondary btn-sm" onclick="logRevertStatus('${o.id}')" title="Voltar para ${STATUS_LABELS[prev]}">
+                  <i class="fa-solid fa-arrow-left"></i> Voltar
+                </button>` : ""}
+              ${next ? `
+                <button class="btn btn-primary btn-sm" style="${nextTheme ? `background:${nextTheme.accent}; box-shadow: 0 4px 12px ${nextTheme.accent}40;` : ""}" onclick="logAdvanceStatus('${o.id}')" title="Avançar para ${nextLabel}">
+                  <i class="fa-solid fa-arrow-right"></i> Avançar
+                </button>` : `
+                <button class="btn btn-secondary btn-sm" disabled>
+                  <i class="fa-solid fa-circle-check"></i> Concluído
+                </button>`}
+            </div>
           </div>
         `;
       }
@@ -944,19 +1591,82 @@
         const grid = document.getElementById("log-vehicles-grid");
         if (logState.vehicles.length === 0) {
           grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:24px;font-style:italic">Nenhum veículo cadastrado.</div>`;
+          document.getElementById("utilFrota").textContent = "0%";
           return;
         }
-        grid.innerHTML = logState.vehicles.map(v => `
-          <div class="log-vehicle-card" onclick="logEditVehicle('${v.id}')">
-            <div class="log-vehicle-top">
-              <span class="log-vehicle-plate"><i class="fa-solid fa-truck"></i> ${escapeHtml(v.placa)}</span>
-              <span class="log-status-pill status-${v.status}">${VEHICLE_STATUS_LABELS[v.status]}</span>
+
+        // utilização: % de veículos fora de "disponivel" (ocupados)
+        const ocupados = logState.vehicles.filter(v => v.status !== "disponivel").length;
+        const utilPct = Math.round((ocupados / logState.vehicles.length) * 100);
+        document.getElementById("utilFrota").textContent = utilPct + "%";
+
+        grid.innerHTML = logState.vehicles.map(v => {
+          const theme = VEHICLE_STATUS_THEME[v.status] || "var(--primary)";
+          const initials = (v.motorista || "?").split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
+
+          // mini barra: se em_rota = 85%, se manutencao = 30%, se disponivel = 10%
+          const util = v.status === "em_rota" ? 85 : v.status === "manutencao" ? 30 : 10;
+          const utilLabel = v.status === "em_rota" ? "Em rota" : v.status === "manutencao" ? "Em manutenção" : "Ocioso";
+
+          return `
+            <div class="log-vehicle-card" style="--status-color: ${theme}" onclick="logEditVehicle('${v.id}')">
+              <div class="log-vehicle-top">
+                <div style="display:flex;gap:12px;align-items:center">
+                  <div class="log-vehicle-icon"><i class="fa-solid fa-truck"></i></div>
+                  <div class="log-vehicle-plate">
+                    ${escapeHtml(v.placa)}
+                    <small>${escapeHtml(v.modelo || "—")}</small>
+                  </div>
+                </div>
+                <span class="log-status-pill status-${v.status}">${VEHICLE_STATUS_LABELS[v.status]}</span>
+              </div>
+
+              <div class="log-vehicle-driver">
+                <span class="avatar">${initials}</span>
+                <div class="info">
+                  <strong>${escapeHtml(v.motorista)}</strong>
+                  ${v.telefone ? `<span><i class="fa-solid fa-phone"></i> ${escapeHtml(v.telefone)}</span>` : '<span style="color:var(--text-muted)">Sem telefone</span>'}
+                </div>
+              </div>
+
+              <div class="util-bar" title="${utilLabel}">
+                <span>Uso</span>
+                <div class="bar"><div class="fill" style="--w: ${util}%; background: ${theme}"></div></div>
+                <strong>${util}%</strong>
+              </div>
             </div>
-            <div class="log-vehicle-model">${escapeHtml(v.modelo || "—")}</div>
-            <div class="log-vehicle-driver"><i class="fa-solid fa-user" style="color:var(--text-muted)"></i> ${escapeHtml(v.motorista)}</div>
-            ${v.telefone ? `<div class="log-vehicle-phone"><i class="fa-solid fa-phone"></i> ${escapeHtml(v.telefone)}</div>` : ""}
-          </div>
-        `).join("");
+          `;
+        }).join("");
+      }
+
+      function logRenderActivity() {
+        const list = document.getElementById("log-activity");
+        if (!logState.activity.length) {
+          list.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic">Sem movimentações registradas.</div>`;
+          return;
+        }
+        const colorMap = {
+          blue:   { bg: "var(--blue-bg)",   fg: "var(--blue)" },
+          brown:  { bg: "var(--brown-bg)",  fg: "var(--brown)" },
+          rose:   { bg: "var(--rose-bg)",   fg: "var(--rose)" },
+          teal:   { bg: "var(--teal-bg)",   fg: "var(--teal)" },
+          amber:  { bg: "var(--amber-bg)",  fg: "var(--amber)" },
+        };
+        list.innerHTML = logState.activity.map(a => {
+          const c = colorMap[a.color] || colorMap.blue;
+          return `
+            <div class="activity-item">
+              <div class="activity-icon" style="background:${c.bg};color:${c.fg}">
+                <i class="fa-solid ${a.icon}"></i>
+              </div>
+              <div class="text">
+                <strong>${escapeHtml(a.titulo)}</strong>
+                <span>${escapeHtml(a.subtitulo)}</span>
+              </div>
+              <div class="hora">${escapeHtml(a.hora)}</div>
+            </div>
+          `;
+        }).join("");
       }
 
       /* ============ AÇÕES: PEDIDOS ============ */
@@ -967,8 +1677,26 @@
         if (!next) return;
         o.status = next;
         logSaveOrders();
+        logAddActivity(
+          next === "entregue" ? "fa-circle-check" : "fa-arrow-right",
+          next === "entregue" ? "teal" : (STATUS_THEME[next].accent.includes("teal") ? "teal" : STATUS_THEME[next].accent.includes("amber") ? "amber" : STATUS_THEME[next].accent.includes("blue") ? "blue" : STATUS_THEME[next].accent.includes("brown") ? "brown" : "blue"),
+          `Pedido #${o.numero} avançou para "${STATUS_LABELS[next]}"`,
+          o.cliente
+        );
         logRender();
         showToast(`Pedido #${o.numero} avançou para "${STATUS_LABELS[next]}".`, "success");
+      }
+
+      function logRevertStatus(id) {
+        const o = logState.orders.find(x => x.id === id);
+        if (!o) return;
+        const prev = logPrevStatus(o.status);
+        if (!prev) return;
+        o.status = prev;
+        logSaveOrders();
+        logAddActivity("fa-arrow-left", "amber", `Pedido #${o.numero} voltou para "${STATUS_LABELS[prev]}"`, o.cliente);
+        logRender();
+        showToast(`Pedido #${o.numero} voltou para "${STATUS_LABELS[prev]}".`, "warning");
       }
 
       function logPopulateVehicleSelect(selectedId) {
@@ -1036,9 +1764,12 @@
           const o = logState.orders.find(x => x.id === id);
           if (o) Object.assign(o, data);
           showToast("Pedido atualizado.", "success");
+          logAddActivity("fa-pen", "blue", `Pedido #${o.numero} atualizado`, o.cliente);
         } else {
-          logState.orders.push({ id: "o" + Date.now().toString(36), ...data });
+          const novo = { id: "o" + Date.now().toString(36), ...data };
+          logState.orders.push(novo);
           showToast("Pedido de expedição criado.", "success");
+          logAddActivity("fa-plus", "blue", `Pedido #${novo.numero} criado`, novo.cliente);
         }
         logSaveOrders();
         closeModal("logPedido");
@@ -1049,9 +1780,11 @@
         const id = document.getElementById("log-ord-id").value;
         if (!id) return;
         if (!confirm("Excluir este pedido de expedição?")) return;
+        const o = logState.orders.find(x => x.id === id);
         logState.orders = logState.orders.filter(o => o.id !== id);
         logSaveOrders();
         closeModal("logPedido");
+        if (o) logAddActivity("fa-trash", "rose", `Pedido #${o.numero} excluído`, o.cliente);
         logRender();
         showToast("Pedido excluído.", "warning");
       }
@@ -1116,11 +1849,13 @@
         const id = document.getElementById("log-veh-id").value;
         if (!id) return;
         if (!confirm("Excluir este veículo?")) return;
+        const v = logState.vehicles.find(x => x.id === id);
         logState.vehicles = logState.vehicles.filter(v => v.id !== id);
         logState.orders.forEach(o => { if (o.veiculoId === id) o.veiculoId = ""; });
         logSaveVehicles();
         logSaveOrders();
         closeModal("logVeiculo");
+        if (v) logAddActivity("fa-trash", "rose", `Veículo ${v.placa} removido`, v.motorista);
         logRender();
         showToast("Veículo excluído.", "warning");
       }

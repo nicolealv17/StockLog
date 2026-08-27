@@ -17,7 +17,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
   />
 
-  <!-- Componentes CSS -->
+  <!-- Componentes CSS (caminhos relativos, mantenha sua estrutura) -->
   <link rel="stylesheet" href="../components/css/sidebar.css" />
   <link rel="stylesheet" href="../components/css/header.css" />
   <link rel="stylesheet" href="../components/css/footer.css" />
@@ -25,7 +25,7 @@
   
   <style>
     /* ============================================================
-       VARIÁVEIS E RESET
+       VARIÁVEIS E RESET (mantido igual)
        ============================================================ */
     :root {
       --bg-body: #f2f6fb;
@@ -222,6 +222,7 @@
       background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
     }
     
+    /* ============ NOVO: Avatar com upload ============ */
     .profile-avatar-wrapper {
       display: flex;
       justify-content: center;
@@ -232,6 +233,7 @@
     }
     
     .profile-avatar {
+      position: relative;
       width: 120px;
       height: 120px;
       border-radius: 50%;
@@ -244,11 +246,51 @@
       border: 4px solid var(--bg-card);
       box-shadow: 0 4px 16px rgba(0, 119, 190, 0.3);
       transition: 0.3s;
+      cursor: pointer;
+      overflow: hidden;
+      flex-shrink: 0;
     }
     
     .profile-avatar:hover {
       transform: scale(1.05);
       box-shadow: 0 8px 24px rgba(0, 119, 190, 0.4);
+    }
+    
+    /* A imagem em si */
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    
+    /* Ícone de câmera (overlay) */
+    .avatar-upload-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 6px 0;
+      font-size: 12px;
+      text-align: center;
+      opacity: 0;
+      transition: 0.3s;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .profile-avatar:hover .avatar-upload-overlay {
+      opacity: 1;
+    }
+    
+    /* Input file escondido */
+    #avatarUploadInput {
+      display: none;
     }
     
     .profile-info {
@@ -299,7 +341,7 @@
       50% { opacity: 0.5; }
     }
 
-    /* Cards de detalhes */
+    /* Cards de detalhes (mantido) */
     .details-card {
       background: var(--bg-card);
       border-radius: 20px;
@@ -653,7 +695,7 @@
       left: 27px;
     }
 
-    /* Modal */
+    /* Modal (mantido) */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -829,7 +871,7 @@
       }
     }
 
-    /* Responsividade */
+    /* Responsividade (mantida) */
     @media (max-width: 1200px) {
       .profile-grid {
         grid-template-columns: 320px 1fr;
@@ -933,9 +975,18 @@
         <div class="profile-card">
           <div class="profile-cover"></div>
           <div class="profile-avatar-wrapper">
-            <div class="profile-avatar">
-              <i class="fas fa-user"></i>
+            <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarUploadInput').click()">
+              <!-- Ícone de usuário (fallback) -->
+              <i class="fas fa-user" id="avatarIcon"></i>
+              <!-- Imagem (oculta por padrão) -->
+              <img id="avatarImage" style="display: none;" alt="Avatar" />
+              <!-- Overlay de upload -->
+              <div class="avatar-upload-overlay">
+                <i class="fas fa-camera"></i> Alterar
+              </div>
             </div>
+            <!-- Input de arquivo -->
+            <input type="file" id="avatarUploadInput" accept="image/*" />
           </div>
           <div class="profile-info">
             <div class="profile-name">Carlos Almeida</div>
@@ -1218,152 +1269,227 @@
   <script src="../components/js/footer.js"></script>
   <script src="../components/js/modoescuro.js"></script>
 
-  <script>
-    // Funções dos modais
-    function openEditModal() {
-      document.getElementById('editModal').classList.add('active');
+<script>
+  // ============================================
+  // UPLOAD DE FOTO DE PERFIL (com localStorage)
+  // ============================================
+  document.getElementById('avatarUploadInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('error', 'Formato inválido', 'Por favor, selecione uma imagem (JPG, PNG, GIF, etc.)');
+      this.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const imageUrl = ev.target.result;
+      const avatarImg = document.getElementById('avatarImage');
+      const avatarIcon = document.getElementById('avatarIcon');
+
+      // Atualiza a visualização na página
+      avatarIcon.style.display = 'none';
+      avatarImg.style.display = 'block';
+      avatarImg.src = imageUrl;
+      
+      // SALVA NO LOCALSTORAGE
+      try {
+        localStorage.setItem('stocklog_profile_photo', imageUrl);
+        // Dispara evento personalizado para atualizar header e sidebar
+        window.dispatchEvent(new Event('profileUpdated'));
+      } catch (e) {
+        console.warn('Não foi possível salvar a foto no localStorage', e);
+      }
+      
+      showToast('success', 'Foto atualizada!', 'Sua foto de perfil foi alterada e salva com sucesso.');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Salvar perfil (com localStorage)
+  function saveProfile(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('editName').value;
+    const email = document.getElementById('editEmail').value;
+    const role = document.getElementById('editRole').value;
+    
+    // Atualizar informações na página
+    document.querySelector('.profile-name').textContent = name;
+    document.getElementById('profile-email').textContent = email;
+    document.getElementById('profile-role-text').textContent = role;
+    
+    // SALVA O NOME NO LOCALSTORAGE
+    try {
+      localStorage.setItem('stocklog_profile_name', name);
+      // Dispara evento personalizado para atualizar header e sidebar
+      window.dispatchEvent(new Event('profileUpdated'));
+    } catch (e) {
+      console.warn('Não foi possível salvar o nome no localStorage', e);
     }
     
-    function openPasswordModal() {
-      document.getElementById('passwordModal').classList.add('active');
-    }
-    
-    function openPreferencesModal() {
-      document.getElementById('preferencesModal').classList.add('active');
-    }
-    
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
-    }
-    
-    // Fechar modal ao clicar fora
-    document.querySelectorAll('.modal-overlay').forEach(overlay => {
-      overlay.addEventListener('click', function(e) {
-        if (e.target === this) {
-          this.classList.remove('active');
+    closeModal('editModal');
+    showToast('success', 'Perfil atualizado', 'Suas informações foram salvas com sucesso!');
+  }
+
+  // Ao carregar a página, carregue a foto salva
+  document.addEventListener('DOMContentLoaded', function() {
+    // Carrega a foto salva
+    try {
+      const savedPhoto = localStorage.getItem('stocklog_profile_photo');
+      if (savedPhoto) {
+        const avatarImg = document.getElementById('avatarImage');
+        const avatarIcon = document.getElementById('avatarIcon');
+        
+        if (avatarImg && avatarIcon) {
+          avatarIcon.style.display = 'none';
+          avatarImg.style.display = 'block';
+          avatarImg.src = savedPhoto;
         }
-      });
+      }
+      
+      // Carrega o nome salvo
+      const savedName = localStorage.getItem('stocklog_profile_name');
+      if (savedName && savedName.trim() !== '') {
+        const profileName = document.querySelector('.profile-name');
+        if (profileName) {
+          profileName.textContent = savedName;
+        }
+        // Atualiza também o input do modal
+        const editName = document.getElementById('editName');
+        if (editName) {
+          editName.value = savedName;
+        }
+      }
+    } catch (e) {
+      console.warn('Não foi possível carregar os dados salvos', e);
+    }
+  });
+
+  // ============================================
+  // FUNÇÕES DOS MODAIS
+  // ============================================
+  function openEditModal() {
+    document.getElementById('editModal').classList.add('active');
+  }
+  
+  function openPasswordModal() {
+    document.getElementById('passwordModal').classList.add('active');
+  }
+  
+  function openPreferencesModal() {
+    document.getElementById('preferencesModal').classList.add('active');
+  }
+  
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+  }
+  
+  // Fechar modal ao clicar fora
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('active');
+      }
     });
+  });
+  
+  // Toggle Switch
+  function toggleSwitch(element) {
+    element.classList.toggle('active');
+  }
+  
+  // Salvar preferências
+  function savePreferences() {
+    const preferences = {
+      notifications: document.getElementById('toggleNotifications').classList.contains('active'),
+      emails: document.getElementById('toggleEmails').classList.contains('active'),
+      darkMode: document.getElementById('toggleDarkMode').classList.contains('active'),
+      reports: document.getElementById('toggleReports').classList.contains('active'),
+      ai: document.getElementById('toggleAI').classList.contains('active')
+    };
     
-    // Toggle Switch
-    function toggleSwitch(element) {
-      element.classList.toggle('active');
+    if (preferences.darkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
     }
     
-    // Salvar preferências
-    function savePreferences() {
-      const preferences = {
-        notifications: document.getElementById('toggleNotifications').classList.contains('active'),
-        emails: document.getElementById('toggleEmails').classList.contains('active'),
-        darkMode: document.getElementById('toggleDarkMode').classList.contains('active'),
-        reports: document.getElementById('toggleReports').classList.contains('active'),
-        ai: document.getElementById('toggleAI').classList.contains('active')
-      };
-      
-      // Aplicar modo escuro se ativado
-      if (preferences.darkMode) {
-        document.body.classList.add('dark');
-      } else {
-        document.body.classList.remove('dark');
-      }
-      
-      closeModal('preferencesModal');
-      showToast('success', 'Preferências salvas', 'Suas preferências foram atualizadas com sucesso!');
-      
-      // Aqui você pode adicionar código para salvar no backend
-      console.log('Preferências:', preferences);
+    closeModal('preferencesModal');
+    showToast('success', 'Preferências salvas', 'Suas preferências foram atualizadas com sucesso!');
+    console.log('Preferências:', preferences);
+  }
+  
+  // Alterar senha
+  function changePassword(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (newPassword !== confirmPassword) {
+      showToast('error', 'Erro', 'As senhas não coincidem!');
+      return;
     }
     
-    // Salvar perfil
-    function saveProfile(event) {
-      event.preventDefault();
-      
-      const name = document.getElementById('editName').value;
-      const email = document.getElementById('editEmail').value;
-      const role = document.getElementById('editRole').value;
-      
-      // Atualizar informações na página
-      document.querySelector('.profile-name').textContent = name;
-      document.getElementById('profile-email').textContent = email;
-      document.getElementById('profile-role-text').textContent = role;
-      
-      closeModal('editModal');
-      showToast('success', 'Perfil atualizado', 'Suas informações foram salvas com sucesso!');
+    if (newPassword.length < 6) {
+      showToast('error', 'Erro', 'A nova senha deve ter pelo menos 6 caracteres!');
+      return;
     }
     
-    // Alterar senha
-    function changePassword(event) {
-      event.preventDefault();
-      
-      const currentPassword = document.getElementById('currentPassword').value;
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      
-      // Validações
-      if (newPassword !== confirmPassword) {
-        showToast('error', 'Erro', 'As senhas não coincidem!');
-        return;
-      }
-      
-      if (newPassword.length < 6) {
-        showToast('error', 'Erro', 'A nova senha deve ter pelo menos 6 caracteres!');
-        return;
-      }
-      
-      // Simular verificação de senha atual (em produção, isso seria feito no backend)
-      if (currentPassword === '123456') { // Senha demo
-        closeModal('passwordModal');
-        document.getElementById('passwordForm').reset();
-        showToast('success', 'Senha alterada', 'Sua senha foi atualizada com sucesso!');
-      } else {
-        showToast('error', 'Erro', 'Senha atual incorreta!');
-      }
+    if (currentPassword === '123456') { // Senha demo
+      closeModal('passwordModal');
+      document.getElementById('passwordForm').reset();
+      showToast('success', 'Senha alterada', 'Sua senha foi atualizada com sucesso!');
+    } else {
+      showToast('error', 'Erro', 'Senha atual incorreta!');
     }
-    
-    // Confirmar logout
-    function confirmLogout() {
-      if (confirm('Tem certeza que deseja sair?')) {
-        showToast('success', 'Saindo...', 'Você será redirecionado para o login.');
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 1500);
-      }
-    }
-    
-    // Toast notification
-    function showToast(type, title, message) {
-      // Remover toast existente
-      const existingToast = document.querySelector('.toast');
-      if (existingToast) {
-        existingToast.remove();
-      }
-      
-      // Criar novo toast
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      
-      const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-      
-      toast.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <div class="toast-content">
-          <div class="toast-title">${title}</div>
-          <div class="toast-message">${message}</div>
-        </div>
-        <button class="modal-close" onclick="this.parentElement.remove()" style="width: 28px; height: 28px;">
-          <i class="fas fa-times" style="font-size: 12px;"></i>
-        </button>
-      `;
-      
-      document.body.appendChild(toast);
-      
-      // Auto remover após 3 segundos
+  }
+  
+  // Confirmar logout
+  function confirmLogout() {
+    if (confirm('Tem certeza que deseja sair?')) {
+      showToast('success', 'Saindo...', 'Você será redirecionado para o login.');
       setTimeout(() => {
-        if (toast.parentElement) {
-          toast.remove();
-        }
-      }, 3000);
+        window.location.href = 'login.html';
+      }, 1500);
     }
-  </script>
+  }
+  
+  // Toast notification
+  function showToast(type, title, message) {
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    
+    toast.innerHTML = `
+      <i class="fas ${icon}"></i>
+      <div class="toast-content">
+        <div class="toast-title">${title}</div>
+        <div class="toast-message">${message}</div>
+      </div>
+      <button class="modal-close" onclick="this.parentElement.remove()" style="width: 28px; height: 28px;">
+        <i class="fas fa-times" style="font-size: 12px;"></i>
+      </button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      if (toast.parentElement) {
+        toast.remove();
+      }
+    }, 3000);
+  }
+</script>
 </body>
 </html>

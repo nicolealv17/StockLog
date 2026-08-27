@@ -23,10 +23,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
       /* ================================================================
          TOKENS / VARIÁVEIS (mesmo padrão do restante do StockLog)
+         Paleta discreta: foco em tons de azul/cinza com pequenos
+         acentos semânticos em saturação baixa.
          ================================================================ */
       :root {
         --bg-body: #f0f5fc;
@@ -47,14 +50,21 @@
         --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
         --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
 
-        --green: #1a7b72;
-        --green-bg: #e0f2ea;
-        --amber: #c47a1f;
-        --amber-bg: #faecd6;
-        --red: #b2433a;
-        --red-bg: #fae2e0;
-        --purple: #6f4c4e;
-        --purple-bg: #ede6f5;
+        /* Cores semânticas em versão sóbria (chips, badges, sparklines) */
+        --neutral: #5a7390;
+        --neutral-bg: #eaf0f7;
+
+        --slate: #3d5f7e;
+        --slate-bg: #e1eaf3;
+
+        --teal: #4a7c82;
+        --teal-bg: #dde9ec;
+
+        --sand: #a88555;
+        --sand-bg: #f1e8d8;
+
+        --rose: #a55a64;
+        --rose-bg: #f1dde0;
       }
 
       body.dark {
@@ -69,10 +79,11 @@
         --text-muted: #6f8daa;
 
         --primary-light: #1d3a55;
-        --green-bg: #123a2a;
-        --amber-bg: #3a2f15;
-        --red-bg: #3a1f1f;
-        --purple-bg: #2a1f3d;
+        --neutral-bg: #1a2b41;
+        --slate-bg: #1d2f47;
+        --teal-bg: #1a2f33;
+        --sand-bg: #2f2718;
+        --rose-bg: #2f1d20;
 
         --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
         --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
@@ -155,7 +166,7 @@
         color: var(--primary);
       }
 
-      /* ========== CARD GENÉRICO (igual ao index) ========== */
+      /* ========== CARD GENÉRICO ========== */
       .card {
         background: var(--bg-card);
         border-radius: 14px;
@@ -238,78 +249,231 @@
       /* ========== GRID DE RELATÓRIOS ========== */
       .relatorios-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
         gap: 18px;
       }
+
       .relatorio-card {
-        background: var(--bg-soft);
+        background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 22px;
-        transition: 0.25s;
+        border-radius: 16px;
+        padding: 0;
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
-      }
-      .relatorio-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: var(--primary-gradient);
-        opacity: 0.7;
+        display: flex;
+        flex-direction: column;
       }
       .relatorio-card:hover {
-        background: var(--bg-card);
         border-color: var(--border-hover);
-        transform: translateY(-2px);
+        transform: translateY(-3px);
         box-shadow: var(--shadow-hover);
       }
+      .relatorio-card .card-top {
+        padding: 20px 22px 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .relatorio-card .card-body {
+        padding: 0 22px 18px;
+        flex: 1;
+      }
+      .relatorio-card .card-footer {
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        background: var(--bg-soft);
+      }
+
       .relatorio-icone {
-        width: 48px;
-        height: 48px;
+        width: 46px;
+        height: 46px;
         border-radius: 12px;
         background: var(--primary-light);
         color: var(--primary);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
-        margin-bottom: 14px;
+        font-size: 20px;
+        flex-shrink: 0;
       }
-      .relatorio-card.producao .relatorio-icone {
-        background: var(--green-bg);
-        color: var(--green);
+      .relatorio-card.neutral .relatorio-icone {
+        background: var(--neutral-bg);
+        color: var(--neutral);
       }
-      .relatorio-card.pedidos .relatorio-icone {
-        background: var(--amber-bg);
-        color: var(--amber);
+      .relatorio-card.slate .relatorio-icone {
+        background: var(--slate-bg);
+        color: var(--slate);
       }
-      .relatorio-card.estoque .relatorio-icone {
-        background: var(--purple-bg);
-        color: var(--purple);
+      .relatorio-card.teal .relatorio-icone {
+        background: var(--teal-bg);
+        color: var(--teal);
       }
-      .relatorio-card.logistica .relatorio-icone {
-        background: rgba(47, 129, 247, 0.15);
-        color: #2f81f7;
+      .relatorio-card.sand .relatorio-icone {
+        background: var(--sand-bg);
+        color: var(--sand);
       }
-      .relatorio-card.desempenho .relatorio-icone {
-        background: var(--red-bg);
-        color: var(--red);
+      .relatorio-card.rose .relatorio-icone {
+        background: var(--rose-bg);
+        color: var(--rose);
       }
+      .relatorio-card.primary .relatorio-icone {
+        background: var(--primary);
+        color: #fff;
+      }
+
       .relatorio-titulo {
+        font-size: 15.5px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 4px;
+        line-height: 1.3;
+      }
+      .relatorio-descricao {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      /* Badge "atualizado" no canto superior direito */
+      .relatorio-tag {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        font-size: 10.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--text-muted);
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        padding: 3px 9px;
+        border-radius: 20px;
+      }
+
+      /* Mini stats (linha de números dentro do card) */
+      .mini-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 4px;
+      }
+      .mini-stat {
+        background: var(--bg-soft);
+        border-radius: 10px;
+        padding: 10px 8px;
+        text-align: center;
+        border: 1px solid var(--border);
+      }
+      .mini-stat .valor {
         font-size: 16px;
         font-weight: 700;
         color: var(--text-main);
-        margin-bottom: 6px;
+        line-height: 1.1;
       }
-      .relatorio-descricao {
-        font-size: 13px;
-        color: var(--text-secondary);
-        line-height: 1.5;
-        margin-bottom: 16px;
+      .mini-stat .rotulo {
+        font-size: 10.5px;
+        color: var(--text-muted);
+        margin-top: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
       }
+      .mini-stat.destaque .valor {
+        color: var(--primary);
+      }
+
+      /* Mini sparkline (Chart.js) */
+      .spark-wrap {
+        position: relative;
+        height: 70px;
+        margin-top: 6px;
+      }
+
+      /* Gráfico um pouco maior para os cards de destaque */
+      .chart-wrap {
+        position: relative;
+        height: 90px;
+        margin-top: 8px;
+      }
+
+      /* Donut com legenda lateral */
+      .donut-wrap {
+        position: relative;
+        height: 110px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .donut-wrap canvas {
+        max-height: 110px;
+        max-width: 110px;
+      }
+      .donut-legenda {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      .donut-legenda span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .donut-legenda i {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      /* Bar chart altura */
+      .bar-wrap {
+        position: relative;
+        height: 110px;
+        margin-top: 6px;
+      }
+
+      /* Mini tabela */
+      .mini-tabela {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      .mini-tabela th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-muted);
+        padding: 4px 0 6px;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border-bottom: 1px solid var(--border);
+      }
+      .mini-tabela td {
+        padding: 7px 0;
+        color: var(--text-main);
+        border-bottom: 1px solid var(--border);
+      }
+      .mini-tabela tr:last-child td {
+        border-bottom: 0;
+      }
+      .mini-tabela td.num {
+        text-align: right;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .mini-tabela td.ok {
+        color: var(--teal);
+      }
+      .mini-tabela td.warn {
+        color: var(--sand);
+      }
+
+      /* ========== BOTÕES DE EXPORTAÇÃO ========== */
       .relatorio-acoes {
         display: flex;
         gap: 8px;
@@ -320,30 +484,27 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
-        padding: 10px 12px;
+        padding: 9px 12px;
         border-radius: 10px;
         font-size: 13px;
         font-weight: 600;
         transition: 0.2s;
-        border: 1px solid transparent;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
       }
-      .btn-export.pdf {
-        background: var(--red-bg);
-        color: var(--red);
-        border-color: var(--red);
+      .btn-export:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
       }
-      .btn-export.pdf:hover {
-        background: var(--red);
-        color: #fff;
+      .btn-export i {
+        font-size: 13px;
+        color: var(--primary);
+        transition: 0.2s;
       }
-      .btn-export.excel {
-        background: var(--green-bg);
-        color: var(--green);
-        border-color: var(--green);
-      }
-      .btn-export.excel:hover {
-        background: var(--green);
-        color: #fff;
+      .btn-export:hover i {
+        color: var(--primary-dark);
       }
       .btn-export:disabled {
         opacity: 0.5;
@@ -385,16 +546,16 @@
         display: inline-block;
       }
       .status-tag.ok {
-        background: var(--green-bg);
-        color: var(--green);
+        background: var(--teal-bg);
+        color: var(--teal);
       }
       .status-tag.warn {
-        background: var(--amber-bg);
-        color: var(--amber);
+        background: var(--sand-bg);
+        color: var(--sand);
       }
       .status-tag.bad {
-        background: var(--red-bg);
-        color: var(--red);
+        background: var(--rose-bg);
+        color: var(--rose);
       }
       .status-tag.info {
         background: var(--primary-light);
@@ -406,7 +567,7 @@
         position: fixed;
         bottom: 30px;
         right: 30px;
-        background: var(--green);
+        background: var(--text-main);
         color: #fff;
         padding: 14px 22px;
         border-radius: 10px;
@@ -426,7 +587,7 @@
         opacity: 1;
       }
       .toast.error {
-        background: var(--red);
+        background: var(--rose);
       }
 
       /* ========== BOTÃO "GERAR TODOS" ========== */
@@ -539,14 +700,14 @@
         <!-- Cabeçalho da página -->
         <div class="page-header">
           <div>
-            <h1><i class="fas fa-file-download"></i> Central de Relatórios</h1>
+            <h1> </h1>
             <p>
-              Gere e baixe relatórios completos do sistema em PDF ou Excel.
+           
             </p>
           </div>
           <div class="periodo-info">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Período: <strong id="periodoLabel">—</strong></span>
+            
+            <span><strong </strong></span>
           </div>
         </div>
 
@@ -606,113 +767,238 @@
         <div class="tab-content active" id="tab-gerar">
           <div class="relatorios-grid">
             <!-- Produção -->
-            <div class="relatorio-card producao">
-              <div class="relatorio-icone">
-                <i class="fas fa-industry"></i>
+            <div class="relatorio-card teal">
+              <div class="card-top">
+                <div class="relatorio-icone">
+                  <i class="fas fa-industry"></i>
+                </div>
+                <div>
+                  <div class="relatorio-titulo">Relatório de Produção</div>
+                  <div class="relatorio-descricao">
+                    Ordens de produção, quantidades e prazos por setor.
+                  </div>
+                </div>
               </div>
-              <div class="relatorio-titulo">Relatório de Produção</div>
-              <div class="relatorio-descricao">
-                Ordens de produção, quantidades, prazos e indicadores por setor.
+              <div class="card-body">
+                <div class="mini-stats">
+                  <div class="mini-stat destaque">
+                    <div class="valor">6</div>
+                    <div class="rotulo">OPs ativas</div>
+                  </div>
+                  <div class="mini-stat">
+                    <div class="valor">7,2k</div>
+                    <div class="rotulo">unidades</div>
+                  </div>
+                  <div class="mini-stat">
+                    <div class="valor">94%</div>
+                    <div class="rotulo">aproveit.</div>
+                  </div>
+                </div>
+                <div class="chart-wrap">
+                  <canvas id="sparkProducao"></canvas>
+                </div>
               </div>
-              <div class="relatorio-acoes">
-                <button class="btn-export pdf" data-tipo="producao" data-formato="pdf">
-                  <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button class="btn-export excel" data-tipo="producao" data-formato="excel">
-                  <i class="fas fa-file-excel"></i> Excel
-                </button>
+              <div class="card-footer">
+                <div class="relatorio-acoes">
+                  <button class="btn-export" data-tipo="producao" data-formato="pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                  </button>
+                  <button class="btn-export" data-tipo="producao" data-formato="excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Pedidos -->
-            <div class="relatorio-card pedidos">
-              <div class="relatorio-icone">
-                <i class="fas fa-clipboard-list"></i>
+            <div class="relatorio-card sand">
+              <div class="card-top">
+                <div class="relatorio-icone">
+                  <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div>
+                  <div class="relatorio-titulo">Relatório de Pedidos</div>
+                  <div class="relatorio-descricao">
+                    Pedidos em aberto, concluídos, atrasados e por cliente.
+                  </div>
+                </div>
               </div>
-              <div class="relatorio-titulo">Relatório de Pedidos</div>
-              <div class="relatorio-descricao">
-                Pedidos em aberto, concluídos, atrasados e por cliente.
+              <div class="card-body">
+                <div class="mini-stats">
+                  <div class="mini-stat destaque">
+                    <div class="valor">6</div>
+                    <div class="rotulo">pedidos</div>
+                  </div>
+                  <div class="mini-stat">
+                    <div class="valor">R$ 40,5k</div>
+                    <div class="rotulo">total</div>
+                  </div>
+                  <div class="mini-stat">
+                    <div class="valor">2</div>
+                    <div class="rotulo">atrasos</div>
+                  </div>
+                </div>
+                <div class="chart-wrap">
+                  <canvas id="sparkPedidos"></canvas>
+                </div>
               </div>
-              <div class="relatorio-acoes">
-                <button class="btn-export pdf" data-tipo="pedidos" data-formato="pdf">
-                  <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button class="btn-export excel" data-tipo="pedidos" data-formato="excel">
-                  <i class="fas fa-file-excel"></i> Excel
-                </button>
+              <div class="card-footer">
+                <div class="relatorio-acoes">
+                  <button class="btn-export" data-tipo="pedidos" data-formato="pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                  </button>
+                  <button class="btn-export" data-tipo="pedidos" data-formato="excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Estoque -->
-            <div class="relatorio-card estoque">
-              <div class="relatorio-icone">
-                <i class="fas fa-warehouse"></i>
+            <div class="relatorio-card slate">
+              <div class="card-top">
+                <div class="relatorio-icone">
+                  <i class="fas fa-warehouse"></i>
+                </div>
+                <div>
+                  <div class="relatorio-titulo">Relatório de Estoque</div>
+                  <div class="relatorio-descricao">
+                    Posição de estoque, itens críticos, mínimos e máximos.
+                  </div>
+                </div>
               </div>
-              <div class="relatorio-titulo">Relatório de Estoque</div>
-              <div class="relatorio-descricao">
-                Posição de estoque, itens críticos, mínimos e máximos.
+              <div class="card-body">
+                <div class="donut-wrap">
+                  <canvas id="chartEstoque"></canvas>
+                </div>
+                <div class="donut-legenda">
+                  <span><i style="background:#3d5f7e;"></i>Normal · 3</span>
+                  <span><i style="background:#a88555;"></i>Baixo · 1</span>
+                  <span><i style="background:#a55a64;"></i>Crítico · 2</span>
+                </div>
               </div>
-              <div class="relatorio-acoes">
-                <button class="btn-export pdf" data-tipo="estoque" data-formato="pdf">
-                  <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button class="btn-export excel" data-tipo="estoque" data-formato="excel">
-                  <i class="fas fa-file-excel"></i> Excel
-                </button>
+              <div class="card-footer">
+                <div class="relatorio-acoes">
+                  <button class="btn-export" data-tipo="estoque" data-formato="pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                  </button>
+                  <button class="btn-export" data-tipo="estoque" data-formato="excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Logística -->
-            <div class="relatorio-card logistica">
-              <div class="relatorio-icone">
-                <i class="fas fa-truck"></i>
+            <div class="relatorio-card neutral">
+              <div class="card-top">
+                <div class="relatorio-icone">
+                  <i class="fas fa-truck"></i>
+                </div>
+                <div>
+                  <div class="relatorio-titulo">Relatório de Logística</div>
+                  <div class="relatorio-descricao">
+                    Entregas, rotas, prazos e ocorrências de transporte.
+                  </div>
+                </div>
               </div>
-              <div class="relatorio-titulo">Relatório de Logística</div>
-              <div class="relatorio-descricao">
-                Entregas, rotas, prazos e ocorrências de transporte.
+              <div class="card-body">
+                <div class="mini-stats">
+                  <div class="mini-stat destaque">
+                    <div class="valor">5</div>
+                    <div class="rotulo">rotas</div>
+                  </div>
+                  <div class="mini-stat">
+                    <div class="valor">2</div>
+                    <div class="rotulo">em rota</div>
+                  </div>
+                  <div class="mini-stat">
+                    <div class="valor">1</div>
+                    <div class="rotulo">atraso</div>
+                  </div>
+                </div>
+                <div class="chart-wrap">
+                  <canvas id="sparkLogistica"></canvas>
+                </div>
               </div>
-              <div class="relatorio-acoes">
-                <button class="btn-export pdf" data-tipo="logistica" data-formato="pdf">
-                  <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button class="btn-export excel" data-tipo="logistica" data-formato="excel">
-                  <i class="fas fa-file-excel"></i> Excel
-                </button>
+              <div class="card-footer">
+                <div class="relatorio-acoes">
+                  <button class="btn-export" data-tipo="logistica" data-formato="pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                  </button>
+                  <button class="btn-export" data-tipo="logistica" data-formato="excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Desempenho -->
-            <div class="relatorio-card desempenho">
-              <div class="relatorio-icone">
-                <i class="fas fa-chart-line"></i>
+            <div class="relatorio-card rose">
+              <div class="card-top">
+                <div class="relatorio-icone">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                  <div class="relatorio-titulo">Relatório de Desempenho</div>
+                  <div class="relatorio-descricao">
+                    KPIs operacionais, OEE, gargalos e produtividade por período.
+                  </div>
+                </div>
               </div>
-              <div class="relatorio-titulo">Relatório de Desempenho</div>
-              <div class="relatorio-descricao">
-                KPIs operacionais, OEE, gargalos e produtividade por período.
+              <div class="card-body">
+                <div class="bar-wrap">
+                  <canvas id="chartDesempenho"></canvas>
+                </div>
               </div>
-              <div class="relatorio-acoes">
-                <button class="btn-export pdf" data-tipo="desempenho" data-formato="pdf">
-                  <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button class="btn-export excel" data-tipo="desempenho" data-formato="excel">
-                  <i class="fas fa-file-excel"></i> Excel
-                </button>
+              <div class="card-footer">
+                <div class="relatorio-acoes">
+                  <button class="btn-export" data-tipo="desempenho" data-formato="pdf">
+                    <i class="fas fa-file-pdf"></i> PDF
+                  </button>
+                  <button class="btn-export" data-tipo="desempenho" data-formato="excel">
+                    <i class="fas fa-file-excel"></i> Excel
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Consolidado -->
-            <div class="relatorio-card" style="background: var(--bg-card);">
-              <div class="relatorio-icone" style="background: var(--primary-light); color: var(--primary);">
-                <i class="fas fa-layer-group"></i>
+            <div class="relatorio-card primary">
+              <span class="relatorio-tag" style="background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.3);">Tudo em 1 PDF</span>
+              <div class="card-top">
+                <div class="relatorio-icone">
+                  <i class="fas fa-layer-group"></i>
+                </div>
+                <div>
+                  <div class="relatorio-titulo">Relatório Consolidado</div>
+                  <div class="relatorio-descricao">
+                    Um único PDF com todas as áreas — ideal para gestão e auditoria.
+                  </div>
+                </div>
               </div>
-              <div class="relatorio-titulo">Relatório Consolidado</div>
-              <div class="relatorio-descricao">
-                Um único PDF com todas as áreas — ideal para gestão e auditoria.
+              <div class="card-body">
+                <div class="mini-stats" style="grid-template-columns: repeat(5, 1fr);">
+                  <div class="mini-stat destaque" style="background: var(--primary-light);">
+                    <div class="valor">5</div>
+                    <div class="rotulo">áreas</div>
+                  </div>
+                  <div class="mini-stat" style="background: var(--primary-light);">
+                    <div class="valor">27</div>
+                    <div class="rotulo">registros</div>
+                  </div>
+                  <div class="mini-stat" style="background: var(--primary-light);">
+                    <div class="valor">100%</div>
+                    <div class="rotulo">cobert.</div>
+                  </div>
+                </div>
               </div>
-              <div class="relatorio-acoes">
-                <button class="btn-export pdf" data-tipo="consolidado" data-formato="pdf" style="flex: 1;">
-                  <i class="fas fa-file-pdf"></i> Baixar consolidado (PDF)
-                </button>
+              <div class="card-footer">
+                <div class="relatorio-acoes">
+                  <button class="btn-export" data-tipo="consolidado" data-formato="pdf" style="flex: 1; background: var(--primary); color: #fff; border-color: var(--primary);">
+                    <i class="fas fa-file-pdf" style="color: #fff;"></i> Baixar consolidado
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -778,5 +1064,123 @@
 
     <!-- Lógica da página -->
     <script src="JS/relatorios.js"></script>
+
+    <!-- Mini-gráficos discretos nos cards (paleta sóbria) -->
+    <script>
+      // Paleta sóbria reaproveitando os tokens do design
+      const C = {
+        teal:    "#4a7c82",
+        sand:    "#a88555",
+        slate:   "#3d5f7e",
+        neutral: "#5a7390",
+        rose:    "#a55a64",
+        primary: "#006bb3",
+      };
+
+      // Paleta "meses" para as linhas (gradiente discreto)
+      const LABELS_MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+      // Helper: linha com área
+      function mkLine(id, color, data) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        new Chart(el.getContext("2d"), {
+          type: "line",
+          data: {
+            labels: LABELS_MESES,
+            datasets: [{
+              data,
+              borderColor: color,
+              backgroundColor: color + "22",
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: {
+              x: { display: false },
+              y: { display: false, beginAtZero: false },
+            },
+          },
+        });
+      }
+
+      // Donut de status do estoque
+      function mkDonut(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        new Chart(el.getContext("2d"), {
+          type: "doughnut",
+          data: {
+            labels: ["Normal", "Baixo", "Crítico"],
+            datasets: [{
+              data: [3, 1, 2],
+              backgroundColor: [C.slate, C.sand, C.rose],
+              borderColor: "#ffffff",
+              borderWidth: 2,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "65%",
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          },
+        });
+      }
+
+      // Barras de OEE por setor
+      function mkBar(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        new Chart(el.getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: ["Prod.", "Qual.", "Log.", "Alm.", "Com."],
+            datasets: [{
+              data: [82, 76, 90, 70, 65],
+              backgroundColor: [C.teal, C.slate, C.primary, C.sand, C.neutral],
+              borderRadius: 6,
+              borderSkipped: false,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 10 }, color: "#7b92b2" },
+              },
+              y: {
+                beginAtZero: true,
+                max: 100,
+                grid: { color: "rgba(0,40,80,0.06)" },
+                ticks: {
+                  font: { size: 9 },
+                  color: "#7b92b2",
+                  callback: (v) => v + "%",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        mkLine("sparkProducao",  C.teal,    [62, 65, 68, 70, 74, 76, 80, 82, 85, 86, 90, 92]);
+        mkLine("sparkPedidos",   C.sand,    [12, 14, 13, 15, 16, 18, 17, 20, 19, 22, 21, 23]);
+        mkLine("sparkLogistica", C.neutral, [4, 3, 5, 4, 6, 5, 7, 6, 5, 4, 5, 5]);
+        mkDonut("chartEstoque");
+        mkBar("chartDesempenho");
+      });
+    </script>
   </body>
 </html>
