@@ -1,583 +1,639 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockLog - Cadastro de Usuário</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Cadastro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+    <style>
+      :root {
+        --bg-body: #edf3f8;
+        --bg-card: #ffffff;
+        --bg-soft: #f4f8fc;
+        --border: #d4e2f0;
 
-  <style>
-    :root[data-theme="light"] {
-      --bg-page: #eef2f6;
-      --card-bg: #ffffff;
-      --navy-primary: #0a192f;
-      --navy-secondary: #1e3a8a;
-      --accent-blue: #2563eb;
-      --accent-glow: rgba(37, 99, 235, 0.25);
-      --text-dark: #1e293b;
-      --text-muted: #64748b;
-      --input-bg: #f8fafc;
-      --input-border: #cbd5e1;
-      --card-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
-      --orb-opacity: 0.5;
-      --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    }
+        --text-main: #0c1e2e;
+        --text-secondary: #3b5a75;
+        --text-muted: #718da8;
 
-    :root[data-theme="dark"] {
-      --bg-page: #070d19;
-      --card-bg: #0f172a;
-      --navy-primary: #020617;
-      --navy-secondary: #1e293b;
-      --accent-blue: #3b82f6;
-      --accent-glow: rgba(59, 130, 246, 0.35);
-      --text-dark: #f8fafc;
-      --text-muted: #94a3b8;
-      --input-bg: #1e293b;
-      --input-border: #334155;
-      --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      --orb-opacity: 0.25;
-      --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    }
+        --primary: #006bb3;
+        --primary-hover: #005691;
+        --primary-light: #e3f0fb;
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-      transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
-    }
+        --green: #15803d;
+        --green-bg: #dcfce7;
+        --green-bar: #16a34a;
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: var(--bg-page);
-      position: relative;
-      overflow-x: hidden;
-      padding: 30px 0;
-    }
+        --amber-bar: #d97706;
 
-    .bg-orbs {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      overflow: hidden;
-      z-index: 0;
-      pointer-events: none;
-    }
+        --red: #b91c1c;
+        --red-bg: #fee2e2;
+        --red-bar: #dc2626;
 
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: var(--orb-opacity);
-      animation: floatOrb 12s infinite ease-in-out alternate;
-    }
+        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
 
-    .orb-1 {
-      width: 420px;
-      height: 420px;
-      background: #3b82f6;
-      top: -100px;
-      left: -80px;
-    }
+        --fs-base: clamp(14px, 0.9vw + 12px, 16px);
+        --fs-h1: clamp(19px, 1.2vw + 14px, 24px);
+        --fs-title: clamp(15px, 1vw + 12px, 18px);
 
-    .orb-2 {
-      width: 500px;
-      height: 500px;
-      background: #1d4ed8;
-      bottom: -150px;
-      right: -100px;
-      animation-delay: -4s;
-    }
-
-    @keyframes floatOrb {
-      0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-      100% { transform: translate(50px, 60px) scale(1.15) rotate(15deg); }
-    }
-
-    .mouse-glow {
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 1;
-      transform: translate(-50%, -50%);
-      transition: left 0.1s ease-out, top 0.1s ease-out;
-    }
-
-    .theme-toggle {
-      position: absolute;
-      top: 25px;
-      right: 25px;
-      z-index: 20;
-      background: var(--card-bg);
-      border: 1px solid var(--input-border);
-      color: var(--text-dark);
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease, border-color 0.3s ease;
-    }
-
-    .theme-toggle:hover {
-      transform: scale(1.05);
-      border-color: var(--accent-blue);
-    }
-
-    .theme-toggle i {
-      font-size: 1.2rem;
-    }
-
-    .register-container {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      width: 960px;
-      max-width: 92%;
-      min-height: 550px;
-      background: var(--card-bg);
-      border-radius: 24px;
-      box-shadow: var(--card-shadow);
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(40px) scale(0.95);
-      animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes cardEntrance {
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+        --pad-content: 16px 20px;
+        --gap-grid: clamp(14px, 1vw, 22px);
+        --pad-card: clamp(18px, 1.4vw, 28px);
       }
-    }
 
-    .left-panel {
-      flex: 1;
-      background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%);
-      color: #ffffff;
-      padding: 45px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
+        [data-theme="dark"],
+        body.dark {
+          --bg-body: #0a131d;
+          --bg-card: #111f2e;
+          --bg-soft: #16283b;
+          --border: #1e364f;
 
-    .left-panel::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%);
-      pointer-events: none;
-    }
+          --text-main: #e2edf8;
+          --text-secondary: #9cb5cd;
+          --text-muted: #6482a0;
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      font-size: 1.4rem;
-    }
+          --primary: #38bdf8;
+          --primary-hover: #0284c7;
+          --primary-light: #17324d;
 
-    .brand-icon {
-      background: rgba(255, 255, 255, 0.12);
-      padding: 12px;
-      border-radius: 14px;
-      color: #60a5fa;
-      animation: floatIcon 4s infinite ease-in-out alternate;
-    }
+          --green: #4ade80;
+          --green-bg: #143823;
+          --green-bar: #22c55e;
 
-    @keyframes floatIcon {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-6px); }
-    }
+          --amber-bar: #f59e0b;
 
-    .panel-content h1 {
-      font-size: 2.1rem;
-      font-weight: 700;
-      line-height: 1.25;
-      margin-bottom: 16px;
-    }
+          --red: #f87171;
+          --red-bg: #3e1919;
+          --red-bar: #ef4444;
 
-    .panel-content p {
-      font-size: 0.95rem;
-      color: #94a3b8;
-      line-height: 1.6;
-      font-weight: 300;
-      margin-bottom: 24px;
-    }
+          --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
 
-    .features-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    .features-list li {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.88rem;
-      color: #cbd5e1;
-    }
+      html { font-size: var(--fs-base); }
 
-    .features-list li i {
-      color: #60a5fa;
-      font-size: 0.9rem;
-    }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        transition: background-color 0.2s, color 0.2s;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
 
-    .right-panel {
-      flex: 1.25;
-      padding: 45px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background-color: var(--card-bg);
-    }
-
-    .form-header h2 {
-      font-size: 2rem;
-      color: var(--text-dark);
-      font-weight: 700;
-    }
-
-    .form-header p {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-      margin-bottom: 24px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .full-width {
-      grid-column: span 2;
-    }
-
-    .input-group {
-      position: relative;
-    }
-
-    .input-group i.icon-left {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      font-size: 1rem;
-      transition: transform 0.3s ease, color 0.3s ease;
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    .input-group input,
-    .input-group select {
-      width: 100%;
-      padding: 13px 16px 13px 46px;
-      background-color: var(--input-bg);
-      border: 1.5px solid var(--input-border);
-      border-radius: 12px;
-      font-size: 0.9rem;
-      color: var(--text-dark);
-      outline: none;
-      appearance: none;
-      -webkit-appearance: none;
-    }
-
-    .input-group select {
-      background-image: var(--select-arrow);
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 40px;
-      cursor: pointer;
-    }
-
-    .input-group select option {
-      background-color: var(--card-bg);
-      color: var(--text-dark);
-    }
-
-    .input-group input::placeholder {
-      color: var(--text-muted);
-      opacity: 0.7;
-    }
-
-    .input-group input:focus,
-    .input-group select:focus {
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 4px var(--accent-glow);
-    }
-
-    .input-group input:focus ~ i.icon-left,
-    .input-group select:focus ~ i.icon-left {
-      color: var(--accent-blue);
-      transform: translateY(-50%) scale(1.15);
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 4px;
-      z-index: 2;
-    }
-
-    .toggle-password:hover {
-      color: var(--text-dark);
-    }
-
-    .form-footer {
-      margin-top: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .mensagem-alerta {
-      font-size: 0.85rem;
-      text-align: center;
-      min-height: 20px;
-      font-weight: 500;
-    }
-
-    .login-link {
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .login-link a {
-      color: var(--accent-blue);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .login-link a:hover {
-      text-decoration: underline;
-    }
-
-    .btn-register {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%);
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .btn-register::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-      transform: rotate(30deg) translateX(-100%);
-      transition: transform 0.8s ease;
-    }
-
-    .btn-register:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px var(--accent-glow);
-    }
-
-    .btn-register:hover::after {
-      transform: rotate(30deg) translateX(100%);
-    }
-
-    .btn-register:active {
-      transform: translateY(0);
-    }
-
-    .spinner {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #ffffff;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .shake {
-      animation: shake 0.4s ease-in-out;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-8px); }
-      40%, 80% { transform: translateX(8px); }
-    }
-
-    @media (max-width: 820px) {
-      .register-container {
+      .main-wrapper {
+        flex: 1;
+        display: flex;
         flex-direction: column;
+        min-height: 100vh;
+        min-width: 0;
       }
-      .left-panel { padding: 30px; }
-      .panel-content h1 { font-size: 1.6rem; }
-      .panel-content p, .features-list { display: none; }
-      .right-panel { padding: 35px 25px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .full-width { grid-column: span 1; }
-    }
-  </style>
-</head>
+
+      .dashboard-container {
+        flex: 1;
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+        padding: var(--pad-content);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--gap-grid);
+      }
+
+      .top-header {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-title-group h1 {
+        font-size: var(--fs-h1);
+        font-weight: 700;
+      }
+
+      .header-title-group h1 span {
+        color: var(--primary);
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: var(--pad-card);
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 600px;
+        transition: transform 0.2s;
+      }
+
+      .card-header-title {
+        font-size: var(--fs-title);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 12px;
+      }
+
+      .card-header-title .title-text {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .card-header-title i {
+        color: var(--primary);
+      }
+
+      .form-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-group label {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-wrapper i.input-icon {
+        position: absolute;
+        left: 12px;
+        color: var(--text-muted);
+        font-size: 14px;
+        pointer-events: none;
+      }
+
+      .input-wrapper input,
+      .input-wrapper select {
+        width: 100%;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px 10px 38px;
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .input-wrapper select {
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      .input-wrapper .select-arrow {
+        position: absolute;
+        right: 12px;
+        color: var(--text-muted);
+        pointer-events: none;
+        font-size: 12px;
+      }
+
+      .input-wrapper input:focus,
+      .input-wrapper select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px;
+      }
+
+      .toggle-password:hover {
+        color: var(--text-main);
+      }
+
+      /* Indicador de Força de Senha */
+      .strength-meter {
+        display: flex;
+        gap: 4px;
+        margin-top: 6px;
+      }
+
+      .strength-bar {
+        height: 4px;
+        flex: 1;
+        background: var(--border);
+        border-radius: 2px;
+        transition: background-color 0.3s;
+      }
+
+      .strength-bar.active.weak { background-color: var(--red-bar); }
+      .strength-bar.active.medium { background-color: var(--amber-bar); }
+      .strength-bar.active.strong { background-color: var(--green-bar); }
+
+      .strength-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        font-weight: 500;
+      }
+
+      /* Alert / Mensagem */
+      .mensagem-alerta {
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 600;
+        display: none;
+      }
+
+      .mensagem-alerta:not(:empty) {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+      }
+
+      .mensagem-alerta.error {
+        background-color: var(--red-bg);
+        color: var(--red);
+        border: 1px solid var(--red-bar);
+      }
+
+      .mensagem-alerta.success {
+        background-color: var(--green-bg);
+        color: var(--green);
+        border: 1px solid var(--green-bar);
+      }
+
+      .btn-submit {
+        background-color: var(--primary);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background-color 0.2s, transform 0.1s;
+        margin-top: 10px;
+        min-height: 44px;
+      }
+
+      .btn-submit:hover {
+        background-color: var(--primary-hover);
+      }
+
+      .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .btn-spinner {
+        display: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #ffffff;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Efeito Shake de Erro */
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-6px); }
+        40%, 80% { transform: translateX(6px); }
+      }
+
+      .shake {
+        animation: shake 0.4s ease-in-out;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-container {
+          padding: 12px;
+        }
+
+        .card {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
   <body>
+    <div id="sidebar-root"></div>
 
-    <div class="mouse-glow" id="mouseGlow"></div>
+    <div class="main-wrapper">
+      <div id="header-root"></div>
 
-    <div class="bg-orbs">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
+      <div class="dashboard-container">
+        <div class="top-header">
+          <div class="header-title-group">
+            <h1>StockLog · <span>Cadastro</span></h1>
+          </div>
+        </div>
+
+        <section class="card" id="cardContainer">
+          <div class="card-header-title">
+            <span class="title-text">
+              <i class="fa-solid fa-user-plus"></i> Cadastro de Funcionário
+            </span>
+          </div>
+
+          <!-- Div para Mensagens de Alerta -->
+          <div id="mensagem" class="mensagem-alerta"></div>
+
+          <form id="registerForm" class="form-grid">
+            <!-- Nome Completo -->
+            <div class="form-group">
+              <label for="nomeInput">Nome Completo</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input
+                  type="text"
+                  id="nomeInput"
+                  placeholder="Digite o nome completo"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- CPF -->
+            <div class="form-group">
+              <label for="cpfInput">CPF</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-id-card input-icon"></i>
+                <input
+                  type="text"
+                  id="cpfInput"
+                  placeholder="000.000.000-00"
+                  maxlength="14"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Área (Caixa Seletora) -->
+            <div class="form-group">
+              <label for="areaSelect">Área de Atuação</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-sitemap input-icon"></i>
+                <select id="areaSelect" required>
+                  <option value="" disabled selected>Selecione a área...</option>
+                  <option value="Gestão">Gestão</option>
+                  <option value="Estoque">Estoque</option>
+                </select>
+                <i class="fa-solid fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+
+            <!-- Senha -->
+            <div class="form-group">
+              <label for="passwordInput">Senha de Acesso</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input
+                  type="password"
+                  id="passwordInput"
+                  placeholder="Digite a senha"
+                  required
+                />
+                <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
+              </div>
+              
+              <!-- Barra de Força da Senha -->
+              <div class="strength-meter">
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+              </div>
+              <span id="strengthLabel" class="strength-label"></span>
+            </div>
+
+            <!-- Botão de Envio -->
+            <button type="submit" class="btn-submit" id="btnRegister">
+              <span id="btnText"><i class="fa-solid fa-user-check"></i> Cadastrar Funcionário</span>
+              <div id="btnSpinner" class="btn-spinner"></div>
+            </button>
+          </form>
+        </section>
+      </div>
+
+      <div id="footer-root"></div>
     </div>
 
-    <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
-      <i class="fa-solid fa-moon"></i>
-    </button>
+    <!-- Firebase SDK Compat Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    <main class="register-container" id="cardContainer">
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+        authDomain: "stocklog-ff7aa.firebaseapp.com",
+        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+        projectId: "stocklog-ff7aa",
+        storageBucket: "stocklog-ff7aa.firebasestorage.app",
+        messagingSenderId: "787537499919",
+        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+      const auth = firebase.auth();
 
-      <section class="left-panel">
-        <div class="brand">
-          <i class="fa-solid fa-boxes-stacked brand-icon"></i>
-          <span>StockLog</span>
-        </div>
+      // ====== Máscara de CPF ======
+      const cpfInput = document.getElementById('cpfInput');
+      cpfInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        e.target.value = v;
+      });
 
-        <div class="panel-content">
-          <h1>Crie sua conta no sistema</h1>
-          <p>Cadastre-se para ter acesso ao módulo de gestão de ordens de produção, movimentações de estoque e relatórios operacionais.</p>
+      // ====== Mostrar/Ocultar Senha ======
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('passwordInput');
 
-          <ul class="features-list">
-            <li><i class="fa-solid fa-circle-check"></i> Perfil com controle de acesso por setor</li>
-            <li><i class="fa-solid fa-circle-check"></i> Rastreamento completo de pedidos</li>
-            <li><i class="fa-solid fa-circle-check"></i> Notificações de movimentação em tempo real</li>
-          </ul>
-        </div>
+      togglePassword.addEventListener('click', () => {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        togglePassword.className = isPassword ? 'fa-regular fa-eye-slash toggle-password' : 'fa-regular fa-eye toggle-password';
+      });
 
-        <div style="font-size: 0.75rem; color: #64748b;">
-          &copy; StockLog Industrial Systems
-        </div>
-      </section>
+      // ====== Indicador de Força da Senha ======
+      const strengthBars = document.querySelectorAll('.strength-bar');
+      const strengthLabel = document.getElementById('strengthLabel');
 
-      <section class="right-panel">
-        <div class="form-header">
-          <h2>Criar Conta</h2>
-          <p>Preencha os dados abaixo para solicitar o seu acesso</p>
-        </div>
+      passwordInput.addEventListener('input', () => {
+        const v = passwordInput.value;
+        let score = 0;
+        if (v.length >= 8) score++;
+        if (/[A-Z]/.test(v)) score++;
+        if (/[0-9]/.test(v)) score++;
+        if (/[^A-Za-z0-9]/.test(v)) score++;
 
-        <form id="registerForm" autocomplete="off">
+        strengthBars.forEach((bar, i) => {
+          bar.classList.remove('active', 'weak', 'medium', 'strong');
+          if (i < score) {
+            bar.classList.add('active');
+            if (score <= 2) bar.classList.add('weak');
+            else if (score === 3) bar.classList.add('medium');
+            else bar.classList.add('strong');
+          }
+        });
 
-          <div class="form-grid">
+        const labels = ['', 'Senha fraca', 'Senha fraca', 'Senha média', 'Senha forte'];
+        strengthLabel.textContent = labels[score] || '';
+      });
 
-            <div class="input-group full-width">
-              <input type="text" id="nomeInput" placeholder="Nome completo" required>
-              <i class="fa-regular fa-user icon-left"></i>
-            </div>
+      // ====== Submissão do Formulário ======
+      const form = document.getElementById('registerForm');
+      const mensagem = document.getElementById('mensagem');
+      const btnRegister = document.getElementById('btnRegister');
+      const btnText = document.getElementById('btnText');
+      const btnSpinner = document.getElementById('btnSpinner');
 
-            <div class="input-group">
-              <input type="text" id="cpfInput" placeholder="CPF (000.000.000-00)" maxlength="14" inputmode="numeric" required>
-              <i class="fa-regular fa-id-card icon-left"></i>
-            </div>
+      function showMessage(text, type) {
+        mensagem.className = 'mensagem-alerta ' + (type || '');
+        mensagem.innerHTML = type === 'error'
+          ? `<i class="fa-solid fa-circle-exclamation"></i> ${text}`
+          : type === 'success'
+            ? `<i class="fa-solid fa-circle-check"></i> ${text}`
+            : text;
+      }
 
-            <div class="input-group">
-              <select id="setorSelect" required>
-                <option value="" disabled selected>Selecione o Setor</option>
-                <option value="gestao">Gestão</option>
-                <option value="estoque">Estoque</option>
-              </select>
-              <i class="fa-solid fa-layer-group icon-left"></i>
-            </div>
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-            <div class="input-group full-width">
-              <input type="email" id="emailInput" placeholder="E-mail" autocomplete="email" required>
-              <i class="fa-regular fa-envelope icon-left"></i>
-            </div>
+        const cpfVal = cpfInput.value.replace(/\D/g, '');
+        if (cpfVal.length !== 11) {
+          showMessage('CPF inválido. Preencha todos os dígitos.', 'error');
+          document.getElementById('cardContainer').classList.add('shake');
+          setTimeout(() => document.getElementById('cardContainer').classList.remove('shake'), 400);
+          return;
+        }
 
-            <div class="input-group full-width">
-              <input type="password" id="passwordInput" placeholder="Senha" autocomplete="new-password" minlength="8" required>
-              <i class="fa-solid fa-lock icon-left"></i>
-              <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
-            </div>
+        btnText.style.display = 'none';
+        btnSpinner.style.display = 'block';
+        btnRegister.disabled = true;
+        showMessage('Processando cadastro...', '');
 
-          </div>
+        setTimeout(() => {
+          btnText.style.display = 'inline';
+          btnSpinner.style.display = 'none';
+          btnRegister.disabled = false;
+          showMessage('Cadastro realizado com sucesso!', 'success');
+        }, 1800);
+      });
+    </script>
 
-          <div class="form-footer">
-            <p id="mensagem" class="mensagem-alerta"></p>
+    <!-- Componentes Globais -->
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
 
-            <button type="submit" class="btn-register" id="btnRegister">
-              <span id="btnText">Concluir Cadastro</span>
-              <div class="spinner" id="btnSpinner"></div>
-            </button>
-
-            <div class="login-link">
-              Já possui uma conta? <a href="login.html">Fazer Login</a>
-            </div>
-          </div>
-
-        </form>
-      </section>
-
-    </main>
-
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
+    <!-- Sincronização do Modo Escuro com a Página Inteira -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
-      authDomain: "stocklog-ff7aa.firebaseapp.com",
-      databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
-      projectId: "stocklog-ff7aa",
-      storageBucket: "stocklog-ff7aa.firebasestorage.app",
-      messagingSenderId: "787537499919",
-      appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const auth = firebase.auth();
-  </script>
+    (function () {
+      const STORAGE_KEY = 'stocklog-theme';
 
-  <script src="JS/cadastro.js"></script>
+      function applyTheme(theme) {
+        const isDark = theme === 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.body.classList.toggle('dark', isDark);
+        try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
+      }
+
+      // 1. Carrega tema salvo no carregamento
+      const saved = (() => {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+      })() || 'light';
+      applyTheme(saved);
+
+      // 2. Se algum script externo mudar a classe do body, sincroniza
+      const observer = new MutationObserver(() => {
+        const bodyIsDark = document.body.classList.contains('dark');
+        const htmlIsDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (bodyIsDark !== htmlIsDark) {
+          applyTheme(bodyIsDark ? 'dark' : 'light');
+        }
+      });
+      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+      // 3. Captura cliques em qualquer botão de tema (mesmo após o DOM ser atualizado)
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('#themeToggle, .theme-toggle, [data-theme-toggle]');
+        if (!btn) return;
+        // Pequeno delay para deixar o modo escuro.js externo agir primeiro
+        setTimeout(() => {
+          const current = document.body.classList.contains('dark') ||
+                          document.documentElement.getAttribute('data-theme') === 'dark';
+          applyTheme(current ? 'dark' : 'light');
+        }, 50);
+      });
+    })();
+  </script>
   </body>
-  </html>
+</html>

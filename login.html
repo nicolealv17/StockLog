@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockLog - Login</title>
+  <title>StockLog · Login</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,6 @@
       padding: 0;
       box-sizing: border-box;
       font-family: 'Inter', sans-serif;
-      transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
     }
 
     body {
@@ -57,6 +56,7 @@
       background-color: var(--bg-page);
       position: relative;
       overflow: hidden;
+      transition: background-color 0.3s ease;
     }
 
     .bg-orbs {
@@ -74,6 +74,7 @@
       filter: blur(90px);
       opacity: var(--orb-opacity);
       animation: floatOrb 12s infinite ease-in-out alternate;
+      transition: opacity 0.3s ease;
     }
 
     .orb-1 {
@@ -98,16 +99,18 @@
       100% { transform: translate(50px, 60px) scale(1.15) rotate(15deg); }
     }
 
+    /* Brilho do cursor com aceleração GPU */
     .mouse-glow {
-      position: absolute;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 500px;
       height: 500px;
       background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
       z-index: 1;
-      transform: translate(-50%, -50%);
-      transition: left 0.1s ease-out, top 0.1s ease-out;
+      will-change: transform;
     }
 
     .theme-toggle {
@@ -126,7 +129,7 @@
       align-items: center;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease, border-color 0.3s ease;
+      transition: transform 0.2s ease, border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     }
 
     .theme-toggle:hover {
@@ -152,6 +155,7 @@
       opacity: 0;
       transform: translateY(40px) scale(0.95);
       animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     @keyframes cardEntrance {
@@ -171,6 +175,7 @@
       justify-content: space-between;
       position: relative;
       overflow: hidden;
+      transition: background 0.3s ease;
     }
 
     .left-panel::before {
@@ -197,15 +202,14 @@
       height: 52px;
       object-fit: contain;
       background: rgba(255, 255, 255, 0.12);
-      padding: 0; /* Remove a margem interna para a imagem ocupar todo o quadrado */
-      transform: scale(1.15); /* Expande levemente a imagem dentro do quadrado */
+      padding: 0;
       border-radius: 14px;
       animation: floatIcon 4s infinite ease-in-out alternate;
     }
 
     @keyframes floatIcon {
-      0% { transform: scale(1.15) translateY(0); }
-      100% { transform: scale(1.15) translateY(-6px); }
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-6px); }
     }
 
     .panel-content h1 {
@@ -229,12 +233,14 @@
       flex-direction: column;
       justify-content: center;
       background-color: var(--card-bg);
+      transition: background-color 0.3s ease;
     }
 
     .form-header h2 {
       font-size: 1.8rem;
       color: var(--text-dark);
       font-weight: 700;
+      transition: color 0.3s ease;
     }
 
     .form-header p {
@@ -242,6 +248,7 @@
       color: var(--text-muted);
       margin-top: 4px;
       margin-bottom: 28px;
+      transition: color 0.3s ease;
     }
 
     .input-group {
@@ -268,6 +275,7 @@
       font-size: 0.95rem;
       color: var(--text-dark);
       outline: none;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     }
 
     .input-group input::placeholder {
@@ -365,6 +373,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .btn-login::after {
@@ -427,171 +436,88 @@
     }
   </style>
 </head>
-  <body>
+<body>
 
-    <div class="mouse-glow" id="mouseGlow"></div>
+  <div class="mouse-glow" id="mouseGlow"></div>
 
-    <div class="bg-orbs">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-    </div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
 
-    <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
-      <i class="fa-solid fa-moon"></i>
-    </button>
+  <button class="theme-toggle" id="themeToggle" title="Alternar Tema">
+    <i class="fa-solid fa-moon" id="themeIcon"></i>
+  </button>
 
-<<<<<<< HEAD
-    <main class="login-container" id="cardContainer">
-=======
   <main class="login-container" id="cardContainer">
     
     <section class="left-panel">
       <div class="brand">
-        <img src="IMG/semfundoo.png" alt="StockLog Logo" class="brand-icon">
+        <img src="IMG/semfundoo.png" alt="StockLog Logo" class="brand-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+        <i class="fa-solid fa-boxes-stacked brand-icon" style="display: none;"></i>
         <span>StockLog</span>
       </div>
->>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17
 
-      <section class="left-panel">
-        <div class="brand">
-          <i class="fa-solid fa-boxes-stacked brand-icon"></i>
-          <span>StockLog</span>
+      <div class="panel-content">
+        <h1>Bem-vindo ao sistema</h1>
+        <p>Acesse o painel central para gerenciar ordens de produção, acompanhar estoques e otimizar todo o fluxo produtivo em tempo real.</p>
+      </div>
+
+      <div style="font-size: 0.75rem; color: #64748b;">
+        &copy; StockLog Industrial Systems
+      </div>
+    </section>
+
+    <section class="right-panel">
+      <div class="form-header">
+        <h2>Login</h2>
+        <p>Entre com suas credenciais para continuar</p>
+      </div>
+
+      <form id="loginForm" autocomplete="off">
+
+        <div class="input-group">
+          <input type="email" id="emailInput" placeholder="E-mail" autocomplete="email" required>
+          <i class="fa-regular fa-envelope icon-left"></i>
         </div>
 
-        <div class="panel-content">
-          <h1>Bem-vindo ao sistema</h1>
-          <p>Acesse o painel central para gerenciar ordens de produção, acompanhar estoques e otimizar todo o fluxo produtivo em tempo real.</p>
+        <div class="input-group">
+          <input type="password" id="passwordInput" placeholder="Senha" autocomplete="current-password" required>
+          <i class="fa-solid fa-lock icon-left"></i>
+          <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
         </div>
 
-        <div style="font-size: 0.75rem; color: #64748b;">
-          &copy; StockLog Industrial Systems
+        <p id="mensagem" style="margin-bottom: 16px; font-size: 0.85rem; text-align: center; min-height: 20px; font-weight: 500;"></p>
+
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" id="rememberMe">
+            <span>Lembrar-me</span>
+          </label>
+          <a href="#" class="forgot-pass">Esqueceu a senha?</a>
         </div>
-      </section>
 
-      <section class="right-panel">
-        <div class="form-header">
-          <h2>Login</h2>
-          <p>Entre com suas credenciais para continuar</p>
+        <button type="submit" class="btn-login" id="btnLogin">
+          <span id="btnText">Entrar</span>
+          <div class="spinner" id="btnSpinner"></div>
+        </button>
+
+        <div class="login-link">
+          Não tem uma conta? <a href="cadastro.html">Criar</a>
         </div>
 
-        <form id="loginForm" autocomplete="off">
-
-<<<<<<< HEAD
-          <div class="input-group">
-            <input type="email" id="emailInput" placeholder="E-mail" autocomplete="email" required>
-            <i class="fa-regular fa-envelope icon-left"></i>
-          </div>
-
-          <div class="input-group">
-            <input type="password" id="passwordInput" placeholder="Senha" autocomplete="current-password" required>
-            <i class="fa-solid fa-lock icon-left"></i>
-            <i class="fa-regular fa-eye toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha"></i>
-          </div>
-=======
       </form>
     </section>
->>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17
 
-          <!-- Mensagem de erro/sucesso -->
-          <p id="mensagem" class="mensagem-alerta" style="margin-bottom: 16px; font-size: 0.85rem; text-align: center; min-height: 20px; font-weight: 500;"></p>
+  </main>
 
-          <div class="form-options">
-            <label class="remember-me">
-              <input type="checkbox" id="rememberMe">
-              <span>Lembrar-me</span>
-            </label>
-            <a href="#" class="forgot-pass">Esqueceu a senha?</a>
-          </div>
+  <!-- Firebase SDK Compat Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-<<<<<<< HEAD
-          <button type="submit" class="btn-login" id="btnLogin">
-            <span id="btnText">Entrar</span>
-            <div class="spinner" id="btnSpinner"></div>
-          </button>
-=======
-      const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
-      setTheme(savedTheme);
->>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17
-
-          <div class="login-link">
-              Não tem uma conta? <a href="cadastro.html">Criar</a>
-          </div>
-
-        </form>
-      </section>
-
-    </main>
-
-<<<<<<< HEAD
-    <!-- Firebase libs (ordem importa) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
-    <!-- Inicialização -->
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
-        authDomain: "stocklog-ff7aa.firebaseapp.com",
-        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
-        projectId: "stocklog-ff7aa",
-        storageBucket: "stocklog-ff7aa.firebasestorage.app",
-        messagingSenderId: "787537499919",
-        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-      const auth = firebase.auth();
-    </script>
-
-    <script src="JS/login.js"></script>
-  </body>
-  </html>
-=======
-      document.addEventListener('mousemove', (e) => {
-        mouseGlow.style.left = `${e.clientX}px`;
-        mouseGlow.style.top = `${e.clientY}px`;
-      });
-
-      togglePassword.addEventListener('click', () => {
-        const isPassword = passwordInput.getAttribute('type') === 'password';
-        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-        togglePassword.classList.toggle('fa-eye', !isPassword);
-        togglePassword.classList.toggle('fa-eye-slash', isPassword);
-      });
-
-      loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        btnText.style.display = 'none';
-        btnSpinner.style.display = 'block';
-        btnLogin.style.pointerEvents = 'none';
-
-        setTimeout(() => {
-          if (userInput.value.trim() !== "" && passwordInput.value.length >= 4) {
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnText.textContent = 'Acessando...';
-            btnLogin.style.background = '#16a34a';
-
-            setTimeout(() => {
-              cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-              cardContainer.style.opacity = '0';
-              cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
-            }, 400);
-
-          } else {
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnLogin.style.pointerEvents = 'auto';
-
-            cardContainer.classList.add('shake');
-            setTimeout(() => cardContainer.classList.remove('shake'), 400);
-          }
-        }, 1200);
-      });
-    });
-
+  <script>
+    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
       authDomain: "stocklog-ff7aa.firebaseapp.com",
@@ -601,7 +527,120 @@
       messagingSenderId: "787537499919",
       appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
     };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const mouseGlow = document.getElementById('mouseGlow');
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('passwordInput');
+      const loginForm = document.getElementById('loginForm');
+      const btnLogin = document.getElementById('btnLogin');
+      const btnText = document.getElementById('btnText');
+      const btnSpinner = document.getElementById('btnSpinner');
+      const cardContainer = document.getElementById('cardContainer');
+      const mensagem = document.getElementById('mensagem');
+
+      // ====== 1. Alternador de Tema Corrigido ======
+      function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('stocklog-theme', theme);
+        if (theme === 'dark') {
+          themeIcon.className = 'fa-solid fa-sun';
+        } else {
+          themeIcon.className = 'fa-solid fa-moon';
+        }
+      }
+
+      const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
+      applyTheme(savedTheme);
+
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+      });
+
+      // ====== 2. Efeito Mouse Glow Fluído (GPU/RAF) ======
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let glowX = mouseX;
+      let glowY = mouseY;
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      function renderGlow() {
+        glowX += (mouseX - glowX) * 0.18;
+        glowY += (mouseY - glowY) * 0.18;
+        mouseGlow.style.transform = `translate3d(${glowX - 250}px, ${glowY - 250}px, 0)`;
+        requestAnimationFrame(renderGlow);
+      }
+      renderGlow();
+
+      // ====== 3. Visibilidade da Senha ======
+      togglePassword.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        togglePassword.classList.toggle('fa-eye', !isPassword);
+        togglePassword.classList.toggle('fa-eye-slash', isPassword);
+      });
+
+      // ====== 4. Submissão do Formulário com Firebase Auth ======
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('emailInput').value.trim();
+        const password = passwordInput.value;
+
+        mensagem.textContent = '';
+        btnText.style.display = 'none';
+        btnSpinner.style.display = 'block';
+        btnLogin.style.pointerEvents = 'none';
+
+        auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            btnSpinner.style.display = 'none';
+            btnText.style.display = 'inline';
+            btnText.textContent = 'Sucesso!';
+            btnLogin.style.background = '#16a34a';
+
+            setTimeout(() => {
+              cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+              cardContainer.style.opacity = '0';
+              cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
+            }, 500);
+          })
+          .catch((error) => {
+            btnSpinner.style.display = 'none';
+            btnText.style.display = 'inline';
+            btnLogin.style.pointerEvents = 'auto';
+
+            mensagem.style.color = '#ef4444';
+            switch (error.code) {
+              case 'auth/user-not-found':
+              case 'auth/wrong-password':
+              case 'auth/invalid-credential':
+                mensagem.textContent = 'E-mail ou senha incorretos.';
+                break;
+              case 'auth/invalid-email':
+                mensagem.textContent = 'Formato de e-mail inválido.';
+                break;
+              default:
+                mensagem.textContent = 'Erro ao realizar login. Tente novamente.';
+            }
+
+            cardContainer.classList.add('shake');
+            setTimeout(() => cardContainer.classList.remove('shake'), 400);
+          });
+      });
+    });
   </script>
 </body>
 </html>
->>>>>>> 4e71f70c4fbe99ffb21b250d473a749e679d0f17
