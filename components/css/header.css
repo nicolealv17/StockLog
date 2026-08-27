@@ -109,20 +109,24 @@ body.dark {
   flex-shrink: 0;
 }
 
+/* ============================================================
+   BOTÕES DO HEADER - TODOS COM O MESMO ESTILO
+   ============================================================ */
 .header-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--bg-soft, #f5faff);
+  border: 1px solid var(--header-border);
+  color: var(--text-secondary);
+  font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
+  flex-shrink: 0;
   position: relative;
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
 }
 .header-btn:hover {
   border-color: var(--primary, #006bb3);
@@ -142,36 +146,62 @@ body.dark {
   border: 1.5px solid var(--header-bg);
 }
 
+/* ============================================================
+   PERFIL DO USUÁRIO - MESMO ESTILO DOS BOTÕES
+   ============================================================ */
 .user-profile {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px 4px 4px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  color: var(--header-text-muted);
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 10px;
+  background: var(--bg-soft, #f5faff);
+  border: 1px solid var(--header-border);
+  color: var(--text-secondary);
   font-weight: 500;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   transition: 0.2s;
   text-decoration: none;
+  height: 38px;
 }
 .user-profile:hover {
-  background: var(--bg-soft, #f5faff);
-  border-color: var(--header-border);
+  border-color: var(--primary, #006bb3);
   color: var(--primary, #006bb3);
-}
-.user-profile i {
-  font-size: 24px;
-  color: var(--primary, #006bb3);
-}
-.user-profile span {
-  display: inline;
+  background: var(--primary-light, #e1eefb);
 }
 
-/* ================================================================
+/* Avatar dentro do perfil */
+.user-avatar-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--primary-light);
+  flex-shrink: 0;
+}
+.user-avatar-wrapper i {
+  font-size: 22px;
+  color: var(--primary);
+}
+
+.header-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-profile-name {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* ============================================================
    RESPONSIVIDADE
-   ================================================================ */
+   ============================================================ */
 @media (max-width: 768px) {
   .header {
     padding: 8px 12px;
@@ -191,8 +221,14 @@ body.dark {
     flex: 1;
   }
 
-  .user-profile span {
+  .user-profile-name {
     display: none;
+  }
+  
+  .user-profile {
+    padding: 4px;
+    width: 38px;
+    justify-content: center;
   }
 }
 
@@ -208,5 +244,17 @@ body.dark {
     width: 30px;
     height: 30px;
     font-size: 12px;
+  }
+  .user-profile {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+  }
+  .user-avatar-wrapper {
+    width: 22px;
+    height: 22px;
+  }
+  .user-avatar-wrapper i {
+    font-size: 18px;
   }
 }

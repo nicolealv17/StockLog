@@ -229,30 +229,7 @@
   display: none;
 }
 
-.sidebar-user {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 8px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 16px;
-  font-size: 13px;
-  color: var(--sidebar-text);
-  width: 100%;
-  flex-shrink: 0;
-}
-.sidebar:not(.open) .sidebar-user {
-  justify-content: center;
-}
-.sidebar-user i {
-  font-size: 24px;
-  color: var(--sidebar-icon);
-  flex-shrink: 0;
-}
-.sidebar:not(.open) .sidebar-user span {
-  display: none;
-}
+
 
 /* ---------------------------------------------------------------
    Overlay (escurece o conteúdo atrás do menu quando aberto no mobile)
@@ -392,9 +369,7 @@ body:not(.dark) .sidebar-user {
   color: #d6e7f8;
   border-top: 1px solid rgba(255, 255, 255, 0.10);
 }
-body:not(.dark) .sidebar-user i {
-  color: #a8c8e6;
-}
+
 
 /* ================================================================
    RESPONSIVIDADE

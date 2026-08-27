@@ -69,8 +69,8 @@
       "<nav>" +
       buildNavHTML() +
       "</nav>" +
-      '<div class="sidebar-user">' +
-      '<i class="fas fa-user-circle"></i><span></span>' +
+   
+       
       "</div>" +
       "</aside>"
     );

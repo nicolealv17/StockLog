@@ -12,6 +12,37 @@
   // Caminho dinâmico da imagem da logo
   var LOGO_SRC = basePath + "IMG/logoo.png";
 
+  // ============================================
+  // FUNÇÕES PARA GERENCIAR A FOTO DE PERFIL
+  // ============================================
+  function getProfilePhoto() {
+    try {
+      return localStorage.getItem('stocklog_profile_photo') || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getProfileName() {
+    try {
+      var name = localStorage.getItem('stocklog_profile_name');
+      if (name && name.trim() !== '') {
+        return name;
+      }
+      return 'Usuário';
+    } catch (e) {
+      return 'Usuário';
+    }
+  }
+
+  function getProfilePhotoHTML() {
+    var photo = getProfilePhoto();
+    if (photo) {
+      return '<img src="' + photo + '" alt="Avatar" class="header-avatar-img" />';
+    }
+    return '<i class="fas fa-user-circle"></i>';
+  }
+
   function getPageTitle() {
     var titles = {
       "index.html": "Dashboard",
@@ -32,14 +63,15 @@
 
   function buildHeaderHTML() {
     var title = getPageTitle();
+    var profileName = getProfileName();
+    var profilePhotoHTML = getProfilePhotoHTML();
+    
     return (
       '<header class="header" role="banner">' +
       '<div class="header-left">' +
-      // Botão hambúrguer (mobile)
       '<button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu">' +
       '<i class="fas fa-bars"></i>' +
       "</button>" +
-      // Logo mobile (aparece apenas em telas pequenas)
       '<a href="' +
       basePath +
       'index.html" class="header-logo-mobile" aria-label="StockLog - Página inicial">' +
@@ -48,7 +80,6 @@
       '" alt="StockLog" />' +
       'Stock<span>Log</span>' +
       "</a>" +
-      // Título da página (desktop)
       '<div class="header-title">' +
       title +
       "</div>" +
@@ -68,8 +99,10 @@
       '<a href="' +
       basePath +
       'perfil.html" class="user-profile" aria-label="Perfil">' +
-      '<i class="fas fa-user-circle"></i>' +
-      "<span>Usuário</span>" +
+      '<span class="user-avatar-wrapper">' +
+      profilePhotoHTML +
+      '</span>' +
+      '<span class="user-profile-name">' + profileName + '</span>' +
       "</a>" +
       "</div>" +
       "</header>"
@@ -97,11 +130,6 @@
     var header = mount();
     if (!header) return;
 
-    // O modo escuro (clique, ícone, localStorage) é todo controlado
-    // pelo modoescuro.js, que detecta este #themeToggleBtn sozinho.
-    // Não adicionar outro listener aqui — dois listeners no mesmo botão
-    // alternavam a classe "dark" duas vezes por clique e anulavam um ao outro.
-
     // Ações de busca
     var searchInput = header.querySelector('.header-search input');
     if (searchInput) {
@@ -111,11 +139,37 @@
           var query = this.value.trim();
           if (query) {
             console.log("[StockLog] Busca:", query);
-            // Você pode redirecionar para uma página de resultados ou filtrar algo
           }
         }
       });
     }
+
+    // Atualiza o header quando o perfil for atualizado
+    window.addEventListener('profileUpdated', function() {
+      var oldHeader = document.querySelector('.header');
+      if (oldHeader) {
+        var placeholder = document.createElement('div');
+        placeholder.id = 'header-root';
+        oldHeader.replaceWith(placeholder);
+        mount();
+        // Reaplica os listeners
+        var newHeader = document.querySelector('.header');
+        if (newHeader) {
+          var newSearchInput = newHeader.querySelector('.header-search input');
+          if (newSearchInput) {
+            newSearchInput.addEventListener("keydown", function (e) {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                var query = this.value.trim();
+                if (query) {
+                  console.log("[StockLog] Busca:", query);
+                }
+              }
+            });
+          }
+        }
+      }
+    });
   }
 
   if (document.readyState === "loading") {
