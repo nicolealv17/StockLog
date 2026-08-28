@@ -853,6 +853,37 @@
           font-size: 10px;
         }
       }
+      /* ===== Mais contraste / vida na paleta ===== */
+:root {
+  --neutral: #2f6fb0; --neutral-bg: #d7e6f7;
+  --slate:   #34517a; --slate-bg:   #d9e2ef;
+  --teal:    #1f8a7e; --teal-bg:    #cdeae5;
+  --sand:    #c17d2e; --sand-bg:    #f5e2c2;
+  --rose:    #c0454f; --rose-bg:    #f6d9db;
+  --green:   #2f9e5c; --green-bg:   #d3f0dd;
+
+  --border: #d3e0ee;           /* era #e2ecf6, quase invisível */
+  --shadow-card: 0 2px 6px rgba(0, 40, 80, 0.08), 0 8px 20px rgba(0, 40, 80, 0.05);
+}
+
+/* Ícones dos cards com fundo sólido em vez de tint pastel */
+.relatorio-icone { color: #fff !important; }
+.relatorio-card.neutral .relatorio-icone { background: var(--neutral) !important; }
+.relatorio-card.slate .relatorio-icone   { background: var(--slate) !important; }
+.relatorio-card.teal .relatorio-icone    { background: var(--teal) !important; }
+.relatorio-card.sand .relatorio-icone    { background: var(--sand) !important; }
+.relatorio-card.rose .relatorio-icone    { background: var(--rose) !important; }
+
+/* Título do card com mais peso */
+.relatorio-titulo { color: var(--text-main) !important; }
+
+/* Borda esquerda colorida pra identificar a categoria de longe */
+.relatorio-card { border-left: 4px solid var(--border) !important; }
+.relatorio-card.neutral { border-left-color: var(--neutral) !important; }
+.relatorio-card.slate   { border-left-color: var(--slate) !important; }
+.relatorio-card.teal    { border-left-color: var(--teal) !important; }
+.relatorio-card.sand    { border-left-color: var(--sand) !important; }
+.relatorio-card.rose    { border-left-color: var(--rose) !important; }
     </style>
   </head>
   <body>
@@ -962,9 +993,7 @@
                   <button class="btn-export" data-tipo="producao" data-formato="excel">
                     <i class="fas fa-file-excel"></i> Excel
                   </button>
-                  <button class="btn-export" data-tipo="producao" data-formato="csv">
-                    <i class="fas fa-file-csv"></i> CSV
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -1009,9 +1038,6 @@
                   <button class="btn-export" data-tipo="pedidos" data-formato="excel">
                     <i class="fas fa-file-excel"></i> Excel
                   </button>
-                  <button class="btn-export" data-tipo="pedidos" data-formato="csv">
-                    <i class="fas fa-file-csv"></i> CSV
-                  </button>
                 </div>
               </div>
             </div>
@@ -1047,9 +1073,7 @@
                   <button class="btn-export" data-tipo="estoque" data-formato="excel">
                     <i class="fas fa-file-excel"></i> Excel
                   </button>
-                  <button class="btn-export" data-tipo="estoque" data-formato="csv">
-                    <i class="fas fa-file-csv"></i> CSV
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -1094,9 +1118,7 @@
                   <button class="btn-export" data-tipo="logistica" data-formato="excel">
                     <i class="fas fa-file-excel"></i> Excel
                   </button>
-                  <button class="btn-export" data-tipo="logistica" data-formato="csv">
-                    <i class="fas fa-file-csv"></i> CSV
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -1127,9 +1149,7 @@
                   <button class="btn-export" data-tipo="desempenho" data-formato="excel">
                     <i class="fas fa-file-excel"></i> Excel
                   </button>
-                  <button class="btn-export" data-tipo="desempenho" data-formato="csv">
-                    <i class="fas fa-file-csv"></i> CSV
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -1302,10 +1322,10 @@
         logistica: {
           colunas: ['Nº Rota', 'Motorista', 'Veículo', 'Destino', 'Saída', 'Previsão', 'Status'],
           linhas: [
-            ['R-001', 'João Silva', 'ABC-1234', 'Distribuidora Nordeste', '05/08/2026', '20/08/2026', 'Entregue'],
-            ['R-002', 'Marcos Souza', 'XYZ-5678', 'Supermercado Boa Vista', '10/08/2026', '25/08/2026', 'Em rota'],
-            ['R-003', 'Ana Paula Rocha', 'JKL-9012', 'Padaria Pão Quente', '15/08/2026', '22/08/2026', 'Em rota'],
-            ['R-004', 'Carlos Lima', 'ABC-1234', 'Mercadinho Ipê', '18/08/2026', '28/08/2026', 'Pendente'],
+            ['R-001', 'João Silva', 'ABC-1234', 'Importadora Global Insumos', '05/08/2026', '20/08/2026', 'Entregue'],
+            ['R-002', 'Marcos Souza', 'XYZ-5678', 'Rolamentos & Cia Indústria', '10/08/2026', '25/08/2026', 'Em rota'],
+            ['R-003', 'Ana Paula Rocha', 'JKL-9012', 'Metalúrgica Silva Ltda ', '15/08/2026', '22/08/2026', 'Em rota'],
+            ['R-004', 'Carlos Lima', 'ABC-1234', 'Ferramentas & Moldes Brasil', '18/08/2026', '28/08/2026', 'Pendente'],
           ]
         },
         desempenho: {
@@ -1579,15 +1599,15 @@
       // 7. GRÁFICOS (Chart.js)
       // ================================================================
       function initGraficos() {
-        const C = {
-          teal:    "#4a7c82",
-          sand:    "#a88555",
-          slate:   "#3d5f7e",
-          neutral: "#5a7390",
-          rose:    "#a55a64",
-          primary: "#006bb3",
-          green:   "#4a8c6a",
-        };
+const C = {
+  teal:    "#1f8a7e",
+  sand:    "#c17d2e",
+  slate:   "#34517a",
+  neutral: "#2f6fb0",
+  rose:    "#c0454f",
+  primary: "#006bb3",
+  green:   "#2f9e5c",
+};
         const LABELS_MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
         function mkLine(id, color, data) {

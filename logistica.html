@@ -14,11 +14,12 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-    <link rel="stylesheet" href="components/css/sidebar.css" />
-    <link rel="stylesheet" href="components/css/header.css" />
-    <link rel="stylesheet" href="components/css/footer.css" />
-    <link rel="stylesheet" href="components/css/modoescuro.css" />
-    <link rel="stylesheet" href="components/css/responsive.css" />
+<link rel="stylesheet" href="components/css/sidebar.css" />
+<link rel="stylesheet" href="components/css/header.css" />
+<link rel="stylesheet" href="components/css/chat.css" />
+<link rel="stylesheet" href="components/css/footer.css" />
+<link rel="stylesheet" href="components/css/modoescuro.css" />
+<link rel="stylesheet" href="components/css/responsive.css" />
     <style>
       /* ================================================================
          TOKENS / VARIÁVEIS
@@ -512,6 +513,36 @@
           right: 12px !important;
         }
       }
+      /* ===== Redução de ruído visual ===== */
+
+/* Stats: tira o preenchimento colorido do ícone, deixa neutro */
+.log-stat-icon {
+  background: var(--bg-soft) !important;
+  color: var(--text-secondary) !important;
+}
+.log-stat::after { display: none; } /* tira a barrinha lateral colorida */
+
+/* Kanban: uma cor só de destaque (primária), exceto o último (Entregue) */
+.log-col-head { border-top-color: var(--border) !important; }
+.log-col:last-child .log-col-head { border-top-color: var(--teal) !important; }
+.log-col-title { color: var(--text-main) !important; }
+.log-col-title i { background: var(--bg-soft) !important; color: var(--text-secondary) !important; }
+
+/* Tira a animação de pulso (pontinho piscando) — é o que mais cansa a vista */
+.log-badge-urgente::before,
+.log-status-pill::before { animation: none !important; }
+
+/* Botões "Avançar": neutraliza a cor de fundo custom por etapa */
+.log-card-foot .btn.btn-primary {
+  background: var(--primary-gradient) !important;
+  box-shadow: none !important;
+}
+
+/* Sombras mais discretas no hover */
+.log-card:hover, .log-vehicle-card:hover, .log-stat:hover {
+  box-shadow: var(--shadow-card) !important;
+  transform: none !important;
+}
     </style>
   </head>
   <body>
@@ -812,10 +843,10 @@
 
       function logDefaultActivity() {
         return [
-          { id: "a1", icon: "fa-truck",        color: "blue",   titulo: "Veículo ABC-1234 saiu para entrega",     subtitulo: "Distribuidora Nordeste",         hora: "08:42" },
-          { id: "a2", icon: "fa-box-open",     color: "brown",  titulo: "Pedido #1039 iniciou embalagem",          subtitulo: "Padaria Pão Quente",             hora: "08:18" },
-          { id: "a3", icon: "fa-bell",         color: "rose",   titulo: "Pedido #1043 marcado como urgente",       subtitulo: "Supermercado Boa Vista",         hora: "07:55" },
-          { id: "a4", icon: "fa-circle-check", color: "teal",   titulo: "Pedido #1030 entregue",                   subtitulo: "Mercadinho Ipê",                  hora: "07:30" },
+          { id: "a1", icon: "fa-truck",        color: "blue",   titulo: "Veículo ABC-1234 saiu para entrega",     subtitulo: "Importadora Global Insumos",         hora: "08:42" },
+          { id: "a2", icon: "fa-box-open",     color: "brown",  titulo: "Pedido #1039 iniciou embalagem",          subtitulo: "Metalúrgica Silva Ltda",             hora: "08:18" },
+          { id: "a3", icon: "fa-bell",         color: "rose",   titulo: "Pedido #1043 marcado como urgente",       subtitulo: "Química Industrial Nordeste",         hora: "07:55" },
+          { id: "a4", icon: "fa-circle-check", color: "teal",   titulo: "Pedido #1030 entregue",                   subtitulo: "Ferramentas & Moldes Brasil",                  hora: "07:30" },
         ];
       }
 
@@ -831,10 +862,10 @@
         return [
           // CORRIGIDO: Clientes com nomes corporativos, valores de peso e volume realistas
           { id: "o1", numero: "1043", cliente: "Usina Metalúrgica Silva", endereco: "Av. Industrial, 900 - Centro", itens: 300, peso: 150.5, volume: 2.3, prioridade: "urgente", status: "aguardando", veiculoId: "", data: "2026-08-21", obs: "Cliente pediu conferência dupla antes da separação." },
-          { id: "o2", numero: "1042", cliente: "Restaurante Sabor & Cia", endereco: "Rua das Flores, 120",    itens: 120, peso: 85.0, volume: 1.2, prioridade: "normal",  status: "separacao",  veiculoId: "",    data: "2026-08-22", obs: "" },
-          { id: "o3", numero: "1039", cliente: "Padaria Pão Quente",    endereco: "Rua Dez, 45",             itens: 60,  peso: 40.2, volume: 0.8, prioridade: "normal",  status: "embalagem",  veiculoId: "",    data: "2026-08-22", obs: "Embalagem térmica." },
-          { id: "o4", numero: "1035", cliente: "Distribuidora Nordeste",endereco: "Rod. BR-101, km 12",      itens: 500, peso: 820.0, volume: 8.5, prioridade: "urgente", status: "expedicao",  veiculoId: "v1", data: "2026-08-21", obs: "" },
-          { id: "o5", numero: "1030", cliente: "Mercadinho Ipê",        endereco: "Travessa Ipê, 8",        itens: 80,  peso: 120.0, volume: 1.5, prioridade: "normal",  status: "entregue",   veiculoId: "v2", data: "2026-08-20", obs: "" },
+          { id: "o2", numero: "1042", cliente: "Rolamentos & Cia Indústria", endereco: "Rua das Flores, 120",    itens: 120, peso: 85.0, volume: 1.2, prioridade: "normal",  status: "separacao",  veiculoId: "",    data: "2026-08-22", obs: "" },
+          { id: "o3", numero: "1039", cliente: "Importadora Global Insumos",    endereco: "Rua Dez, 45",             itens: 60,  peso: 40.2, volume: 0.8, prioridade: "normal",  status: "embalagem",  veiculoId: "",    data: "2026-08-22", obs: "Embalagem térmica." },
+          { id: "o4", numero: "1035", cliente: "Embalagens Express S.A.",endereco: "Rod. BR-101, km 12",      itens: 500, peso: 820.0, volume: 8.5, prioridade: "urgente", status: "expedicao",  veiculoId: "v1", data: "2026-08-21", obs: "" },
+          { id: "o5", numero: "1030", cliente: "Ferramentas & Moldes Brasil",        endereco: "Travessa Ipê, 8",        itens: 80,  peso: 120.0, volume: 1.5, prioridade: "normal",  status: "entregue",   veiculoId: "v2", data: "2026-08-20", obs: "" },
         ];
       }
 
