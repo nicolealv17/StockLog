@@ -1,690 +1,604 @@
-  <!DOCTYPE html>
-  <html lang="pt-BR">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>StockLog · Rastreamento de Pedidos</title>
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Rastreamento de Pedidos</title>
 
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-      <link rel="stylesheet" href="components/css/sidebar.css" />
-      <link rel="stylesheet" href="components/css/header.css" />
-      <link rel="stylesheet" href="components/css/footer.css" />
-      <link rel="stylesheet" href="components/css/modoescuro.css" />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
 
-      <style>
+    <style>
 
-        :root {
-          --bg-body: #edf3f8;
-          --bg-card: #ffffff;
-          --bg-soft: #f4f8fc;
-          --border: #d4e2f0;
+      :root {
+        --bg-body: #edf3f8;
+        --bg-card: #ffffff;
+        --bg-soft: #f4f8fc;
+        --border: #d4e2f0;
 
-          --text-main: #0c1e2e;
-          --text-secondary: #3b5a75;
-          --text-muted: #718da8;
+        --text-main: #0c1e2e;
+        --text-secondary: #3b5a75;
+        --text-muted: #718da8;
 
-          --primary: #006bb3;
-          --primary-light: #e3f0fb;
+        --primary: #006bb3;
+        --primary-light: #e3f0fb;
 
-          --green: #16a34a;
-          --green-bg: #dcfce7;
+        --green: #16a34a;
+        --green-bg: #dcfce7;
 
-          --blue: #0284c7;
-          --blue-bg: #e0f2fe;
+        --blue: #0284c7;
+        --blue-bg: #e0f2fe;
 
-          --amber: #d97706;
-          --amber-bg: #fef3c7;
+        --amber: #d97706;
+        --amber-bg: #fef3c7;
 
-          --purple: #7c3aed;
-          --purple-bg: #f3e8ff;
+        --purple: #7c3aed;
+        --purple-bg: #f3e8ff;
 
-          --shadow: 0 8px 24px rgba(12, 30, 46, 0.08);
-          --radius: 14px;
-        }
+        --shadow: 0 8px 24px rgba(12, 30, 46, 0.08);
+        --radius: 14px;
+      }
 
-        body.dark {
-          --bg-body: #0a131d;
-          --bg-card: #111f2e;
-          --bg-soft: #16283b;
-          --border: #1e364f;
+      body.dark {
+        --bg-body: #0a131d;
+        --bg-card: #111f2e;
+        --bg-soft: #16283b;
+        --border: #1e364f;
 
-          --text-main: #e2edf8;
-          --text-secondary: #9cb5cd;
-          --text-muted: #6482a0;
+        --text-main: #e2edf8;
+        --text-secondary: #9cb5cd;
+        --text-muted: #6482a0;
 
-          --primary: #38bdf8;
-          --primary-light: #17324d;
+        --primary: #38bdf8;
+        --primary-light: #17324d;
 
-          --green: #4ade80;
-          --green-bg: #143823;
+        --green: #4ade80;
+        --green-bg: #143823;
 
-          --blue: #38bdf8;
-          --blue-bg: #123147;
+        --blue: #38bdf8;
+        --blue-bg: #123147;
 
-          --amber: #fbbf24;
-          --amber-bg: #3d2d11;
+        --amber: #fbbf24;
+        --amber-bg: #3d2d11;
 
-          --purple: #c084fc;
-          --purple-bg: #321d47;
+        --purple: #c084fc;
+        --purple-bg: #321d47;
 
-          --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-        }
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html, body { height: 100%; }
+      html, body { height: 100%; }
 
-        body {
-          font-family: "Inter", sans-serif;
-          background-color: var(--bg-body);
-          color: var(--text-main);
-          min-height: 100vh;
-          transition: background-color 0.3s, color 0.3s;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        min-height: 100vh;
+        transition: background-color 0.3s, color 0.3s;
+      }
 
-        /* Layout principal: sidebar fixa à esquerda + coluna de conteúdo */
-        .app-layout {
-          display: flex;
-          min-height: 100vh;
-          width: 100%;
-        }
+      /* Layout principal: sidebar fixa à esquerda + coluna de conteúdo */
+      .app-layout {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+      }
 
-        #sidebar-root {
-          flex-shrink: 0;
-        }
+      #sidebar-root {
+        flex-shrink: 0;
+      }
 
-        .main-column {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-        }
+      .main-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
 
-        /* Container agora ocupa a largura toda do espaço disponível */
-        .container {
-          width: 100%;
-          max-width: none;
-          margin: 0;
-          padding: 24px 28px;
-          display: flex;
-          flex-direction: column;
-          gap: 22px;
-          flex: 1;
-        }
+      /* Container agora ocupa a largura toda do espaço disponível */
+      .container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 24px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        flex: 1;
+      }
 
-        /* KPI Cards: mínimo menor para caber 4 lado a lado em telas normais */
-        .kpi-grid {
-          display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 18px;
-        }
-        @media (max-width: 1200px) {
-          .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        }
-        @media (max-width: 600px) {
-          .kpi-grid { grid-template-columns: 1fr; }
-        }
-        .kpi-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 20px 22px;
-          box-shadow: var(--shadow);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-        }
-        .kpi-val {
-          font-size: clamp(1.6rem, 1.5vw + 1rem, 2.2rem);
-          font-weight: 800;
-          margin-top: 4px;
-          color: var(--text-main);
-          line-height: 1.1;
-        }
-        .kpi-label {
-          font-size: 11.5px;
-          font-weight: 700;
-          color: var(--text-muted);
-          text-transform: uppercase;
-          letter-spacing: 0.4px;
-        }
-        .kpi-icon {
-          width: 52px;
-          height: 52px;
-          border-radius: 14px;
-          display: grid;
-          place-items: center;
-          font-size: 20px;
-          flex-shrink: 0;
-        }
+      /* Filtros */
+      .filter-bar {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 22px;
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .filter-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+      .chip {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        padding: 9px 18px;
+        border-radius: 22px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        white-space: nowrap;
+      }
+      .chip:hover { border-color: var(--primary); color: var(--primary); }
+      .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        /* Filtros */
-        .filter-bar {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 16px 22px;
-          box-shadow: var(--shadow);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 16px;
-        }
-        .filter-chips { display: flex; gap: 10px; flex-wrap: wrap; }
-        .chip {
-          background: var(--bg-soft);
-          border: 1px solid var(--border);
-          color: var(--text-secondary);
-          padding: 9px 18px;
-          border-radius: 22px;
-          font-size: 13.5px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: 0.2s;
-          white-space: nowrap;
-        }
-        .chip:hover { border-color: var(--primary); color: var(--primary); }
-        .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        padding: 10px 16px;
+        border-radius: 10px;
+        width: 360px;
+        max-width: 100%;
+      }
+      .search-box input {
+        border: none;
+        background: transparent;
+        color: var(--text-main);
+        outline: none;
+        font-weight: 600;
+        width: 100%;
+        font-family: inherit;
+        font-size: 13.5px;
+      }
 
-        .search-box {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          background: var(--bg-soft);
-          border: 1px solid var(--border);
-          padding: 10px 16px;
-          border-radius: 10px;
-          width: 360px;
-          max-width: 100%;
-        }
-        .search-box input {
-          border: none;
-          background: transparent;
-          color: var(--text-main);
-          outline: none;
-          font-weight: 600;
-          width: 100%;
-          font-family: inherit;
-          font-size: 13.5px;
-        }
+      /* Grid principal: lista mais larga e mapa bem maior */
+      .main-grid {
+        display: grid;
+        grid-template-columns: minmax(360px, 420px) 1fr;
+        gap: 22px;
+        min-height: 680px;
+      }
+      @media (max-width: 1100px) {
+        .main-grid { grid-template-columns: 1fr; }
+      }
 
-        /* Grid principal: lista mais larga e mapa bem maior */
-        .main-grid {
-          display: grid;
-          grid-template-columns: minmax(360px, 420px) 1fr;
-          gap: 22px;
-          min-height: 680px;
-        }
-        @media (max-width: 1100px) {
-          .main-grid { grid-template-columns: 1fr; }
-        }
+      /* Lista de entregas */
+      .delivery-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+        max-height: 820px;
+        padding-right: 6px;
+      }
+      .delivery-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: var(--shadow);
+      }
+      .delivery-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+      .delivery-card.selected { border: 2px solid var(--primary); background: var(--primary-light); }
 
-        /* Lista de entregas */
-        .delivery-list {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          overflow-y: auto;
-          max-height: 820px;
-          padding-right: 6px;
-        }
-        .delivery-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 18px 20px;
-          cursor: pointer;
-          transition: all 0.2s;
-          box-shadow: var(--shadow);
-        }
-        .delivery-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-        .delivery-card.selected { border: 2px solid var(--primary); background: var(--primary-light); }
+      .status-badge {
+        font-size: 11px;
+        font-weight: 800;
+        padding: 5px 12px;
+        border-radius: 14px;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      .status-preparacao { background: var(--amber-bg); color: var(--amber); }
+      .status-transito { background: var(--blue-bg); color: var(--blue); }
+      .status-entregue { background: var(--green-bg); color: var(--green); }
 
-        .status-badge {
-          font-size: 11px;
-          font-weight: 800;
-          padding: 5px 12px;
-          border-radius: 14px;
-          text-transform: uppercase;
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          white-space: nowrap;
-        }
-        .status-preparacao { background: var(--amber-bg); color: var(--amber); }
-        .status-transito { background: var(--blue-bg); color: var(--blue); }
-        .status-entregue { background: var(--green-bg); color: var(--green); }
+      /* Mapa bem mais alto */
+      .map-view-container { display: flex; flex-direction: column; gap: 22px; }
+      .map-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        height: 520px;
+        position: relative;
+        box-shadow: var(--shadow);
+      }
+      #map { width: 100%; height: 100%; z-index: 1; }
 
-        /* Mapa bem mais alto */
-        .map-view-container { display: flex; flex-direction: column; gap: 22px; }
-        .map-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          overflow: hidden;
-          height: 520px;
-          position: relative;
-          box-shadow: var(--shadow);
-        }
-        #map { width: 100%; height: 100%; z-index: 1; }
+      .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+      }
+      @media (max-width: 900px) {
+        .details-grid { grid-template-columns: 1fr; }
+      }
 
-        .details-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 22px;
-        }
-        @media (max-width: 900px) {
-          .details-grid { grid-template-columns: 1fr; }
-        }
+      .info-box {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px 24px;
+        box-shadow: var(--shadow);
+      }
 
-        .info-box {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 22px 24px;
-          box-shadow: var(--shadow);
-        }
+      /* Stepper */
+      .stepper {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin-top: 18px;
+        padding: 0 6px;
+      }
+      .stepper::before {
+        content: '';
+        position: absolute;
+        top: 16px;
+        left: 18px;
+        right: 18px;
+        height: 3px;
+        background: var(--border);
+        z-index: 1;
+      }
+      .step-item {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+        flex: 1;
+      }
+      .step-node {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 3px solid var(--border);
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .step-item.completed .step-node { background: var(--green); border-color: var(--green); color: #fff; }
+      .step-item.active .step-node {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        box-shadow: 0 0 0 4px var(--primary-light);
+      }
+      .step-label {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        max-width: 80px;
+      }
 
-        /* Stepper */
-        .stepper {
-          display: flex;
-          justify-content: space-between;
-          position: relative;
-          margin-top: 18px;
-          padding: 0 6px;
-        }
-        .stepper::before {
-          content: '';
-          position: absolute;
-          top: 16px;
-          left: 18px;
-          right: 18px;
-          height: 3px;
-          background: var(--border);
-          z-index: 1;
-        }
-        .step-item {
-          position: relative;
-          z-index: 2;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          text-align: center;
-          flex: 1;
-        }
-        .step-node {
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          background: var(--bg-card);
-          border: 3px solid var(--border);
-          display: grid;
-          place-items: center;
-          font-size: 12px;
-          font-weight: 700;
-          color: var(--text-muted);
-        }
-        .step-item.completed .step-node { background: var(--green); border-color: var(--green); color: #fff; }
-        .step-item.active .step-node {
-          background: var(--primary);
-          border-color: var(--primary);
-          color: #fff;
-          box-shadow: 0 0 0 4px var(--primary-light);
-        }
-        .step-label {
-          font-size: 11.5px;
-          font-weight: 700;
-          color: var(--text-secondary);
-          max-width: 80px;
-        }
+      .marker-truck {
+        background: var(--primary);
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        font-size: 14px;
+      }
 
-        .marker-truck {
-          background: var(--primary);
-          color: #fff;
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          border: 2px solid #fff;
-          display: grid;
-          place-items: center;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-          font-size: 14px;
-        }
+      @media (max-width: 768px) {
+        .container { padding: 14px; gap: 16px; }
+        .filter-bar { flex-direction: column; align-items: stretch; }
+        .search-box { width: 100%; }
+        .map-card { height: 380px; }
+      }
+    </style>
+  </head>
+  <body>
 
-        @media (max-width: 768px) {
-          .container { padding: 14px; gap: 16px; }
-          .filter-bar { flex-direction: column; align-items: stretch; }
-          .search-box { width: 100%; }
-          .map-card { height: 380px; }
-        }
-      </style>
-    </head>
-    <body>
+    <div class="app-layout">
 
-      <div class="app-layout">
+      <div id="sidebar-root"></div>
 
-        <div id="sidebar-root"></div>
+      <div class="main-column">
 
-        <div class="main-column">
+        <div id="header-root"></div>
 
-          <div id="header-root"></div>
+        <div class="container">
 
-          <div class="container">
+          <section class="filter-bar">
+            <div class="filter-chips">
+              <div class="chip active" onclick="filterStatus('todos', this)">Todas Entregas</div>
+              <div class="chip" onclick="filterStatus('em_preparacao', this)"><i class="fas fa-clock" style="color:var(--amber)"></i> Em Preparação</div>
+              <div class="chip" onclick="filterStatus('em_transito', this)"><i class="fas fa-truck-moving" style="color:var(--blue)"></i> Em Trânsito</div>
+              <div class="chip" onclick="filterStatus('entregue', this)"><i class="fas fa-check" style="color:var(--green)"></i> Entregues</div>
+            </div>
 
-            <section class="kpi-grid">
-              <div class="kpi-card">
-                <div>
-                  <div class="kpi-label">Total Monitorado</div>
-                  <div class="kpi-val" id="kpiTotal">0</div>
-                </div>
-                <div class="kpi-icon" style="background:var(--purple-bg); color:var(--purple);"><i class="fas fa-cubes"></i></div>
-              </div>
-              <div class="kpi-card">
-                <div>
-                  <div class="kpi-label">Em Preparação</div>
-                  <div class="kpi-val" id="kpiPrep" style="color:var(--amber);">0</div>
-                </div>
-                <div class="kpi-icon" style="background:var(--amber-bg); color:var(--amber);"><i class="fas fa-box"></i></div>
-              </div>
-              <div class="kpi-card">
-                <div>
-                  <div class="kpi-label">Em Trânsito</div>
-                  <div class="kpi-val" id="kpiTransito" style="color:var(--blue);">0</div>
-                </div>
-                <div class="kpi-icon" style="background:var(--blue-bg); color:var(--blue);"><i class="fas fa-truck-fast"></i></div>
-              </div>
-              <div class="kpi-card">
-                <div>
-                  <div class="kpi-label">Entregues (Hoje)</div>
-                  <div class="kpi-val" id="kpiEntregue" style="color:var(--green);">0</div>
-                </div>
-                <div class="kpi-icon" style="background:var(--green-bg); color:var(--green);"><i class="fas fa-circle-check"></i></div>
-              </div>
-            </section>
+            <div class="search-box">
+              <i class="fas fa-search" style="color:var(--text-muted)"></i>
+              <input type="text" id="searchInput" placeholder="Motorista, veículo, código..." oninput="renderList()" />
+            </div>
+          </section>
 
-            <section class="filter-bar">
-              <div class="filter-chips">
-                <div class="chip active" onclick="filterStatus('todos', this)">Todas Entregas</div>
-                <div class="chip" onclick="filterStatus('em_preparacao', this)"><i class="fas fa-clock" style="color:var(--amber)"></i> Em Preparação</div>
-                <div class="chip" onclick="filterStatus('em_transito', this)"><i class="fas fa-truck-moving" style="color:var(--blue)"></i> Em Trânsito</div>
-                <div class="chip" onclick="filterStatus('entregue', this)"><i class="fas fa-check" style="color:var(--green)"></i> Entregues</div>
+          <div class="main-grid">
+
+            <div class="delivery-list" id="deliveryList"></div>
+
+            <div class="map-view-container">
+              <div class="map-card">
+                <div id="map"></div>
               </div>
 
-              <div class="search-box">
-                <i class="fas fa-search" style="color:var(--text-muted)"></i>
-                <input type="text" id="searchInput" placeholder="Motorista, veículo, código..." oninput="renderList()" />
-              </div>
-            </section>
+              <div class="details-grid">
 
-            <div class="main-grid">
+                <div class="info-box">
+                  <h4 style="font-size:14px; font-weight:700; margin-bottom:12px; display:flex; justify-content:space-between; color:var(--text-main);">
+                    <span>Progresso da Entrega</span>
+                    <span id="selectedCode" style="color:var(--primary)">-</span>
+                  </h4>
 
-              <div class="delivery-list" id="deliveryList"></div>
-
-              <div class="map-view-container">
-                <div class="map-card">
-                  <div id="map"></div>
-                </div>
-
-                <div class="details-grid">
-
-                  <div class="info-box">
-                    <h4 style="font-size:14px; font-weight:700; margin-bottom:12px; display:flex; justify-content:space-between; color:var(--text-main);">
-                      <span>Progresso da Entrega</span>
-                      <span id="selectedCode" style="color:var(--primary)">-</span>
-                    </h4>
-
-                    <div class="stepper" id="stepperContainer">
-                      <div class="step-item">
-                        <div class="step-node">1</div>
-                        <div class="step-label">Preparação</div>
-                      </div>
-                      <div class="step-item">
-                        <div class="step-node">2</div>
-                        <div class="step-label">Coletado</div>
-                      </div>
-                      <div class="step-item">
-                        <div class="step-node">3</div>
-                        <div class="step-label">Em Trânsito</div>
-                      </div>
-                      <div class="step-item">
-                        <div class="step-node">4</div>
-                        <div class="step-label">Entregue</div>
-                      </div>
+                  <div class="stepper" id="stepperContainer">
+                    <div class="step-item">
+                      <div class="step-node">1</div>
+                      <div class="step-label">Preparação</div>
+                    </div>
+                    <div class="step-item">
+                      <div class="step-node">2</div>
+                      <div class="step-label">Coletado</div>
+                    </div>
+                    <div class="step-item">
+                      <div class="step-node">3</div>
+                      <div class="step-label">Em Trânsito</div>
+                    </div>
+                    <div class="step-item">
+                      <div class="step-node">4</div>
+                      <div class="step-label">Entregue</div>
                     </div>
                   </div>
+                </div>
 
-                  <div class="info-box">
-                    <h4 style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--text-main);">
-                      <i class="fas fa-gauge-high" style="color:var(--primary)"></i> Telemetria & Dados em Tempo Real
-                    </h4>
-                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align:center;">
-                      <div style="background:var(--bg-soft); padding:10px; border-radius:8px;">
-                        <span style="font-size:11px; color:var(--text-muted); font-weight:700;">VELOCIDADE</span>
-                        <div style="font-size:16px; font-weight:800; color:var(--text-main);" id="teleSpeed">-</div>
-                      </div>
-                      <div style="background:var(--bg-soft); padding:10px; border-radius:8px;">
-                        <span style="font-size:11px; color:var(--text-muted); font-weight:700;">TEMP. BAÚ</span>
-                        <div style="font-size:16px; font-weight:800; color:var(--text-main);" id="teleTemp">-</div>
-                      </div>
-                      <div style="background:var(--bg-soft); padding:10px; border-radius:8px;">
-                        <span style="font-size:11px; color:var(--text-muted); font-weight:700;">BATERIA/TANQUE</span>
-                        <div style="font-size:16px; font-weight:800; color:var(--green)" id="teleFuel">-</div>
-                      </div>
+                <div class="info-box">
+                  <h4 style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--text-main);">
+                    <i class="fas fa-gauge-high" style="color:var(--primary)"></i> Telemetria & Dados em Tempo Real
+                  </h4>
+                  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align:center;">
+                    <div style="background:var(--bg-soft); padding:10px; border-radius:8px;">
+                      <span style="font-size:11px; color:var(--text-muted); font-weight:700;">VELOCIDADE</span>
+                      <div style="font-size:16px; font-weight:800; color:var(--text-main);" id="teleSpeed">-</div>
+                    </div>
+                    <div style="background:var(--bg-soft); padding:10px; border-radius:8px;">
+                      <span style="font-size:11px; color:var(--text-muted); font-weight:700;">TEMP. BAÚ</span>
+                      <div style="font-size:16px; font-weight:800; color:var(--text-main);" id="teleTemp">-</div>
+                    </div>
+                    <div style="background:var(--bg-soft); padding:10px; border-radius:8px;">
+                      <span style="font-size:11px; color:var(--text-muted); font-weight:700;">BATERIA/TANQUE</span>
+                      <div style="font-size:16px; font-weight:800; color:var(--green)" id="teleFuel">-</div>
                     </div>
                   </div>
-
                 </div>
-              </div>
 
+              </div>
             </div>
 
           </div>
 
-          <div id="footer-root"></div>
-
         </div>
+
+        <div id="footer-root"></div>
 
       </div>
 
-      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    </div>
 
-      <script>
-        const deliveries = [
-          {
-            id: 'SL-982347-BR',
-            item: 'Lote Eletrônicos Industriais',
-            driver: 'Marcos Oliveira',
-            vehicle: 'Renault Master · ABC-4E89',
-            dest: 'Campinas, SP',
-            status: 'em_transito',
-            step: 3,
-            speed: '78 km/h',
-            temp: '21°C',
-            fuel: '84%',
-            route: [[-23.5505, -46.6333], [-23.3251, -46.8582], [-22.9099, -47.0626]],
-            currentPos: [-23.3251, -46.8582]
-          },
-          {
-            id: 'SL-554102-BR',
-            item: 'Chapas de Aço Inox (5 T)',
-            driver: 'Roberto Alves',
-            vehicle: 'Scania R450 · DEF-1A23',
-            dest: 'Santos, SP',
-            status: 'em_transito',
-            step: 3,
-            speed: '62 km/h',
-            temp: 'N/A',
-            fuel: '65%',
-            route: [[-23.5505, -46.6333], [-23.7500, -46.5000], [-23.9618, -46.3322]],
-            currentPos: [-23.7500, -46.5000]
-          },
-          {
-            id: 'SL-120938-BR',
-            item: 'Caixas de Óleo Lubrificante',
-            driver: 'Ana Paula Souza',
-            vehicle: 'VW Delivery · GHI-9012',
-            dest: 'Guarulhos, SP',
-            status: 'em_preparacao',
-            step: 1,
-            speed: '0 km/h',
-            temp: '25°C',
-            fuel: '100%',
-            route: [[-23.5505, -46.6333], [-23.4628, -46.5333]],
-            currentPos: [-23.5505, -46.6333]
-          },
-          {
-            id: 'SL-773411-BR',
-            item: 'Componentes Hidráulicos',
-            driver: 'Carlos Eduardo',
-            vehicle: 'Mercedes Sprinter · JKL-3456',
-            dest: 'Sorocaba, SP',
-            status: 'entregue',
-            step: 4,
-            speed: '0 km/h',
-            temp: '20°C',
-            fuel: '42%',
-            route: [[-23.5505, -46.6333], [-23.5015, -47.4526]],
-            currentPos: [-23.5015, -47.4526]
-          }
-        ];
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        let selectedId = 'SL-982347-BR';
-        let currentFilter = 'todos';
-        let map, mapPolyline, mapMarkers = [];
-        let tileLayer;
-
-        function initMap() {
-          const isDark = document.body.classList.contains('dark');
-          map = L.map('map', { zoomControl: false }).setView([-23.5505, -46.6333], 9);
-          L.control.zoom({ position: 'bottomright' }).addTo(map);
-          updateMapTiles(isDark);
-          renderKPIs();
-          renderList();
-          selectDelivery(selectedId);
-
-          // Reflow após sidebar/header injetados pelos componentes
-          setTimeout(() => map.invalidateSize(), 200);
-          setTimeout(() => map.invalidateSize(), 600);
+    <script>
+      const deliveries = [
+        {
+          id: 'SL-982347-BR',
+          item: 'Lote Eletrônicos Industriais',
+          driver: 'Marcos Oliveira',
+          vehicle: 'Renault Master · ABC-4E89',
+          dest: 'Campinas, SP',
+          status: 'em_transito',
+          step: 3,
+          speed: '78 km/h',
+          temp: '21°C',
+          fuel: '84%',
+          route: [[-23.5505, -46.6333], [-23.3251, -46.8582], [-22.9099, -47.0626]],
+          currentPos: [-23.3251, -46.8582]
+        },
+        {
+          id: 'SL-554102-BR',
+          item: 'Chapas de Aço Inox (5 T)',
+          driver: 'Roberto Alves',
+          vehicle: 'Scania R450 · DEF-1A23',
+          dest: 'Santos, SP',
+          status: 'em_transito',
+          step: 3,
+          speed: '62 km/h',
+          temp: 'N/A',
+          fuel: '65%',
+          route: [[-23.5505, -46.6333], [-23.7500, -46.5000], [-23.9618, -46.3322]],
+          currentPos: [-23.7500, -46.5000]
+        },
+        {
+          id: 'SL-120938-BR',
+          item: 'Caixas de Óleo Lubrificante',
+          driver: 'Ana Paula Souza',
+          vehicle: 'VW Delivery · GHI-9012',
+          dest: 'Guarulhos, SP',
+          status: 'em_preparacao',
+          step: 1,
+          speed: '0 km/h',
+          temp: '25°C',
+          fuel: '100%',
+          route: [[-23.5505, -46.6333], [-23.4628, -46.5333]],
+          currentPos: [-23.5505, -46.6333]
+        },
+        {
+          id: 'SL-773411-BR',
+          item: 'Componentes Hidráulicos',
+          driver: 'Carlos Eduardo',
+          vehicle: 'Mercedes Sprinter · JKL-3456',
+          dest: 'Sorocaba, SP',
+          status: 'entregue',
+          step: 4,
+          speed: '0 km/h',
+          temp: '20°C',
+          fuel: '42%',
+          route: [[-23.5505, -46.6333], [-23.5015, -47.4526]],
+          currentPos: [-23.5015, -47.4526]
         }
+      ];
 
-        function updateMapTiles(isDark) {
-          if (tileLayer) map.removeLayer(tileLayer);
-          const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-          tileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
-        }
+      let selectedId = 'SL-982347-BR';
+      let currentFilter = 'todos';
+      let map, mapPolyline, mapMarkers = [];
+      let tileLayer;
 
-        function renderKPIs() {
-          document.getElementById('kpiTotal').innerText = deliveries.length;
-          document.getElementById('kpiPrep').innerText = deliveries.filter(d => d.status === 'em_preparacao').length;
-          document.getElementById('kpiTransito').innerText = deliveries.filter(d => d.status === 'em_transito').length;
-          document.getElementById('kpiEntregue').innerText = deliveries.filter(d => d.status === 'entregue').length;
-        }
+      function initMap() {
+        const isDark = document.body.classList.contains('dark');
+        map = L.map('map', { zoomControl: false }).setView([-23.5505, -46.6333], 9);
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        updateMapTiles(isDark);
+        renderList();
+        selectDelivery(selectedId);
 
-        function renderList() {
-          const search = document.getElementById('searchInput').value.toLowerCase();
-          const container = document.getElementById('deliveryList');
+        // Reflow após sidebar/header injetados pelos componentes
+        setTimeout(() => map.invalidateSize(), 200);
+        setTimeout(() => map.invalidateSize(), 600);
+      }
 
-          const filtered = deliveries.filter(d => {
-            const matchFilter = currentFilter === 'todos' || d.status === currentFilter;
-            const matchSearch = d.id.toLowerCase().includes(search) || d.driver.toLowerCase().includes(search) || d.dest.toLowerCase().includes(search);
-            return matchFilter && matchSearch;
-          });
+      function updateMapTiles(isDark) {
+        if (tileLayer) map.removeLayer(tileLayer);
+        const tileUrl = isDark
+          ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+          : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+        tileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
+      }
 
-          container.innerHTML = filtered.map(d => {
-            const badgeClass = d.status === 'em_preparacao' ? 'status-preparacao' : d.status === 'em_transito' ? 'status-transito' : 'status-entregue';
-            const statusText = d.status === 'em_preparacao' ? 'Em Preparação' : d.status === 'em_transito' ? 'Em Trânsito' : 'Entregue';
+      function renderList() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const container = document.getElementById('deliveryList');
 
-            return `
-              <div class="delivery-card ${d.id === selectedId ? 'selected' : ''}" onclick="selectDelivery('${d.id}')">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <strong style="font-size:14px; color:var(--text-main);">${d.id}</strong>
-                  <span class="status-badge ${badgeClass}">${statusText}</span>
-                </div>
-                <div style="font-size:13px; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">${d.item}</div>
-                <div style="font-size:12px; color:var(--text-muted);"><i class="fas fa-user-circle"></i> ${d.driver} · ${d.vehicle}</div>
-                <div style="font-size:12px; color:var(--text-muted); margin-top:2px;"><i class="fas fa-location-dot"></i> Destino: <strong>${d.dest}</strong></div>
+        const filtered = deliveries.filter(d => {
+          const matchFilter = currentFilter === 'todos' || d.status === currentFilter;
+          const matchSearch = d.id.toLowerCase().includes(search) || d.driver.toLowerCase().includes(search) || d.dest.toLowerCase().includes(search);
+          return matchFilter && matchSearch;
+        });
+
+        container.innerHTML = filtered.map(d => {
+          const badgeClass = d.status === 'em_preparacao' ? 'status-preparacao' : d.status === 'em_transito' ? 'status-transito' : 'status-entregue';
+          const statusText = d.status === 'em_preparacao' ? 'Em Preparação' : d.status === 'em_transito' ? 'Em Trânsito' : 'Entregue';
+
+          return `
+            <div class="delivery-card ${d.id === selectedId ? 'selected' : ''}" onclick="selectDelivery('${d.id}')">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="font-size:14px; color:var(--text-main);">${d.id}</strong>
+                <span class="status-badge ${badgeClass}">${statusText}</span>
               </div>
-            `;
-          }).join('');
-        }
+              <div style="font-size:13px; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">${d.item}</div>
+              <div style="font-size:12px; color:var(--text-muted);"><i class="fas fa-user-circle"></i> ${d.driver} · ${d.vehicle}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;"><i class="fas fa-location-dot"></i> Destino: <strong>${d.dest}</strong></div>
+            </div>
+          `;
+        }).join('');
+      }
 
-        function selectDelivery(id) {
-          selectedId = id;
-          renderList();
+      function selectDelivery(id) {
+        selectedId = id;
+        renderList();
 
-          const data = deliveries.find(d => d.id === id);
-          if (!data) return;
+        const data = deliveries.find(d => d.id === id);
+        if (!data) return;
 
-          document.getElementById('selectedCode').innerText = data.id;
-          document.getElementById('teleSpeed').innerText = data.speed;
-          document.getElementById('teleTemp').innerText = data.temp;
-          document.getElementById('teleFuel').innerText = data.fuel;
+        document.getElementById('selectedCode').innerText = data.id;
+        document.getElementById('teleSpeed').innerText = data.speed;
+        document.getElementById('teleTemp').innerText = data.temp;
+        document.getElementById('teleFuel').innerText = data.fuel;
 
-          const steps = document.querySelectorAll('#stepperContainer .step-item');
-          steps.forEach((el, idx) => {
-            el.classList.remove('completed', 'active');
-            if (idx + 1 < data.step) el.classList.add('completed');
-            else if (idx + 1 === data.step) el.classList.add('active');
-          });
-
-          mapMarkers.forEach(m => map.removeLayer(m));
-          mapMarkers = [];
-          if (mapPolyline) map.removeLayer(mapPolyline);
-
-          const isDark = document.body.classList.contains('dark');
-          mapPolyline = L.polyline(data.route, {
-            color: isDark ? '#38bdf8' : '#006bb3',
-            weight: 5,
-            dashArray: '6, 6'
-          }).addTo(map);
-
-          const truckIcon = L.divIcon({
-            className: 'custom-icon',
-            html: `<div class="marker-truck"><i class="fas fa-truck"></i></div>`,
-            iconSize: [34, 34],
-            iconAnchor: [17, 17]
-          });
-
-          const marker = L.marker(data.currentPos, { icon: truckIcon }).addTo(map).bindPopup(`<b>${data.driver}</b><br>${data.vehicle}`).openPopup();
-          mapMarkers.push(marker);
-
-          map.fitBounds(mapPolyline.getBounds(), { padding: [40, 40] });
-        }
-
-        function filterStatus(status, btn) {
-          currentFilter = status;
-          document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
-          btn.classList.add('active');
-          renderList();
-        }
-
-        // Atualiza mapa quando o tema mudar
-        const themeObserver = new MutationObserver(() => {
-          if (!map) return;
-          const isDark = document.body.classList.contains('dark');
-          updateMapTiles(isDark);
-          if (selectedId) selectDelivery(selectedId);
+        const steps = document.querySelectorAll('#stepperContainer .step-item');
+        steps.forEach((el, idx) => {
+          el.classList.remove('completed', 'active');
+          if (idx + 1 < data.step) el.classList.add('completed');
+          else if (idx + 1 === data.step) el.classList.add('active');
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-          initMap();
-          themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-        });
-      </script>
+        mapMarkers.forEach(m => map.removeLayer(m));
+        mapMarkers = [];
+        if (mapPolyline) map.removeLayer(mapPolyline);
 
-      <script src="components/js/header.js"></script>
-      <script src="components/js/sidebar.js"></script>
-      <script src="components/js/footer.js"></script>
-      <script src="components/js/modoescuro.js"></script>
-    </body>
-  </html>
+        const isDark = document.body.classList.contains('dark');
+        mapPolyline = L.polyline(data.route, {
+          color: isDark ? '#38bdf8' : '#006bb3',
+          weight: 5,
+          dashArray: '6, 6'
+        }).addTo(map);
+
+        const truckIcon = L.divIcon({
+          className: 'custom-icon',
+          html: `<div class="marker-truck"><i class="fas fa-truck"></i></div>`,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        });
+
+        const marker = L.marker(data.currentPos, { icon: truckIcon }).addTo(map).bindPopup(`<b>${data.driver}</b><br>${data.vehicle}`).openPopup();
+        mapMarkers.push(marker);
+
+        map.fitBounds(mapPolyline.getBounds(), { padding: [40, 40] });
+      }
+
+      function filterStatus(status, btn) {
+        currentFilter = status;
+        document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        renderList();
+      }
+
+      // Atualiza mapa quando o tema mudar
+      const themeObserver = new MutationObserver(() => {
+        if (!map) return;
+        const isDark = document.body.classList.contains('dark');
+        updateMapTiles(isDark);
+        if (selectedId) selectDelivery(selectedId);
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        initMap();
+        themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      });
+    </script>
+
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
+  </body>
+</html>
