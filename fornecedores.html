@@ -70,7 +70,7 @@
         --fs-title: clamp(15px, 1vw + 12px, 18px);
         --fs-table: clamp(12.5px, 0.5vw + 11.5px, 14px);
 
-        --pad-content: 16px 20px;
+        --pad-content: 20px;
         --gap-grid: clamp(14px, 1vw, 22px);
         --pad-card: clamp(18px, 1.4vw, 28px);
       }
@@ -146,37 +146,14 @@
       }
 
       .dashboard-container {
+        flex: 1;
         max-width: 100%;
         width: 100%;
-        margin: 0;
+        margin: 0 auto;
         padding: var(--pad-content);
         display: flex;
         flex-direction: column;
         gap: var(--gap-grid);
-      }
-
-      .top-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .header-title-group {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .header-title-group h1 {
-        font-size: var(--fs-h1);
-        font-weight: 700;
-      }
-
-      .header-title-group h1 span {
-        color: var(--primary);
       }
 
       .btn-action {
@@ -644,19 +621,6 @@
       <div id="header-root"></div>
 
       <div class="dashboard-container">
-        <div class="top-header">
-          <div class="header-title-group">
-
-          </div>
-          <div class="header-actions">
-            <button class="btn-action btn-primary" onclick="openModal()">
-              <i class="fas fa-plus"></i> Novo Fornecedor
-            </button>
-          </div>
-
-        </div>
-      </div>
-
         <section class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon" style="background: var(--blue-bg); color: var(--blue);">
@@ -700,26 +664,26 @@
         </section>
 
         <section class="card">
-        <div class="card-header-title">
-          <span class="title-text"><i class="fas fa-address-book"></i> Consulta de Parceiros e Fornecedores</span>
-          <div class="table-controls">
-            <div class="search-box">
-              <i class="fas fa-magnifying-glass"></i>
-              <input type="text" id="searchInput" placeholder="Buscar por Razão Social, CNPJ ou produto..." oninput="renderTable()" />
+          <div class="card-header-title">
+            <span class="title-text"><i class="fas fa-address-book"></i> Consulta de Parceiros e Fornecedores</span>
+            <div class="table-controls">
+              <div class="search-box">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por Razão Social, CNPJ ou produto..." oninput="renderTable()" />
+              </div>
+              <select class="filter-select" id="categoryFilter" onchange="renderTable()">
+                <option value="todas">Todas as categorias</option>
+                <option value="Siderurgia">Siderurgia & Metais</option>
+                <option value="Usinagem">Componentes & Usinagem</option>
+                <option value="Química">Química & Polímeros</option>
+                <option value="Embalagens">Embalagens</option>
+                <option value="Ferramentas">Ferramental</option>
+              </select>
+              <button class="btn-action btn-primary" onclick="openModal()">
+                <i class="fas fa-plus"></i> Novo Fornecedor
+              </button>
             </div>
-            <select class="filter-select" id="categoryFilter" onchange="renderTable()">
-              <option value="todas">Todas as categorias</option>
-              <option value="Siderurgia">Siderurgia & Metais</option>
-              <option value="Usinagem">Componentes & Usinagem</option>
-              <option value="Química">Química & Polímeros</option>
-              <option value="Embalagens">Embalagens</option>
-              <option value="Ferramentas">Ferramental</option>
-            </select>
-            <button class="btn-action btn-primary" onclick="openModal()">
-              <i class="fas fa-plus"></i> Novo Fornecedor
-            </button>
           </div>
-        </div>
 
           <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
             <button class="filter-chip active" data-status="todos" onclick="setStatusFilter('todos', this)">Todos</button>
@@ -823,9 +787,7 @@
           <h2 id="detailsTitle"><i class="fas fa-building"></i> Detalhes do Fornecedor</h2>
           <button class="close-modal-btn" onclick="closeDetailsModal()"><i class="fas fa-xmark"></i></button>
         </div>
-        <div id="detailsContent">
-          <!-- Conteúdo gerado dinamicamente -->
-        </div>
+        <div id="detailsContent"></div>
         <div class="modal-footer">
           <button class="btn-action btn-primary" onclick="closeDetailsModal()">Fechar</button>
         </div>
@@ -950,7 +912,6 @@
         editingSupplierId = null;
       }
 
-      /* Abre o modal com os detalhes e o histórico do fornecedor */
       function openDetailsModal(id) {
         const supplier = suppliers.find(s => s.id === id);
         if (!supplier) return;
@@ -1047,40 +1008,44 @@
 
       function handleSaveSupplier(e) {
         e.preventDefault();
-        const productsArr = document.getElementById("formProducts").value
+        const name = document.getElementById("formName").value;
+        const cnpj = document.getElementById("formCnpj").value;
+        const category = document.getElementById("formCategory").value;
+        const representative = document.getElementById("formContact").value;
+        const phone = document.getElementById("formPhone").value;
+        const email = document.getElementById("formEmail").value;
+        const products = document.getElementById("formProducts").value
           .split(",")
           .map(p => p.trim())
           .filter(p => p.length > 0);
+        const status = document.getElementById("formStatus").value;
 
         if (editingSupplierId) {
-          const index = suppliers.findIndex(s => s.id === editingSupplierId);
-          if (index !== -1) {
-            suppliers[index] = {
-              ...suppliers[index],
-              name: document.getElementById("formName").value,
-              cnpj: document.getElementById("formCnpj").value,
-              category: document.getElementById("formCategory").value,
-              representative: document.getElementById("formContact").value,
-              email: document.getElementById("formEmail").value,
-              phone: document.getElementById("formPhone").value,
-              products: productsArr.length > 0 ? productsArr : ["Geral"],
-              status: document.getElementById("formStatus").value
-            };
-            showToast("Fornecedor atualizado com sucesso!");
+          const item = suppliers.find(s => s.id === editingSupplierId);
+          if (item) {
+            item.name = name;
+            item.cnpj = cnpj;
+            item.category = category;
+            item.representative = representative;
+            item.phone = phone;
+            item.email = email;
+            item.products = products;
+            item.status = status;
           }
+          showToast("Fornecedor atualizado com sucesso!");
         } else {
           const newSupplier = {
-            id: suppliers.length ? Math.max(...suppliers.map(s => s.id)) + 1 : 1,
-            name: document.getElementById("formName").value,
-            cnpj: document.getElementById("formCnpj").value,
-            category: document.getElementById("formCategory").value,
-            representative: document.getElementById("formContact").value,
-            email: document.getElementById("formEmail").value,
-            phone: document.getElementById("formPhone").value,
-            products: productsArr.length > 0 ? productsArr : ["Geral"],
+            id: Date.now(),
+            name,
+            cnpj,
+            category,
+            representative,
+            email,
+            phone,
+            products,
             totalOrders: 0,
             totalSpent: "R$ 0",
-            status: document.getElementById("formStatus").value
+            status
           };
           suppliers.unshift(newSupplier);
           showToast("Fornecedor cadastrado com sucesso!");
@@ -1091,48 +1056,27 @@
       }
 
       function deleteSupplier(id) {
-        suppliers = suppliers.filter(s => s.id !== id);
-        showToast("Fornecedor removido.");
-        renderTable();
-      }
-
-      function updateStats() {
-        document.getElementById("statTotal").innerText = suppliers.length;
-        const activeCount = suppliers.filter(s => s.status === 'ativo' || s.status === 'homologado').length;
-        document.getElementById("statAtivos").innerText = activeCount;
+        if (confirm("Tem certeza que deseja excluir este fornecedor?")) {
+          suppliers = suppliers.filter(s => s.id !== id);
+          renderTable();
+          showToast("Fornecedor excluído com sucesso!");
+        }
       }
 
       function renderTable() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const category = document.getElementById("categoryFilter").value;
         const tbody = document.getElementById("supplierTableBody");
-        const searchVal = document.getElementById("searchInput").value.toLowerCase();
-        const catVal = document.getElementById("categoryFilter").value;
 
-        const filtered = suppliers.filter(s => {
-          if (currentStatusFilter !== "todos" && s.status !== currentStatusFilter) return false;
-          if (catVal !== "todas" && s.category !== catVal) return false;
+        const filtered = suppliers.filter(item => {
+          const matchesSearch = item.name.toLowerCase().includes(search) ||
+                                item.cnpj.toLowerCase().includes(search) ||
+                                item.products.some(p => p.toLowerCase().includes(search));
+          const matchesCategory = category === "todas" || item.category === category;
+          const matchesStatus = currentStatusFilter === "todos" || item.status === currentStatusFilter;
 
-          return (
-            s.name.toLowerCase().includes(searchVal) ||
-            s.cnpj.toLowerCase().includes(searchVal) ||
-            s.representative.toLowerCase().includes(searchVal) ||
-            s.products.some(p => p.toLowerCase().includes(searchVal))
-          );
+          return matchesSearch && matchesCategory && matchesStatus;
         });
-
-        updateStats();
-        document.getElementById("resultsCount").innerText = `Mostrando ${filtered.length} de ${suppliers.length} fornecedores`;
-
-        if (filtered.length === 0) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">
-                <i class="fas fa-folder-open" style="font-size:24px; margin-bottom:8px; display:block;"></i>
-                Nenhum fornecedor encontrado com os termos pesquisados.
-              </td>
-            </tr>
-          `;
-          return;
-        }
 
         const statusLabels = {
           ativo: 'Ativo',
@@ -1141,53 +1085,53 @@
           bloqueado: 'Bloqueado'
         };
 
-        tbody.innerHTML = filtered.map(s => `
+        tbody.innerHTML = filtered.map(item => `
           <tr>
             <td>
               <div class="supplier-info">
-                <span class="supplier-name">${s.name}</span>
-                <span class="supplier-cnpj"><i class="far fa-id-card"></i> ${s.cnpj}</span>
+                <span class="supplier-name">${item.name}</span>
+                <span class="supplier-cnpj">${item.cnpj}</span>
               </div>
             </td>
             <td>
               <div class="contact-box">
-                <span class="rep"><i class="far fa-user"></i> ${s.representative}</span>
-                <span class="details"><i class="far fa-envelope"></i> ${s.email}</span>
-                <span class="details"><i class="fas fa-phone"></i> ${s.phone}</span>
+                <span class="rep">${item.representative}</span>
+                <span class="details">${item.phone} • ${item.email}</span>
               </div>
             </td>
             <td>
               <div class="products-badge-list">
-                ${s.products.map(p => `<span class="product-tag">${p}</span>`).join('')}
+                ${item.products.map(p => `<span class="product-tag">${p}</span>`).join('')}
               </div>
             </td>
             <td>
-              <div style="display:flex; flex-direction:column; font-size:0.85em;">
-                <strong style="color:var(--text-main);">${s.totalSpent}</strong>
-                <span style="color:var(--text-muted);">${s.totalOrders} pedidos realizados</span>
+              <div class="contact-box">
+                <span class="rep">${item.totalSpent}</span>
+                <span class="details">${item.totalOrders} pedidos</span>
               </div>
             </td>
             <td>
-              <span class="status-pill ${s.status}">
-                <i class="fas fa-circle" style="font-size:6px;"></i> ${statusLabels[s.status]}
-              </span>
+              <span class="status-pill ${item.status}">${statusLabels[item.status]}</span>
             </td>
             <td>
               <div class="action-btn-group">
-                <button class="icon-btn-sm" onclick="editSupplier(${s.id})" title="Editar"><i class="fas fa-pen"></i></button>
-                <button class="icon-btn-sm" onclick="openDetailsModal(${s.id})" title="Abrir Detalhes / Histórico"><i class="fas fa-folder-open"></i></button>
-                <button class="icon-btn-sm" onclick="deleteSupplier(${s.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+                <button class="icon-btn-sm" title="Ver detalhes" onclick="openDetailsModal(${item.id})"><i class="fas fa-eye"></i></button>
+                <button class="icon-btn-sm" title="Editar" onclick="editSupplier(${item.id})"><i class="fas fa-pen"></i></button>
+                <button class="icon-btn-sm" title="Excluir" onclick="deleteSupplier(${item.id})"><i class="fas fa-trash"></i></button>
               </div>
             </td>
           </tr>
         `).join('');
+
+        document.getElementById("resultsCount").innerText = `Mostrando ${filtered.length} de ${suppliers.length} fornecedores`;
+        document.getElementById("statTotal").innerText = suppliers.length;
+        document.getElementById("statAtivos").innerText = suppliers.filter(s => s.status === 'ativo' || s.status === 'homologado').length;
       }
 
       document.addEventListener("DOMContentLoaded", () => {
         renderTable();
       });
-    </script>
-
+    </script> 
     <script src="components/js/header.js"></script>
     <script src="components/js/sidebar.js"></script>
     <script src="components/js/chat.js"></script>
