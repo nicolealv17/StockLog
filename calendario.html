@@ -775,7 +775,7 @@
             client_id: GOOGLE_CLIENT_ID,
             scope: GOOGLE_SCOPES,
             callback: (resp) => {
-              if (resp.error) { showToast("Não foi possível autenticar.", "error"); return; }
+              if (resp.error) { showToast("Não foi possível autenticarr.", "error"); return; }
               googleAccessToken = resp.access_token;
               calFetchGoogleEvents();
             },
