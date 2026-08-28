@@ -3,7 +3,7 @@
    ========================================================= */
 
 // 🔑 COLOQUE SUA CHAVE DA API DO OPEN ROUTER AQUI
-const OPENROUTER_API_KEY = "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"; 
+const OPENROUTER_API_KEY = ""; 
 const OPENROUTER_MODEL = "openai/gpt-4o-mini"; // Ou o modelo de sua preferência (ex: "meta-llama/llama-3.1-8b-instruct")
 
 document.addEventListener("DOMContentLoaded", () => {
