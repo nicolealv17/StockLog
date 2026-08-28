@@ -135,6 +135,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
       }
 
       .header-title-group h1 {
@@ -177,6 +179,8 @@
         margin-bottom: 24px;
         padding-bottom: 14px;
         border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       .card-header-title .title-text {
@@ -199,6 +203,36 @@
         font-size: 15px;
       }
 
+      .btn-sm {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 600;
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-sm:hover {
+        border-color: var(--border-hover);
+        color: var(--text-main);
+      }
+
+      .btn-sm.primary {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+      }
+
+      .btn-sm.primary:hover {
+        background: var(--primary-hover);
+      }
+
       .form-grid {
         display: flex;
         flex-direction: column;
@@ -216,6 +250,11 @@
         font-weight: 600;
         color: var(--text-secondary);
         letter-spacing: 0.01em;
+      }
+
+      .form-group label .req {
+        color: var(--red);
+        margin-left: 2px;
       }
 
       .input-wrapper {
@@ -298,7 +337,6 @@
         color: var(--text-main);
       }
 
-      /* Indicador e Texto de Força de Senha */
       .strength-meter-container {
         margin-top: 8px;
       }
@@ -324,7 +362,6 @@
         transition: color 0.3s ease;
       }
 
-      /* Banner de Alerta (Informativo e Sucesso) */
       .mensagem-alerta {
         border-radius: 10px;
         font-size: 14px;
@@ -353,6 +390,13 @@
         border: 1px solid var(--green-bar);
       }
 
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+
       .btn-submit {
         background-color: var(--primary);
         color: #ffffff;
@@ -368,8 +412,8 @@
         justify-content: center;
         gap: 8px;
         transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-        margin-top: 8px;
         min-height: 48px;
+        flex: 1;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
       }
 
@@ -388,6 +432,31 @@
         transform: none;
       }
 
+      .btn-cancel {
+        background-color: var(--bg-soft);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 14.5px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: 0.2s ease;
+        min-height: 48px;
+        flex: 1;
+      }
+
+      .btn-cancel:hover {
+        border-color: var(--border-hover);
+        color: var(--text-main);
+        background: var(--bg-card);
+      }
+
       .btn-spinner {
         display: none;
         width: 18px;
@@ -398,6 +467,103 @@
         animation: spin 0.8s linear infinite;
       }
 
+      /* ============ LISTA DE FUNCIONÁRIOS ============ */
+      .lista-container {
+        display: none;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+      }
+
+      .lista-container.visible {
+        display: block;
+        animation: fadeInUp 0.3s ease;
+      }
+
+      .lista-container .lista-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .lista-container .lista-header h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .lista-container .lista-header .badge {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 2px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .lista-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13.5px;
+      }
+
+      .lista-item:last-child {
+        border-bottom: 0;
+      }
+
+      .lista-item:hover {
+        background: var(--bg-soft);
+        border-radius: 8px;
+      }
+
+      .lista-item .info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .lista-item .info .nome {
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      .lista-item .info .detalhe {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .lista-item .status-pill {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        text-transform: uppercase;
+      }
+
+      .status-pill.ativo {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+
+      .status-pill.inativo {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+
+      .lista-vazia {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 24px;
+        font-style: italic;
+        font-size: 14px;
+      }
+
+      /* ============ ANIMAÇÕES ============ */
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
@@ -436,6 +602,20 @@
         .card {
           border-radius: 12px;
         }
+
+        .form-actions {
+          flex-direction: column;
+        }
+
+        .top-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .lista-item {
+          flex-wrap: wrap;
+          gap: 4px;
+        }
       }
     </style>
   </head>
@@ -452,96 +632,70 @@
           </div>
         </div>
 
+        <!-- CARD: FORMULÁRIO -->
         <section class="card" id="cardContainer">
           <div class="card-header-title">
             <span class="title-text">
               <span class="icon-badge"><i class="fa-solid fa-user-plus"></i></span>
               Novo Funcionário
             </span>
+            <button class="btn-sm" onclick="toggleLista()">
+              <i class="fa-solid fa-users"></i> Ver cadastrados
+            </button>
           </div>
 
-          <!-- Div para Mensagens de Erro ou Sucesso -->
+          <!-- Mensagem -->
           <div id="mensagem" class="mensagem-alerta" aria-live="polite"></div>
 
+          <!-- Formulário -->
           <form id="registerForm" class="form-grid" novalidate>
             <div class="form-group">
-              <label for="nomeInput">Nome Completo</label>
+              <label for="nomeInput">Nome Completo <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-user input-icon"></i>
-                <input
-                  type="text"
-                  id="nomeInput"
-                  placeholder="Ex: Roberto Silva"
-                  autocomplete="name"
-                  required
-                />
+                <input type="text" id="nomeInput" placeholder="Ex: Roberto Silva" autocomplete="name" required />
               </div>
             </div>
 
             <div class="form-group">
-              <label for="cpfInput">CPF</label>
+              <label for="cpfInput">CPF <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-id-card input-icon"></i>
-                <input
-                  type="text"
-                  id="cpfInput"
-                  inputmode="numeric"
-                  placeholder="000.000.000-00"
-                  maxlength="14"
-                  required
-                />
+                <input type="text" id="cpfInput" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" required />
               </div>
             </div>
 
-            <!-- CAMPO DE E-MAIL ADICIONADO -->
             <div class="form-group">
-              <label for="emailInput">E-mail</label>
+              <label for="emailInput">E-mail <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-envelope input-icon"></i>
-                <input
-                  type="email"
-                  id="emailInput"
-                  placeholder="Ex: roberto.silva@empresa.com"
-                  autocomplete="email"
-                  required
-                />
+                <input type="email" id="emailInput" placeholder="Ex: roberto.silva@empresa.com" autocomplete="email" required />
               </div>
             </div>
 
             <div class="form-group">
-              <label for="areaSelect">Área de Atuação</label>
+              <label for="areaSelect">Área de Atuação <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-sitemap input-icon"></i>
                 <select id="areaSelect" required>
                   <option value="" disabled selected>Selecione o setor...</option>
                   <option value="Gestão">Gestão</option>
                   <option value="Estoque">Estoque</option>
+                  <option value="Produção">Produção</option>
+                  <option value="Logística">Logística</option>
                 </select>
                 <i class="fa-solid fa-chevron-down select-arrow"></i>
               </div>
             </div>
 
             <div class="form-group">
-              <label for="passwordInput">Senha de Acesso</label>
+              <label for="passwordInput">Senha de Acesso <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-lock input-icon"></i>
-                <input
-                  type="password"
-                  id="passwordInput"
-                  placeholder="Crie uma senha segura"
-                  autocomplete="new-password"
-                  required
-                />
-                <i
-                  class="fa-regular fa-eye toggle-password"
-                  id="togglePassword"
-                  role="button"
-                  aria-label="Mostrar ou ocultar senha"
-                  tabindex="0"
-                ></i>
+                <input type="password" id="passwordInput" placeholder="Crie uma senha segura" autocomplete="new-password" required />
+                <i class="fa-regular fa-eye toggle-password" id="togglePassword" role="button" aria-label="Mostrar ou ocultar senha" tabindex="0"></i>
               </div>
 
-              <!-- Indicador e Rótulo Dinâmico da Senha -->
               <div class="strength-meter-container">
                 <div class="strength-meter">
                   <div class="strength-bar"></div>
@@ -553,18 +707,34 @@
               </div>
             </div>
 
-            <button type="submit" class="btn-submit" id="btnRegister">
-              <span id="btnText"><i class="fa-solid fa-user-check"></i> Cadastrar Funcionário</span>
-              <div id="btnSpinner" class="btn-spinner"></div>
-            </button>
+            <div class="form-actions">
+              <button type="button" class="btn-cancel" onclick="limparForm()">
+                <i class="fa-solid fa-rotate-left"></i> Limpar
+              </button>
+              <button type="submit" class="btn-submit" id="btnRegister">
+                <span id="btnText"><i class="fa-solid fa-user-check"></i> Cadastrar</span>
+                <div id="btnSpinner" class="btn-spinner"></div>
+              </button>
+            </div>
           </form>
+
+          <!-- LISTA DE FUNCIONÁRIOS (oculta por padrão) -->
+          <div class="lista-container" id="listaContainer">
+            <div class="lista-header">
+              <h4><i class="fa-solid fa-users" style="color:var(--primary)"></i> Funcionários cadastrados</h4>
+              <span class="badge" id="contadorLista">0</span>
+            </div>
+            <div id="listaBody">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
         </section>
       </div>
 
       <div id="footer-root"></div>
     </div>
 
-    <!-- Firebase SDK Compat Scripts -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -581,9 +751,16 @@
       };
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
-      const auth = firebase.auth();
 
-      // ====== Máscara de CPF ======
+      // ========== DADOS MOCK ==========
+      let funcionarios = [
+        { id: 1, nome: "Roberto Silva", cpf: "123.456.789-00", email: "roberto.silva@empresa.com", setor: "Produção", status: "ativo" },
+        { id: 2, nome: "Ana Oliveira", cpf: "987.654.321-00", email: "ana.oliveira@empresa.com", setor: "Qualidade", status: "ativo" },
+        { id: 3, nome: "Carlos Mendes", cpf: "456.789.123-00", email: "carlos.mendes@empresa.com", setor: "Usinagem", status: "ativo" },
+        { id: 4, nome: "Fernanda Costa", cpf: "321.654.987-00", email: "fernanda.costa@empresa.com", setor: "Logística", status: "inativo" },
+      ];
+
+      // ========== CPF MÁSCARA ==========
       const cpfInput = document.getElementById('cpfInput');
       cpfInput.addEventListener('input', (e) => {
         let v = e.target.value.replace(/\D/g, '').slice(0, 11);
@@ -593,16 +770,14 @@
         e.target.value = v;
       });
 
-      // ====== Mostrar/Ocultar Senha ======
+      // ========== TOGGLE SENHA ==========
       const togglePassword = document.getElementById('togglePassword');
       const passwordInput = document.getElementById('passwordInput');
 
       function togglePasswordVisibility() {
         const isPassword = passwordInput.type === 'password';
         passwordInput.type = isPassword ? 'text' : 'password';
-        togglePassword.className = isPassword
-          ? 'fa-regular fa-eye-slash toggle-password'
-          : 'fa-regular fa-eye toggle-password';
+        togglePassword.className = isPassword ? 'fa-regular fa-eye-slash toggle-password' : 'fa-regular fa-eye toggle-password';
       }
 
       togglePassword.addEventListener('click', togglePasswordVisibility);
@@ -613,16 +788,14 @@
         }
       });
 
-      // ====== Indicador Dinâmico da Força da Senha ======
+      // ========== INDICADOR DE FORÇA ==========
       const strengthBars = document.querySelectorAll('.strength-bar');
       const strengthLabel = document.getElementById('strengthLabel');
 
       passwordInput.addEventListener('input', () => {
         const v = passwordInput.value;
         if (!v) {
-          strengthBars.forEach(bar => {
-            bar.style.backgroundColor = '';
-          });
+          strengthBars.forEach(bar => bar.style.backgroundColor = '');
           strengthLabel.textContent = '';
           return;
         }
@@ -633,36 +806,70 @@
         if (/[0-9]/.test(v)) score++;
         if (/[^A-Za-z0-9]/.test(v)) score++;
 
-        // Definição textual e cores por nível
         const levels = [
           { text: '', color: '' },
-          { text: 'Senha Muito Fraca', color: 'var(--red-bar)' },
-          { text: 'Senha Fraca', color: 'var(--orange-bar)' },
-          { text: 'Senha Média', color: 'var(--amber-bar)' },
-          { text: 'Senha Forte', color: 'var(--green-bar)' }
+          { text: 'Muito Fraca', color: 'var(--red-bar)' },
+          { text: 'Fraca', color: 'var(--orange-bar)' },
+          { text: 'Média', color: 'var(--amber-bar)' },
+          { text: 'Forte', color: 'var(--green-bar)' }
         ];
 
-        const currentLevel = levels[score] || levels[1];
-
+        const current = levels[score] || levels[1];
         strengthBars.forEach((bar, i) => {
-          if (i < score) {
-            bar.style.backgroundColor = currentLevel.color;
-          } else {
-            bar.style.backgroundColor = 'var(--border)';
-          }
+          bar.style.backgroundColor = i < score ? current.color : 'var(--border)';
         });
-
-        strengthLabel.textContent = currentLevel.text;
-        strengthLabel.style.color = currentLevel.color;
+        strengthLabel.textContent = current.text;
+        strengthLabel.style.color = current.color;
       });
 
-      // ====== Submissão do Formulário ======
+      // ========== LIMPAR FORMULÁRIO ==========
+      function limparForm() {
+        document.getElementById('registerForm').reset();
+        strengthBars.forEach(bar => bar.style.backgroundColor = '');
+        strengthLabel.textContent = '';
+        document.getElementById('mensagem').className = 'mensagem-alerta';
+        document.getElementById('mensagem').innerHTML = '';
+      }
+
+      // ========== MOSTRAR/OCULTAR LISTA ==========
+      function toggleLista() {
+        const container = document.getElementById('listaContainer');
+        container.classList.toggle('visible');
+        if (container.classList.contains('visible')) {
+          renderizarLista();
+        }
+      }
+
+      // ========== RENDERIZAR LISTA SIMPLES ==========
+      function renderizarLista() {
+        const body = document.getElementById('listaBody');
+        const contador = document.getElementById('contadorLista');
+
+        if (funcionarios.length === 0) {
+          body.innerHTML = `<div class="lista-vazia">Nenhum funcionário cadastrado ainda.</div>`;
+          contador.textContent = '0';
+          return;
+        }
+
+        contador.textContent = funcionarios.length;
+
+        body.innerHTML = funcionarios.map(f => `
+          <div class="lista-item">
+            <div class="info">
+              <span class="nome">${f.nome}</span>
+              <span class="detalhe">${f.setor} · ${f.email}</span>
+            </div>
+            <span class="status-pill ${f.status}">${f.status === 'ativo' ? 'Ativo' : 'Inativo'}</span>
+          </div>
+        `).join('');
+      }
+
+      // ========== SUBMISSÃO DO FORMULÁRIO ==========
       const form = document.getElementById('registerForm');
       const mensagem = document.getElementById('mensagem');
       const btnRegister = document.getElementById('btnRegister');
       const btnText = document.getElementById('btnText');
       const btnSpinner = document.getElementById('btnSpinner');
-      const emailInput = document.getElementById('emailInput');
 
       function showMessage(text, type) {
         mensagem.className = 'mensagem-alerta ' + (type || '');
@@ -676,40 +883,60 @@
       form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const cpfVal = cpfInput.value.replace(/\D/g, '');
-        if (cpfVal.length !== 11) {
-          showMessage('CPF inválido. Preencha os 11 dígitos.', 'error');
+        const nome = document.getElementById('nomeInput').value.trim();
+        const cpf = document.getElementById('cpfInput').value.replace(/\D/g, '');
+        const email = document.getElementById('emailInput').value.trim();
+        const setor = document.getElementById('areaSelect').value;
+
+        if (!nome || !cpf || !email || !setor) {
+          showMessage('Preencha todos os campos obrigatórios.', 'error');
           document.getElementById('cardContainer').classList.add('shake');
           setTimeout(() => document.getElementById('cardContainer').classList.remove('shake'), 400);
           return;
         }
 
-        // Validação básica do formato de E-mail
-        const emailVal = emailInput.value.trim();
+        if (cpf.length !== 11) {
+          showMessage('CPF inválido. Digite 11 dígitos.', 'error');
+          return;
+        }
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailVal || !emailRegex.test(emailVal)) {
+        if (!emailRegex.test(email)) {
           showMessage('Informe um e-mail válido.', 'error');
-          document.getElementById('cardContainer').classList.add('shake');
-          setTimeout(() => document.getElementById('cardContainer').classList.remove('shake'), 400);
           return;
         }
 
         btnText.style.display = 'none';
         btnSpinner.style.display = 'block';
         btnRegister.disabled = true;
-        showMessage('Processando cadastro...', '');
 
         setTimeout(() => {
+          const novo = {
+            id: funcionarios.length + 1,
+            nome,
+            cpf: document.getElementById('cpfInput').value,
+            email,
+            setor,
+            status: 'ativo'
+          };
+          funcionarios.push(novo);
+
           btnText.style.display = 'inline-flex';
           btnSpinner.style.display = 'none';
           btnRegister.disabled = false;
 
-          // Mensagem de confirmação e reset do formulário
           showMessage('Cadastro realizado com sucesso!', 'success');
-          
-          form.reset();
-          strengthBars.forEach(bar => bar.style.backgroundColor = 'var(--border)');
-          strengthLabel.textContent = '';
+          limparForm();
+
+          // Atualiza a lista se estiver visível
+          if (document.getElementById('listaContainer').classList.contains('visible')) {
+            renderizarLista();
+          }
+
+          setTimeout(() => {
+            mensagem.className = 'mensagem-alerta';
+            mensagem.innerHTML = '';
+          }, 3000);
         }, 1500);
       });
     </script>

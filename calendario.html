@@ -44,6 +44,7 @@
         --purple: #6f4c4e; --purple-bg: #ede6f5;
         --pink: #a13e73; --pink-bg: #f7e3ee;
         --blue: #2f81f7; --teal: #3fb950;
+        --orange: #d68c2e; --orange-bg: #f5e6d0;
       }
 
       body.dark {
@@ -53,6 +54,7 @@
         --primary-light: #1d3a55;
         --green-bg: #123a2a; --amber-bg: #3a2f15; --red-bg: #3a1f1f;
         --purple-bg: #2a1f3d; --pink-bg: #351427; --pink: #d1699f;
+        --orange-bg: #3a2f18;
         --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
         --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
       }
@@ -96,7 +98,7 @@
       .cal-view-btn { background: transparent; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--text-secondary); border-radius: 7px; transition: 0.2s; }
       .cal-view-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-card); }
 
-      /* ============ FILTROS RÁPIDOS ============ */
+      /* ============ FILTROS RÁPIDOS (COM NOVOS FILTROS PCP) ============ */
       .cal-filters { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
       .cal-filter-btn { background: var(--bg-card); border: 1px solid var(--border); padding: 8px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 600; color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
       .cal-filter-btn:hover { border-color: var(--border-hover); color: var(--text-main); }
@@ -108,7 +110,7 @@
       .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--bg-soft); border-bottom: 1px solid var(--border); }
       .cal-weekday { padding: 12px 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
       .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(120px, auto); }
-      .cal-day { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 6px 8px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 4px; position: relative; min-height: 120px; }
+      .cal-day { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 6px 8px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 4px; position: relative; min-height: 120px; overflow: hidden; }
       .cal-day:nth-child(7n) { border-right: 0; }
       .cal-day:hover { background: var(--bg-soft); }
       .cal-day.outside { background: transparent; color: var(--text-muted); opacity: 0.45; }
@@ -116,15 +118,19 @@
       .cal-day.today .cal-day-num { background: var(--primary); color: #fff; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
       .cal-day-num { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
 
-      /* Visual dos eventos na grade */
+      /* Visual dos eventos na grade - com truncamento e "mais" */
       .cal-evt { font-size: 10.5px; padding: 4px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; cursor: pointer; }
       .cal-evt::before { content: ""; width: 6px; height: 6px; min-width: 6px; border-radius: 50%; background: currentColor; }
       .cal-evt.type-reuniao { background: rgba(47,129,247,.12); color: var(--blue); }
       .cal-evt.type-treinamento { background: var(--green-bg); color: var(--green); }
-      .cal-evt.type-prazo { background: var(--amber-bg); color: var(--amber); }
+      .cal-evt.type-prazo-op { background: var(--orange-bg); color: var(--orange); }
+      .cal-evt.type-manutencao { background: var(--amber-bg); color: var(--amber); }
       .cal-evt.type-compromisso { background: var(--purple-bg); color: var(--purple); }
       .cal-evt.type-urgente { background: var(--red-bg); color: var(--red); }
       .cal-evt.type-google { background: rgba(26,115,232,.12); color: var(--primary); }
+      
+      .cal-evt-more { font-size: 10px; color: var(--text-muted); padding: 3px 8px; border-radius: 6px; background: var(--bg-soft); border: 1px dashed var(--border); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+      .cal-evt-more:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
 
       /* ============ PAINEL LATERAL DE EVENTOS ============ */
       .cal-side-panel { position: fixed; top: 0; right: -420px; width: 400px; max-width: 92vw; height: 100vh; background: var(--bg-card); border-left: 1px solid var(--border); box-shadow: -8px 0 32px rgba(0,0,0,.18); z-index: 900; display: flex; flex-direction: column; transition: right .3s ease; }
@@ -135,7 +141,8 @@
       .cal-side-item { padding: 12px 14px; border-radius: 10px; background: var(--bg-soft); border: 1px solid var(--border); border-left: 3px solid var(--primary); }
       .cal-side-item.type-reuniao { border-left-color: var(--blue); }
       .cal-side-item.type-treinamento { border-left-color: var(--green); }
-      .cal-side-item.type-prazo { border-left-color: var(--amber); }
+      .cal-side-item.type-prazo-op { border-left-color: var(--orange); }
+      .cal-side-item.type-manutencao { border-left-color: var(--amber); }
       .cal-side-item.type-compromisso { border-left-color: var(--purple); }
       .cal-side-item.type-urgente { border-left-color: var(--red); }
       .cal-side-item.type-google { border-left-color: var(--primary); }
@@ -165,7 +172,8 @@
       .upcoming-tag { font-size: 10.5px; padding: 3px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
       .tag-reuniao { background: rgba(47,129,247,.15); color: var(--blue); }
       .tag-treinamento { background: var(--green-bg); color: var(--green); }
-      .tag-prazo { background: var(--amber-bg); color: var(--amber); }
+      .tag-prazo-op { background: var(--orange-bg); color: var(--orange); }
+      .tag-manutencao { background: var(--amber-bg); color: var(--amber); }
       .tag-compromisso { background: var(--purple-bg); color: var(--purple); }
       .tag-urgente { background: var(--red-bg); color: var(--red); }
       .tag-google { background: rgba(26,115,232,.12); color: var(--primary); }
@@ -250,8 +258,8 @@
               <div class="cal-stat-label">Nos próximos 7 dias</div>
             </div>
           </div>
-          <div class="cal-stat" style="--accent: var(--amber)">
-            <div class="cal-stat-icon" style="background: var(--amber-bg); color: var(--amber);"><i class="fa-solid fa-industry"></i></div>
+          <div class="cal-stat" style="--accent: var(--orange)">
+            <div class="cal-stat-icon" style="background: var(--orange-bg); color: var(--orange);"><i class="fa-solid fa-industry"></i></div>
             <div class="cal-stat-body">
               <div class="cal-stat-num" id="kpi-prazos">0</div>
               <div class="cal-stat-label">Prazos / Vencimentos</div>
@@ -287,13 +295,15 @@
           </div>
         </div>
 
-        <!-- Legenda + Filtros -->
+        <!-- Legenda + Filtros (COM NOVOS FILTROS PCP) -->
         <div class="cal-filters">
           <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Filtrar:</span>
           <button class="cal-filter-btn active" onclick="calFilterType('all', this)"><i class="fa-solid fa-border-all"></i> Todos</button>
           <button class="cal-filter-btn" onclick="calFilterType('reuniao', this)"><i class="fa-solid fa-handshake"></i> Reuniões</button>
           <button class="cal-filter-btn" onclick="calFilterType('treinamento', this)"><i class="fa-solid fa-graduation-cap"></i> Treinamentos</button>
           <button class="cal-filter-btn" onclick="calFilterType('urgente', this)"><i class="fa-solid fa-triangle-exclamation"></i> Urgentes</button>
+          <button class="cal-filter-btn" onclick="calFilterType('prazo-op', this)"><i class="fa-solid fa-flag-checkered"></i> Prazos OPs</button>
+          <button class="cal-filter-btn" onclick="calFilterType('manutencao', this)"><i class="fa-solid fa-wrench"></i> Manutenções</button>
           <button class="cal-filter-btn" onclick="calFilterType('google', this)"><i class="fa-brands fa-google"></i> Google</button>
         </div>
 
@@ -356,7 +366,8 @@
             <div class="cal-type-picker" id="cal-type-picker">
               <button class="cal-type-btn active" data-type="reuniao" onclick="calSelectType('reuniao',this)"><i class="fa-solid fa-handshake"></i> Reunião</button>
               <button class="cal-type-btn" data-type="treinamento" onclick="calSelectType('treinamento',this)"><i class="fa-solid fa-graduation-cap"></i> Treinamento</button>
-              <button class="cal-type-btn" data-type="prazo" onclick="calSelectType('prazo',this)"><i class="fa-solid fa-flag"></i> Prazo</button>
+              <button class="cal-type-btn" data-type="prazo-op" onclick="calSelectType('prazo-op',this)"><i class="fa-solid fa-flag-checkered"></i> Prazo OP</button>
+              <button class="cal-type-btn" data-type="manutencao" onclick="calSelectType('manutencao',this)"><i class="fa-solid fa-wrench"></i> Manutenção</button>
               <button class="cal-type-btn" data-type="compromisso" onclick="calSelectType('compromisso',this)"><i class="fa-solid fa-calendar-check"></i> Compromisso</button>
               <button class="cal-type-btn" data-type="urgente" onclick="calSelectType('urgente',this)"><i class="fa-solid fa-triangle-exclamation"></i> Urgente</button>
             </div>
@@ -364,7 +375,7 @@
 
           <div class="form-group">
             <label>Título <span style="color:var(--red)">*</span></label>
-            <input type="text" class="form-input" id="cal-evt-titulo" placeholder="Ex: Reunião de alinhamento">
+            <input type="text" class="form-input" id="cal-evt-titulo" placeholder="Ex: OP-2026-001 - Flange Aço">
           </div>
 
           <div class="form-row">
@@ -388,7 +399,7 @@
           </div>
 
           <div class="form-group">
-            <label>Setor relacionado</label>
+            <label>Setor / Equipamento relacionado</label>
             <select class="form-select" id="cal-evt-setor">
               <option value="">Nenhum / Geral</option>
               <option value="Produção">Produção</option>
@@ -396,12 +407,15 @@
               <option value="Qualidade">Qualidade</option>
               <option value="Estoque">Estoque</option>
               <option value="Compras">Compras</option>
+              <option value="Torno CNC 02">🛠️ Torno CNC 02</option>
+              <option value="Fresa CNC 05">🛠️ Fresa CNC 05</option>
+              <option value="Caldeira 01">🛠️ Caldeira 01</option>
             </select>
           </div>
 
           <div class="form-group">
             <label>Descrição / Anotações</label>
-            <textarea class="form-textarea" id="cal-evt-desc" placeholder="Observações, pauta..."></textarea>
+            <textarea class="form-textarea" id="cal-evt-desc" placeholder="Detalhes, roteiro, observações..."></textarea>
           </div>
         </div>
         <div class="modal-foot">
@@ -416,23 +430,24 @@
 
     <script src="components/js/header.js"></script>
     <script src="components/js/sidebar.js"></script>
-    <script src="components//js/chat.js"></script>
+    <script src="components/js/chat.js"></script>
     <script src="components/js/config.js"></script>
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
 
     <script>
       /* =========================================================
-         StockLog — Calendário Inteligente
+         StockLog — Calendário Inteligente (VERSÃO PCP)
          ========================================================= */
       const GOOGLE_CLIENT_ID = "SEU_CLIENT_ID_AQUI.apps.googleusercontent.com";
       const GOOGLE_SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
       let googleTokenClient = null;
       let googleAccessToken = null;
 
-      const CAL_STORAGE = "stocklog_cal_v2";
+      const CAL_STORAGE = "stocklog_cal_v3";
       const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
       const WEEKDAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+      const MAX_EVENTS_PER_DAY = 3;
 
       let calState = {
         events: [],
@@ -442,6 +457,7 @@
         type: "reuniao",
         activeFilter: "all"
       };
+      let calSelectedDate = null;
 
       function calLoad() {
         try {
@@ -453,13 +469,20 @@
       function calSave() { localStorage.setItem(CAL_STORAGE, JSON.stringify(calState.events)); }
 
       function calDefaultEvents() {
+        // Eventos com foco em PCP: OPs, Manutenções, Prazos de Produção
         return [
+          // Eventos originais (adaptados)
           { id: "e1", title: "Reunião de alinhamento semanal", type: "reuniao", date: "2026-08-21", time: "09:00", duration: 60, setor: "Qualidade", desc: "Pauta: revisão de KPIs e alertas." },
           { id: "e2", title: "Treinamento POP-018 — Recepção de Insumos", type: "treinamento", date: "2026-08-24", time: "14:00", duration: 120, setor: "Estoque", desc: "Capacitação Almoxarifado." },
-          { id: "e3", title: "Vencimento POP-042 — Controle de pH", type: "prazo", date: "2026-08-25", time: "08:00", duration: 0, setor: "Qualidade", desc: "Revisar e reemitir POP." },
+          { id: "e3", title: "🔴 Data Limite OP-2026-001 (Flange Aço)", type: "prazo-op", date: "2026-08-25", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-001. 500 unidades." },
           { id: "e4", title: "Visita técnica fornecedor Inox do Brasil", type: "compromisso", date: "2026-08-27", time: "10:30", duration: 180, setor: "Compras", desc: "Levantar novos itens para cotação." },
           { id: "e5", title: "Auditoria interna — Qualidade", type: "urgente", date: "2026-08-28", time: "08:00", duration: 240, setor: "Qualidade", desc: "Atender auditores." },
-          { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, setor: "Produção", desc: "Capacitar 4 operadores." }
+          { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, setor: "Produção", desc: "Capacitar 4 operadores." },
+          // NOVOS EVENTOS PCP
+          { id: "e7", title: "🔴 Data Limite OP-2026-002 (Eixo Vazado)", type: "prazo-op", date: "2026-08-28", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-002. 120 unidades." },
+          { id: "e8", title: "🛠️ Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-08-26", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Troca de rolamentos e calibragem." },
+          { id: "e9", title: "🔴 Data Limite OP-2026-003 (Suporte Estrutural)", type: "prazo-op", date: "2026-08-29", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-003. 80 unidades." },
+          { id: "e10", title: "🛠️ Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-08-27", time: "08:00", duration: 360, setor: "Fresa CNC 05", desc: "Substituição de ferramentas e revisão elétrica." },
         ];
       }
 
@@ -506,11 +529,17 @@
           const iso = calFmtISO(d);
           const outside = d.getMonth() !== month;
           const today = iso === todayIso;
-          const dayEvents = events.filter(e => e.date === iso).slice(0, 3);
+          const dayEvents = events.filter(e => e.date === iso);
+          const showEvents = dayEvents.slice(0, MAX_EVENTS_PER_DAY);
+          const remaining = dayEvents.length - MAX_EVENTS_PER_DAY;
 
-          html += `<div class="cal-day ${outside ? "outside" : ""} ${today ? "today" : ""}" onclick="calOpenDay('${iso}')">
+          // Verifica se há eventos com prioridade alta para destacar
+          const hasUrgent = dayEvents.some(e => e.type === "urgente" || e.type === "prazo-op");
+
+          html += `<div class="cal-day ${outside ? "outside" : ""} ${today ? "today" : ""} ${hasUrgent && !outside ? "has-urgent" : ""}" onclick="calOpenDay('${iso}')">
             <div class="cal-day-num">${d.getDate()}</div>
-            ${dayEvents.map(e => `<div class="cal-evt type-${e.type}" title="${escapeHtml(e.title)}" onclick="event.stopPropagation(); calEdit('${e.id}')"><i class="fa-regular fa-clock" style="font-size:9px"></i> ${escapeHtml(e.time || "")} ${escapeHtml(e.title)}</div>`).join("")}
+            ${showEvents.map(e => `<div class="cal-evt type-${e.type}" title="${escapeHtml(e.title)}" onclick="event.stopPropagation(); calEdit('${e.id}')"><i class="fa-regular fa-clock" style="font-size:9px"></i> ${escapeHtml(e.time || "")} ${escapeHtml(e.title)}</div>`).join("")}
+            ${remaining > 0 ? `<div class="cal-evt-more" onclick="event.stopPropagation(); calOpenDay('${iso}')"><i class="fa-solid fa-plus"></i> +${remaining} mais...</div>` : ""}
           </div>`;
         }
         html += `</div>`;
@@ -573,7 +602,7 @@
           const d = new Date(e.date + "T00:00:00");
           return d >= today && d <= in7Days;
         }).length;
-        const prazos = calState.events.filter(e => e.type === "prazo").length;
+        const prazos = calState.events.filter(e => e.type === "prazo-op" || e.type === "manutencao").length;
 
         document.getElementById("kpi-total").textContent = total;
         document.getElementById("kpi-urgentes").textContent = urgentes;
@@ -595,6 +624,8 @@
         }
         list.innerHTML = items.map(e => {
           const [y, m, d] = e.date.split("-");
+          // Ícone especial para prazos de OP
+          const icon = e.type === "prazo-op" ? '🔴 ' : e.type === "manutencao" ? '🛠️ ' : '';
           return `
             <div class="upcoming-item" onclick="calEdit('${e.id}')">
               <div class="upcoming-date">
@@ -602,13 +633,13 @@
                 <div class="month">${MONTHS_PT[parseInt(m)-1].slice(0,3)}</div>
               </div>
               <div class="upcoming-info">
-                <div class="upcoming-title">${escapeHtml(e.title)}</div>
+                <div class="upcoming-title">${icon} ${escapeHtml(e.title)}</div>
                 <div class="upcoming-meta">
                   <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
                   <span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor || "Geral")}</span>
                 </div>
               </div>
-              <span class="upcoming-tag tag-${e.type}">${e.type}</span>
+              <span class="upcoming-tag tag-${e.type}">${e.type === "prazo-op" ? "Prazo OP" : e.type === "manutencao" ? "Manutenção" : e.type}</span>
             </div>`;
         }).join("");
       }
@@ -630,7 +661,7 @@
       }
 
       function calOpenDay(iso) {
-        calState.selectedDate = iso;
+        calSelectedDate = iso;
         const [y, m, d] = iso.split("-");
         document.getElementById("cal-side-date-label").textContent = `${parseInt(d)} de ${MONTHS_PT[parseInt(m)-1]} de ${y}`;
         const dayEvents = calFilteredEvents().filter(e => e.date === iso);

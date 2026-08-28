@@ -53,6 +53,11 @@
         --teal-bg: #e0f2ea;
         --rose: #b2433a;
         --rose-bg: #fae2e0;
+        
+        /* CHAT - Ajuste de z-index e posicionamento */
+        --chat-z-index: 900;
+        --chat-bottom-offset: 100px;
+        --chat-right-offset: 28px;
       }
 
       body.dark {
@@ -153,6 +158,7 @@
         cursor: pointer;
         transition: all 0.2s ease;
         white-space: nowrap;
+        font-family: inherit;
       }
       .btn i { font-size: 13px; transition: transform 0.2s ease; }
       .btn.btn-primary {
@@ -166,7 +172,7 @@
       .btn.btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
       .btn.btn-danger { background: var(--rose-bg); color: var(--rose); border-color: var(--rose); }
       .btn.btn-danger:hover { background: var(--rose); color: #fff; }
-      .btn.btn-sm { padding: 6px 11px; font-size: 12px; }
+      .btn.btn-sm { padding: 8px 14px; font-size: 12px; border-radius: 8px; height: 36px; line-height: 1.2; }
       .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
 
       /* ============ STATS / INDICADORES ============ */
@@ -250,7 +256,7 @@
       .log-badge-urgente::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--rose); animation: pulseDot 1.6s ease-in-out infinite; }
       @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
 
-      .log-card-cliente { font-size: 13.5px; font-weight: 600; margin-bottom: 10px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+      .log-card-cliente { font-size: 13.5px; font-weight: 600; margin-bottom: 10px; line-height: 1.35; display: -webkit-box; ; -webkit-box-orient: vertical; overflow: hidden; }
       .log-card-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin-bottom: 12px; font-size: 11.5px; }
       .log-card-info .item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
       .log-card-info .item i { color: var(--text-muted); font-size: 10.5px; width: 12px; text-align: center; }
@@ -262,8 +268,9 @@
       .log-card-driver .info strong { display: block; color: var(--text-main); font-weight: 600; font-size: 12px; }
       .log-card-driver .info span { font-size: 10.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
+      /* ============ BOTÕES DE AÇÃO PADRONIZADOS ============ */
       .log-card-foot { display: flex; gap: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
-      .log-card-foot .btn { flex: 1; justify-content: center; }
+      .log-card-foot .btn { flex: 1; justify-content: center; min-height: 36px; font-size: 12px; }
 
       /* ============ VEÍCULOS E MOTORISTAS ============ */
       .card { background: var(--bg-card); border-radius: 14px; padding: 22px; border: 1px solid var(--border); box-shadow: var(--shadow-card); }
@@ -302,6 +309,7 @@
       .log-vehicle-driver .info strong { display: block; font-weight: 600; font-size: 12.5px; }
       .log-vehicle-driver .info span { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
+      /* ============ BARRA DE UTILIZAÇÃO (OCUPAÇÃO DE CARGA) ============ */
       .util-bar { margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: 10.5px; color: var(--text-muted); }
       .util-bar .bar { flex: 1; height: 5px; background: var(--bg-soft); border-radius: 3px; overflow: hidden; position: relative; }
       .util-bar .fill { position: absolute; inset: 0; width: var(--w, 0%); background: var(--status-color, var(--primary)); border-radius: 3px; transition: width 0.4s ease; }
@@ -326,10 +334,10 @@
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lift); animation: slideUp 0.25s ease; }
       @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-      .modal-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .modal-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg-card); z-index: 10; border-radius: 16px 16px 0 0; }
       .modal-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; }
       .modal-body { padding: 22px 24px; }
-      .modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+      .modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: var(--bg-card); border-radius: 0 0 16px 16px; position: sticky; bottom: 0; }
 
       /* ============ FORMULÁRIO ============ */
       .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
@@ -354,6 +362,114 @@
       .toast.info i { color: var(--primary); }
       @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
 
+      /* ============ CHAT - AJUSTE DE SOBREPOSIÇÃO ============ */
+      /* Estilos para o chat via components/js/chat.js */
+      .chat-toggle {
+        position: fixed !important;
+        bottom: var(--chat-bottom-offset, 100px) !important;
+        right: var(--chat-right-offset, 28px) !important;
+        z-index: var(--chat-z-index, 900) !important;
+      }
+      
+      .chat-widget {
+        position: fixed !important;
+        bottom: calc(var(--chat-bottom-offset, 100px) + 70px) !important;
+        right: var(--chat-right-offset, 28px) !important;
+        z-index: calc(var(--chat-z-index, 900) + 1) !important;
+        max-width: 380px !important;
+        width: 100% !important;
+        max-height: 500px !important;
+        border-radius: 16px !important;
+        box-shadow: var(--shadow-lift) !important;
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        overflow: hidden !important;
+        display: none !important;
+      }
+      .chat-widget.open {
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .chat-widget .chat-header {
+        padding: 14px 18px !important;
+        background: var(--primary-gradient) !important;
+        color: #fff !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+      }
+      .chat-widget .chat-body {
+        padding: 16px !important;
+        overflow-y: auto !important;
+        flex: 1 !important;
+        max-height: 340px !important;
+      }
+      .chat-widget .chat-footer {
+        padding: 12px 16px !important;
+        border-top: 1px solid var(--border) !important;
+        display: flex !important;
+        gap: 8px !important;
+        flex-shrink: 0 !important;
+        background: var(--bg-soft) !important;
+      }
+      .chat-widget .chat-footer input {
+        flex: 1 !important;
+        padding: 8px 12px !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        background: var(--bg-card) !important;
+        color: var(--text-main) !important;
+        font-family: inherit !important;
+        font-size: 13px !important;
+        outline: none !important;
+      }
+      .chat-widget .chat-footer input:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px var(--primary-light) !important;
+      }
+      .chat-widget .chat-footer button {
+        background: var(--primary) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+      }
+      .chat-widget .chat-footer button:hover {
+        background: var(--primary-dark) !important;
+      }
+      .chat-message {
+        margin-bottom: 10px !important;
+        padding: 10px 14px !important;
+        border-radius: 12px !important;
+        max-width: 85% !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+      }
+      .chat-message.bot {
+        background: var(--bg-soft) !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text-main) !important;
+        align-self: flex-start !important;
+        border-bottom-left-radius: 4px !important;
+      }
+      .chat-message.user {
+        background: var(--primary) !important;
+        color: #fff !important;
+        align-self: flex-end !important;
+        border-bottom-right-radius: 4px !important;
+      }
+      .chat-message .time {
+        font-size: 9px !important;
+        opacity: 0.6 !important;
+        margin-top: 4px !important;
+        display: block !important;
+      }
+
       /* ============ RESPONSIVIDADE ============ */
       @media (max-width: 1300px) {
         .log-stats { grid-template-columns: repeat(3, 1fr); }
@@ -362,6 +478,15 @@
       @media (max-width: 900px) {
         .log-stats { grid-template-columns: repeat(2, 1fr); }
         .log-kanban { grid-template-columns: repeat(2, minmax(230px, 1fr)); }
+        :root {
+          --chat-bottom-offset: 80px;
+          --chat-right-offset: 16px;
+        }
+        .chat-widget {
+          max-width: 320px !important;
+          max-height: 420px !important;
+          bottom: calc(var(--chat-bottom-offset, 80px) + 60px) !important;
+        }
       }
       @media (max-width: 768px) {
         .content { padding: 18px 16px; }
@@ -374,6 +499,18 @@
         .page-head h1 { font-size: 20px; }
         .page-head h1 i { width: 34px; height: 34px; font-size: 14px; }
         .page-head p { margin-left: 46px; }
+        .chat-widget {
+          max-width: 290px !important;
+          max-height: 380px !important;
+          bottom: calc(var(--chat-bottom-offset, 80px) + 50px) !important;
+          right: 12px !important;
+        }
+        .chat-toggle {
+          width: 50px !important;
+          height: 50px !important;
+          font-size: 20px !important;
+          right: 12px !important;
+        }
       }
     </style>
   </head>
@@ -434,7 +571,7 @@
               <div class="card-actions">
                 <span class="util-info">
                   <i class="fa-solid fa-chart-simple" style="color:var(--primary)"></i>
-                  <span>Utilização da frota: <strong id="utilFrota">0%</strong></span>
+                  <span>Ocupação de Carga: <strong id="utilFrota">0%</strong></span>
                 </span>
               </div>
             </div>
@@ -490,7 +627,7 @@
 
           <div class="form-group">
             <label>Cliente / Destino <span style="color:var(--rose)">*</span></label>
-            <input type="text" class="form-input" id="log-ord-cliente" placeholder="Ex: Supermercado Boa Vista">
+            <input type="text" class="form-input" id="log-ord-cliente" placeholder="Ex: Usina Metalúrgica Silva">
           </div>
 
           <div class="form-group">
@@ -615,9 +752,9 @@
 
     <!-- Lógica da Logística -->
     <script>
-      const LOG_STORAGE_ORDERS = "stocklog_log_orders_v1";
-      const LOG_STORAGE_VEHICLES = "stocklog_log_vehicles_v1";
-      const LOG_STORAGE_ACTIVITY = "stocklog_log_activity_v1";
+      const LOG_STORAGE_ORDERS = "stocklog_log_orders_v2";
+      const LOG_STORAGE_VEHICLES = "stocklog_log_vehicles_v2";
+      const LOG_STORAGE_ACTIVITY = "stocklog_log_activity_v2";
 
       const STATUS_ORDER = ["aguardando", "separacao", "embalagem", "expedicao", "entregue"];
       const STATUS_LABELS = {
@@ -692,7 +829,8 @@
 
       function logDefaultOrders() {
         return [
-          { id: "o1", numero: "1043", cliente: "Supermercado Boa Vista", endereco: "Av. Central, 900 - Centro", itens: 300, peso: 150.5, volume: 2.3, prioridade: "urgente", status: "aguardando", veiculoId: "", data: "2026-08-21", obs: "Cliente pediu conferência dupla antes da separação." },
+          // CORRIGIDO: Clientes com nomes corporativos, valores de peso e volume realistas
+          { id: "o1", numero: "1043", cliente: "Usina Metalúrgica Silva", endereco: "Av. Industrial, 900 - Centro", itens: 300, peso: 150.5, volume: 2.3, prioridade: "urgente", status: "aguardando", veiculoId: "", data: "2026-08-21", obs: "Cliente pediu conferência dupla antes da separação." },
           { id: "o2", numero: "1042", cliente: "Restaurante Sabor & Cia", endereco: "Rua das Flores, 120",    itens: 120, peso: 85.0, volume: 1.2, prioridade: "normal",  status: "separacao",  veiculoId: "",    data: "2026-08-22", obs: "" },
           { id: "o3", numero: "1039", cliente: "Padaria Pão Quente",    endereco: "Rua Dez, 45",             itens: 60,  peso: 40.2, volume: 0.8, prioridade: "normal",  status: "embalagem",  veiculoId: "",    data: "2026-08-22", obs: "Embalagem térmica." },
           { id: "o4", numero: "1035", cliente: "Distribuidora Nordeste",endereco: "Rod. BR-101, km 12",      itens: 500, peso: 820.0, volume: 8.5, prioridade: "urgente", status: "expedicao",  veiculoId: "v1", data: "2026-08-21", obs: "" },
@@ -814,6 +952,13 @@
         const nextLabel = next ? STATUS_LABELS[next] : null;
         const nextTheme = next ? STATUS_THEME[next] : null;
 
+        // ATRIBUIÇÃO DE MOTORISTA: SÓ APARECE A PARTIR DA ETAPA DE EMBALAGEM
+        // (Aguardando Separação e Em Separação NÃO mostram motorista/placa)
+        const showDriver = o.status === "embalagem" || o.status === "expedicao" || o.status === "entregue";
+        
+        // Apenas mostra veículo se estiver nas etapas corretas E se houver veículo designado
+        const showVehicle = showDriver && veh;
+
         const initials = (o.cliente || "?").split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
 
         return `
@@ -831,7 +976,7 @@
               <div class="item"><i class="fa-solid fa-cube"></i> <strong>${o.volume || 0}</strong>&nbsp;m³</div>
             </div>
 
-            ${veh ? `
+            ${showVehicle ? `
               <div class="log-card-driver">
                 <span class="avatar">${initials}</span>
                 <div class="info">
@@ -865,15 +1010,32 @@
           return;
         }
 
-        const ocupados = logState.vehicles.filter(v => v.status !== "disponivel").length;
-        const utilPct = Math.round((ocupados / logState.vehicles.length) * 100);
+        // Cálculo de ocupação de carga baseado no peso médio
+        const totalPeso = logState.orders
+          .filter(o => o.status !== "entregue" && o.veiculoId)
+          .reduce((sum, o) => sum + (o.peso || 0), 0);
+        const capacidadeTotal = logState.vehicles
+          .filter(v => v.status !== "manutencao")
+          .length * 1000; // capacidade fictícia de 1000kg por veículo
+        const utilPct = capacidadeTotal > 0 ? Math.min(Math.round((totalPeso / capacidadeTotal) * 100), 100) : 0;
         document.getElementById("utilFrota").textContent = utilPct + "%";
 
         grid.innerHTML = logState.vehicles.map(v => {
           const theme = VEHICLE_STATUS_THEME[v.status] || "var(--primary)";
           const initials = (v.motorista || "?").split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
-          const util = v.status === "em_rota" ? 85 : v.status === "manutencao" ? 30 : 10;
-          const utilLabel = v.status === "em_rota" ? "Em rota" : v.status === "manutencao" ? "Em manutenção" : "Ocioso";
+          
+          // Ocupação de carga baseada no status e peso dos pedidos associados
+          let utilPctVehicle = 10; // base ocioso
+          if (v.status === "em_rota") {
+            const pesoCarregado = logState.orders
+              .filter(o => o.veiculoId === v.id && o.status !== "entregue")
+              .reduce((sum, o) => sum + (o.peso || 0), 0);
+            utilPctVehicle = Math.min(Math.round((pesoCarregado / 1000) * 100), 95);
+            if (utilPctVehicle < 30) utilPctVehicle = 30;
+          } else if (v.status === "manutencao") {
+            utilPctVehicle = 0;
+          }
+          const utilLabel = v.status === "em_rota" ? `${utilPctVehicle}% ocupado` : v.status === "manutencao" ? "Em manutenção" : "Ocioso";
 
           return `
             <div class="log-vehicle-card" style="--status-color: ${theme}" onclick="logEditVehicle('${v.id}')">
@@ -897,9 +1059,9 @@
               </div>
 
               <div class="util-bar" title="${utilLabel}">
-                <span>Uso</span>
-                <div class="bar"><div class="fill" style="--w: ${util}%; background: ${theme}"></div></div>
-                <strong>${util}%</strong>
+                <span>Ocupação de carga</span>
+                <div class="bar"><div class="fill" style="--w: ${utilPctVehicle}%; background: ${theme}"></div></div>
+                <strong>${utilPctVehicle}%</strong>
               </div>
             </div>
           `;

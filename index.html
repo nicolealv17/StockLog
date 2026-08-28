@@ -95,6 +95,7 @@
         flex-direction: column;
         min-height: 100vh;
         min-width: 0;
+        position: relative;
       }
 
       /* ================================================================
@@ -151,7 +152,7 @@
       .kpi-label {
         font-size: 12px;
         font-weight: 600;
-        color: var(--text-muted);
+        color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
@@ -307,7 +308,7 @@
 
       .alert-meta {
         font-size: 12.5px;
-        color: var(--text-muted);
+        color: var(--text-secondary);
         display: flex;
         gap: 16px;
         margin-top: 4px;
@@ -320,40 +321,66 @@
         width: 14px;
       }
 
-      .alert-tag {
-        background: var(--bg-soft);
+      /* Tags de severidade - agora apenas níveis */
+      .severity-tag {
         padding: 3px 14px;
         border-radius: 20px;
         font-size: 11px;
         font-weight: 600;
-        color: var(--text-secondary);
         white-space: nowrap;
-        border: 1px solid var(--border);
         flex-shrink: 0;
+        border: 1px solid transparent;
       }
 
-      .alert-tag.critical {
+      .severity-tag.critical {
         background: var(--red-bg);
         color: var(--red);
         border-color: var(--red);
       }
 
-      .alert-tag.high {
+      .severity-tag.high {
         background: var(--orange-bg);
         color: var(--orange);
         border-color: var(--orange);
       }
 
-      .alert-tag.warning {
-        background: var(--orange-bg);
-        color: var(--orange);
-        border-color: var(--orange);
+      .severity-tag.medium {
+        background: var(--amber-bg);
+        color: var(--amber);
+        border-color: var(--amber);
       }
 
-      .alert-tag.info {
+      .severity-tag.low {
         background: var(--blue-bg);
         color: var(--blue);
         border-color: var(--blue);
+      }
+
+      /* Botões de ação para alertas */
+      .alert-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .alert-action-btn {
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .alert-action-btn:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
       }
 
       /* ---------------- Gráfico de Barras ---------------- */
@@ -450,7 +477,7 @@
 
       .stat-block .label {
         font-size: 11px;
-        color: var(--text-muted);
+        color: var(--text-secondary);
       }
 
       /* ---------------- Tabela ---------------- */
@@ -478,6 +505,11 @@
         flex: 1;
         min-width: 150px;
         transition: 0.2s;
+      }
+
+      .search-input::placeholder {
+        color: var(--text-secondary);
+        opacity: 0.8;
       }
 
       .search-input:focus,
@@ -515,7 +547,7 @@
         text-align: left;
         padding: 10px 8px 8px 0;
         font-weight: 600;
-        color: var(--text-muted);
+        color: var(--text-secondary);
         border-bottom: 2px solid var(--border);
         font-size: 11px;
         letter-spacing: 0.4px;
@@ -607,6 +639,38 @@
       .action-group {
         display: flex;
         gap: 4px;
+      }
+
+      /* ================================================================
+       LEGENDA PARA ÍCONES DE EVIDÊNCIA
+       ================================================================ */
+      .evidence-legend {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        flex-wrap: wrap;
+      }
+
+      .evidence-legend span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .evidence-legend i {
+        font-size: 14px;
+      }
+
+      .evidence-legend .fa-check-circle {
+        color: var(--green);
+      }
+      .evidence-legend .fa-clock {
+        color: var(--amber);
+      }
+      .evidence-legend .fa-spinner {
+        color: var(--primary);
       }
 
       /* ---------------- Row 3 ---------------- */
@@ -746,6 +810,33 @@
 
       .op-footer i {
         color: var(--primary);
+      }
+
+      /* ================================================================
+       CHAT BOTÃO - AJUSTE PARA NÃO SOBREPOR O RODAPÉ
+       ================================================================ */
+      .chat-toggle {
+        position: fixed;
+        bottom: 100px !important; /* Aumentado para não sobrepor o footer */
+        right: 30px;
+        z-index: 999;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 20px rgba(0, 107, 179, 0.4);
+        font-size: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+      }
+
+      .chat-toggle:hover {
+        transform: scale(1.08);
+        box-shadow: 0 6px 28px rgba(0, 107, 179, 0.5);
       }
 
       /* ================================================================
@@ -904,7 +995,10 @@
                     <span><i class="fas fa-building"></i>Qualidade · 6 colab.</span>
                   </div>
                 </div>
-                <span class="alert-tag critical">Urgente</span>
+                <div class="alert-actions">
+                  <span class="severity-tag critical">Crítico</span>
+                  <button class="alert-action-btn" title="Revisar pedido"><i class="fas fa-search"></i> Revisar</button>
+                </div>
               </div>
               <div class="alert-item">
                 <div>
@@ -914,7 +1008,10 @@
                     <span><i class="fas fa-industry"></i>Produção · revisão urgente</span>
                   </div>
                 </div>
-                <span class="alert-tag high">Crítico</span>
+                <div class="alert-actions">
+                  <span class="severity-tag critical">Crítico</span>
+                  <button class="alert-action-btn" title="Verificar estoque"><i class="fas fa-warehouse"></i> Ver Estoque</button>
+                </div>
               </div>
               <div class="alert-item">
                 <div>
@@ -924,7 +1021,10 @@
                     <span><i class="fas fa-warehouse"></i>Almoxarifado</span>
                   </div>
                 </div>
-                <span class="alert-tag warning">Agendar</span>
+                <div class="alert-actions">
+                  <span class="severity-tag medium">Médio</span>
+                  <button class="alert-action-btn" title="Verificar estoque"><i class="fas fa-warehouse"></i> Ver Estoque</button>
+                </div>
               </div>
               <div class="alert-item" style="border-bottom: 0; padding-bottom: 0">
                 <div>
@@ -934,12 +1034,15 @@
                     <span><i class="fas fa-route"></i>Rota 03</span>
                   </div>
                 </div>
-                <span class="alert-tag info">Revisão</span>
+                <div class="alert-actions">
+                  <span class="severity-tag low">Baixo</span>
+                  <button class="alert-action-btn" title="Acompanhar entrega"><i class="fas fa-truck"></i> Acompanhar</button>
+                </div>
               </div>
             </div>
           </section>
 
-          <!-- Produção por setor (GRÁFICO DE BARRAS) -->
+          <!-- Produção por setor (CORRIGIDO: apenas setores de fábrica) -->
           <section class="card">
             <div class="card-header">
               <h3><i class="fas fa-chart-bar"></i>Produção por setor</h3>
@@ -947,46 +1050,46 @@
             </div>
             <div class="chart-container">
               <div class="chart-bar">
-                <span class="chart-label">Produção</span>
+                <span class="chart-label">Corte</span>
                 <div class="chart-track">
                   <div class="chart-fill" style="width: 91%; background: var(--green);"></div>
                 </div>
                 <span class="chart-value">91%</span>
               </div>
               <div class="chart-bar">
-                <span class="chart-label">Desenv. embalagens</span>
+                <span class="chart-label">Usinagem</span>
                 <div class="chart-track">
                   <div class="chart-fill" style="width: 86%; background: var(--primary);"></div>
                 </div>
                 <span class="chart-value">86%</span>
               </div>
               <div class="chart-bar">
-                <span class="chart-label">Geral</span>
+                <span class="chart-label">Caldeiraria</span>
                 <div class="chart-track">
                   <div class="chart-fill" style="width: 78%; background: var(--amber);"></div>
                 </div>
                 <span class="chart-value">78%</span>
               </div>
               <div class="chart-bar">
-                <span class="chart-label">Financeiro</span>
+                <span class="chart-label">Solda</span>
                 <div class="chart-track">
                   <div class="chart-fill" style="width: 72%; background: var(--purple);"></div>
                 </div>
                 <span class="chart-value">72%</span>
               </div>
               <div class="chart-bar">
-                <span class="chart-label">Marketing</span>
+                <span class="chart-label">Pintura</span>
                 <div class="chart-track">
-                  <div class="chart-fill" style="width: 45%; background: var(--orange);"></div>
+                  <div class="chart-fill" style="width: 65%; background: var(--orange);"></div>
                 </div>
-                <span class="chart-value">45%</span>
+                <span class="chart-value">65%</span>
               </div>
               <div class="chart-bar">
-                <span class="chart-label">Trade MKT</span>
+                <span class="chart-label">Montagem</span>
                 <div class="chart-track">
-                  <div class="chart-fill" style="width: 23%; background: var(--red);"></div>
+                  <div class="chart-fill" style="width: 58%; background: var(--red);"></div>
                 </div>
-                <span class="chart-value">23%</span>
+                <span class="chart-value">58%</span>
               </div>
             </div>
 
@@ -1010,7 +1113,7 @@
           </section>
         </div>
 
-        <!-- Pedidos recentes -->
+        <!-- Pedidos recentes (CORRIGIDO: coluna principal = Pedido/Cliente) -->
         <section class="card" style="margin-bottom: 28px">
           <div class="card-header">
             <h3><i class="fas fa-receipt"></i>Pedidos recentes</h3>
@@ -1019,7 +1122,7 @@
 
           <!-- FILTROS -->
           <div class="table-filters">
-            <input type="text" placeholder="Buscar colaborador..." class="search-input" />
+            <input type="text" placeholder="Buscar pedido ou cliente..." class="search-input" />
             <select class="filter-select">
               <option value="">Todos os status</option>
               <option value="concluido">Concluído</option>
@@ -1029,12 +1132,20 @@
             <button class="filter-btn"><i class="fas fa-filter"></i> Filtrar</button>
           </div>
 
+          <!-- Legenda para ícones de evidência -->
+          <div class="evidence-legend">
+            <span><i class="fas fa-check-circle"></i> Evidência anexada</span>
+            <span><i class="fas fa-clock"></i> Aguardando evidência</span>
+            <span><i class="fas fa-spinner"></i> Em processamento</span>
+          </div>
+
           <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
-                  <th>Colaborador</th>
-                  <th>PDP</th>
+                  <th>Nº Pedido</th>
+                  <th>Cliente</th>
+                  <th>Item / Produto</th>
                   <th>Setor</th>
                   <th>Data</th>
                   <th>Status</th>
@@ -1044,13 +1155,14 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>Bruno Pessoa Ferreira</td>
-                  <td>MN 003</td>
-                  <td>Geral</td>
+                  <td><strong>PED-2026-001</strong></td>
+                  <td>Metalúrgica Souza</td>
+                  <td>Flange Aço ABNT 1020</td>
+                  <td>Corte</td>
                   <td>15/05/2026</td>
                   <td><span class="status-badge success">Concluído</span></td>
                   <td>
-                    <i class="fas fa-check-circle" style="color: var(--green)"></i>
+                    <i class="fas fa-check-circle" style="color: var(--green)" title="Evidência anexada"></i>
                   </td>
                   <td>
                     <div class="action-group">
@@ -1061,13 +1173,14 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Vinícius Alves de Carvalho</td>
-                  <td>GQ 001</td>
-                  <td>Produção</td>
+                  <td><strong>PED-2026-002</strong></td>
+                  <td>Indústrias Ribeiro</td>
+                  <td>Eixo Vazado 420mm</td>
+                  <td>Usinagem</td>
                   <td>15/05/2026</td>
                   <td><span class="status-badge pending">Pendente</span></td>
                   <td>
-                    <i class="fas fa-clock" style="color: var(--amber)"></i>
+                    <i class="fas fa-clock" style="color: var(--amber)" title="Aguardando evidência"></i>
                   </td>
                   <td>
                     <div class="action-group">
@@ -1078,13 +1191,14 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Ricardo Badeca Ribeiro</td>
-                  <td>GQ 008</td>
-                  <td>Produção</td>
+                  <td><strong>PED-2026-003</strong></td>
+                  <td>Peças & Cia Ltda</td>
+                  <td>Suporte Estrutural</td>
+                  <td>Solda</td>
                   <td>15/05/2026</td>
                   <td><span class="status-badge progress">Em andamento</span></td>
                   <td>
-                    <i class="fas fa-spinner" style="color: var(--primary)"></i>
+                    <i class="fas fa-spinner" style="color: var(--primary)" title="Em processamento"></i>
                   </td>
                   <td>
                     <div class="action-group">
@@ -1213,6 +1327,8 @@
       <div id="footer-root"></div>
     </div>
 
+
+
     <!-- ================================================================
        SCRIPTS (ordem correta: header antes de sidebar)
        ================================================================ -->
@@ -1241,12 +1357,13 @@
 
           const rows = document.querySelectorAll('.table-wrapper tbody tr');
           rows.forEach(function(row) {
-            const name = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
+            const pedido = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
+            const cliente = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
             const statusEl = row.querySelector('.status-badge');
             const statusText = statusEl ? statusEl.textContent.toLowerCase() : '';
 
             let show = true;
-            if (searchTerm && !name.includes(searchTerm)) {
+            if (searchTerm && !pedido.includes(searchTerm) && !cliente.includes(searchTerm)) {
               show = false;
             }
             if (statusTerm) {
@@ -1291,6 +1408,16 @@
             }, 200);
           });
         });
+
+        // ---- CHAT TOGGLE ----
+        const chatToggle = document.getElementById('chatToggle');
+        if (chatToggle) {
+          chatToggle.addEventListener('click', function() {
+            // Simula abertura do chat - integra com components/js/chat.js
+            const chatEvent = new CustomEvent('toggleChat');
+            document.dispatchEvent(chatEvent);
+          });
+        }
 
         console.log('🚀 StockLog Dashboard carregado com sucesso!');
       })();

@@ -55,6 +55,11 @@
         --purple-bg: #ede6f5;
         --pink: #a13e73;
         --pink-bg: #f7e3ee;
+        
+        --wip-limit-bg: rgba(0, 107, 179, 0.08);
+        --wip-limit-text: var(--primary);
+        --wip-limit-exceed-bg: rgba(178, 67, 58, 0.15);
+        --wip-limit-exceed-text: var(--red);
       }
 
       body.dark {
@@ -81,6 +86,9 @@
           0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
         --shadow-hover:
           0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
+          
+        --wip-limit-bg: rgba(0, 107, 179, 0.15);
+        --wip-limit-exceed-bg: rgba(178, 67, 58, 0.25);
       }
 
       * {
@@ -148,6 +156,50 @@
       }
       .btn.danger:hover { background: var(--red); color: #fff; }
 
+      /* ============ CHAVE SELETORA (TABS) ============ */
+      .view-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 20px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 4px;
+        box-shadow: var(--shadow-card);
+        flex-wrap: wrap;
+      }
+      .view-tab {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        justify-content: center;
+        background: transparent;
+        border: none;
+      }
+      .view-tab:hover { background: var(--bg-soft); color: var(--text-main); }
+      .view-tab.active {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(0, 107, 179, 0.3);
+      }
+      .view-tab.active:hover { background: var(--primary-dark); }
+      .view-tab i { font-size: 14px; }
+      
+      /* Painéis de visualização */
+      .view-panel {
+        display: none;
+        animation: fadeIn 0.25s ease;
+      }
+      .view-panel.active { display: block; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
       /* ============ KPI / STATS ============ */
       .stats-wrapper {
         display: flex;
@@ -208,8 +260,6 @@
       .kpi-label i { color: var(--primary); font-size: 12px; }
       .kpi-value { font-size: 26px; font-weight: 700; color: var(--text-main); line-height: 1.1; }
 
-      /* Botão "Adicionar Tarefa" — ocupa o mesmo "andar" dos cards
-         e tem altura compatível para não ficar miúdo. */
       .stats-wrapper > .btn.primary {
         align-self: stretch;
         padding: 0 22px;
@@ -328,15 +378,34 @@
         text-transform: uppercase;
         letter-spacing: 0.04em;
       }
+      /* ============ WIP LIMIT NO CABEÇALHO ============ */
       .column-count {
-        background: var(--bg-card);
+        background: var(--bg-soft);
         color: var(--text-secondary);
         font-size: 11px;
         font-weight: 700;
-        padding: 2px 9px;
+        padding: 3px 10px;
         border-radius: 20px;
         border: 1px solid var(--border);
+        transition: 0.3s;
+        white-space: nowrap;
       }
+      .column-count.wip-limit {
+        background: var(--wip-limit-bg);
+        color: var(--wip-limit-text);
+        border-color: var(--primary);
+      }
+      .column-count.wip-exceed {
+        background: var(--wip-limit-exceed-bg);
+        color: var(--wip-limit-exceed-text);
+        border-color: var(--red);
+        animation: pulse-wip 1.5s ease-in-out infinite;
+      }
+      @keyframes pulse-wip {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
       .column-add-btn, .column-collapse-btn {
         background: transparent;
         border: 1px solid var(--border);
@@ -382,6 +451,10 @@
         border-left: 3px solid var(--text-muted);
         user-select: none;
       }
+      /* Cards neutros (dentro do prazo) - fundo limpo */
+      .kanban-card:not(.overdue) {
+        background: var(--bg-card);
+      }
       .kanban-card:hover {
         border-color: var(--border-hover);
         transform: translateY(-2px);
@@ -392,7 +465,11 @@
       .kanban-card.priority-alta { border-left-color: var(--red); }
       .kanban-card.priority-media { border-left-color: var(--amber); }
       .kanban-card.priority-baixa { border-left-color: var(--green); }
-      .kanban-card.overdue { background: linear-gradient(135deg, var(--bg-soft), var(--red-bg)); }
+      /* Fundo vermelho APENAS quando atrasado */
+      .kanban-card.overdue { 
+        background: linear-gradient(135deg, var(--bg-soft), var(--red-bg));
+        border-left-color: var(--red);
+      }
 
       .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
       .card-id { font-size: 10.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.04em; }
@@ -426,6 +503,36 @@
         -webkit-box-orient: vertical;
         overflow: hidden; line-height: 1.45;
       }
+      
+      /* ============ BARRA DE PROGRESSO NO CARD ============ */
+      .card-progress {
+        margin: 8px 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-progress .progress-track {
+        flex: 1;
+        height: 4px;
+        background: var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .card-progress .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.6s ease;
+        background: var(--primary-gradient);
+      }
+      .card-progress .progress-text {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-muted);
+        white-space: nowrap;
+        min-width: 30px;
+        text-align: right;
+      }
+      
       .card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
       .tag {
         font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
@@ -452,6 +559,12 @@
         background: var(--primary-light); border: 1px solid var(--primary); color: var(--primary);
         display: flex; align-items: center; justify-content: center;
         font-size: 11px; font-weight: 700; flex-shrink: 0;
+        cursor: help;
+        transition: 0.2s;
+      }
+      .card-avatar:hover {
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       }
       .kanban-card.overdue .card-avatar { border-color: var(--red); color: var(--red); background: var(--red-bg); }
 
@@ -535,6 +648,8 @@
         .stats-wrapper { flex-direction: column; align-items: stretch; }
         .stats-wrapper > .btn.primary { width: 100%; padding: 12px 18px; }
         .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .view-tabs { flex-direction: column; }
+        .view-tab { flex: none; justify-content: center; }
       }
       @media (max-width: 768px) {
         .content { padding: 18px 16px; }
@@ -555,89 +670,110 @@
       <div id="header-root"></div>
 
       <main class="content" role="main">
-        <!-- STATS + BOTÃO ADICIONAR -->
-        <div class="stats-wrapper">
-          <div class="kpi-grid" id="kanbanStats"></div>
-          <button class="btn primary" onclick="openTaskModal()">
-            <i class="fas fa-plus"></i> Adicionar Tarefa
+        <!-- CHAVE SELETORA: Kanban de OPs / Tarefas Administrativas -->
+        <div class="view-tabs" role="tablist">
+          <button class="view-tab active" data-view="production" role="tab" aria-selected="true">
+            <i class="fas fa-industry"></i> Kanban de Produção (OPs)
+          </button>
+          <button class="view-tab" data-view="tasks" role="tab" aria-selected="false">
+            <i class="fas fa-tasks"></i> Tarefas Operacionais / Suporte
           </button>
         </div>
 
-        <!-- FILTER BAR -->
-        <div class="filter-bar">
-          <div class="search-box">
-            <i class="fas fa-magnifying-glass"></i>
-            <input type="search" id="searchInput" placeholder="Pesquisar tarefas por título, descrição ou responsável..." />
+        <!-- PAINEL: PRODUÇÃO (OPs) -->
+        <div class="view-panel active" id="panel-production">
+          <div class="stats-wrapper">
+            <div class="kpi-grid" id="kanbanStats"></div>
+            <button class="btn primary" onclick="openTaskModal()">
+              <i class="fas fa-plus"></i> Nova OP
+            </button>
           </div>
-          <select class="filter-select" id="filterPriority">
-            <option value="">Todas Prioridades</option>
-            <option value="alta">Alta</option>
-            <option value="media">Média</option>
-            <option value="baixa">Baixa</option>
-          </select>
-          <select class="filter-select" id="filterResponsible">
-            <option value="">Todos Responsáveis</option>
-          </select>
-          <select class="filter-select" id="filterCategory">
-            <option value="">Todas Categorias</option>
-            <option value="Estoque">Estoque</option>
-            <option value="Transporte">Transporte</option>
-            <option value="Compras">Compras</option>
-            <option value="Financeiro">Financeiro</option>
-            <option value="Logística">Logística</option>
-          </select>
-          <select class="filter-select" id="filterStatus">
-            <option value="">Todos Status</option>
-            <option value="todo">A Fazer</option>
-            <option value="doing">Em Andamento</option>
-            <option value="review">Em Revisão</option>
-            <option value="done">Concluído</option>
-          </select>
-          <button class="filter-clear" onclick="clearFilters()">
-            <i class="fas fa-rotate-left"></i> Limpar
-          </button>
+
+          <div class="filter-bar">
+            <div class="search-box">
+              <i class="fas fa-magnifying-glass"></i>
+              <input type="search" id="searchInput" placeholder="Pesquisar OPs por produto, operador ou código..." />
+            </div>
+            <select class="filter-select" id="filterPriority">
+              <option value="">Todas Prioridades</option>
+              <option value="alta">Alta</option>
+              <option value="media">Média</option>
+              <option value="baixa">Baixa</option>
+            </select>
+            <select class="filter-select" id="filterResponsible">
+              <option value="">Todos Operadores</option>
+            </select>
+            <select class="filter-select" id="filterCategory">
+              <option value="">Todas Categorias</option>
+              <option value="Estoque">Estoque</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Compras">Compras</option>
+              <option value="Financeiro">Financeiro</option>
+              <option value="Logística">Logística</option>
+            </select>
+            <select class="filter-select" id="filterStatus">
+              <option value="">Todos Status</option>
+              <option value="todo">A Fazer</option>
+              <option value="doing">Em Andamento</option>
+              <option value="review">Em Revisão</option>
+              <option value="done">Concluído</option>
+            </select>
+            <button class="filter-clear" onclick="clearFilters()">
+              <i class="fas fa-rotate-left"></i> Limpar
+            </button>
+          </div>
+
+          <div class="kanban-board" id="kanbanBoard">
+            <div class="kanban-column" data-status="todo">
+              <div class="column-header">
+                <span class="column-dot todo"></span>
+                <span class="column-title">Planejamento</span>
+                <span class="column-count" id="count-todo">0</span>
+                <button class="column-add-btn" onclick="openTaskModal('todo')" aria-label="Adicionar OP"><i class="fas fa-plus"></i></button>
+              </div>
+              <div class="column-cards" id="col-todo" data-status="todo"></div>
+            </div>
+
+            <div class="kanban-column" data-status="doing">
+              <div class="column-header">
+                <span class="column-dot doing"></span>
+                <span class="column-title">Em Produção</span>
+                <span class="column-count" id="count-doing">0</span>
+                <button class="column-add-btn" onclick="openTaskModal('doing')" aria-label="Adicionar OP"><i class="fas fa-plus"></i></button>
+              </div>
+              <div class="column-cards" id="col-doing" data-status="doing"></div>
+            </div>
+
+            <div class="kanban-column" data-status="review">
+              <div class="column-header">
+                <span class="column-dot review"></span>
+                <span class="column-title">Controle QA</span>
+                <span class="column-count" id="count-review">0</span>
+                <button class="column-add-btn" onclick="openTaskModal('review')" aria-label="Adicionar OP"><i class="fas fa-plus"></i></button>
+              </div>
+              <div class="column-cards" id="col-review" data-status="review"></div>
+            </div>
+
+            <div class="kanban-column" data-status="done">
+              <div class="column-header">
+                <span class="column-dot done"></span>
+                <span class="column-title">Pronto / Expedição</span>
+                <span class="column-count" id="count-done">0</span>
+                <button class="column-add-btn" onclick="openTaskModal('done')" aria-label="Adicionar OP"><i class="fas fa-plus"></i></button>
+              </div>
+              <div class="column-cards" id="col-done" data-status="done"></div>
+            </div>
+          </div>
         </div>
 
-        <!-- KANBAN BOARD -->
-        <div class="kanban-board" id="kanbanBoard">
-          <div class="kanban-column" data-status="todo">
-            <div class="column-header">
-              <span class="column-dot todo"></span>
-              <span class="column-title">A Fazer</span>
-              <span class="column-count" id="count-todo">0</span>
-              <button class="column-add-btn" onclick="openTaskModal('todo')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
-            </div>
-            <div class="column-cards" id="col-todo" data-status="todo"></div>
-          </div>
-
-          <div class="kanban-column" data-status="doing">
-            <div class="column-header">
-              <span class="column-dot doing"></span>
-              <span class="column-title">Em Andamento</span>
-              <span class="column-count" id="count-doing">0</span>
-              <button class="column-add-btn" onclick="openTaskModal('doing')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
-            </div>
-            <div class="column-cards" id="col-doing" data-status="doing"></div>
-          </div>
-
-          <div class="kanban-column" data-status="review">
-            <div class="column-header">
-              <span class="column-dot review"></span>
-              <span class="column-title">Em Revisão</span>
-              <span class="column-count" id="count-review">0</span>
-              <button class="column-add-btn" onclick="openTaskModal('review')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
-            </div>
-            <div class="column-cards" id="col-review" data-status="review"></div>
-          </div>
-
-          <div class="kanban-column" data-status="done">
-            <div class="column-header">
-              <span class="column-dot done"></span>
-              <span class="column-title">Concluído</span>
-              <span class="column-count" id="count-done">0</span>
-              <button class="column-add-btn" onclick="openTaskModal('done')" aria-label="Adicionar tarefa"><i class="fas fa-plus"></i></button>
-            </div>
-            <div class="column-cards" id="col-done" data-status="done"></div>
+        <!-- PAINEL: TAREFAS ADMINISTRATIVAS (oculto por padrão) -->
+        <div class="view-panel" id="panel-tasks">
+          <div style="padding: 40px 0; text-align: center; color: var(--text-muted);">
+            <i class="fas fa-chevron-left" style="font-size: 32px; display: block; margin-bottom: 12px; opacity: 0.4;"></i>
+            <p style="font-size: 15px; max-width: 400px; margin: 0 auto;">
+              Este painel exibe tarefas administrativas e de suporte.<br>
+              <span style="font-size: 13px; opacity: 0.7;">Alternar para o painel de Produção para ver OPs do chão de fábrica.</span>
+            </p>
           </div>
         </div>
       </main>
@@ -650,25 +786,25 @@
     <div class="modal-overlay" id="taskModal">
       <div class="modal">
         <button class="modal-close" onclick="closeTaskModal()" aria-label="Fechar"><i class="fas fa-xmark"></i></button>
-        <div class="modal-title"><i class="fas fa-table-columns"></i> <span id="modalTitle">Nova Tarefa</span></div>
-        <div class="modal-subtitle">Preencha os dados para registrar uma nova atividade no quadro.</div>
+        <div class="modal-title"><i class="fas fa-table-columns"></i> <span id="modalTitle">Nova Ordem de Produção</span></div>
+        <div class="modal-subtitle">Preencha os dados para registrar uma nova OP no quadro.</div>
 
         <form id="taskForm" onsubmit="event.preventDefault(); saveTask();">
           <input type="hidden" id="taskId" />
           <div class="form-grid">
             <div class="form-group full">
-              <label class="form-label">Título <span class="req">*</span></label>
-              <input class="form-input" type="text" id="taskTitle" placeholder="Ex: Conferir estoque do depósito" maxlength="120" />
-              <div class="form-error" id="err-title">Informe o título da tarefa.</div>
+              <label class="form-label">Produto / Item <span class="req">*</span></label>
+              <input class="form-input" type="text" id="taskTitle" placeholder="Ex: Flange Aço ABNT 1020 ø50mm" maxlength="120" />
+              <div class="form-error" id="err-title">Informe o produto/item da OP.</div>
             </div>
             <div class="form-group full">
-              <label class="form-label">Descrição</label>
-              <textarea class="form-textarea" id="taskDesc" placeholder="Detalhes adicionais sobre a tarefa..."></textarea>
+              <label class="form-label">Descrição / Especificações</label>
+              <textarea class="form-textarea" id="taskDesc" placeholder="Detalhes técnicos, roteiro, observações..."></textarea>
             </div>
             <div class="form-group">
-              <label class="form-label">Responsável <span class="req">*</span></label>
+              <label class="form-label">Operador Responsável <span class="req">*</span></label>
               <select class="form-select" id="taskResponsible"><option value="">Selecione...</option></select>
-              <div class="form-error" id="err-responsible">Selecione um responsável.</div>
+              <div class="form-error" id="err-responsible">Selecione um operador.</div>
             </div>
             <div class="form-group">
               <label class="form-label">Prioridade <span class="req">*</span></label>
@@ -689,22 +825,22 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Data de Entrega</label>
+              <label class="form-label">Data Limite</label>
               <input class="form-input" type="date" id="taskDueDate" />
             </div>
             <div class="form-group full">
               <label class="form-label">Status</label>
               <select class="form-select" id="taskStatus">
-                <option value="todo">A Fazer</option>
-                <option value="doing">Em Andamento</option>
-                <option value="review">Em Revisão</option>
-                <option value="done">Concluído</option>
+                <option value="todo">Planejamento</option>
+                <option value="doing">Em Produção</option>
+                <option value="review">Controle QA</option>
+                <option value="done">Pronto / Expedição</option>
               </select>
             </div>
           </div>
           <div class="modal-actions">
             <button type="button" class="btn secondary" onclick="closeTaskModal()">Cancelar</button>
-            <button type="submit" class="btn primary"><i class="fas fa-check"></i> <span id="modalSaveText">Salvar Tarefa</span></button>
+            <button type="submit" class="btn primary"><i class="fas fa-check"></i> <span id="modalSaveText">Salvar OP</span></button>
           </div>
         </form>
       </div>
@@ -722,35 +858,40 @@
 
     <script>
       /* =========================================================
-         StockLog — Kanban (lógica do quadro)
+         StockLog — Kanban (lógica do quadro) - VERSÃO PCP
          ========================================================= */
-      const STORAGE_KEY = "stocklog_kanban_v1";
-      const USERS_KEY = "stocklog_kanban_users_v1";
+      const STORAGE_KEY = "stocklog_kanban_v2";
+      const USERS_KEY = "stocklog_kanban_users_v2";
+      const WIP_LIMITS = {
+        todo: 5,
+        doing: 3,
+        review: 2,
+        done: 10
+      };
 
-      const STATUS_LABELS = { todo: "A Fazer", doing: "Em Andamento", review: "Em Revisão", done: "Concluído" };
+      const STATUS_LABELS = { todo: "Planejamento", doing: "Em Produção", review: "Controle QA", done: "Pronto / Expedição" };
 
-      const DEFAULT_USERS = ["Maria Silva", "João Santos", "Pedro Costa", "Ana Oliveira", "Carlos Lima", "Fernanda Rocha", "Rafael Mendes"];
+      const DEFAULT_USERS = ["Maria Silva", "João Santos", "Pedro Costa", "Ana Oliveira", "Carlos Lima", "Fernanda Rocha", "Rafael Mendes", "Gustavo Almeida", "Ricardo Badeca"];
 
       const DEFAULT_TASKS = [
-        { id: "t1", title: "Conferir estoque do depósito central", desc: "Realizar contagem física e validar com sistema.", responsible: "Maria Silva", priority: "alta", category: "Estoque", dueDate: "2026-08-22", status: "doing" },
-        { id: "t2", title: "Atualizar entrada de mercadorias", desc: "Lançar NF-e 4521, 4522 e 4523 no sistema.", responsible: "João Santos", priority: "media", category: "Estoque", dueDate: "2026-08-21", status: "todo" },
-        { id: "t3", title: "Conferir pedidos pendentes", desc: "Validar status de 14 pedidos em aberto na transportadora.", responsible: "Carlos Lima", priority: "alta", category: "Logística", dueDate: "2026-08-20", status: "todo" },
-        { id: "t4", title: "Organizar rota de entrega - Zona Sul", desc: "Sequenciar 8 entregas por CEP e prazo.", responsible: "Rafael Mendes", priority: "media", category: "Transporte", dueDate: "2026-08-23", status: "doing" },
-        { id: "t5", title: "Verificar produtos com estoque baixo", desc: "Parafuso M8, Luva Nitrílica e Chapa Inox 304.", responsible: "Ana Oliveira", priority: "alta", category: "Estoque", dueDate: "2026-08-20", status: "review" },
-        { id: "t6", title: "Atualizar cadastro de fornecedor", desc: "Inox do Brasil — novo contato comercial.", responsible: "Fernanda Rocha", priority: "baixa", category: "Compras", dueDate: "2026-08-25", status: "todo" },
-        { id: "t7", title: "Conferir movimentações de estoque", desc: "Auditoria semanal — entradas e saídas.", responsible: "Maria Silva", priority: "media", category: "Estoque", dueDate: "2026-08-19", status: "done" },
-        { id: "t8", title: "Emitir ordem de compra - Fixadores", desc: "Solicitar 5.000 parafusos M8 zincados.", responsible: "Pedro Costa", priority: "media", category: "Compras", dueDate: "2026-08-24", status: "todo" },
-        { id: "t9", title: "Analisar ruptura de estoque", desc: "Levantar itens críticos para reunião semanal.", responsible: "Carlos Lima", priority: "alta", category: "Estoque", dueDate: "2026-08-21", status: "review" },
-        { id: "t10", title: "Processar devoluções - Cliente XPTO", desc: "3 volumes retornados por avaria. Registrar NF.", responsible: "Ana Oliveira", priority: "baixa", category: "Logística", dueDate: "2026-08-26", status: "todo" },
-        { id: "t11", title: "Atualizar tabela de frete", desc: "Revisão trimestral com transportadoras parceiras.", responsible: "Rafael Mendes", priority: "baixa", category: "Financeiro", dueDate: "2026-08-30", status: "todo" },
-        { id: "t12", title: "Treinamento de equipe - WMS", desc: "Capacitar 4 operadores no novo sistema.", responsible: "Fernanda Rocha", priority: "media", category: "Logística", dueDate: "2026-08-27", status: "doing" }
+        { id: "t1", title: "Flange Aço ABNT 1020 ø50mm", desc: "Roteiro: Corte → Usinagem → Furação → Controle QA. Lote: 500 unid.", responsible: "Gustavo Almeida", priority: "alta", category: "Estoque", dueDate: "2026-08-24", status: "doing" },
+        { id: "t2", title: "Eixo Vazado 420mm", desc: "Roteiro: Torneamento → Fresamento → Retífica. Lote: 120 unid.", responsible: "Ana Oliveira", priority: "media", category: "Estoque", dueDate: "2026-08-26", status: "todo" },
+        { id: "t3", title: "Suporte Estrutural - Conjunto Soldado", desc: "Roteiro: Corte → Caldeiraria → Solda → Pintura. Lote: 80 unid.", responsible: "Ricardo Badeca", priority: "alta", category: "Logística", dueDate: "2026-08-22", status: "todo" },
+        { id: "t4", title: "Placa Base Usinada 300x300mm", desc: "Roteiro: Fresamento → Furação → Acabamento. Lote: 200 unid.", responsible: "Carlos Lima", priority: "media", category: "Transporte", dueDate: "2026-08-28", status: "doing" },
+        { id: "t5", title: "Conjunto de Mancais", desc: "Roteiro: Usinagem → Montagem → Controle QA. Lote: 45 unid.", responsible: "João Santos", priority: "alta", category: "Estoque", dueDate: "2026-08-21", status: "review" },
+        { id: "t6", title: "Chapa Perfurada 2mm", desc: "Roteiro: Corte → Furação → Acabamento. Lote: 1.000 unid.", responsible: "Fernanda Rocha", priority: "baixa", category: "Compras", dueDate: "2026-08-30", status: "todo" },
+        { id: "t7", title: "Anel de Vedação 200mm", desc: "Roteiro: Usinagem → Controle Dimensional. Lote: 300 unid.", responsible: "Maria Silva", priority: "media", category: "Estoque", dueDate: "2026-08-19", status: "done" },
+        { id: "t8", title: "Parafuso M8 Zincado", desc: "Roteiro: Forjamento → Rosqueamento → Tratamento Térmico. Lote: 5.000 unid.", responsible: "Pedro Costa", priority: "media", category: "Compras", dueDate: "2026-08-25", status: "todo" },
+        { id: "t9", title: "Carcaca Bomba Hidráulica", desc: "Roteiro: Fundição → Usinagem → Controle QA. Lote: 25 unid.", responsible: "Rafael Mendes", priority: "alta", category: "Estoque", dueDate: "2026-08-20", status: "review" },
+        { id: "t10", title: "Eixo Estriado 450mm", desc: "Roteiro: Torneamento → Fresamento de Estrias → Retífica. Lote: 60 unid.", responsible: "Gustavo Almeida", priority: "baixa", category: "Logística", dueDate: "2026-08-27", status: "todo" }
       ];
 
       let state = {
         tasks: [],
         users: [],
         filters: { search: "", priority: "", responsible: "", category: "", status: "" },
-        currentDragId: null
+        currentDragId: null,
+        currentView: "production"
       };
 
       function loadState() {
@@ -780,16 +921,32 @@
         render();
         showToast("Filtros limpos.", "info");
       }
+
+      // Event listeners dos filtros
       document.getElementById("searchInput").addEventListener("input", (e) => { state.filters.search = e.target.value.toLowerCase(); render(); });
       document.getElementById("filterPriority").addEventListener("change", (e) => { state.filters.priority = e.target.value; render(); });
       document.getElementById("filterResponsible").addEventListener("change", (e) => { state.filters.responsible = e.target.value; render(); });
       document.getElementById("filterCategory").addEventListener("change", (e) => { state.filters.category = e.target.value; render(); });
       document.getElementById("filterStatus").addEventListener("change", (e) => { state.filters.status = e.target.value; render(); });
 
+      // Tabs de visualização
+      document.querySelectorAll(".view-tab").forEach((tab) => {
+        tab.addEventListener("click", function() {
+          document.querySelectorAll(".view-tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
+          this.classList.add("active");
+          this.setAttribute("aria-selected", "true");
+          const view = this.dataset.view;
+          state.currentView = view;
+          document.querySelectorAll(".view-panel").forEach((p) => p.classList.remove("active"));
+          document.getElementById("panel-" + view).classList.add("active");
+          if (view === "production") render();
+        });
+      });
+
       function populateSelects() {
         const resp = document.getElementById("filterResponsible");
         const taskResp = document.getElementById("taskResponsible");
-        resp.innerHTML = '<option value="">Todos Responsáveis</option>';
+        resp.innerHTML = '<option value="">Todos Operadores</option>';
         taskResp.innerHTML = '<option value="">Selecione...</option>';
         state.users.forEach((u) => {
           resp.insertAdjacentHTML("beforeend", `<option value="${u}">${u}</option>`);
@@ -805,8 +962,8 @@
         const high = state.tasks.filter((t) => t.priority === "alta" && t.status !== "done").length;
 
         const stats = [
-          { label: "Total de Tarefas", value: total, icon: "fa-table-columns", cls: "c-blue" },
-          { label: "Em Andamento", value: doing, icon: "fa-circle-play", cls: "c-blue" },
+          { label: "Total de OPs", value: total, icon: "fa-table-columns", cls: "c-blue" },
+          { label: "Em Produção", value: doing, icon: "fa-circle-play", cls: "c-blue" },
           { label: "Em Atraso", value: overdue, icon: "fa-triangle-exclamation", cls: "c-red" },
           { label: "Concluídas", value: done, icon: "fa-circle-check", cls: "c-green" },
           { label: "Prioridade Alta", value: high, icon: "fa-fire", cls: "c-amber" }
@@ -830,11 +987,13 @@
         const due = new Date(task.dueDate + "T00:00:00");
         return due < today;
       }
+      
       function formatDateBR(dateStr) {
         if (!dateStr) return "";
         const [y, m, d] = dateStr.split("-");
         return `${d}/${m}`;
       }
+      
       function daysUntil(dateStr) {
         if (!dateStr) return null;
         const today = new Date();
@@ -842,10 +1001,12 @@
         const due = new Date(dateStr + "T00:00:00");
         return Math.ceil((due - today) / (1000 * 60 * 60 * 24));
       }
+      
       function getInitials(name) {
         if (!name) return "?";
         return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
       }
+      
       function escapeHtml(str) {
         if (str == null) return "";
         return String(str).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
@@ -880,6 +1041,13 @@
         const catSlug = task.category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "");
         const catClass = "tag-cat-" + catSlug;
 
+        // Progresso simulado com base no status
+        let progress = 0;
+        if (task.status === "todo") progress = 25;
+        else if (task.status === "doing") progress = 55;
+        else if (task.status === "review") progress = 85;
+        else if (task.status === "done") progress = 100;
+
         return `
           <div class="kanban-card priority-${task.priority} ${overdue ? "overdue" : ""}" draggable="true" data-id="${task.id}">
             <div class="card-top">
@@ -893,6 +1061,15 @@
             </div>
             <div class="card-title">${escapeHtml(task.title)}</div>
             ${task.desc ? `<div class="card-desc">${escapeHtml(task.desc)}</div>` : ""}
+            
+            <!-- Barra de progresso -->
+            <div class="card-progress">
+              <span class="progress-track">
+                <span class="progress-fill" style="width: ${progress}%;"></span>
+              </span>
+              <span class="progress-text">${progress}%</span>
+            </div>
+            
             <div class="card-tags">
               <span class="tag tag-priority-${task.priority}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
               <span class="tag ${catClass}">${escapeHtml(task.category)}</span>
@@ -907,20 +1084,36 @@
       function renderColumn(status) {
         const col = document.getElementById("col-" + status);
         const filtered = applyFilters(state.tasks.filter((t) => t.status === status));
+        const count = filtered.length;
+        const wipLimit = WIP_LIMITS[status] || 10;
+        const isAtLimit = count >= wipLimit;
+        const isExceeded = count > wipLimit;
+
+        // Atualiza o contador com WIP Limit
+        const countEl = document.getElementById("count-" + status);
+        countEl.textContent = `${count}/${wipLimit}`;
+        countEl.className = "column-count";
+        if (isExceeded) {
+          countEl.classList.add("wip-exceed");
+        } else if (isAtLimit) {
+          countEl.classList.add("wip-limit");
+        }
+
         if (filtered.length === 0) {
           const hasFilters = state.filters.search || state.filters.priority || state.filters.category || state.filters.responsible || state.filters.status;
-          col.innerHTML = `<div class="column-empty">Nenhuma tarefa<br>${hasFilters ? "com os filtros aplicados" : "aqui ainda"}</div>`;
+          col.innerHTML = `<div class="column-empty">Nenhuma OP<br>${hasFilters ? "com os filtros aplicados" : "aqui ainda"}</div>`;
         } else {
           col.innerHTML = filtered.map(renderCard).join("");
         }
-        document.getElementById("count-" + status).textContent = filtered.length;
         attachDragEvents(col);
       }
 
       function render() {
-        renderStats();
-        ["todo", "doing", "review", "done"].forEach(renderColumn);
-        populateSelects();
+        if (state.currentView === "production") {
+          renderStats();
+          ["todo", "doing", "review", "done"].forEach(renderColumn);
+          populateSelects();
+        }
       }
 
       function attachDragEvents(col) {
@@ -957,6 +1150,15 @@
           if (!task) return;
           const newStatus = col.dataset.status;
           if (task.status === newStatus) return;
+          
+          // Verifica WIP Limit
+          const wipLimit = WIP_LIMITS[newStatus] || 10;
+          const targetCount = state.tasks.filter((t) => t.status === newStatus).length;
+          if (targetCount >= wipLimit && newStatus !== "done") {
+            showToast(`⚠️ Limite WIP excedido: ${STATUS_LABELS[newStatus]} (${targetCount}/${wipLimit})`, "warning");
+            return;
+          }
+          
           const oldLabel = STATUS_LABELS[task.status];
           const newLabel = STATUS_LABELS[newStatus];
           task.status = newStatus;
@@ -979,8 +1181,8 @@
         document.getElementById("taskId").value = "";
         document.getElementById("taskStatus").value = status;
         document.getElementById("taskPriority").value = "media";
-        document.getElementById("modalTitle").textContent = "Nova Tarefa";
-        document.getElementById("modalSaveText").textContent = "Salvar Tarefa";
+        document.getElementById("modalTitle").textContent = "Nova Ordem de Produção";
+        document.getElementById("modalSaveText").textContent = "Salvar OP";
         document.querySelectorAll(".form-error").forEach((e) => e.classList.remove("show"));
         populateSelects();
         document.getElementById("taskModal").classList.add("open");
@@ -998,8 +1200,8 @@
         document.getElementById("taskCategory").value = task.category;
         document.getElementById("taskDueDate").value = task.dueDate || "";
         document.getElementById("taskStatus").value = task.status;
-        document.getElementById("modalTitle").textContent = "Editar Tarefa";
-        document.getElementById("modalSaveText").textContent = "Atualizar Tarefa";
+        document.getElementById("modalTitle").textContent = "Editar OP";
+        document.getElementById("modalSaveText").textContent = "Atualizar OP";
         document.querySelectorAll(".form-error").forEach((e) => e.classList.remove("show"));
         document.getElementById("taskModal").classList.add("open");
       }
@@ -1028,13 +1230,13 @@
           const task = state.tasks.find((t) => t.id === id);
           if (task) {
             Object.assign(task, { title, desc, responsible, priority, category, dueDate, status });
-            showToast("Tarefa atualizada.", "success");
+            showToast("OP atualizada.", "success");
           }
         } else {
           const newId = "t" + Date.now().toString(36);
           state.tasks.push({ id: newId, title, desc, responsible, priority, category, dueDate, status });
           if (!state.users.includes(responsible)) { state.users.push(responsible); saveUsers(); }
-          showToast("Tarefa criada no quadro.", "success");
+          showToast("OP criada no quadro.", "success");
         }
         saveState();
         closeTaskModal();
@@ -1044,11 +1246,11 @@
       function deleteTask(id) {
         const task = state.tasks.find((t) => t.id === id);
         if (!task) return;
-        if (!confirm(`Excluir a tarefa "${task.title}"?`)) return;
+        if (!confirm(`Excluir a OP "${task.title}"?`)) return;
         state.tasks = state.tasks.filter((t) => t.id !== id);
         saveState();
         render();
-        showToast("Tarefa excluída.", "warning");
+        showToast("OP excluída.", "warning");
       }
 
       function duplicateTask(id) {
@@ -1058,15 +1260,7 @@
         state.tasks.push({ ...task, id: newId, title: task.title + " (cópia)", status: "todo" });
         saveState();
         render();
-        showToast("Tarefa duplicada.", "info");
-      }
-
-      function toggleColumn(btn) {
-        if (window.innerWidth > 900) return;
-        const col = btn.closest(".kanban-column");
-        col.classList.toggle("collapsed");
-        const icon = btn.querySelector("i");
-        icon.className = col.classList.contains("collapsed") ? "fas fa-chevron-down" : "fas fa-chevron-up";
+        showToast("OP duplicada.", "info");
       }
 
       function showToast(message, type = "info") {
