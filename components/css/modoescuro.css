@@ -1,9 +1,10 @@
 /* ================================================================
    COMPONENTE: MODO ESCURO (StockLog)
-   Estilo do botão de alternância de tema. Serve tanto para o botão
-   flutuante criado automaticamente pelo modoescuro.js quanto para
-   um #themeToggleBtn que já exista dentro do header.
+   Estilo do botão de alternância de tema no header.
    ================================================================ */
+
+/* O botão já está estilizado no header.css como .header-btn */
+/* Apenas garantimos que o ícone mude corretamente */
 
 .theme-toggle-btn {
   display: flex;
@@ -20,25 +21,238 @@
   transition: 0.2s;
   flex-shrink: 0;
 }
+
 .theme-toggle-btn:hover {
   background: var(--primary-light);
   border-color: var(--primary);
   color: var(--primary);
 }
+
 .theme-toggle-btn i {
   pointer-events: none;
 }
 
-/* Botão flutuante — usado somente quando a página não tem
-   #themeToggleBtn dentro do header. */
-.theme-toggle-floating {
-  position: fixed;
-  right: 22px;
-  bottom: 22px;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-hover);
-  z-index: 400;
+/* ================================================================
+   VARIÁVEIS DO MODO ESCURO (já definidas no index.html)
+   ================================================================ */
+body.dark {
+  --bg-body: #0d1727;
+  --bg-card: #14243e;
+  --bg-soft: #0f1f30;
+  --border: #1d344b;
+  --border-hover: #2a4866;
+
+  --text-main: #e2edf8;
+  --text-secondary: #a5bed6;
+  --text-muted: #6f8daa;
+
+  --primary-light: #1d3a55;
+
+  --green-bg: #123a2a;
+  --amber-bg: #3a2f15;
+  --orange-bg: #3a2413;
+  --red-bg: #3a1f1f;
+  --blue-bg: #16263f;
+  --purple-bg: #2a1f3d;
+
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================================
+   ESTILOS ADICIONAIS PARA O MODO ESCURO
+   ================================================================ */
+body.dark .sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .sidebar-item.active {
+  background: rgba(0, 107, 179, 0.25);
+}
+
+body.dark .action-btn {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .action-btn:hover {
+  background: rgba(0, 107, 179, 0.25);
+}
+
+body.dark .filter-btn {
+  background: var(--primary-dark);
+}
+
+body.dark .filter-btn:hover {
+  background: var(--primary);
+}
+
+body.dark .search-input,
+body.dark .filter-select {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .search-input:focus,
+body.dark .filter-select:focus {
+  box-shadow: 0 0 0 3px rgba(0, 107, 179, 0.3);
+}
+
+body.dark .status-badge {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .kpi-spark rect,
+body.dark .kpi-spark polyline {
+  opacity: 0.7;
+}
+
+body.dark .alert-tag {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .chart-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .badge-soft {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .op-status-item {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .logbot-panel {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.dark .colaboradores-stats {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.dark .count-badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+body.dark .sidebar-footer .user-info .avatar {
+  background: rgba(0, 107, 179, 0.3);
+}
+
+body.dark .header-right .user-badge .avatar-sm {
+  background: rgba(0, 107, 179, 0.3);
+}
+
+body.dark .trend-up {
+  background: rgba(26, 123, 114, 0.3);
+}
+
+body.dark .trend-warn {
+  background: rgba(196, 122, 31, 0.3);
+}
+
+body.dark .trend-down {
+  background: rgba(178, 67, 58, 0.3);
+}
+
+body.dark .theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark .theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+}
+
+/* Header no modo escuro */
+body.dark .header {
+  background: #14293e;
+  border-color: #1d344b;
+}
+
+body.dark .header-title {
+  color: #e2edf8;
+}
+
+body.dark .header-search {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #1d344b;
+}
+
+body.dark .header-search input {
+  color: #e2edf8;
+}
+
+body.dark .header-search input::placeholder {
+  color: #6f8daa;
+}
+
+body.dark .header-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #1d344b;
+  color: #a5bed6;
+}
+
+body.dark .header-btn:hover {
+  background: rgba(0, 107, 179, 0.25);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+body.dark .user-profile {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #1d344b;
+  color: #a5bed6;
+}
+
+body.dark .user-profile:hover {
+  background: rgba(0, 107, 179, 0.25);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+body.dark .user-avatar-wrapper {
+  background: rgba(0, 107, 179, 0.3);
+}
+
+body.dark .notif-dropdown {
+  background: #14243e;
+  border-color: #1d344b;
+}
+
+body.dark .notif-dropdown-header {
+  background: #0f1f30;
+  border-color: #1d344b;
+}
+
+body.dark .notif-item-sm {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.dark .notif-item-sm.unread {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #1d344b;
+}
+
+body.dark .notif-title-sm {
+  color: #e2edf8;
+}
+
+body.dark .notif-desc-sm {
+  color: #a5bed6;
+}
+
+body.dark .notif-time-sm {
+  color: #6f8daa;
+}
+
+/* Footer no modo escuro */
+body.dark .footer {
+  background: #14293e;
+  border-color: #1d344b;
+  color: #6f8daa;
+}
+
+body.dark .footer .version i {
+  color: var(--primary);
 }

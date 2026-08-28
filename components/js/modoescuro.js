@@ -1,29 +1,7 @@
 /* ================================================================
    COMPONENTE: MODO ESCURO (StockLog)
    Alterna entre tema claro/escuro adicionando/removendo a classe
-   "dark" no <body>. As variáveis de cor de cada tema já existem
-   no <style> do index.html (:root e body.dark).
-
-   Como usar
-   ---------
-   1) Inclua o CSS no <head>, junto dos outros componentes:
-        <link rel="stylesheet" href="components/css/modoescuro.css" />
-
-   2) Inclua este script no fim do <body>, depois de sidebar.js:
-        <script src="components/js/modoescuro.js"></script>
-
-   3) Por padrão o componente cria um botão flutuante (canto
-      inferior direito) para alternar o tema. Se preferir o botão
-      dentro do header, basta criar, dentro do components/js/header.js,
-      um elemento:
-        <button id="themeToggleBtn"></button>
-      O modoescuro.js detecta esse elemento automaticamente e passa
-      a usá-lo no lugar do botão flutuante (não cria os dois).
-
-   4) A escolha do usuário fica salva em localStorage e é reaplicada
-      nas próximas visitas. Enquanto ele não escolher manualmente,
-      o tema segue a preferência do sistema operacional
-      (prefers-color-scheme) e acompanha mudanças em tempo real.
+   "dark" no <body>. Usa o botão #themeToggleBtn do header.
    ================================================================ */
 (function () {
   "use strict";
@@ -43,7 +21,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch (e) {
-      /* localStorage indisponível (ex.: navegação privada) — segue sem salvar */
+      /* localStorage indisponível */
     }
   }
 
@@ -64,7 +42,7 @@
     btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
     btn.setAttribute(
       "aria-label",
-      theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro",
+      theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"
     );
     var icon = btn.querySelector("i");
     if (icon) {
@@ -72,44 +50,32 @@
     }
   }
 
-  function createFloatingButton() {
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.id = "themeToggleBtn";
-    btn.className = "theme-toggle-btn theme-toggle-floating";
-    btn.title = "Alternar tema";
-    btn.innerHTML = '<i class="fas fa-moon"></i>';
-    document.body.appendChild(btn);
-    return btn;
-  }
-
   function init() {
+    // Procura o botão criado pelo header.js
     var btn = document.getElementById("themeToggleBtn");
-    if (btn) {
-      // Botão já existe na página (ex.: dentro do header) — só garante a marcação.
-      btn.classList.add("theme-toggle-btn");
-      if (!btn.querySelector("i")) {
-        btn.innerHTML = '<i class="fas fa-moon"></i>';
-      }
-    } else {
-      btn = createFloatingButton();
-    }
+
+    // Se não encontrar, NÃO cria botão flutuante (usa o do header)
+    // Isso evita duplicação
 
     var theme = getInitialTheme();
     applyTheme(theme, btn);
 
-    btn.addEventListener("click", function () {
-      theme = document.body.classList.contains("dark") ? "light" : "dark";
-      applyTheme(theme, btn);
-      saveTheme(theme);
-    });
+    if (btn) {
+      btn.addEventListener("click", function () {
+        theme = document.body.classList.contains("dark") ? "light" : "dark";
+        applyTheme(theme, btn);
+        saveTheme(theme);
+      });
+    } else {
+      console.warn("⚠️ Botão de tema (#themeToggleBtn) não encontrado no header.");
+    }
 
-    // Enquanto o usuário não escolher manualmente, acompanha o SO em tempo real.
+    // Acompanha preferência do sistema (se o usuário nunca escolheu manualmente)
     if (window.matchMedia) {
       window
         .matchMedia("(prefers-color-scheme: dark)")
         .addEventListener("change", function (e) {
-          if (getSavedTheme()) return; // já escolheu manualmente, não sobrescreve
+          if (getSavedTheme()) return; // já escolheu manualmente
           applyTheme(e.matches ? "dark" : "light", btn);
         });
     }
