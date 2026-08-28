@@ -16,7 +16,6 @@
     />
     <link rel="stylesheet" href="components/css/sidebar.css" />
     <link rel="stylesheet" href="components/css/header.css" />
-    <link rel="stylesheet" href="components/css/chat.css" />
     <link rel="stylesheet" href="components/css/footer.css" />
     <link rel="stylesheet" href="components/css/modoescuro.css" />
     <link rel="stylesheet" href="components/css/responsive.css" />
@@ -151,20 +150,6 @@
         margin-top: 4px;
         margin-left: 50px;
       }
-      .page-head .head-info {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 16px;
-        font-size: 13px;
-        color: var(--text-secondary);
-        box-shadow: var(--shadow-card);
-      }
-      .page-head .head-info i { color: var(--primary); }
-      .page-head .head-info strong { color: var(--text-main); font-weight: 600; }
 
       /* ============ BOTÕES GERAIS ============ */
       .btn {
@@ -1084,17 +1069,7 @@
 
       <main class="content" role="main">
 
-        <!-- Cabeçalho da página -->
-        <div class="page-head">
-          <div>
-            <h1></h1>
-            <p></p>
-          </div>
-          <div class="head-info">
-            <i class="fa-regular fa-calendar"></i>
-            <span> <strong id="dataHoje"></strong></span>
-          </div>
-        </div>
+  
 
         <!-- Estatísticas / Indicadores -->
         <div class="log-stats" id="log-stats"></div>
@@ -1125,10 +1100,10 @@
         <div class="log-section-head">
           <div>
             <div class="title">
-           
-           
+              <i class="fa-solid fa-arrow-right-arrow-left"></i>
+              Fluxo de expedição
             </div>
-           
+          
           </div>
         </div>
         <div class="log-kanban" id="log-kanban"></div>
@@ -1143,7 +1118,7 @@
                   <i class="fa-solid fa-truck-fast"></i>
                   Frota & Motoristas
                 </div>
-                <div class="card-subtitle"></div>
+                
               </div>
               <div class="card-actions">
                 <span class="util-info">
@@ -1163,7 +1138,7 @@
                   <i class="fa-solid fa-bolt"></i>
                   Atividade recente
                 </div>
-                <div class="card-subtitle"></div>
+                <div class="card-subtitle">Últimas movimentações</div>
               </div>
             </div>
             <div class="activity-list" id="log-activity"></div>
@@ -1327,7 +1302,6 @@
     <!-- Scripts dos componentes -->
     <script src="components/js/header.js"></script>
     <script src="components/js/sidebar.js"></script>
-    <script src="components/js/chat.js"></script>
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
 
@@ -1438,16 +1412,10 @@
       }
 
       /* ============ HEADER DATA ============ */
-      function logRenderHeader() {
-        const d = new Date();
-        const meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
-        document.getElementById("dataHoje").textContent =
-          `${String(d.getDate()).padStart(2,"0")} ${meses[d.getMonth()]} ${d.getFullYear()}`;
-      }
+      // Removido - não exibe mais a data no cabeçalho
 
       /* ============ RENDER PRINCIPAL ============ */
       function logRender() {
-        logRenderHeader();
         logRenderStats();
         logRenderToolbar();
         logRenderKanban();
