@@ -21,62 +21,68 @@
     <link rel="stylesheet" href="components/css/responsive.css" />
     <style>
       /* ================================================================
-       TNo prazoENS / VARIÁVEIS
+       TONS / VARIÁVEIS
        ================================================================ */
       :root {
-  --bg-body: #f0f5fc;
-  --bg-card: #ffffff;
-  --bg-soft: #f5faff;
-  --border: #e2ecf6;
-  --border-hover: #c6daea;
+        --bg-body: #f0f5fc;
+        --bg-card: #ffffff;
+        --bg-soft: #f5faff;
+        --border: #e2ecf6;
+        --border-hover: #c6daea;
 
-  --primary: #006bb3;
-  --primary-dark: #004d80;
-  --primary-light: #e1eefb;
-  --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
+        --primary: #006bb3;
+        --primary-dark: #004d80;
+        --primary-light: #e1eefb;
+        --primary-gradient: linear-gradient(145deg, #0077be, #005a8c);
 
-  --text-main: #0a1f33;
-  --text-secondary: #3d5f7e;
-  --text-muted: #7b92b2; /* Corrigido */
+        --text-main: #0a1f33;
+        --text-secondary: #3d5f7e;
+        --text-muted: #7b92b2;
 
-  --shadow-card:
-    0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
-  --shadow-hover:
-    0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
+        --shadow-card:
+          0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
+        --shadow-hover:
+          0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
 
-  --green: #1a7b72; /* Corrigido */
-  --green-bg: #e0f2ea;
-  --amber: #c47a1f;
-  --amber-bg: #faecd6;
-  --red: #b2433a; /* Corrigido */
-  --red-bg: #fae2e0;
-  --purple: #6f4c4e; /* Corrigido */
-  --purple-bg: #ede6f5;
-}
+        --green: #1a7b72;
+        --green-bg: #e0f2ea;
+        --amber: #c47a1f;
+        --amber-bg: #faecd6;
+        --orange: #c15a1f;
+        --orange-bg: #fbe6d6;
+        --red: #b2433a;
+        --red-bg: #fae2e0;
+        --blue: #2d6bb0;
+        --blue-bg: #e2ecfa;
+        --purple: #6f4c4e;
+        --purple-bg: #ede6f5;
+      }
 
-body.dark {
-  --bg-body: #0d1727; /* Corrigido */
-  --bg-card: #14243e; /* Corrigido */
-  --bg-soft: #0f1f30;
-  --border: #1d344b;
-  --border-hover: #2a4866;
+      body.dark {
+        --bg-body: #0d1727;
+        --bg-card: #14243e;
+        --bg-soft: #0f1f30;
+        --border: #1d344b;
+        --border-hover: #2a4866;
 
-  --text-main: #e2edf8;
-  --text-secondary: #a5bed6;
-  --text-muted: #6f8daa;
+        --text-main: #e2edf8;
+        --text-secondary: #a5bed6;
+        --text-muted: #6f8daa;
 
-  --primary-light: #1d3a55;
+        --primary-light: #1d3a55;
 
-  --green-bg: #123a2a;
-  --amber-bg: #3a2f15;
-  --red-bg: #3a1f1f;
-  --purple-bg: #2a1f3d;
+        --green-bg: #123a2a;
+        --amber-bg: #3a2f15;
+        --orange-bg: #3a2413;
+        --red-bg: #3a1f1f;
+        --blue-bg: #16263f;
+        --purple-bg: #2a1f3d;
 
-  --shadow-card:
-    0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
-  --shadow-hover:
-    0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
-}
+        --shadow-card:
+          0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
+        --shadow-hover:
+          0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
+      }
       * {
         margin: 0;
         padding: 0;
@@ -127,7 +133,7 @@ body.dark {
         padding: 28px 32px 20px;
       }
 
-      /* KPI Cards */
+      /* ---------------- KPI Cards ---------------- */
       .kpi-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -159,6 +165,12 @@ body.dark {
         background: var(--primary-gradient);
         opacity: 0.6;
       }
+      .kpi-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
       .kpi-label {
         font-size: 12px;
         font-weight: 600;
@@ -180,10 +192,14 @@ body.dark {
         color: var(--text-main);
         line-height: 1.1;
       }
+      .kpi-spark {
+        flex-shrink: 0;
+        opacity: 0.9;
+      }
       .kpi-sub {
         font-size: 13px;
         color: var(--text-secondary);
-        margin-top: 8px;
+        margin-top: 10px;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -196,6 +212,9 @@ body.dark {
         border-radius: 20px;
         font-weight: 600;
         font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
       }
       .trend-warn {
         background: var(--amber-bg);
@@ -204,9 +223,12 @@ body.dark {
         border-radius: 20px;
         font-weight: 600;
         font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
       }
 
-      /* Row 2 */
+      /* ---------------- Row 2 ---------------- */
       .row-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -254,7 +276,7 @@ body.dark {
         border: 1px solid var(--border);
       }
 
-      /* Alertas */
+      /* ---------------- Alertas ---------------- */
       .alert-list {
         display: flex;
         flex-direction: column;
@@ -266,6 +288,7 @@ body.dark {
         align-items: center;
         border-bottom: 1px solid var(--border);
         padding-bottom: 14px;
+        gap: 12px;
       }
       .alert-item:last-child {
         border-bottom: 0;
@@ -298,33 +321,51 @@ body.dark {
         color: var(--text-secondary);
         white-space: nowrap;
         border: 1px solid var(--border);
+        flex-shrink: 0;
       }
       .alert-tag.critical {
         background: var(--red-bg);
         color: var(--red);
         border-color: var(--red);
       }
+      .alert-tag.high {
+        background: var(--orange-bg);
+        color: var(--orange);
+        border-color: var(--orange);
+      }
       .alert-tag.warning {
-        background: var(--amber-bg);
-        color: var(--amber);
-        border-color: var(--amber);
+        background: var(--orange-bg);
+        color: var(--orange);
+        border-color: var(--orange);
+      }
+      .alert-tag.info {
+        background: var(--blue-bg);
+        color: var(--blue);
+        border-color: var(--blue);
       }
 
-      /* Rotas */
+      /* ---------------- Setores ---------------- */
       .sector-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px 16px;
+        gap: 10px;
         margin-top: 4px;
       }
       .sector-item {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         font-size: 13.5px;
-        padding: 8px 12px;
-        background: var(--bg-soft);
-        border-radius: 8px;
+        padding: 10px 14px;
+        background: var(--bg-card);
+        border-radius: 10px;
         border: 1px solid var(--border);
+        box-shadow: 0 2px 6px rgba(0, 40, 80, 0.03);
+        transition: 0.2s;
+      }
+      .sector-item:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-1px);
       }
       .sector-name {
         color: var(--text-secondary);
@@ -333,6 +374,10 @@ body.dark {
       .sector-pct {
         font-weight: 700;
         color: var(--text-main);
+        background: var(--bg-soft);
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 12.5px;
       }
 
       .colaboradores-stats {
@@ -341,21 +386,43 @@ body.dark {
         margin: 18px 0 12px;
         background: var(--bg-soft);
         border-radius: 10px;
-        padding: 14px 8px;
+        padding: 16px 8px;
         border: 1px solid var(--border);
       }
       .stat-block {
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+      .stat-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .stat-icon.green {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .stat-icon.blue {
+        background: var(--blue-bg);
+        color: var(--blue);
       }
       .stat-block .num {
-        font-size: 26px;
+        font-size: 22px;
         font-weight: 700;
         color: var(--text-main);
       }
       .stat-block .label {
         font-size: 11px;
         color: var(--text-muted);
-        margin-top: 2px;
       }
 
       .progress-bars {
@@ -371,9 +438,9 @@ body.dark {
         overflow: hidden;
       }
       .progress-bar .fill {
-        height: 86%;
+        height: 100%;
         border-radius: 4px;
-        animation: growBar 0.24s ease forwards;
+        animation: growBar 0.4s ease forwards;
         transform-origin: left;
       }
       @keyframes growBar {
@@ -397,13 +464,13 @@ body.dark {
         background: var(--primary);
       }
 
-      /* Tabela */
+      /* ---------------- Tabela ---------------- */
       .table-wrapper {
         overflow-x: auto;
         margin-top: 6px;
       }
       table {
-        width: 86%;
+        width: 100%;
         border-collapse: collapse;
         font-size: 13.5px;
       }
@@ -425,17 +492,56 @@ body.dark {
       tr:last-child td {
         border-bottom: 0;
       }
+      tr {
+        transition: background 0.15s;
+      }
+      tbody tr:hover {
+        background: var(--bg-soft);
+      }
       .status-badge {
         background: var(--bg-soft);
         padding: 3px 14px;
         border-radius: 20px;
         font-size: 12px;
-        font-weight: 500;
+        font-weight: 600;
         color: var(--text-secondary);
         border: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      .status-badge.success {
+        background: var(--green-bg);
+        color: var(--green);
+        border-color: var(--green);
+      }
+      .status-badge.pending {
+        background: var(--amber-bg);
+        color: var(--amber);
+        border-color: var(--amber);
+      }
+      .status-badge.progress {
+        background: var(--blue-bg);
+        color: var(--blue);
+        border-color: var(--blue);
+      }
+      .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        transition: 0.2s;
+      }
+      .action-btn:hover {
+        color: var(--primary);
+        border-color: var(--primary);
+        background: var(--primary-light);
       }
 
-      /* Row 3 */
+      /* ---------------- Row 3 ---------------- */
       .row-3 {
         display: grid;
         grid-template-columns: 1fr 1.2fr;
@@ -468,7 +574,7 @@ body.dark {
         flex-shrink: 0;
       }
       .dot.planej {
-        background: #5824;
+        background: #7b5be0;
       }
       .dot.aguard {
         background: #e6b45c;
@@ -480,7 +586,7 @@ body.dark {
         background: var(--purple);
       }
       .dot.concl {
-        background: #2d7a;
+        background: #2d8a5f;
       }
       .dot.canc {
         background: var(--red);
@@ -535,6 +641,24 @@ body.dark {
         font-weight: 500;
       }
 
+      .op-footer {
+        margin-top: 14px;
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        font-size: 13px;
+        color: var(--text-secondary);
+        flex-wrap: wrap;
+      }
+      .op-footer span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .op-footer i {
+        color: var(--primary);
+      }
+
       /* ================================================================
        RESPONSIVIDADE (dashboard)
        ================================================================ */
@@ -558,7 +682,6 @@ body.dark {
           grid-template-columns: 1fr;
         }
 
-        /* Alertas logísticos: empilhar título e tag em vez de lado a lado */
         .alert-item {
           flex-direction: column;
           align-items: flex-start;
@@ -568,12 +691,10 @@ body.dark {
           gap: 10px;
         }
 
-        /* Cards da Produção por Setor: 1 coluna no mobile */
         .sector-grid {
           grid-template-columns: 1fr;
         }
 
-        /* Lista de status OP: quebra em linhas */
         .op-status-list {
           gap: 6px 8px;
         }
@@ -582,22 +703,19 @@ body.dark {
           padding: 4px 10px 4px 8px;
         }
 
-        /* Rodapé do card "Últimas OP": empilha linhas */
-        .row-3 .card > div[style*="justify-content: flex-end"] {
+        .op-footer {
           flex-direction: column;
           align-items: flex-start;
           gap: 8px;
         }
 
-        /* Tabela "Pedidos recentes" e "Últimas OP":
-           permite scroll horizontal dentro do card */
         .card .table-wrapper {
           margin-left: -16px;
           margin-right: -16px;
           width: calc(100% + 32px);
+          padding: 0 16px;
         }
 
-        /* Cabeçalho do card com wrap mais compacto */
         .card-header h3 {
           font-size: 14px;
         }
@@ -638,10 +756,24 @@ body.dark {
         <!-- KPIs -->
         <section class="kpi-grid">
           <div class="kpi-card">
-            <div class="kpi-label">
-              <i class="fas fa-file-alt"></i> Pedidos em aberto
+            <div class="kpi-top">
+              <div>
+                <div class="kpi-label">
+                  <i class="fas fa-file-alt"></i> Pedidos em aberto
+                </div>
+                <div class="kpi-value">42</div>
+              </div>
+              <svg class="kpi-spark" width="70" height="34" viewBox="0 0 70 34">
+                <polyline
+                  points="0,26 12,22 24,24 36,14 48,17 60,6 70,4"
+                  fill="none"
+                  stroke="var(--primary)"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </div>
-            <div class="kpi-value">42</div>
             <div class="kpi-sub">
               <span class="trend-up"
                 ><i class="fas fa-arrow-up"></i> 8 novos hoje</span
@@ -649,28 +781,69 @@ body.dark {
               12 em produção
             </div>
           </div>
+
           <div class="kpi-card">
-            <div class="kpi-label">
-              <i class="fas fa-check-circle"></i> Pedidos entregues
+            <div class="kpi-top">
+              <div>
+                <div class="kpi-label">
+                  <i class="fas fa-check-circle"></i> Pedidos entregues
+                </div>
+                <div class="kpi-value">86%</div>
+              </div>
+              <svg class="kpi-spark" width="70" height="34" viewBox="0 0 70 34">
+                <polyline
+                  points="0,20 12,24 24,18 36,20 48,10 60,14 70,7"
+                  fill="none"
+                  stroke="var(--green)"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </div>
-            <div class="kpi-value">86%</div>
             <div class="kpi-sub">
-              <span class="trend-up"><i class="fas fa-check"></i> No prazo</span> 4
-              vencidos
+              <span class="trend-up"><i class="fas fa-check"></i> No prazo</span>
+              4 vencidos
             </div>
           </div>
+
           <div class="kpi-card">
-            <div class="kpi-label">
-              <i class="fas fa-users"></i> Estoque baixo
+            <div class="kpi-top">
+              <div>
+                <div class="kpi-label">
+                  <i class="fas fa-box-open"></i> Estoque baixo
+                </div>
+                <div class="kpi-value">7</div>
+              </div>
+              <svg class="kpi-spark" width="70" height="34" viewBox="0 0 70 34">
+                <rect x="2" y="18" width="7" height="16" rx="2" fill="var(--amber)" opacity="0.85" />
+                <rect x="14" y="10" width="7" height="24" rx="2" fill="var(--amber)" opacity="0.85" />
+                <rect x="26" y="22" width="7" height="12" rx="2" fill="var(--amber)" opacity="0.85" />
+                <rect x="38" y="4" width="7" height="30" rx="2" fill="var(--amber)" opacity="0.85" />
+                <rect x="50" y="14" width="7" height="20" rx="2" fill="var(--amber)" opacity="0.85" />
+                <rect x="62" y="8" width="7" height="26" rx="2" fill="var(--amber)" opacity="0.85" />
+              </svg>
             </div>
-            <div class="kpi-value">7</div>
             <div class="kpi-sub">6 setores · 86% treinados</div>
           </div>
+
           <div class="kpi-card">
-            <div class="kpi-label">
-              <i class="fas fa-tasks"></i> Ordens de produção
+            <div class="kpi-top">
+              <div>
+                <div class="kpi-label">
+                  <i class="fas fa-tasks"></i> Ordens de produção
+                </div>
+                <div class="kpi-value">24</div>
+              </div>
+              <svg class="kpi-spark" width="70" height="34" viewBox="0 0 70 34">
+                <rect x="2" y="20" width="7" height="14" rx="2" fill="var(--primary)" opacity="0.85" />
+                <rect x="14" y="12" width="7" height="22" rx="2" fill="var(--primary)" opacity="0.85" />
+                <rect x="26" y="24" width="7" height="10" rx="2" fill="var(--primary)" opacity="0.85" />
+                <rect x="38" y="6" width="7" height="28" rx="2" fill="var(--primary)" opacity="0.85" />
+                <rect x="50" y="16" width="7" height="18" rx="2" fill="var(--primary)" opacity="0.85" />
+                <rect x="62" y="2" width="7" height="32" rx="2" fill="var(--primary)" opacity="0.85" />
+              </svg>
             </div>
-            <div class="kpi-value">24</div>
             <div class="kpi-sub">
               <span class="trend-warn"
                 ><i class="fas fa-arrow-up"></i> 5 iniciadas hoje</span
@@ -689,7 +862,7 @@ body.dark {
                 <i class="fas fa-clock" style="color: var(--red)"></i
                 >Alertas logísticos
               </h3>
-              <span class="badge-soft">5 alertas</span>
+              <span class="badge-soft">4 alertas</span>
             </div>
             <div class="alert-list">
               <div class="alert-item">
@@ -709,7 +882,9 @@ body.dark {
               </div>
               <div class="alert-item">
                 <div>
-                  <div class="alert-title">Pedido #1031 – Aguardando matéria-prima</div>
+                  <div class="alert-title">
+                    Pedido #1031 – Aguardando matéria-prima
+                  </div>
                   <div class="alert-meta">
                     <span
                       ><i class="fas fa-calendar-alt"></i>Venceu há 12
@@ -720,7 +895,7 @@ body.dark {
                     >
                   </div>
                 </div>
-                <span class="alert-tag critical">Crítico</span>
+                <span class="alert-tag high">Crítico</span>
               </div>
               <div class="alert-item">
                 <div>
@@ -738,15 +913,14 @@ body.dark {
                 style="border-bottom: 0; padding-bottom: 0"
               >
                 <div>
-                  <div class="alert-title">
-                    Entrega #1047 em rota
-                  </div>
+                  <div class="alert-title">Entrega #1047 em rota</div>
                   <div class="alert-meta">
-                    <span><i class="fas fa-edit"></i>Em revisão documental</span
-                    ><span>P&D · v03</span>
+                    <span
+                      ><i class="fas fa-truck"></i>Chegada prevista hoje</span
+                    ><span><i class="fas fa-route"></i>Rota 03</span>
                   </div>
                 </div>
-                <span class="alert-tag">Revisão</span>
+                <span class="alert-tag info">Revisão</span>
               </div>
             </div>
           </section>
@@ -785,14 +959,17 @@ body.dark {
             </div>
             <div class="colaboradores-stats">
               <div class="stat-block">
+                <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
                 <div class="num">7</div>
                 <div class="label">Pedidos</div>
               </div>
               <div class="stat-block">
+                <div class="stat-icon blue"><i class="fas fa-route"></i></div>
                 <div class="num">6</div>
                 <div class="label">Rotas</div>
               </div>
               <div class="stat-block">
+                <div class="stat-icon green"><i class="fas fa-percentage"></i></div>
                 <div class="num">86%</div>
                 <div class="label">Entregues</div>
               </div>
@@ -823,7 +1000,7 @@ body.dark {
         <!-- Pedidos recentes -->
         <section class="card" style="margin-bottom: 28px">
           <div class="card-header">
-            <h3><i class="fas fa-graduation-cap"></i>Pedidos recentes</h3>
+            <h3><i class="fas fa-receipt"></i>Pedidos recentes</h3>
             <span class="badge-soft">3 registros</span>
           </div>
           <div class="table-wrapper">
@@ -831,11 +1008,12 @@ body.dark {
               <thead>
                 <tr>
                   <th>Colaborador</th>
-                  <th>POP</th>
+                  <th>PDP</th>
                   <th>Setor</th>
                   <th>Data</th>
                   <th>Status</th>
                   <th>Evidência</th>
+                  <th>Ação</th>
                 </tr>
               </thead>
               <tbody>
@@ -844,12 +1022,17 @@ body.dark {
                   <td>MN 003</td>
                   <td>Geral</td>
                   <td>15/05/2026</td>
-                  <td><span class="status-badge">Concluído</span></td>
+                  <td><span class="status-badge success">Concluído</span></td>
                   <td>
                     <i
                       class="fas fa-check-circle"
                       style="color: var(--green)"
                     ></i>
+                  </td>
+                  <td>
+                    <button class="action-btn" title="Ver pedido">
+                      <i class="fas fa-eye"></i>
+                    </button>
                   </td>
                 </tr>
                 <tr>
@@ -857,9 +1040,14 @@ body.dark {
                   <td>GQ 001</td>
                   <td>Produção</td>
                   <td>15/05/2026</td>
-                  <td><span class="status-badge">Pendente</span></td>
+                  <td><span class="status-badge pending">Pendente</span></td>
                   <td>
                     <i class="fas fa-clock" style="color: var(--amber)"></i>
+                  </td>
+                  <td>
+                    <button class="action-btn" title="Ver pedido">
+                      <i class="fas fa-eye"></i>
+                    </button>
                   </td>
                 </tr>
                 <tr>
@@ -867,9 +1055,14 @@ body.dark {
                   <td>GQ 008</td>
                   <td>Produção</td>
                   <td>15/05/2026</td>
-                  <td><span class="status-badge">Em andamento</span></td>
+                  <td><span class="status-badge progress">Em andamento</span></td>
                   <td>
                     <i class="fas fa-spinner" style="color: var(--primary)"></i>
+                  </td>
+                  <td>
+                    <button class="action-btn" title="Ver pedido">
+                      <i class="fas fa-eye"></i>
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -966,7 +1159,7 @@ body.dark {
                         >Em Produção</span
                       >
                     </td>
-                    <td>024/06/2025</td>
+                    <td>24/06/2025</td>
                   </tr>
                   <tr>
                     <td><strong>OP-2025-002</strong></td>
@@ -988,16 +1181,7 @@ body.dark {
                 </tbody>
               </table>
             </div>
-            <div
-              style="
-                margin-top: 14px;
-                display: flex;
-                gap: 16px;
-                justify-content: flex-end;
-                font-size: 13px;
-                color: var(--text-secondary);
-              "
-            >
+            <div class="op-footer">
               <span><i class="fas fa-arrow-right"></i> 5 iniciadas hoje</span>
               <span
                 ><i class="fas fa-robot"></i> IA prevê gargalo em
