@@ -1,0 +1,181 @@
+/* ================================================================
+   RESPONSIVE.CSS — StockLog
+   Ajustes globais compartilhados por TODAS as páginas.
+
+   Como usar
+   ---------
+   Inclua este arquivo DEPOIS dos outros CSS de componente no <head>:
+     <link rel="stylesheet" href="components/css/sidebar.css" />
+     <link rel="stylesheet" href="components/css/header.css" />
+     <link rel="stylesheet" href="components/css/footer.css" />
+     <link rel="stylesheet" href="components/css/modoescuro.css" />
+     <link rel="stylesheet" href="components/css/responsive.css" />
+   ================================================================ */
+
+/* ================================================================
+   1. TIPOGRAFIA E ESPAÇAMENTOS FLUIDOS
+   --------------------------------------------------------------
+   Escalas suaves baseadas em clamp() para que títulos, textos e
+   containers nunca estourem a tela nem fiquem miúdos em mobiles.
+   ================================================================ */
+:root {
+  --fs-fluid-base: clamp(14px, 0.6vw + 12.5px, 16px);
+  --fs-fluid-h1: clamp(20px, 1.2vw + 16px, 26px);
+  --fs-fluid-h3: clamp(15px, 0.6vw + 13px, 18px);
+  --fs-fluid-small: clamp(12px, 0.4vw + 11px, 13.5px);
+
+  --pad-fluid-x: clamp(12px, 2.5vw, 32px);
+  --pad-fluid-y: clamp(14px, 1.4vw, 28px);
+}
+
+/* ================================================================
+   2. CORREÇÕES GLOBAIS PARA MOBILE
+   --------------------------------------------------------------
+   Aplica-se a partir de 768px (tablets pequenos e celulares).
+   ================================================================ */
+@media (max-width: 768px) {
+  /* Tipos de texto mais confortáveis em telas pequenas */
+  html { font-size: 15px; }
+
+  /* Inputs, selects e textareas com tamanho confortável
+     (evita zoom automático do iOS ao tocar no campo) */
+  input, select, textarea, button {
+    font-size: 16px;
+  }
+
+  /* Containers principais devem respeitar a largura disponível.
+     O flex do body pode fazer um filho "inchar" — min-width: 0
+     garante que o encolhimento funcione. */
+  .main-wrapper,
+  .main-wrapper > * {
+    min-width: 0;
+  }
+
+  /* Tabelas: scroll horizontal dentro do card. Adiciona também
+     uma sombra sutil na borda direita para indicar que há mais
+     conteúdo para rolar. */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    width: calc(100% + 32px);
+  }
+
+  /* Cabeçalhos de seção mais compactos em mobile */
+  h1 { font-size: var(--fs-fluid-h1); }
+  h2 { font-size: var(--fs-fluid-h3); }
+  h3 { font-size: var(--fs-fluid-h3); }
+
+  /* Cards/containers com menos padding interno em mobile */
+  .card,
+  .dashboard-container,
+  .content {
+    padding-left: var(--pad-fluid-x);
+    padding-right: var(--pad-fluid-x);
+  }
+
+  /* Botões de ação em linhas: empilha em telas muito estreitas */
+  .top-header,
+  .header-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Grids genéricos de 2+ colunas caem para 1 coluna no mobile */
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  [class*="row-"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Cards de KPI: garante quebra confortável */
+  .kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Toolbars com busca/filtro: empilha e estica inputs */
+  .toolbar,
+  .table-controls,
+  .filter-bar,
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .toolbar > *,
+  .table-controls > *,
+  .filter-bar > *,
+  .search-row > * {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Modal ocupa a tela toda em mobile com margens seguras */
+  .modal,
+  .modal-overlay .modal {
+    max-width: 100%;
+    margin: 8px;
+    width: calc(100% - 16px);
+  }
+
+  /* Toast/popup: ocupa largura total com margens laterais */
+  .toast,
+  .toast-popup {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    max-width: calc(100% - 32px) !important;
+    width: auto !important;
+  }
+}
+
+/* ================================================================
+   3. ULTRA-PEQUENO (≤ 480px)
+   --------------------------------------------------------------
+   Ajustes finos para celulares compactos.
+   ================================================================ */
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+
+  /* Reduz ainda mais o padding de cards */
+  .card,
+  .dashboard-container,
+  .content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* Títulos e KPIs mais compactos */
+  .kpi-value { font-size: 1.6rem; }
+  h1 { font-size: 1.25rem; }
+  h2, h3 { font-size: 1.05rem; }
+
+  /* Botões: garantem altura mínima para toque confortável */
+  .btn,
+  button.btn,
+  .icon-btn {
+    min-height: 38px;
+  }
+
+  /* Dropdowns de notificação: largura reduzida */
+  .notif-dropdown {
+    width: calc(100vw - 24px) !important;
+    right: -8px !important;
+  }
+}
+
+/* ================================================================
+   4. UTILITÁRIOS RESPONSIVOS
+   --------------------------------------------------------------
+   Classes auxiliares para esconder/mostrar conteúdo por breakpoint.
+   ================================================================ */
+.hide-mobile { display: initial; }
+.show-mobile { display: none !important; }
+
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+  .show-mobile { display: initial; }
+}
