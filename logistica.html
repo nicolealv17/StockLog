@@ -43,24 +43,14 @@
         --shadow-hover: 0 4px 8px rgba(0, 40, 80, 0.06), 0 12px 28px rgba(0, 40, 80, 0.08);
         --shadow-lift: 0 8px 20px rgba(0, 40, 80, 0.10), 0 20px 40px rgba(0, 40, 80, 0.06);
 
-        /* Cores semânticas (status logístico) */
         --amber: #c47a1f;
         --amber-bg: #faecd6;
-        --amber-strong: #f59f1a;
-
         --blue: #2f6fdb;
         --blue-bg: #e1ecfb;
-        --blue-strong: #2f81f7;
-
         --brown: #8b5a2b;
         --brown-bg: #f1e3d2;
-        --brown-strong: #b97840;
-
-        --primary-strong: #006bb3;
         --teal: #1a7b72;
         --teal-bg: #e0f2ea;
-        --teal-strong: #14a085;
-
         --rose: #b2433a;
         --rose-bg: #fae2e0;
       }
@@ -134,8 +124,7 @@
         letter-spacing: -0.01em;
       }
       .page-head h1 i {
-        width: 38px;
-        height: 38px;
+        width: 38px; height: 38px;
         border-radius: 10px;
         background: var(--primary-light);
         color: var(--primary);
@@ -171,861 +160,190 @@
         color: #fff;
         box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25);
       }
-      .btn.btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(0, 102, 179, 0.35);
-      }
+      .btn.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 102, 179, 0.35); }
       .btn.btn-primary:hover i { transform: rotate(90deg); }
-      .btn.btn-secondary {
-        background: var(--bg-card);
-        color: var(--text-main);
-        border-color: var(--border);
-      }
-      .btn.btn-secondary:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        background: var(--primary-light);
-      }
-      .btn.btn-secondary:hover i { color: var(--primary); }
-      .btn.btn-danger {
-        background: var(--rose-bg);
-        color: var(--rose);
-        border-color: var(--rose);
-      }
+      .btn.btn-secondary { background: var(--bg-card); color: var(--text-main); border-color: var(--border); }
+      .btn.btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+      .btn.btn-danger { background: var(--rose-bg); color: var(--rose); border-color: var(--rose); }
       .btn.btn-danger:hover { background: var(--rose); color: #fff; }
-      .btn.btn-icon {
-        padding: 7px 10px;
-        background: transparent;
-        color: var(--text-secondary);
-        border: 1px solid transparent;
-      }
-      .btn.btn-icon:hover { background: var(--bg-soft); color: var(--text-main); }
       .btn.btn-sm { padding: 6px 11px; font-size: 12px; }
       .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
 
       /* ============ STATS / INDICADORES ============ */
-      .log-stats {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 14px;
-        margin-bottom: 20px;
-      }
+      .log-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
       .log-stat {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 18px 20px;
-        box-shadow: var(--shadow-card);
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        transition: all 0.25s ease;
-        position: relative;
-        overflow: hidden;
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+        padding: 18px 20px; box-shadow: var(--shadow-card);
+        display: flex; align-items: center; gap: 14px; transition: all 0.25s ease;
+        position: relative; overflow: hidden;
       }
       .log-stat::after {
-        content: "";
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 3px;
-        background: var(--accent, var(--primary));
-        opacity: 0;
-        transition: opacity 0.25s ease;
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+        background: var(--accent, var(--primary)); opacity: 0; transition: opacity 0.25s ease;
       }
-      .log-stat:hover {
-        border-color: var(--border-hover);
-        box-shadow: var(--shadow-hover);
-        transform: translateY(-2px);
-      }
+      .log-stat:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); transform: translateY(-2px); }
       .log-stat:hover::after { opacity: 1; }
       .log-stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 19px;
-        flex-shrink: 0;
-        transition: transform 0.25s ease;
+        width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center;
+        justify-content: center; font-size: 19px; flex-shrink: 0;
       }
-      .log-stat:hover .log-stat-icon { transform: scale(1.05) rotate(-3deg); }
       .log-stat-body { flex: 1; min-width: 0; }
-      .log-stat-num {
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--text-main);
-        line-height: 1.1;
-        letter-spacing: -0.01em;
-        font-variant-numeric: tabular-nums;
-      }
-      .log-stat-label {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        font-weight: 600;
-        margin-top: 3px;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-      }
-      .log-stat-trend {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        font-size: 10.5px;
-        font-weight: 600;
-        margin-top: 4px;
-        padding: 1px 6px;
-        border-radius: 10px;
-      }
-      .log-stat-trend.up {
-        color: var(--teal);
-        background: var(--teal-bg);
-      }
-      .log-stat-trend.down {
-        color: var(--rose);
-        background: var(--rose-bg);
-      }
+      .log-stat-num { font-size: 24px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
+      .log-stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.03em; }
+      .log-stat-trend { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; margin-top: 4px; padding: 1px 6px; border-radius: 10px; }
+      .log-stat-trend.up { color: var(--teal); background: var(--teal-bg); }
+      .log-stat-trend.down { color: var(--rose); background: var(--rose-bg); }
 
       /* ============ TOOLBAR / ÁREA DE AÇÕES ============ */
       .log-toolbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 14px 18px;
-        box-shadow: var(--shadow-card);
+        display: flex; justify-content: space-between; align-items: center; gap: 16px;
+        flex-wrap: wrap; margin-bottom: 20px; background: var(--bg-card);
+        border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px; box-shadow: var(--shadow-card);
       }
-      .log-toolbar-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        flex: 1;
-      }
-      .log-toolbar-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
+      .log-toolbar-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: 1; }
+      .log-toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-      .log-search-wrap {
-        position: relative;
-        display: flex;
-        align-items: center;
-        flex: 1;
-        min-width: 240px;
-        max-width: 360px;
-      }
-      .log-search-wrap i {
-        position: absolute;
-        left: 14px;
-        color: var(--text-muted);
-        font-size: 13px;
-        pointer-events: none;
-        transition: color 0.2s ease;
-      }
+      .log-search-wrap { position: relative; display: flex; align-items: center; flex: 1; min-width: 240px; max-width: 360px; }
+      .log-search-wrap i { position: absolute; left: 14px; color: var(--text-muted); font-size: 13px; pointer-events: none; transition: color 0.2s ease; }
       .log-search {
-        font-size: 13.5px;
-        padding: 10px 14px 10px 38px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        background: var(--bg-soft);
-        color: var(--text-main);
-        width: 100%;
-        outline: none;
-        transition: all 0.2s ease;
+        font-size: 13.5px; padding: 10px 14px 10px 38px; border: 1px solid var(--border);
+        border-radius: 10px; background: var(--bg-soft); color: var(--text-main); width: 100%; outline: none; transition: all 0.2s ease;
       }
       .log-search::placeholder { color: var(--text-muted); }
-      .log-search:focus {
-        border-color: var(--primary);
-        background: var(--bg-card);
-        box-shadow: 0 0 0 3px var(--primary-light);
-      }
-      .log-search:focus + i,
-      .log-search-wrap:focus-within i {
-        color: var(--primary);
-      }
+      .log-search:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 3px var(--primary-light); }
+      .log-search:focus + i, .log-search-wrap:focus-within i { color: var(--primary); }
 
-      .toolbar-info {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12.5px;
-        color: var(--text-muted);
-        padding: 8px 12px;
-        border-radius: 8px;
-        background: var(--bg-soft);
-        border: 1px dashed var(--border);
-      }
+      .toolbar-info { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); padding: 8px 12px; border-radius: 8px; background: var(--bg-soft); border: 1px dashed var(--border); }
       .toolbar-info i { color: var(--primary); }
       .toolbar-info strong { color: var(--text-main); font-weight: 600; }
 
       /* ============ KANBAN DE EXPEDIÇÃO ============ */
-      .log-section-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 4px 0 14px;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .log-section-head .title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .log-section-head .title i {
-        width: 32px; height: 32px;
-        border-radius: 8px;
-        background: var(--primary-light);
-        color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-      }
-      .log-section-head .subtitle {
-        font-size: 12.5px;
-        color: var(--text-muted);
-        margin-left: 42px;
-        margin-top: -8px;
-      }
+      .log-section-head { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; flex-wrap: wrap; gap: 8px; }
+      .log-section-head .title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+      .log-section-head .title i { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
 
-      .log-kanban {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(230px, 1fr));
-        gap: 14px;
-        margin-bottom: 28px;
-      }
-      .log-col {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 0;
-        min-height: 240px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        transition: border-color 0.2s ease;
-      }
-      .log-col:hover { border-color: var(--border-hover); }
-
-      .log-col-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 14px 12px;
-        background: var(--bg-card);
-        border-bottom: 1px solid var(--border);
-        border-top: 3px solid var(--accent, var(--primary));
-      }
-      .log-col-title {
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--text-main);
-      }
-      .log-col-title i {
-        width: 22px; height: 22px;
-        border-radius: 6px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        background: var(--accent-bg, var(--primary-light));
-        color: var(--accent, var(--primary));
-      }
-      .log-col-count {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        font-size: 11px;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 20px;
-        min-width: 24px;
-        text-align: center;
-      }
-      .log-col-body {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        flex: 1;
-        padding: 12px;
-      }
-      .log-col-empty {
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 11.5px;
-        font-style: italic;
-        padding: 26px 6px;
-        opacity: 0.7;
-      }
+      .log-kanban { display: grid; grid-template-columns: repeat(5, minmax(230px, 1fr)); gap: 14px; margin-bottom: 28px; }
+      .log-col { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 0; min-height: 240px; display: flex; flex-direction: column; overflow: hidden; transition: border-color 0.2s ease; }
+      
+      .log-col-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 14px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border); border-top: 3px solid var(--accent, var(--primary)); }
+      .log-col-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 8px; color: var(--text-main); }
+      .log-col-title i { width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; background: var(--accent-bg, var(--primary-light)); color: var(--accent, var(--primary)); }
+      .log-col-count { background: var(--bg-soft); border: 1px solid var(--border); color: var(--text-secondary); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; min-width: 24px; text-align: center; }
+      .log-col-body { display: flex; flex-direction: column; gap: 10px; flex: 1; padding: 12px; }
+      .log-col-empty { text-align: center; color: var(--text-muted); font-size: 11.5px; font-style: italic; padding: 26px 6px; opacity: 0.7; }
 
       /* ============ CARDS DOS PEDIDOS ============ */
       .log-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 14px;
-        box-shadow: var(--shadow-card);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: relative;
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+        box-shadow: var(--shadow-card); cursor: pointer; transition: all 0.2s ease; position: relative;
       }
-      .log-card:hover {
-        border-color: var(--primary);
-        box-shadow: var(--shadow-lift);
-        transform: translateY(-2px);
-      }
-      .log-card-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 8px;
-        margin-bottom: 10px;
-        padding-bottom: 10px;
-        border-bottom: 1px dashed var(--border);
-      }
-      .log-card-num {
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--primary);
-        letter-spacing: -0.01em;
-        font-variant-numeric: tabular-nums;
-      }
-      .log-card-num small {
-        display: block;
-        font-size: 9.5px;
-        font-weight: 600;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-top: 1px;
-      }
+      .log-card:hover { border-color: var(--primary); box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+      .log-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
+      .log-card-num { font-size: 15px; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+      .log-card-num small { display: block; font-size: 9.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 1px; }
+      
       .log-badge-urgente {
-        font-size: 9.5px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--rose);
-        background: var(--rose-bg);
-        padding: 3px 8px;
-        border-radius: 20px;
-        letter-spacing: 0.05em;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        position: relative;
+        font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: var(--rose);
+        background: var(--rose-bg); padding: 3px 8px; border-radius: 20px; letter-spacing: 0.05em;
+        display: inline-flex; align-items: center; gap: 4px; position: relative;
       }
-      .log-badge-urgente::before {
-        content: "";
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--rose);
-        animation: pulseDot 1.6s ease-in-out infinite;
-      }
-      @keyframes pulseDot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(0.7); }
-      }
+      .log-badge-urgente::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--rose); animation: pulseDot 1.6s ease-in-out infinite; }
+      @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
 
-      .log-card-cliente {
-        font-size: 13.5px;
-        font-weight: 600;
-        color: var(--text-main);
-        margin-bottom: 10px;
-        line-height: 1.35;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
+      .log-card-cliente { font-size: 13.5px; font-weight: 600; margin-bottom: 10px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+      .log-card-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin-bottom: 12px; font-size: 11.5px; }
+      .log-card-info .item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+      .log-card-info .item i { color: var(--text-muted); font-size: 10.5px; width: 12px; text-align: center; }
+      .log-card-info .item strong { color: var(--text-main); font-weight: 600; font-variant-numeric: tabular-nums; }
 
-      .log-card-info {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px 10px;
-        margin-bottom: 12px;
-        font-size: 11.5px;
-      }
-      .log-card-info .item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--text-secondary);
-      }
-      .log-card-info .item i {
-        color: var(--text-muted);
-        font-size: 10.5px;
-        width: 12px;
-        text-align: center;
-      }
-      .log-card-info .item strong {
-        color: var(--text-main);
-        font-weight: 600;
-        font-variant-numeric: tabular-nums;
-      }
+      .log-card-driver { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg-soft); border-radius: 8px; margin-bottom: 10px; font-size: 11.5px; color: var(--text-secondary); }
+      .log-card-driver .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+      .log-card-driver .info { flex: 1; min-width: 0; line-height: 1.3; }
+      .log-card-driver .info strong { display: block; color: var(--text-main); font-weight: 600; font-size: 12px; }
+      .log-card-driver .info span { font-size: 10.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
-      .log-card-foot {
-        display: flex;
-        gap: 6px;
-        padding-top: 10px;
-        border-top: 1px solid var(--border);
-      }
+      .log-card-foot { display: flex; gap: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
       .log-card-foot .btn { flex: 1; justify-content: center; }
 
-      /* Hint quando o card está atribuído a um veículo */
-      .log-card-driver {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 10px;
-        background: var(--bg-soft);
-        border-radius: 8px;
-        margin-bottom: 10px;
-        font-size: 11.5px;
-        color: var(--text-secondary);
-      }
-      .log-card-driver .avatar {
-        width: 24px; height: 24px;
-        border-radius: 50%;
-        background: var(--primary-light);
-        color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        font-weight: 700;
-        flex-shrink: 0;
-      }
-      .log-card-driver .info { flex: 1; min-width: 0; line-height: 1.3; }
-      .log-card-driver .info strong {
-        display: block;
-        color: var(--text-main);
-        font-weight: 600;
-        font-size: 12px;
-      }
-      .log-card-driver .info span {
-        font-size: 10.5px;
-        color: var(--text-muted);
-        font-variant-numeric: tabular-nums;
-      }
-
       /* ============ VEÍCULOS E MOTORISTAS ============ */
-      .card {
-        background: var(--bg-card);
-        border-radius: 14px;
-        padding: 22px;
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-card);
-      }
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 18px;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      .card-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .card-title i {
-        width: 32px; height: 32px;
-        border-radius: 8px;
-        background: var(--primary-light);
-        color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-      }
-      .card-subtitle {
-        font-size: 12.5px;
-        color: var(--text-muted);
-        margin-top: 2px;
-        margin-left: 42px;
-      }
+      .card { background: var(--bg-card); border-radius: 14px; padding: 22px; border: 1px solid var(--border); box-shadow: var(--shadow-card); }
+      .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; flex-wrap: wrap; }
+      .card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+      .card-title i { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+      .card-subtitle { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; margin-left: 42px; }
       .card-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-      .util-info {
-        font-size: 12px;
-        color: var(--text-muted);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-      }
+      
+      .util-info { font-size: 12px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 20px; }
       .util-info strong { color: var(--text-main); font-weight: 700; }
 
-      .log-vehicles-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 14px;
-      }
+      .log-vehicles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
       .log-vehicle-card {
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        border-radius: 12px;
-        padding: 16px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: relative;
-        overflow: hidden;
+        border: 1px solid var(--border); background: var(--bg-card); border-radius: 12px; padding: 16px;
+        cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden;
       }
-      .log-vehicle-card::before {
-        content: "";
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 4px;
-        background: var(--status-color, var(--primary));
-        transition: width 0.2s ease;
-      }
-      .log-vehicle-card:hover {
-        border-color: var(--primary);
-        box-shadow: var(--shadow-hover);
-        transform: translateY(-2px);
-      }
+      .log-vehicle-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--status-color, var(--primary)); transition: width 0.2s ease; }
+      .log-vehicle-card:hover { border-color: var(--primary); box-shadow: var(--shadow-hover); transform: translateY(-2px); }
       .log-vehicle-card:hover::before { width: 6px; }
 
-      .log-vehicle-top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 12px;
-      }
-      .log-vehicle-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        background: var(--bg-soft);
-        color: var(--status-color, var(--primary));
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        flex-shrink: 0;
-      }
-      .log-vehicle-plate {
-        font-size: 14.5px;
-        font-weight: 700;
-        color: var(--text-main);
-        letter-spacing: 0.02em;
-        font-variant-numeric: tabular-nums;
-        line-height: 1.2;
-      }
-      .log-vehicle-plate small {
-        display: block;
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--text-muted);
-        margin-top: 2px;
-        letter-spacing: 0;
-      }
-      .log-status-pill {
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        padding: 4px 9px;
-        border-radius: 20px;
-        letter-spacing: 0.04em;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        white-space: nowrap;
-      }
-      .log-status-pill::before {
-        content: "";
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: currentColor;
-        animation: pulseDot 2s ease-in-out infinite;
-      }
+      .log-vehicle-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+      .log-vehicle-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--bg-soft); color: var(--status-color, var(--primary)); display: inline-flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+      .log-vehicle-plate { font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
+      .log-vehicle-plate small { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 2px; letter-spacing: 0; }
+
+      .log-status-pill { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 4px 9px; border-radius: 20px; letter-spacing: 0.04em; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+      .log-status-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulseDot 2s ease-in-out infinite; }
       .status-disponivel { background: var(--teal-bg); color: var(--teal); }
       .status-em_rota { background: var(--blue-bg); color: var(--blue); }
       .status-manutencao { background: var(--amber-bg); color: var(--amber); }
 
-      .log-vehicle-driver {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid var(--border);
-      }
-      .log-vehicle-driver .avatar {
-        width: 32px; height: 32px;
-        border-radius: 50%;
-        background: var(--primary-light);
-        color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        font-weight: 700;
-        flex-shrink: 0;
-      }
+      .log-vehicle-driver { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+      .log-vehicle-driver .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
       .log-vehicle-driver .info { flex: 1; min-width: 0; line-height: 1.3; }
-      .log-vehicle-driver .info strong {
-        display: block;
-        color: var(--text-main);
-        font-weight: 600;
-        font-size: 12.5px;
-      }
-      .log-vehicle-driver .info span {
-        font-size: 11px;
-        color: var(--text-muted);
-        font-variant-numeric: tabular-nums;
-      }
-      .log-vehicle-driver .info span i { margin-right: 3px; }
+      .log-vehicle-driver .info strong { display: block; font-weight: 600; font-size: 12.5px; }
+      .log-vehicle-driver .info span { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
-      /* Barra de utilização da frota */
-      .util-bar {
-        margin-top: 10px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 10.5px;
-        color: var(--text-muted);
-      }
-      .util-bar .bar {
-        flex: 1;
-        height: 5px;
-        background: var(--bg-soft);
-        border-radius: 3px;
-        overflow: hidden;
-        position: relative;
-      }
-      .util-bar .fill {
-        position: absolute;
-        inset: 0;
-        width: var(--w, 0%);
-        background: var(--status-color, var(--primary));
-        border-radius: 3px;
-        transition: width 0.4s ease;
-      }
-      .util-bar strong {
-        color: var(--text-main);
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-      }
+      .util-bar { margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: 10.5px; color: var(--text-muted); }
+      .util-bar .bar { flex: 1; height: 5px; background: var(--bg-soft); border-radius: 3px; overflow: hidden; position: relative; }
+      .util-bar .fill { position: absolute; inset: 0; width: var(--w, 0%); background: var(--status-color, var(--primary)); border-radius: 3px; transition: width 0.4s ease; }
+      .util-bar strong { color: var(--text-main); font-weight: 700; font-variant-numeric: tabular-nums; }
 
-      /* ============ GRID INFERIOR: FROTA + ATIVIDADE RECENTE ============ */
-      .bottom-grid {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr;
-        gap: 18px;
-        margin-top: 8px;
-      }
-      @media (max-width: 1100px) {
-        .bottom-grid { grid-template-columns: 1fr; }
-      }
+      /* ============ GRID INFERIOR ============ */
+      .bottom-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-top: 8px; }
+      @media (max-width: 1100px) { .bottom-grid { grid-template-columns: 1fr; } }
 
-      .activity-list {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-      .activity-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 8px;
-        border-radius: 8px;
-        transition: background 0.2s ease;
-      }
+      .activity-list { display: flex; flex-direction: column; gap: 4px; }
+      .activity-item { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 8px; transition: background 0.2s ease; }
       .activity-item:hover { background: var(--bg-soft); }
-      .activity-icon {
-        width: 32px; height: 32px;
-        border-radius: 8px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        flex-shrink: 0;
-      }
+      .activity-icon { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
       .activity-item .text { flex: 1; min-width: 0; line-height: 1.3; }
-      .activity-item .text strong {
-        display: block;
-        color: var(--text-main);
-        font-weight: 600;
-        font-size: 12.5px;
-      }
-      .activity-item .text span {
-        font-size: 11.5px;
-        color: var(--text-muted);
-      }
-      .activity-item .hora {
-        font-size: 11px;
-        color: var(--text-muted);
-        font-variant-numeric: tabular-nums;
-        white-space: nowrap;
-      }
+      .activity-item .text strong { display: block; font-weight: 600; font-size: 12.5px; }
+      .activity-item .text span { font-size: 11.5px; color: var(--text-muted); }
+      .activity-item .hora { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
       /* ============ MODAL ============ */
-      .modal-overlay {
-        position: fixed; inset: 0;
-        background: rgba(10, 20, 35, 0.55);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        padding: 20px;
-      }
+      .modal-overlay { position: fixed; inset: 0; background: rgba(10, 20, 35, 0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
       .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .modal {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        width: 100%;
-        max-width: 560px;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: var(--shadow-lift);
-        animation: slideUp 0.25s ease;
-      }
+      .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lift); animation: slideUp 0.25s ease; }
       @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-      .modal-head {
-        padding: 20px 24px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .modal-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-      }
+      .modal-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .modal-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; }
       .modal-body { padding: 22px 24px; }
-      .modal-foot {
-        padding: 16px 24px;
-        border-top: 1px solid var(--border);
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-      }
+      .modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
 
       /* ============ FORMULÁRIO ============ */
       .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 14px;
-      }
+      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
       .form-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
-      .form-group label {
-        font-size: 11.5px;
-        font-weight: 700;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-      .form-input, .form-textarea, .form-select {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 12px;
-        font-size: 13.5px;
-        outline: none;
-        width: 100%;
-        transition: 0.2s;
-        color: var(--text-main);
-      }
-      .form-input:focus, .form-textarea:focus, .form-select:focus {
-        border-color: var(--primary);
-        background: var(--bg-card);
-        box-shadow: 0 0 0 3px var(--primary-light);
-      }
+      .form-group label { font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+      .form-input, .form-textarea, .form-select { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; outline: none; width: 100%; transition: 0.2s; color: var(--text-main); }
+      .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 3px var(--primary-light); }
       .form-textarea { resize: vertical; min-height: 70px; font-family: inherit; }
-      .form-select {
-        cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b92b2' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 14px;
-        padding-right: 32px;
-      }
-
-      .log-type-picker { display: flex; gap: 6px; flex-wrap: wrap; }
-      .log-type-btn {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        padding: 7px 12px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: 0.2s;
-      }
-      .log-type-btn:hover { border-color: var(--border-hover); color: var(--text-main); }
-      .log-type-btn.active {
-        background: var(--primary-light);
-        color: var(--primary);
-        border-color: var(--primary);
-      }
+      .form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b92b2' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; padding-right: 32px; }
 
       /* ============ TOAST ============ */
-      .toast-container {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 2000;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        pointer-events: none;
-      }
-      .toast {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-left: 3px solid var(--primary);
-        border-radius: 10px;
-        padding: 12px 16px;
-        box-shadow: var(--shadow-hover);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 240px;
-        max-width: 360px;
-        pointer-events: auto;
-        color: var(--text-main);
-        font-size: 13.5px;
-        font-weight: 500;
-        animation: slideInRight 0.3s ease;
-      }
+      .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+      .toast { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 10px; padding: 12px 16px; box-shadow: var(--shadow-hover); display: flex; align-items: center; gap: 10px; min-width: 240px; max-width: 360px; pointer-events: auto; color: var(--text-main); font-size: 13.5px; font-weight: 500; animation: slideInRight 0.3s ease; }
       .toast.success { border-left-color: var(--teal); }
       .toast.error { border-left-color: var(--rose); }
       .toast.warning { border-left-color: var(--amber); }
@@ -1068,9 +386,6 @@
       <div id="header-root"></div>
 
       <main class="content" role="main">
-
-  
-
         <!-- Estatísticas / Indicadores -->
         <div class="log-stats" id="log-stats"></div>
 
@@ -1098,12 +413,9 @@
 
         <!-- Kanban de expedição -->
         <div class="log-section-head">
-          <div>
-            <div class="title">
-              <i class="fa-solid fa-arrow-right-arrow-left"></i>
-              Fluxo de expedição
-            </div>
-          
+          <div class="title">
+            <i class="fa-solid fa-arrow-right-arrow-left"></i>
+            Fluxo de expedição
           </div>
         </div>
         <div class="log-kanban" id="log-kanban"></div>
@@ -1118,7 +430,6 @@
                   <i class="fa-solid fa-truck-fast"></i>
                   Frota & Motoristas
                 </div>
-                
               </div>
               <div class="card-actions">
                 <span class="util-info">
@@ -1158,9 +469,7 @@
             <i class="fa-solid fa-box" style="color:var(--primary);margin-right:8px"></i>
             Novo pedido de expedição
           </span>
-          <button class="btn btn-icon" onclick="closeModal('logPedido')">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+          <button class="btn btn-icon" onclick="closeModal('logPedido')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
           <input type="hidden" id="log-ord-id">
@@ -1195,6 +504,17 @@
               <input type="number" min="0" class="form-input" id="log-ord-itens" placeholder="0">
             </div>
             <div class="form-group">
+              <label>Peso (kg) <i class="fa-solid fa-weight-hanging" style="font-size:10px; color:var(--text-muted)"></i></label>
+              <input type="number" min="0" step="0.1" class="form-input" id="log-ord-peso" placeholder="0.0">
+            </div>
+            <div class="form-group">
+              <label>Volume (m³) <i class="fa-solid fa-cube" style="font-size:10px; color:var(--text-muted)"></i></label>
+              <input type="number" min="0" step="0.1" class="form-input" id="log-ord-volume" placeholder="0.0">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
               <label>Data prevista</label>
               <input type="date" class="form-input" id="log-ord-data">
             </div>
@@ -1223,15 +543,9 @@
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn btn-secondary" onclick="closeModal('logPedido')">
-            <i class="fa-solid fa-xmark"></i> Cancelar
-          </button>
-          <button class="btn btn-danger" id="log-ord-btn-delete" onclick="logDeleteOrder()" style="display:none">
-            <i class="fa-solid fa-trash"></i> Excluir
-          </button>
-          <button class="btn btn-primary" onclick="logSaveOrder()">
-            <i class="fa-solid fa-floppy-disk"></i> Salvar
-          </button>
+          <button class="btn btn-secondary" onclick="closeModal('logPedido')"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+          <button class="btn btn-danger" id="log-ord-btn-delete" onclick="logDeleteOrder()" style="display:none"><i class="fa-solid fa-trash"></i> Excluir</button>
+          <button class="btn btn-primary" onclick="logSaveOrder()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
         </div>
       </div>
     </div>
@@ -1244,9 +558,7 @@
             <i class="fa-solid fa-truck" style="color:var(--primary);margin-right:8px"></i>
             Novo veículo
           </span>
-          <button class="btn btn-icon" onclick="closeModal('logVeiculo')">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+          <button class="btn btn-icon" onclick="closeModal('logVeiculo')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
           <input type="hidden" id="log-veh-id">
@@ -1283,15 +595,9 @@
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn btn-secondary" onclick="closeModal('logVeiculo')">
-            <i class="fa-solid fa-xmark"></i> Cancelar
-          </button>
-          <button class="btn btn-danger" id="log-veh-btn-delete" onclick="logDeleteVehicle()" style="display:none">
-            <i class="fa-solid fa-trash"></i> Excluir
-          </button>
-          <button class="btn btn-primary" onclick="logSaveVehicle()">
-            <i class="fa-solid fa-floppy-disk"></i> Salvar
-          </button>
+          <button class="btn btn-secondary" onclick="closeModal('logVeiculo')"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+          <button class="btn btn-danger" id="log-veh-btn-delete" onclick="logDeleteVehicle()" style="display:none"><i class="fa-solid fa-trash"></i> Excluir</button>
+          <button class="btn btn-primary" onclick="logSaveVehicle()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
         </div>
       </div>
     </div>
@@ -1302,16 +608,13 @@
     <!-- Scripts dos componentes -->
     <script src="components/js/header.js"></script>
     <script src="components/js/sidebar.js"></script>
-<script src="components/js/chat.js"></script>
-<script src="components/js/config.js"></script>
+    <script src="components/js/chat.js"></script>
+    <script src="components/js/config.js"></script>
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
 
     <!-- Lógica da Logística -->
     <script>
-      /* =========================================================
-         StockLog — Logística (separação, embalagem, expedição)
-         ========================================================= */
       const LOG_STORAGE_ORDERS = "stocklog_log_orders_v1";
       const LOG_STORAGE_VEHICLES = "stocklog_log_vehicles_v1";
       const LOG_STORAGE_ACTIVITY = "stocklog_log_activity_v1";
@@ -1389,11 +692,11 @@
 
       function logDefaultOrders() {
         return [
-          { id: "o1", numero: "1043", cliente: "Supermercado Boa Vista", endereco: "Av. Central, 900 - Centro", itens: 300, prioridade: "urgente", status: "aguardando", veiculoId: "", data: "2026-08-21", obs: "Cliente pediu conferência dupla antes da separação." },
-          { id: "o2", numero: "1042", cliente: "Restaurante Sabor & Cia", endereco: "Rua das Flores, 120",    itens: 120, prioridade: "normal",  status: "separacao",  veiculoId: "",    data: "2026-08-22", obs: "" },
-          { id: "o3", numero: "1039", cliente: "Padaria Pão Quente",    endereco: "Rua Dez, 45",             itens: 60,  prioridade: "normal",  status: "embalagem",  veiculoId: "",    data: "2026-08-22", obs: "Embalagem térmica." },
-          { id: "o4", numero: "1035", cliente: "Distribuidora Nordeste",endereco: "Rod. BR-101, km 12",      itens: 500, prioridade: "urgente", status: "expedicao",  veiculoId: "v1", data: "2026-08-21", obs: "" },
-          { id: "o5", numero: "1030", cliente: "Mercadinho Ipê",        endereco: "Travessa Ipê, 8",        itens: 80,  prioridade: "normal",  status: "entregue",   veiculoId: "v2", data: "2026-08-20", obs: "" },
+          { id: "o1", numero: "1043", cliente: "Supermercado Boa Vista", endereco: "Av. Central, 900 - Centro", itens: 300, peso: 150.5, volume: 2.3, prioridade: "urgente", status: "aguardando", veiculoId: "", data: "2026-08-21", obs: "Cliente pediu conferência dupla antes da separação." },
+          { id: "o2", numero: "1042", cliente: "Restaurante Sabor & Cia", endereco: "Rua das Flores, 120",    itens: 120, peso: 85.0, volume: 1.2, prioridade: "normal",  status: "separacao",  veiculoId: "",    data: "2026-08-22", obs: "" },
+          { id: "o3", numero: "1039", cliente: "Padaria Pão Quente",    endereco: "Rua Dez, 45",             itens: 60,  peso: 40.2, volume: 0.8, prioridade: "normal",  status: "embalagem",  veiculoId: "",    data: "2026-08-22", obs: "Embalagem térmica." },
+          { id: "o4", numero: "1035", cliente: "Distribuidora Nordeste",endereco: "Rod. BR-101, km 12",      itens: 500, peso: 820.0, volume: 8.5, prioridade: "urgente", status: "expedicao",  veiculoId: "v1", data: "2026-08-21", obs: "" },
+          { id: "o5", numero: "1030", cliente: "Mercadinho Ipê",        endereco: "Travessa Ipê, 8",        itens: 80,  peso: 120.0, volume: 1.5, prioridade: "normal",  status: "entregue",   veiculoId: "v2", data: "2026-08-20", obs: "" },
         ];
       }
 
@@ -1413,10 +716,6 @@
         logSaveActivity();
       }
 
-      /* ============ HEADER DATA ============ */
-      // Removido - não exibe mais a data no cabeçalho
-
-      /* ============ RENDER PRINCIPAL ============ */
       function logRender() {
         logRenderStats();
         logRenderToolbar();
@@ -1433,7 +732,7 @@
         const urgentes = logState.orders.filter(o => o.prioridade === "urgente" && o.status !== "entregue").length;
 
         const tiles = [
-          { label: "Aguardando Separação", num: counts.aguardando, icon: "fa-hourglass-half",     color: "amber",   trend: counts.aguardando > 0 ? `${counts.aguardando} pendentes` : "Em dia",     trendUp: counts.aguardando === 0 },
+          { label: "Aguardando Separação", num: counts.aguardando, icon: "fa-hourglass-half",     color: "amber",   trend: `${counts.aguardando} pendentes`, trendUp: counts.aguardando === 0 },
           { label: "Em Separação",        num: counts.separacao,   icon: "fa-people-carry-box",   color: "blue",    trend: `${emRota} veículos em rota`,   trendUp: true },
           { label: "Embalagem",           num: counts.embalagem,   icon: "fa-box-open",           color: "brown",   trend: "Tempo médio 35min",          trendUp: true },
           { label: "Em Expedição",        num: counts.expedicao,   icon: "fa-truck-ramp-box",     color: "primary", trend: `${disponiveis} disponíveis`,   trendUp: true },
@@ -1441,7 +740,7 @@
         ];
 
         document.getElementById("log-stats").innerHTML = tiles.map(t => `
-          <div class="log-stat" style="--accent: ${STATUS_THEME[Object.keys(STATUS_THEME).find(k => k.startsWith(t.color) || (t.color === 'primary' && k === 'expedicao') || (t.color === 'teal' && k === 'entregue'))]?.accent || "var(--primary)"}">
+          <div class="log-stat" style="--accent: ${getColor(t.color, "fg")}">
             <div class="log-stat-icon" style="background:${getColor(t.color, "bg")};color:${getColor(t.color, "fg")}">
               <i class="fa-solid ${t.icon}"></i>
             </div>
@@ -1515,16 +814,12 @@
         const nextLabel = next ? STATUS_LABELS[next] : null;
         const nextTheme = next ? STATUS_THEME[next] : null;
 
-        const initials = (o.cliente || "?")
-          .split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
+        const initials = (o.cliente || "?").split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
 
         return `
           <div class="log-card" onclick="logEditOrder('${o.id}')">
             <div class="log-card-head">
-              <div class="log-card-num">
-                #${escapeHtml(o.numero)}
-                <small>Pedido</small>
-              </div>
+              <div class="log-card-num">#${escapeHtml(o.numero)}<small>Pedido</small></div>
               ${o.prioridade === "urgente" ? '<span class="log-badge-urgente">Urgente</span>' : ""}
             </div>
             <div class="log-card-cliente">${escapeHtml(o.cliente)}</div>
@@ -1532,6 +827,8 @@
             <div class="log-card-info">
               <div class="item"><i class="fa-solid fa-boxes-stacked"></i> <strong>${o.itens || 0}</strong>&nbsp;itens</div>
               <div class="item"><i class="fa-solid fa-calendar"></i> ${logFmtBR(o.data)}</div>
+              <div class="item"><i class="fa-solid fa-weight-hanging"></i> <strong>${o.peso || 0}</strong>&nbsp;kg</div>
+              <div class="item"><i class="fa-solid fa-cube"></i> <strong>${o.volume || 0}</strong>&nbsp;m³</div>
             </div>
 
             ${veh ? `
@@ -1568,7 +865,6 @@
           return;
         }
 
-        // utilização: % de veículos fora de "disponivel" (ocupados)
         const ocupados = logState.vehicles.filter(v => v.status !== "disponivel").length;
         const utilPct = Math.round((ocupados / logState.vehicles.length) * 100);
         document.getElementById("utilFrota").textContent = utilPct + "%";
@@ -1576,8 +872,6 @@
         grid.innerHTML = logState.vehicles.map(v => {
           const theme = VEHICLE_STATUS_THEME[v.status] || "var(--primary)";
           const initials = (v.motorista || "?").split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
-
-          // mini barra: se em_rota = 85%, se manutencao = 30%, se disponivel = 10%
           const util = v.status === "em_rota" ? 85 : v.status === "manutencao" ? 30 : 10;
           const utilLabel = v.status === "em_rota" ? "Em rota" : v.status === "manutencao" ? "Em manutenção" : "Ocioso";
 
@@ -1642,7 +936,6 @@
         }).join("");
       }
 
-      /* ============ AÇÕES: PEDIDOS ============ */
       function logAdvanceStatus(id) {
         const o = logState.orders.find(x => x.id === id);
         if (!o) return;
@@ -1650,12 +943,7 @@
         if (!next) return;
         o.status = next;
         logSaveOrders();
-        logAddActivity(
-          next === "entregue" ? "fa-circle-check" : "fa-arrow-right",
-          next === "entregue" ? "teal" : (STATUS_THEME[next].accent.includes("teal") ? "teal" : STATUS_THEME[next].accent.includes("amber") ? "amber" : STATUS_THEME[next].accent.includes("blue") ? "blue" : STATUS_THEME[next].accent.includes("brown") ? "brown" : "blue"),
-          `Pedido #${o.numero} avançou para "${STATUS_LABELS[next]}"`,
-          o.cliente
-        );
+        logAddActivity("fa-arrow-right", "blue", `Pedido #${o.numero} avançou para "${STATUS_LABELS[next]}"`, o.cliente);
         logRender();
         showToast(`Pedido #${o.numero} avançou para "${STATUS_LABELS[next]}".`, "success");
       }
@@ -1685,13 +973,14 @@
         document.getElementById("log-ord-cliente").value = "";
         document.getElementById("log-ord-endereco").value = "";
         document.getElementById("log-ord-itens").value = "";
+        document.getElementById("log-ord-peso").value = "";
+        document.getElementById("log-ord-volume").value = "";
         document.getElementById("log-ord-data").value = "";
         document.getElementById("log-ord-status").value = "aguardando";
         document.getElementById("log-ord-prioridade").value = "normal";
         document.getElementById("log-ord-obs").value = "";
         logPopulateVehicleSelect("");
-        document.getElementById("log-modal-title").innerHTML =
-          '<i class="fa-solid fa-box" style="color:var(--primary);margin-right:8px"></i>Novo pedido de expedição';
+        document.getElementById("log-modal-title").innerHTML = '<i class="fa-solid fa-box" style="color:var(--primary);margin-right:8px"></i>Novo pedido de expedição';
         document.getElementById("log-ord-btn-delete").style.display = "none";
         openModal("logPedido");
       }
@@ -1704,13 +993,14 @@
         document.getElementById("log-ord-cliente").value = o.cliente;
         document.getElementById("log-ord-endereco").value = o.endereco || "";
         document.getElementById("log-ord-itens").value = o.itens || "";
+        document.getElementById("log-ord-peso").value = o.peso || "";
+        document.getElementById("log-ord-volume").value = o.volume || "";
         document.getElementById("log-ord-data").value = o.data || "";
         document.getElementById("log-ord-status").value = o.status;
         document.getElementById("log-ord-prioridade").value = o.prioridade || "normal";
         document.getElementById("log-ord-obs").value = o.obs || "";
         logPopulateVehicleSelect(o.veiculoId);
-        document.getElementById("log-modal-title").innerHTML =
-          '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar pedido';
+        document.getElementById("log-modal-title").innerHTML = '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar pedido';
         document.getElementById("log-ord-btn-delete").style.display = "inline-flex";
         openModal("logPedido");
       }
@@ -1726,6 +1016,8 @@
           cliente,
           endereco: document.getElementById("log-ord-endereco").value.trim(),
           itens: parseInt(document.getElementById("log-ord-itens").value) || 0,
+          peso: parseFloat(document.getElementById("log-ord-peso").value) || 0,
+          volume: parseFloat(document.getElementById("log-ord-volume").value) || 0,
           data: document.getElementById("log-ord-data").value,
           status: document.getElementById("log-ord-status").value,
           prioridade: document.getElementById("log-ord-prioridade").value,
@@ -1762,7 +1054,6 @@
         showToast("Pedido excluído.", "warning");
       }
 
-      /* ============ AÇÕES: VEÍCULOS ============ */
       function logOpenNewVehicle() {
         document.getElementById("log-veh-id").value = "";
         document.getElementById("log-veh-placa").value = "";
@@ -1770,8 +1061,7 @@
         document.getElementById("log-veh-motorista").value = "";
         document.getElementById("log-veh-telefone").value = "";
         document.getElementById("log-veh-status").value = "disponivel";
-        document.getElementById("log-veh-modal-title").innerHTML =
-          '<i class="fa-solid fa-truck" style="color:var(--primary);margin-right:8px"></i>Novo veículo';
+        document.getElementById("log-veh-modal-title").innerHTML = '<i class="fa-solid fa-truck" style="color:var(--primary);margin-right:8px"></i>Novo veículo';
         document.getElementById("log-veh-btn-delete").style.display = "none";
         openModal("logVeiculo");
       }
@@ -1785,8 +1075,7 @@
         document.getElementById("log-veh-motorista").value = v.motorista;
         document.getElementById("log-veh-telefone").value = v.telefone || "";
         document.getElementById("log-veh-status").value = v.status;
-        document.getElementById("log-veh-modal-title").innerHTML =
-          '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar veículo';
+        document.getElementById("log-veh-modal-title").innerHTML = '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar veículo';
         document.getElementById("log-veh-btn-delete").style.display = "inline-flex";
         openModal("logVeiculo");
       }
@@ -1833,7 +1122,6 @@
         showToast("Veículo excluído.", "warning");
       }
 
-      /* ============ UTILITÁRIOS ============ */
       function logFmtBR(iso) {
         if (!iso) return "—";
         const [y, m, d] = iso.split("-");
@@ -1857,13 +1145,9 @@
       }
 
       document.addEventListener("keydown", e => {
-        if (e.key === "Escape") {
-          closeModal("logPedido");
-          closeModal("logVeiculo");
-        }
+        if (e.key === "Escape") { closeModal("logPedido"); closeModal("logVeiculo"); }
       });
 
-      /* Inicialização */
       logLoad();
       logRender();
     </script>

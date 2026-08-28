@@ -6,14 +6,8 @@
     <title>StockLog · Calendário</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link rel="stylesheet" href="components/css/sidebar.css" />
     <link rel="stylesheet" href="components/css/header.css" />
     <link rel="stylesheet" href="components/css/chat.css" />
@@ -23,7 +17,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
       /* ================================================================
-         TOKENS / VARIÁVEIS (mesmo padrão da index)
+         TOKENS / VARIÁVEIS
          ================================================================ */
       :root {
         --bg-body: #f0f5fc;
@@ -35,7 +29,7 @@
         --primary: #1a73e8;
         --primary-dark: #1558b0;
         --primary-light: #e8f0fe;
-        --primary-gradient: var(--primary);
+        --primary-gradient: linear-gradient(135deg, #1a73e8, #1558b0);
 
         --text-main: #0a1f33;
         --text-secondary: #3d5f7e;
@@ -44,626 +38,165 @@
         --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
         --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
 
-        --green: #1a7b72;
-        --green-bg: #e0f2ea;
-        --amber: #c47a1f;
-        --amber-bg: #faecd6;
-        --red: #b2433a;
-        --red-bg: #fae2e0;
-        --purple: #6f4c4e;
-        --purple-bg: #ede6f5;
-        --pink: #a13e73;
-        --pink-bg: #f7e3ee;
-        --blue: #2f81f7;
-        --teal: #3fb950;
+        --green: #1a7b72; --green-bg: #e0f2ea;
+        --amber: #c47a1f; --amber-bg: #faecd6;
+        --red: #b2433a; --red-bg: #fae2e0;
+        --purple: #6f4c4e; --purple-bg: #ede6f5;
+        --pink: #a13e73; --pink-bg: #f7e3ee;
+        --blue: #2f81f7; --teal: #3fb950;
       }
 
       body.dark {
-        --bg-body: #0d1727;
-        --bg-card: #14243e;
-        --bg-soft: #0f1f30;
-        --border: #1d344b;
-        --border-hover: #2a4866;
-
-        --text-main: #e2edf8;
-        --text-secondary: #a5bed6;
-        --text-muted: #6f8daa;
-
+        --bg-body: #0d1727; --bg-card: #14243e; --bg-soft: #0f1f30;
+        --border: #1d344b; --border-hover: #2a4866;
+        --text-main: #e2edf8; --text-secondary: #a5bed6; --text-muted: #6f8daa;
         --primary-light: #1d3a55;
-
-        --green-bg: #123a2a;
-        --amber-bg: #3a2f15;
-        --red-bg: #3a1f1f;
-        --purple-bg: #2a1f3d;
-        --pink-bg: #351427;
-        --pink: #d1699f;
-
+        --green-bg: #123a2a; --amber-bg: #3a2f15; --red-bg: #3a1f1f;
+        --purple-bg: #2a1f3d; --pink-bg: #351427; --pink: #d1699f;
         --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
         --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
       }
 
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body {
-        font-family: "Inter", sans-serif;
-        background: var(--bg-body);
-        color: var(--text-main);
-        display: flex;
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-      }
+      body { font-family: "Inter", sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; transition: background 0.3s, color 0.3s; }
       a { text-decoration: none; color: inherit; }
       button { cursor: pointer; font-family: inherit; border: none; background: none; }
       input, select, textarea { font-family: inherit; color: var(--text-main); }
 
-      .main-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        min-width: 0;
-      }
-      .content {
-        flex: 1;
-        padding: 28px 32px 20px;
-        min-width: 0;
-      }
+      .main-wrapper { flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+      .content { flex: 1; padding: 28px 32px 20px; min-width: 0; }
 
-      /* ============ TOOLBAR DO CALENDÁRIO ============ */
-      .cal-toolbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 14px 18px;
-        box-shadow: var(--shadow-card);
-      }
-      .cal-toolbar-left {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        flex-wrap: wrap;
-      }
-      .cal-toolbar-right { display: flex; align-items: center; gap: 8px; }
-      .cal-nav-group {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 4px;
-      }
-      .cal-month-label {
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--text-main);
-        padding: 0 12px;
-        min-width: 130px;
-        text-align: center;
-        text-transform: capitalize;
-      }
-      .cal-view-group {
-        display: flex;
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 4px;
-        gap: 2px;
-      }
-      .cal-view-btn {
-        background: transparent;
-        border: none;
-        padding: 6px 14px;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        border-radius: 7px;
-        transition: 0.2s;
-        cursor: pointer;
-      }
-      .cal-view-btn:hover { color: var(--text-main); }
-      .cal-view-btn.active {
-        background: var(--bg-card);
-        color: var(--primary);
-        box-shadow: var(--shadow-card);
-      }
-
-      /* ============ BOTÕES GERAIS ============ */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 16px;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: 0.2s;
-        white-space: nowrap;
-      }
+      /* ============ BOTÕES ============ */
+      .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 1px solid transparent; cursor: pointer; transition: 0.2s; white-space: nowrap; }
       .btn i { font-size: 13px; }
-      .btn.btn-primary {
-        background: var(--primary-gradient);
-        color: #fff;
-        box-shadow: var(--shadow-card);
-      }
+      .btn.btn-primary { background: var(--primary-gradient); color: #fff; box-shadow: var(--shadow-card); }
       .btn.btn-primary:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
-      .btn.btn-secondary {
-        background: var(--bg-soft);
-        color: var(--text-main);
-        border-color: var(--border);
-      }
+      .btn.btn-secondary { background: var(--bg-soft); color: var(--text-main); border-color: var(--border); }
       .btn.btn-secondary:hover { border-color: var(--border-hover); }
-      .btn.btn-danger {
-        background: var(--red-bg);
-        color: var(--red);
-        border-color: var(--red);
-      }
+      .btn.btn-danger { background: var(--red-bg); color: var(--red); border-color: var(--red); }
       .btn.btn-danger:hover { background: var(--red); color: #fff; }
-      .btn.btn-icon {
-        padding: 7px 10px;
-        background: transparent;
-        color: var(--text-secondary);
-        border: 1px solid transparent;
-      }
+      .btn.btn-icon { padding: 7px 10px; background: transparent; color: var(--text-secondary); border: 1px solid transparent; }
       .btn.btn-icon:hover { background: var(--bg-soft); color: var(--text-main); }
 
-      /* ============ LEGENDA ============ */
-      .cal-legend {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        flex-wrap: wrap;
-        padding: 10px 16px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        margin-bottom: 14px;
-        font-size: 12.5px;
-        color: var(--text-secondary);
-        box-shadow: var(--shadow-card);
-      }
-      .cal-leg-item { display: inline-flex; align-items: center; gap: 6px; }
-      .cal-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
+      /* ============ KPIs DO CALENDÁRIO ============ */
+      .cal-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+      .cal-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 14px; transition: 0.2s; }
+      .cal-stat:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+      .cal-stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 19px; }
+      .cal-stat-body { flex: 1; }
+      .cal-stat-num { font-size: 24px; font-weight: 700; line-height: 1.1; }
+      .cal-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
 
-      /* ============ GRADE DO CALENDÁRIO (MÊS) ============ */
-      .cal-wrap {
-        position: relative;
-        margin-bottom: 22px;
-      }
-      .cal-grid-month {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        box-shadow: var(--shadow-card);
-        overflow: hidden;
-      }
-      .cal-weekdays {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        background: var(--bg-soft);
-        border-bottom: 1px solid var(--border);
-      }
-      .cal-weekday {
-        padding: 12px 10px;
-        text-align: center;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      .cal-days {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        grid-auto-rows: minmax(110px, auto);
-      }
-      .cal-day {
-        border-right: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
-        padding: 6px 8px;
-        cursor: pointer;
-        transition: background 0.15s;
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        position: relative;
-        min-height: 110px;
-      }
+      /* ============ TOOLBAR DO CALENDÁRIO ============ */
+      .cal-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px; box-shadow: var(--shadow-card); }
+      .cal-toolbar-left, .cal-toolbar-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+      .cal-nav-group { display: flex; align-items: center; gap: 6px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+      .cal-month-label { font-size: 14px; font-weight: 700; padding: 0 12px; min-width: 130px; text-align: center; text-transform: capitalize; }
+      .cal-view-group { display: flex; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 4px; gap: 2px; }
+      .cal-view-btn { background: transparent; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--text-secondary); border-radius: 7px; transition: 0.2s; }
+      .cal-view-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-card); }
+
+      /* ============ FILTROS RÁPIDOS ============ */
+      .cal-filters { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+      .cal-filter-btn { background: var(--bg-card); border: 1px solid var(--border); padding: 8px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 600; color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+      .cal-filter-btn:hover { border-color: var(--border-hover); color: var(--text-main); }
+      .cal-filter-btn.active { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+      /* ============ GRADE DO CALENDÁRIO ============ */
+      .cal-wrap { position: relative; margin-bottom: 22px; }
+      .cal-grid-month { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-card); overflow: hidden; }
+      .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--bg-soft); border-bottom: 1px solid var(--border); }
+      .cal-weekday { padding: 12px 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+      .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(120px, auto); }
+      .cal-day { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 6px 8px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 4px; position: relative; min-height: 120px; }
       .cal-day:nth-child(7n) { border-right: 0; }
       .cal-day:hover { background: var(--bg-soft); }
       .cal-day.outside { background: transparent; color: var(--text-muted); opacity: 0.45; }
-      .cal-day.today .cal-day-num {
-        background: var(--primary-gradient);
-        color: #fff;
-        border-radius: 50%;
-        width: 26px;
-        height: 26px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-      }
-      .cal-day-num {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-main);
-        margin-bottom: 2px;
-      }
-      .cal-evt {
-        font-size: 11px;
-        padding: 3px 8px 3px 6px;
-        border-radius: 4px;
-        background: var(--primary-light);
-        color: var(--primary-dark);
-        font-weight: 500;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .cal-evt::before {
-        content: "";
-        width: 6px;
-        height: 6px;
-        min-width: 6px;
-        border-radius: 50%;
-        background: currentColor;
-      }
-      .cal-evt.type-reuniao { background: rgba(47,129,247,.15); color: var(--blue); }
+      .cal-day.today { background: var(--primary-light); border-top: 3px solid var(--primary); }
+      .cal-day.today .cal-day-num { background: var(--primary); color: #fff; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+      .cal-day-num { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+
+      /* Visual dos eventos na grade */
+      .cal-evt { font-size: 10.5px; padding: 4px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+      .cal-evt::before { content: ""; width: 6px; height: 6px; min-width: 6px; border-radius: 50%; background: currentColor; }
+      .cal-evt.type-reuniao { background: rgba(47,129,247,.12); color: var(--blue); }
       .cal-evt.type-treinamento { background: var(--green-bg); color: var(--green); }
       .cal-evt.type-prazo { background: var(--amber-bg); color: var(--amber); }
       .cal-evt.type-compromisso { background: var(--purple-bg); color: var(--purple); }
       .cal-evt.type-urgente { background: var(--red-bg); color: var(--red); }
       .cal-evt.type-google { background: rgba(26,115,232,.12); color: var(--primary); }
-      body.dark .cal-evt.type-reuniao { background: rgba(47,129,247,.22); }
-      body.dark .cal-evt.type-google { background: rgba(26,115,232,.22); }
 
-      /* ============ PAINEL LATERAL DE EVENTOS DO DIA ============ */
-      .cal-side-panel {
-        position: fixed;
-        top: 0; right: -420px;
-        width: 400px;
-        max-width: 92vw;
-        height: 100vh;
-        background: var(--bg-card);
-        border-left: 1px solid var(--border);
-        box-shadow: -8px 0 32px rgba(0,0,0,.18);
-        z-index: 900;
-        display: flex;
-        flex-direction: column;
-        transition: right .3s ease;
-      }
+      /* ============ PAINEL LATERAL DE EVENTOS ============ */
+      .cal-side-panel { position: fixed; top: 0; right: -420px; width: 400px; max-width: 92vw; height: 100vh; background: var(--bg-card); border-left: 1px solid var(--border); box-shadow: -8px 0 32px rgba(0,0,0,.18); z-index: 900; display: flex; flex-direction: column; transition: right .3s ease; }
       .cal-side-panel.open { right: 0; }
-      .cal-side-head {
-        padding: 18px 20px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: 700;
-        font-size: 14px;
-      }
-      .cal-side-body {
-        flex: 1;
-        padding: 16px 20px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .cal-side-foot {
-        padding: 14px 20px;
-        border-top: 1px solid var(--border);
-      }
-      .cal-side-foot .btn { width: 100%; justify-content: center; }
-      .cal-side-item {
-        padding: 12px 14px;
-        border-radius: 10px;
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-left: 3px solid var(--primary);
-      }
+      .cal-side-head { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 14px; }
+      .cal-side-body { flex: 1; padding: 16px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+      .cal-side-foot { padding: 14px 20px; border-top: 1px solid var(--border); }
+      .cal-side-item { padding: 12px 14px; border-radius: 10px; background: var(--bg-soft); border: 1px solid var(--border); border-left: 3px solid var(--primary); }
       .cal-side-item.type-reuniao { border-left-color: var(--blue); }
       .cal-side-item.type-treinamento { border-left-color: var(--green); }
       .cal-side-item.type-prazo { border-left-color: var(--amber); }
       .cal-side-item.type-compromisso { border-left-color: var(--purple); }
       .cal-side-item.type-urgente { border-left-color: var(--red); }
       .cal-side-item.type-google { border-left-color: var(--primary); }
-      .cal-side-item-title {
-        font-weight: 700;
-        font-size: 13.5px;
-        color: var(--text-main);
-        margin-bottom: 4px;
-      }
-      .cal-side-item-meta {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
+      .cal-side-item-title { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; }
+      .cal-side-item-meta { font-size: 11.5px; color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap; }
 
-      /* ============ GRADE SEMANA / DIA ============ */
-      .cal-grid-week, .cal-grid-day {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        box-shadow: var(--shadow-card);
-        padding: 16px;
-        min-height: 480px;
-      }
-      .cal-week-header {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      .cal-week-col {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px;
-        min-height: 380px;
-      }
-      .cal-week-col-title {
-        font-weight: 700;
-        font-size: 12px;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        margin-bottom: 8px;
-      }
-
-      /* ============ MODAL DE NOVO COMPROMISSO ============ */
-      .modal-overlay {
-        position: fixed; inset: 0;
-        background: rgba(10, 20, 35, 0.55);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        padding: 20px;
-      }
-      .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
-      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .modal {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        width: 100%;
-        max-width: 560px;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: var(--shadow-hover);
-        animation: slideUp 0.25s ease;
-      }
-      @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-      .modal-head {
-        padding: 20px 24px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .modal-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-      }
-      .modal-body { padding: 22px 24px; }
-      .modal-foot {
-        padding: 16px 24px;
-        border-top: 1px solid var(--border);
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-      }
-
-      /* ============ FORMULÁRIO ============ */
-      .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-      .form-row {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        margin-bottom: 14px;
-      }
-      .form-group label {
-        font-size: 11.5px;
-        font-weight: 700;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-      .form-input, .form-textarea, .form-select {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 12px;
-        font-size: 13.5px;
-        outline: none;
-        width: 100%;
-        transition: 0.2s;
-        color: var(--text-main);
-      }
-      .form-input:focus, .form-textarea:focus, .form-select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-light);
-      }
-      .form-textarea { resize: vertical; min-height: 80px; font-family: inherit; }
-      .form-select {
-        cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b92b2' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 14px;
-        padding-right: 32px;
-      }
-
-      /* Seletor de tipo de compromisso */
-      .cal-type-picker {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-      .cal-type-btn {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        padding: 7px 12px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: 0.2s;
-      }
-      .cal-type-btn:hover { border-color: var(--border-hover); color: var(--text-main); }
-      .cal-type-btn.active {
-        background: var(--primary-light);
-        color: var(--primary);
-        border-color: var(--primary);
-      }
+      /* ============ VIEW SEMANA / DIA ============ */
+      .cal-grid-week, .cal-grid-day { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-card); padding: 16px; min-height: 480px; }
+      .cal-week-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 12px; }
+      .cal-week-col { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 10px; min-height: 380px; }
+      .cal-week-col-title { font-weight: 700; font-size: 12px; text-transform: uppercase; margin-bottom: 8px; }
 
       /* ============ PRÓXIMOS COMPROMISSOS ============ */
-      .card {
-        background: var(--bg-card);
-        border-radius: 14px;
-        padding: 22px 24px 24px;
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-card);
-        transition: 0.3s;
-      }
+      .card { background: var(--bg-card); border-radius: 14px; padding: 22px 24px; border: 1px solid var(--border); box-shadow: var(--shadow-card); transition: 0.3s; }
       .card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); }
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      .card-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-      }
-      .upcoming-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border);
-      }
+      .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap; }
+      .card-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; }
+      
+      .upcoming-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
       .upcoming-item:last-child { border-bottom: 0; }
-      .upcoming-date {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 6px 12px;
-        text-align: center;
-        min-width: 60px;
-      }
-      .upcoming-date .day {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-main);
-        line-height: 1;
-      }
-      .upcoming-date .month {
-        font-size: 10px;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        margin-top: 2px;
-      }
+      .upcoming-date { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; text-align: center; min-width: 60px; }
+      .upcoming-date .day { font-size: 18px; font-weight: 700; line-height: 1; }
+      .upcoming-date .month { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
       .upcoming-info { flex: 1; min-width: 0; }
-      .upcoming-title {
-        font-size: 13.5px;
-        font-weight: 600;
-        color: var(--text-main);
-        margin-bottom: 3px;
-      }
-      .upcoming-meta {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-      .upcoming-tag {
-        font-size: 10.5px;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
+      .upcoming-title { font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+      .upcoming-meta { font-size: 11.5px; color: var(--text-muted); display: flex; gap: 12px; flex-wrap: wrap; }
+      .upcoming-tag { font-size: 10.5px; padding: 3px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
       .tag-reuniao { background: rgba(47,129,247,.15); color: var(--blue); }
       .tag-treinamento { background: var(--green-bg); color: var(--green); }
       .tag-prazo { background: var(--amber-bg); color: var(--amber); }
       .tag-compromisso { background: var(--purple-bg); color: var(--purple); }
       .tag-urgente { background: var(--red-bg); color: var(--red); }
       .tag-google { background: rgba(26,115,232,.12); color: var(--primary); }
-      .cal-google-badge {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11.5px;
-        color: var(--primary);
-        background: var(--primary-light);
-        border-radius: 8px;
-        padding: 8px 10px;
-        margin-bottom: 14px;
-      }
+
+      /* ============ MODAL ============ */
+      .modal-overlay { position: fixed; inset: 0; background: rgba(10, 20, 35, 0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+      .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-hover); animation: slideUp 0.25s ease; }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+      .modal-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .modal-title { font-size: 16px; font-weight: 700; }
+      .modal-body { padding: 22px 24px; }
+      .modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+      /* ============ FORMULÁRIO ============ */
+      .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+      .form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+      .form-group label { font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+      .form-input, .form-textarea, .form-select { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; outline: none; width: 100%; transition: 0.2s; }
+      .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+      .form-textarea { resize: vertical; min-height: 80px; }
+      .form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b92b2' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; padding-right: 32px; }
+      .cal-type-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+      .cal-type-btn { background: var(--bg-soft); border: 1px solid var(--border); color: var(--text-secondary); padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+      .cal-type-btn.active { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+      .cal-google-badge { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--primary); background: var(--primary-light); border-radius: 8px; padding: 8px 10px; margin-bottom: 14px; }
 
       /* ============ TOAST ============ */
-      .toast-container {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 2000;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        pointer-events: none;
-      }
-      .toast {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-left: 3px solid var(--primary);
-        border-radius: 10px;
-        padding: 12px 16px;
-        box-shadow: var(--shadow-hover);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 240px;
-        max-width: 360px;
-        pointer-events: auto;
-        color: var(--text-main);
-        font-size: 13.5px;
-        font-weight: 500;
-        animation: slideInRight 0.3s ease;
-      }
+      .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+      .toast { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 10px; padding: 12px 16px; box-shadow: var(--shadow-hover); display: flex; align-items: center; gap: 10px; min-width: 240px; max-width: 360px; pointer-events: auto; color: var(--text-main); font-size: 13.5px; font-weight: 500; animation: slideInRight 0.3s ease; }
       .toast.success { border-left-color: var(--green); }
       .toast.error { border-left-color: var(--red); }
       .toast.warning { border-left-color: var(--amber); }
@@ -675,20 +208,12 @@
       @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
 
       /* ============ RESPONSIVIDADE ============ */
-      @media (max-width: 1100px) {
-        .cal-week-header { grid-template-columns: repeat(3, 1fr); }
-        .form-row { grid-template-columns: 1fr 1fr; }
-      }
+      @media (max-width: 1200px) { .cal-stats { grid-template-columns: repeat(2, 1fr); } }
       @media (max-width: 768px) {
         .content { padding: 18px 16px; }
+        .cal-stats { grid-template-columns: 1fr; }
         .cal-toolbar { flex-direction: column; align-items: stretch; }
-        .cal-toolbar-left, .cal-toolbar-right { justify-content: center; }
-        .cal-days { grid-auto-rows: minmax(80px, auto); }
-        .cal-day { min-height: 80px; padding: 4px 5px; }
-        .cal-day-num { font-size: 11px; }
-        .cal-week-header { grid-template-columns: 1fr; }
         .form-row { grid-template-columns: 1fr; }
-        .cal-legend { font-size: 11px; gap: 10px; }
       }
     </style>
   </head>
@@ -702,6 +227,37 @@
 
       <main class="content" role="main">
 
+        <!-- KPIs -->
+        <div class="cal-stats" id="cal-stats">
+          <div class="cal-stat" style="--accent: var(--primary)">
+            <div class="cal-stat-icon" style="background: var(--primary-light); color: var(--primary);"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="cal-stat-body">
+              <div class="cal-stat-num" id="kpi-total">0</div>
+              <div class="cal-stat-label">Total de compromissos</div>
+            </div>
+          </div>
+          <div class="cal-stat" style="--accent: var(--red)">
+            <div class="cal-stat-icon" style="background: var(--red-bg); color: var(--red);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="cal-stat-body">
+              <div class="cal-stat-num" id="kpi-urgentes">0</div>
+              <div class="cal-stat-label">Compromissos urgentes</div>
+            </div>
+          </div>
+          <div class="cal-stat" style="--accent: var(--green)">
+            <div class="cal-stat-icon" style="background: var(--green-bg); color: var(--green);"><i class="fa-solid fa-clock"></i></div>
+            <div class="cal-stat-body">
+              <div class="cal-stat-num" id="kpi-semana">0</div>
+              <div class="cal-stat-label">Nos próximos 7 dias</div>
+            </div>
+          </div>
+          <div class="cal-stat" style="--accent: var(--amber)">
+            <div class="cal-stat-icon" style="background: var(--amber-bg); color: var(--amber);"><i class="fa-solid fa-industry"></i></div>
+            <div class="cal-stat-body">
+              <div class="cal-stat-num" id="kpi-prazos">0</div>
+              <div class="cal-stat-label">Prazos / Vencimentos</div>
+            </div>
+          </div>
+        </div>
 
         <!-- Toolbar -->
         <div class="cal-toolbar">
@@ -711,13 +267,9 @@
             </button>
 
             <div class="cal-nav-group">
-              <button class="btn btn-icon" onclick="calNavMonth(-1)" title="Mês anterior">
-                <i class="fa-solid fa-chevron-left"></i>
-              </button>
+              <button class="btn btn-icon" onclick="calNavMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
               <span class="cal-month-label" id="cal-month-label">Agosto 2026</span>
-              <button class="btn btn-icon" onclick="calNavMonth(1)" title="Próximo mês">
-                <i class="fa-solid fa-chevron-right"></i>
-              </button>
+              <button class="btn btn-icon" onclick="calNavMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
               <button class="btn btn-secondary" onclick="calGoToday()" style="font-size:12px;padding:5px 12px">Hoje</button>
             </div>
 
@@ -735,29 +287,26 @@
           </div>
         </div>
 
-        <!-- Legenda -->
-        <div class="cal-legend">
-          <span class="cal-leg-item"><span class="cal-dot" style="background:var(--blue)"></span>Reunião</span>
-          <span class="cal-leg-item"><span class="cal-dot" style="background:var(--green)"></span>Treinamento</span>
-          <span class="cal-leg-item"><span class="cal-dot" style="background:var(--amber)"></span>Prazo/Vencimento</span>
-          <span class="cal-leg-item"><span class="cal-dot" style="background:var(--purple)"></span>Compromisso</span>
-          <span class="cal-leg-item"><span class="cal-dot" style="background:var(--red)"></span>Urgente</span>
-          <span class="cal-leg-item"><span class="cal-dot" style="background:var(--primary)"></span>Google Calendar</span>
+        <!-- Legenda + Filtros -->
+        <div class="cal-filters">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Filtrar:</span>
+          <button class="cal-filter-btn active" onclick="calFilterType('all', this)"><i class="fa-solid fa-border-all"></i> Todos</button>
+          <button class="cal-filter-btn" onclick="calFilterType('reuniao', this)"><i class="fa-solid fa-handshake"></i> Reuniões</button>
+          <button class="cal-filter-btn" onclick="calFilterType('treinamento', this)"><i class="fa-solid fa-graduation-cap"></i> Treinamentos</button>
+          <button class="cal-filter-btn" onclick="calFilterType('urgente', this)"><i class="fa-solid fa-triangle-exclamation"></i> Urgentes</button>
+          <button class="cal-filter-btn" onclick="calFilterType('google', this)"><i class="fa-brands fa-google"></i> Google</button>
         </div>
 
-        <!-- Grade do calendário -->
+        <!-- Grade -->
         <div class="cal-wrap">
           <div id="cal-grid-month" class="cal-grid-month"></div>
           <div id="cal-grid-week" class="cal-grid-week" style="display:none"></div>
           <div id="cal-grid-day" class="cal-grid-day" style="display:none"></div>
 
-          <!-- Painel lateral de eventos do dia -->
           <div class="cal-side-panel" id="cal-side-panel">
             <div class="cal-side-head">
               <span id="cal-side-date-label">Compromissos do dia</span>
-              <button class="btn btn-icon" onclick="document.getElementById('cal-side-panel').classList.remove('open')">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
+              <button class="btn btn-icon" onclick="document.getElementById('cal-side-panel').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="cal-side-body" id="cal-side-body"></div>
             <div class="cal-side-foot">
@@ -768,20 +317,14 @@
           </div>
         </div>
 
-        <!-- Próximos compromissos -->
+        <!-- Próximos -->
         <section class="card">
           <div class="card-header">
             <span class="card-title">
               <i class="fa-solid fa-clock" style="color:var(--primary);margin-right:8px"></i>
               Próximos compromissos
             </span>
-            <input
-              type="text"
-              id="cal-search"
-              placeholder="Buscar..."
-              oninput="calFilterList(this.value)"
-              style="font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg-soft);color:var(--text-main);width:160px"
-            />
+            <input type="text" id="cal-search" placeholder="Buscar..." oninput="calFilterList(this.value)" style="font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg-soft);color:var(--text-main);width:160px" />
           </div>
           <div id="cal-upcoming-list" style="max-height:340px;overflow-y:auto"></div>
         </section>
@@ -791,7 +334,7 @@
       <div id="footer-root"></div>
     </div>
 
-    <!-- MODAL: NOVO COMPROMISSO -->
+    <!-- MODAL -->
     <div class="modal-overlay" id="modal-calEvento">
       <div class="modal">
         <div class="modal-head">
@@ -799,35 +342,23 @@
             <i class="fa-solid fa-calendar-plus" style="color:var(--primary);margin-right:8px"></i>
             Novo compromisso
           </span>
-          <button class="btn btn-icon" onclick="closeModal('calEvento')">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+          <button class="btn btn-icon" onclick="closeModal('calEvento')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
           <input type="hidden" id="cal-evt-id">
           <div class="cal-google-badge" id="cal-google-badge" style="display:none">
             <i class="fa-brands fa-google"></i>
-            <span>Este compromisso foi importado do Google Calendar. Alterações aqui ficam só localmente.</span>
+            <span>Importado do Google Calendar. Alterações aqui ficam só localmente.</span>
           </div>
 
           <div class="form-group">
             <label>Tipo de compromisso</label>
             <div class="cal-type-picker" id="cal-type-picker">
-              <button class="cal-type-btn active" data-type="reuniao" onclick="calSelectType('reuniao',this)">
-                <i class="fa-solid fa-handshake"></i> Reunião
-              </button>
-              <button class="cal-type-btn" data-type="treinamento" onclick="calSelectType('treinamento',this)">
-                <i class="fa-solid fa-graduation-cap"></i> Treinamento
-              </button>
-              <button class="cal-type-btn" data-type="prazo" onclick="calSelectType('prazo',this)">
-                <i class="fa-solid fa-flag"></i> Prazo
-              </button>
-              <button class="cal-type-btn" data-type="compromisso" onclick="calSelectType('compromisso',this)">
-                <i class="fa-solid fa-calendar-check"></i> Compromisso
-              </button>
-              <button class="cal-type-btn" data-type="urgente" onclick="calSelectType('urgente',this)">
-                <i class="fa-solid fa-triangle-exclamation"></i> Urgente
-              </button>
+              <button class="cal-type-btn active" data-type="reuniao" onclick="calSelectType('reuniao',this)"><i class="fa-solid fa-handshake"></i> Reunião</button>
+              <button class="cal-type-btn" data-type="treinamento" onclick="calSelectType('treinamento',this)"><i class="fa-solid fa-graduation-cap"></i> Treinamento</button>
+              <button class="cal-type-btn" data-type="prazo" onclick="calSelectType('prazo',this)"><i class="fa-solid fa-flag"></i> Prazo</button>
+              <button class="cal-type-btn" data-type="compromisso" onclick="calSelectType('compromisso',this)"><i class="fa-solid fa-calendar-check"></i> Compromisso</button>
+              <button class="cal-type-btn" data-type="urgente" onclick="calSelectType('urgente',this)"><i class="fa-solid fa-triangle-exclamation"></i> Urgente</button>
             </div>
           </div>
 
@@ -850,48 +381,39 @@
               <select class="form-select" id="cal-evt-duracao">
                 <option value="30">30 min</option>
                 <option value="60" selected>1 hora</option>
-                <option value="90">1h30</option>
                 <option value="120">2 horas</option>
-                <option value="180">3 horas</option>
                 <option value="0">Dia inteiro</option>
               </select>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Descrição / Anotações</label>
-            <textarea class="form-textarea" id="cal-evt-desc" placeholder="Observações, pauta..."></textarea>
+            <label>Setor relacionado</label>
+            <select class="form-select" id="cal-evt-setor">
+              <option value="">Nenhum / Geral</option>
+              <option value="Produção">Produção</option>
+              <option value="Logística">Logística</option>
+              <option value="Qualidade">Qualidade</option>
+              <option value="Estoque">Estoque</option>
+              <option value="Compras">Compras</option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label><i class="fa-solid fa-bell" style="margin-right:4px;color:var(--amber)"></i>Lembrete</label>
-            <select class="form-select" id="cal-evt-lembrete">
-              <option value="0">Sem lembrete</option>
-              <option value="15">15 minutos antes</option>
-              <option value="30" selected>30 minutos antes</option>
-              <option value="60">1 hora antes</option>
-              <option value="1440">1 dia antes</option>
-            </select>
+            <label>Descrição / Anotações</label>
+            <textarea class="form-textarea" id="cal-evt-desc" placeholder="Observações, pauta..."></textarea>
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn btn-secondary" onclick="closeModal('calEvento')">
-            <i class="fa-solid fa-xmark"></i> Cancelar
-          </button>
-          <button class="btn btn-danger" id="cal-btn-delete" onclick="calDeleteEvent()" style="display:none">
-            <i class="fa-solid fa-trash"></i> Excluir
-          </button>
-          <button class="btn btn-primary" onclick="calSaveEvent()">
-            <i class="fa-solid fa-floppy-disk"></i> Salvar
-          </button>
+          <button class="btn btn-secondary" onclick="closeModal('calEvento')"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+          <button class="btn btn-danger" id="cal-btn-delete" onclick="calDeleteEvent()" style="display:none"><i class="fa-solid fa-trash"></i> Excluir</button>
+          <button class="btn btn-primary" onclick="calSaveEvent()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
         </div>
       </div>
     </div>
 
-    <!-- Toast -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Scripts dos componentes -->
     <script src="components/js/header.js"></script>
     <script src="components/js/sidebar.js"></script>
     <script src="components//js/chat.js"></script>
@@ -899,32 +421,26 @@
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
 
-    <!-- Lógica do calendário -->
     <script>
       /* =========================================================
-         StockLog — Calendário inteligente
-         ========================================================= */
-      /* =========================================================
-         CONFIGURAÇÃO DO GOOGLE CALENDAR
-         Troque pelo Client ID do SEU projeto no Google Cloud Console
-         (OAuth Client ID > tipo "Aplicativo da Web").
-         Veja o passo a passo que te mandei junto com este arquivo.
+         StockLog — Calendário Inteligente
          ========================================================= */
       const GOOGLE_CLIENT_ID = "SEU_CLIENT_ID_AQUI.apps.googleusercontent.com";
       const GOOGLE_SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
       let googleTokenClient = null;
       let googleAccessToken = null;
 
-      const CAL_STORAGE = "stocklog_cal_v1";
+      const CAL_STORAGE = "stocklog_cal_v2";
       const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
       const WEEKDAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
       let calState = {
         events: [],
         view: "month",
-        cursor: new Date(2026, 7, 1), // agosto 2026 (mês 7 = agosto)
+        cursor: new Date(2026, 7, 1),
         selectedDate: null,
         type: "reuniao",
+        activeFilter: "all"
       };
 
       function calLoad() {
@@ -932,20 +448,18 @@
           const saved = localStorage.getItem(CAL_STORAGE);
           calState.events = saved ? JSON.parse(saved) : calDefaultEvents();
           if (!saved) calSave();
-        } catch (e) {
-          calState.events = calDefaultEvents();
-        }
+        } catch (e) { calState.events = calDefaultEvents(); }
       }
       function calSave() { localStorage.setItem(CAL_STORAGE, JSON.stringify(calState.events)); }
 
       function calDefaultEvents() {
         return [
-          { id: "e1", title: "Reunião de alinhamento semanal", type: "reuniao", date: "2026-08-21", time: "09:00", duration: 60, desc: "Pauta: revisão de KPIs e alertas." },
-          { id: "e2", title: "Treinamento POP-018 — Recepção de Insumos", type: "treinamento", date: "2026-08-24", time: "14:00", duration: 120, desc: "Capacitação Almoxarifado." },
-          { id: "e3", title: "Vencimento POP-042 — Controle de pH", type: "prazo", date: "2026-08-25", time: "08:00", duration: 0, desc: "Revisar e reemitir POP." },
-          { id: "e4", title: "Visita técnica fornecedor Inox do Brasil", type: "compromisso", date: "2026-08-27", time: "10:30", duration: 180, desc: "Levantar novos itens para cotação." },
-          { id: "e5", title: "Auditoria interna — Qualidade", type: "urgente", date: "2026-08-28", time: "08:00", duration: 240, desc: "Atender auditores." },
-          { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, desc: "Capacitar 4 operadores." }
+          { id: "e1", title: "Reunião de alinhamento semanal", type: "reuniao", date: "2026-08-21", time: "09:00", duration: 60, setor: "Qualidade", desc: "Pauta: revisão de KPIs e alertas." },
+          { id: "e2", title: "Treinamento POP-018 — Recepção de Insumos", type: "treinamento", date: "2026-08-24", time: "14:00", duration: 120, setor: "Estoque", desc: "Capacitação Almoxarifado." },
+          { id: "e3", title: "Vencimento POP-042 — Controle de pH", type: "prazo", date: "2026-08-25", time: "08:00", duration: 0, setor: "Qualidade", desc: "Revisar e reemitir POP." },
+          { id: "e4", title: "Visita técnica fornecedor Inox do Brasil", type: "compromisso", date: "2026-08-27", time: "10:30", duration: 180, setor: "Compras", desc: "Levantar novos itens para cotação." },
+          { id: "e5", title: "Auditoria interna — Qualidade", type: "urgente", date: "2026-08-28", time: "08:00", duration: 240, setor: "Qualidade", desc: "Atender auditores." },
+          { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, setor: "Produção", desc: "Capacitar 4 operadores." }
         ];
       }
 
@@ -954,9 +468,7 @@
       function calFmtBR(iso) { const [y,m,d] = iso.split("-"); return `${d}/${m}/${y}`; }
 
       function calRender() {
-        document.getElementById("cal-month-label").textContent =
-          `${MONTHS_PT[calState.cursor.getMonth()]} ${calState.cursor.getFullYear()}`;
-
+        document.getElementById("cal-month-label").textContent = `${MONTHS_PT[calState.cursor.getMonth()]} ${calState.cursor.getFullYear()}`;
         document.getElementById("cal-grid-month").style.display = calState.view === "month" ? "block" : "none";
         document.getElementById("cal-grid-week").style.display = calState.view === "week" ? "block" : "none";
         document.getElementById("cal-grid-day").style.display  = calState.view === "day"  ? "block" : "none";
@@ -965,7 +477,13 @@
         else if (calState.view === "week") calRenderWeek();
         else calRenderDay();
 
+        calRenderKPIs();
         calRenderUpcoming();
+      }
+
+      function calFilteredEvents() {
+        if (calState.activeFilter === "all") return calState.events;
+        return calState.events.filter(e => e.type === calState.activeFilter);
       }
 
       function calRenderMonth() {
@@ -974,9 +492,10 @@
         const month = calState.cursor.getMonth();
         const first = new Date(year, month, 1);
         const start = new Date(first);
-        start.setDate(1 - first.getDay()); // volta até o domingo
+        start.setDate(1 - first.getDay());
 
         const todayIso = calFmtISO(new Date());
+        const events = calFilteredEvents();
         let html = `<div class="cal-weekdays">`;
         WEEKDAYS_PT.forEach(w => html += `<div class="cal-weekday">${w}</div>`);
         html += `</div><div class="cal-days">`;
@@ -987,11 +506,11 @@
           const iso = calFmtISO(d);
           const outside = d.getMonth() !== month;
           const today = iso === todayIso;
-          const dayEvents = calState.events.filter(e => e.date === iso).slice(0, 3);
+          const dayEvents = events.filter(e => e.date === iso).slice(0, 3);
 
           html += `<div class="cal-day ${outside ? "outside" : ""} ${today ? "today" : ""}" onclick="calOpenDay('${iso}')">
             <div class="cal-day-num">${d.getDate()}</div>
-            ${dayEvents.map(e => `<div class="cal-evt type-${e.type}" title="${escapeHtml(e.title)}">${escapeHtml(e.title)}</div>`).join("")}
+            ${dayEvents.map(e => `<div class="cal-evt type-${e.type}" title="${escapeHtml(e.title)}" onclick="event.stopPropagation(); calEdit('${e.id}')"><i class="fa-regular fa-clock" style="font-size:9px"></i> ${escapeHtml(e.time || "")} ${escapeHtml(e.title)}</div>`).join("")}
           </div>`;
         }
         html += `</div>`;
@@ -1002,16 +521,17 @@
         const grid = document.getElementById("cal-grid-week");
         const start = new Date(calState.cursor);
         start.setDate(calState.cursor.getDate() - calState.cursor.getDay());
+        const events = calFilteredEvents();
 
         let html = `<div class="cal-week-header">`;
         for (let i = 0; i < 7; i++) {
           const d = new Date(start);
           d.setDate(start.getDate() + i);
           const iso = calFmtISO(d);
-          const dayEvents = calState.events.filter(e => e.date === iso);
+          const dayEvents = events.filter(e => e.date === iso);
           html += `<div class="cal-week-col">
             <div class="cal-week-col-title">${WEEKDAYS_PT[d.getDay()]} ${calPad(d.getDate())}/${calPad(d.getMonth()+1)}</div>
-            ${dayEvents.map(e => `<div class="cal-evt type-${e.type}" style="margin-bottom:6px" onclick="calEdit('${e.id}')">${escapeHtml(e.title)}</div>`).join("") || '<div style="font-size:11px;color:var(--text-muted);font-style:italic">sem compromissos</div>'}
+            ${dayEvents.map(e => `<div class="cal-evt type-${e.type}" style="margin-bottom:6px" onclick="calEdit('${e.id}')">${escapeHtml(e.time || "")} ${escapeHtml(e.title)}</div>`).join("") || '<div style="font-size:11px;color:var(--text-muted);font-style:italic">sem compromissos</div>'}
           </div>`;
         }
         html += `</div>`;
@@ -1021,7 +541,7 @@
       function calRenderDay() {
         const grid = document.getElementById("cal-grid-day");
         const iso = calFmtISO(calState.cursor);
-        const dayEvents = calState.events.filter(e => e.date === iso);
+        const dayEvents = calFilteredEvents().filter(e => e.date === iso);
         grid.innerHTML = `
           <div class="cal-week-col-title" style="font-size:14px;margin-bottom:14px">
             ${WEEKDAYS_PT[calState.cursor.getDay()]}, ${calState.cursor.getDate()} de ${MONTHS_PT[calState.cursor.getMonth()]} de ${calState.cursor.getFullYear()}
@@ -1033,7 +553,7 @@
                 <div class="cal-side-item-title">${escapeHtml(e.title)}</div>
                 <div class="cal-side-item-meta">
                   <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
-                  <span><i class="fa-solid fa-tag"></i> ${e.type}</span>
+                  ${e.setor ? `<span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor)}</span>` : ""}
                 </div>
                 ${e.desc ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:6px">${escapeHtml(e.desc)}</div>` : ""}
               </div>
@@ -1041,10 +561,30 @@
           }`;
       }
 
+      function calRenderKPIs() {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const in7Days = new Date(today);
+        in7Days.setDate(in7Days.getDate() + 7);
+
+        const total = calState.events.length;
+        const urgentes = calState.events.filter(e => e.type === "urgente").length;
+        const semana = calState.events.filter(e => {
+          const d = new Date(e.date + "T00:00:00");
+          return d >= today && d <= in7Days;
+        }).length;
+        const prazos = calState.events.filter(e => e.type === "prazo").length;
+
+        document.getElementById("kpi-total").textContent = total;
+        document.getElementById("kpi-urgentes").textContent = urgentes;
+        document.getElementById("kpi-semana").textContent = semana;
+        document.getElementById("kpi-prazos").textContent = prazos;
+      }
+
       function calRenderUpcoming() {
         const list = document.getElementById("cal-upcoming-list");
         const today = calFmtISO(new Date());
-        const items = calState.events
+        const items = calFilteredEvents()
           .filter(e => e.date >= today)
           .sort((a, b) => a.date.localeCompare(b.date))
           .slice(0, 10);
@@ -1056,7 +596,7 @@
         list.innerHTML = items.map(e => {
           const [y, m, d] = e.date.split("-");
           return `
-            <div class="upcoming-item" onclick="calEdit('${e.id}')" style="cursor:pointer">
+            <div class="upcoming-item" onclick="calEdit('${e.id}')">
               <div class="upcoming-date">
                 <div class="day">${parseInt(d)}</div>
                 <div class="month">${MONTHS_PT[parseInt(m)-1].slice(0,3)}</div>
@@ -1065,7 +605,7 @@
                 <div class="upcoming-title">${escapeHtml(e.title)}</div>
                 <div class="upcoming-meta">
                   <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
-                  <span><i class="fa-solid fa-calendar"></i> ${calFmtBR(e.date)}</span>
+                  <span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor || "Geral")}</span>
                 </div>
               </div>
               <span class="upcoming-tag tag-${e.type}">${e.type}</span>
@@ -1082,12 +622,18 @@
         });
       }
 
+      function calFilterType(type, btn) {
+        calState.activeFilter = type;
+        document.querySelectorAll(".cal-filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        calRender();
+      }
+
       function calOpenDay(iso) {
         calState.selectedDate = iso;
         const [y, m, d] = iso.split("-");
-        document.getElementById("cal-side-date-label").textContent =
-          `${parseInt(d)} de ${MONTHS_PT[parseInt(m)-1]} de ${y}`;
-        const dayEvents = calState.events.filter(e => e.date === iso);
+        document.getElementById("cal-side-date-label").textContent = `${parseInt(d)} de ${MONTHS_PT[parseInt(m)-1]} de ${y}`;
+        const dayEvents = calFilteredEvents().filter(e => e.date === iso);
         const body = document.getElementById("cal-side-body");
         body.innerHTML = dayEvents.length === 0
           ? `<div style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic">Nenhum compromisso.</div>`
@@ -1096,21 +642,14 @@
                 <div class="cal-side-item-title">${escapeHtml(e.title)}</div>
                 <div class="cal-side-item-meta">
                   <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
-                  <span><i class="fa-solid fa-tag"></i> ${e.type}</span>
+                  ${e.setor ? `<span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor)}</span>` : ""}
                 </div>
-                ${e.desc ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:6px">${escapeHtml(e.desc)}</div>` : ""}
               </div>`).join("");
         document.getElementById("cal-side-panel").classList.add("open");
       }
 
-      function calNavMonth(delta) {
-        calState.cursor.setMonth(calState.cursor.getMonth() + delta);
-        calRender();
-      }
-      function calGoToday() {
-        calState.cursor = new Date();
-        calRender();
-      }
+      function calNavMonth(delta) { calState.cursor.setMonth(calState.cursor.getMonth() + delta); calRender(); }
+      function calGoToday() { calState.cursor = new Date(); calRender(); }
       function calSetView(view, btn) {
         calState.view = view;
         document.querySelectorAll(".cal-view-btn").forEach(b => b.classList.remove("active"));
@@ -1125,17 +664,15 @@
       }
 
       function calOpenNewEvent(dateIso = null) {
-        document.getElementById("taskForm")?.reset();
         document.getElementById("cal-evt-id").value = "";
         document.getElementById("cal-evt-titulo").value = "";
         document.getElementById("cal-evt-desc").value = "";
         document.getElementById("cal-evt-data").value = dateIso || calFmtISO(new Date());
         document.getElementById("cal-evt-hora").value = "09:00";
         document.getElementById("cal-evt-duracao").value = "60";
-        document.getElementById("cal-evt-lembrete").value = "30";
+        document.getElementById("cal-evt-setor").value = "";
         calSelectType("reuniao", document.querySelector('.cal-type-btn[data-type="reuniao"]'));
-        document.getElementById("cal-modal-title").innerHTML =
-          '<i class="fa-solid fa-calendar-plus" style="color:var(--primary);margin-right:8px"></i>Novo compromisso';
+        document.getElementById("cal-modal-title").innerHTML = '<i class="fa-solid fa-calendar-plus" style="color:var(--primary);margin-right:8px"></i>Novo compromisso';
         document.getElementById("cal-btn-delete").style.display = "none";
         document.getElementById("cal-google-badge").style.display = "none";
         openModal("calEvento");
@@ -1149,11 +686,10 @@
         document.getElementById("cal-evt-data").value = e.date;
         document.getElementById("cal-evt-hora").value = e.time || "09:00";
         document.getElementById("cal-evt-duracao").value = e.duration || 60;
-        document.getElementById("cal-evt-lembrete").value = e.lembrete || 30;
+        document.getElementById("cal-evt-setor").value = e.setor || "";
         document.getElementById("cal-evt-desc").value = e.desc || "";
         calSelectType(e.type, document.querySelector(`.cal-type-btn[data-type="${e.type}"]`));
-        document.getElementById("cal-modal-title").innerHTML =
-          '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar compromisso';
+        document.getElementById("cal-modal-title").innerHTML = '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar compromisso';
         document.getElementById("cal-btn-delete").style.display = "inline-flex";
         document.getElementById("cal-google-badge").style.display = e.source === "google" ? "flex" : "none";
         document.getElementById("cal-side-panel").classList.remove("open");
@@ -1172,7 +708,7 @@
           date,
           time: document.getElementById("cal-evt-hora").value,
           duration: parseInt(document.getElementById("cal-evt-duracao").value),
-          lembrete: parseInt(document.getElementById("cal-evt-lembrete").value),
+          setor: document.getElementById("cal-evt-setor").value,
           desc: document.getElementById("cal-evt-desc").value.trim(),
         };
 
@@ -1201,23 +737,14 @@
       }
 
       function calImportGoogle() {
-        if (GOOGLE_CLIENT_ID.includes("SEU_CLIENT_ID_AQUI")) {
-          showToast("Configure o GOOGLE_CLIENT_ID no código antes de sincronizar.", "warning");
-          return;
-        }
-        if (typeof google === "undefined" || !google.accounts) {
-          showToast("Biblioteca do Google ainda não carregou. Tente novamente em instantes.", "error");
-          return;
-        }
+        if (GOOGLE_CLIENT_ID.includes("SEU_CLIENT_ID_AQUI")) { showToast("Configure o GOOGLE_CLIENT_ID no código antes de sincronizar.", "warning"); return; }
+        if (typeof google === "undefined" || !google.accounts) { showToast("Biblioteca do Google ainda não carregou.", "error"); return; }
         if (!googleTokenClient) {
           googleTokenClient = google.accounts.oauth2.initTokenClient({
             client_id: GOOGLE_CLIENT_ID,
             scope: GOOGLE_SCOPES,
             callback: (resp) => {
-              if (resp.error) {
-                showToast("Não foi possível autenticar com o Google.", "error");
-                return;
-              }
+              if (resp.error) { showToast("Não foi possível autenticar.", "error"); return; }
               googleAccessToken = resp.access_token;
               calFetchGoogleEvents();
             },
@@ -1231,55 +758,35 @@
         btn.disabled = true;
         showToast("Sincronizando com o Google Calendar...", "info");
         try {
-          const timeMin = new Date();
-          timeMin.setMonth(timeMin.getMonth() - 1);
-          const timeMax = new Date();
-          timeMax.setMonth(timeMax.getMonth() + 3);
-          const params = new URLSearchParams({
-            timeMin: timeMin.toISOString(),
-            timeMax: timeMax.toISOString(),
-            singleEvents: "true",
-            orderBy: "startTime",
-            maxResults: "250",
-          });
-          const res = await fetch(
-            `https://www.googleapis.com/calendar/v3/calendars/primary/events?${params.toString()}`,
-            { headers: { Authorization: `Bearer ${googleAccessToken}` } }
-          );
-          if (res.status === 401) {
-            googleAccessToken = null;
-            throw new Error("Sessão expirada, faça login novamente.");
-          }
+          const timeMin = new Date(); timeMin.setMonth(timeMin.getMonth() - 1);
+          const timeMax = new Date(); timeMax.setMonth(timeMax.getMonth() + 3);
+          const params = new URLSearchParams({ timeMin: timeMin.toISOString(), timeMax: timeMax.toISOString(), singleEvents: "true", orderBy: "startTime", maxResults: "250" });
+          const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params.toString()}`, { headers: { Authorization: `Bearer ${googleAccessToken}` } });
+          if (res.status === 401) { googleAccessToken = null; throw new Error("Sessão expirada."); }
           if (!res.ok) throw new Error("Erro " + res.status);
 
           const data = await res.json();
-          const imported = (data.items || [])
-            .map(ev => ({
-              id: "g_" + ev.id,
-              title: ev.summary || "(sem título)",
-              type: "google",
-              date: (ev.start.date || ev.start.dateTime || "").slice(0, 10),
-              time: ev.start.dateTime ? ev.start.dateTime.slice(11, 16) : "",
-              duration: 60,
-              desc: ev.description || "",
-              source: "google",
-            }))
-            .filter(e => e.date);
+          const imported = (data.items || []).map(ev => ({
+            id: "g_" + ev.id,
+            title: ev.summary || "(sem título)",
+            type: "google",
+            date: (ev.start.date || ev.start.dateTime || "").slice(0, 10),
+            time: ev.start.dateTime ? ev.start.dateTime.slice(11, 16) : "",
+            duration: 60,
+            setor: "Geral",
+            desc: ev.description || "",
+            source: "google",
+          })).filter(e => e.date);
 
           calState.events = calState.events.filter(e => e.source !== "google");
           calState.events.push(...imported);
           calSave();
           calRender();
           showToast(`${imported.length} compromisso(s) importado(s) do Google Calendar.`, "success");
-        } catch (err) {
-          console.error(err);
-          showToast("Não foi possível sincronizar com o Google Calendar.", "error");
-        } finally {
-          btn.disabled = false;
-        }
+        } catch (err) { console.error(err); showToast("Não foi possível sincronizar.", "error"); }
+        finally { btn.disabled = false; }
       }
 
-      /* Utilitários */
       function escapeHtml(str) {
         if (str == null) return "";
         return String(str).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
@@ -1298,13 +805,9 @@
       }
 
       document.addEventListener("keydown", e => {
-        if (e.key === "Escape") {
-          closeModal("calEvento");
-          document.getElementById("cal-side-panel").classList.remove("open");
-        }
+        if (e.key === "Escape") { closeModal("calEvento"); document.getElementById("cal-side-panel").classList.remove("open"); }
       });
 
-      /* Inicialização */
       calLoad();
       calRender();
     </script>
