@@ -4,14 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StockLog · Esqueci a Senha</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* Reutilizando o mesmo CSS da página de login, com pequenas adaptações */
     :root[data-theme="light"] {
       --bg-page: #eef2f6;
       --card-bg: #ffffff;
@@ -212,6 +211,7 @@
       color: var(--text-muted);
       font-size: 1.05rem;
       transition: transform 0.3s ease, color 0.3s ease;
+      pointer-events: none;
     }
 
     .input-group input {
@@ -241,6 +241,10 @@
       transform: translateY(-50%) scale(1.2);
     }
 
+    .input-group.input-error input {
+      border-color: #ef4444;
+    }
+
     .btn-login {
       width: 100%;
       padding: 15px;
@@ -257,7 +261,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-login:disabled {
+      cursor: not-allowed;
+      opacity: 0.75;
+      transform: none !important;
     }
 
     .btn-login::after {
@@ -272,16 +282,16 @@
       transition: transform 0.8s ease;
     }
 
-    .btn-login:hover {
+    .btn-login:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 12px 25px var(--accent-glow);
     }
 
-    .btn-login:hover::after {
+    .btn-login:hover:not(:disabled)::after {
       transform: rotate(30deg) translateX(100%);
     }
 
-    .btn-login:active {
+    .btn-login:active:not(:disabled) {
       transform: translateY(0);
     }
 
@@ -354,8 +364,8 @@
         <p>Digite seu e-mail para receber um link de redefinição</p>
       </div>
 
-      <form id="recoverForm" autocomplete="off">
-        <div class="input-group">
+      <form id="recoverForm" autocomplete="off" novalidate>
+        <div class="input-group" id="emailGroup">
           <input type="email" id="emailInput" placeholder="E-mail cadastrado" autocomplete="email" required>
           <i class="fa-regular fa-envelope icon-left"></i>
         </div>
@@ -394,6 +404,8 @@
       firebase.initializeApp(firebaseConfig);
     }
     const auth = firebase.auth();
+    // Idioma dos e-mails/erros do Firebase alinhado ao do navegador do usuário
+    auth.useDeviceLanguage();
 
     document.addEventListener('DOMContentLoaded', () => {
       const mouseGlow = document.getElementById('mouseGlow');
@@ -405,32 +417,30 @@
       const btnSpinner = document.getElementById('btnSpinner');
       const cardContainer = document.getElementById('cardContainer');
       const mensagem = document.getElementById('mensagem');
+      const emailGroup = document.getElementById('emailGroup');
+      const emailInput = document.getElementById('emailInput');
 
-      // Tema
+      // ---------- Tema ----------
       function applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('stocklog-theme', theme);
         themeIcon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
       }
-
       applyTheme(localStorage.getItem('stocklog-theme') || 'light');
-
       themeToggle.addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
       });
 
-      // Mouse glow
+      // ---------- Glow do mouse ----------
       let mouseX = window.innerWidth / 2;
       let mouseY = window.innerHeight / 2;
       let glowX = mouseX;
       let glowY = mouseY;
-
       document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
       });
-
       function renderGlow() {
         glowX += (mouseX - glowX) * 0.18;
         glowY += (mouseY - glowY) * 0.18;
@@ -439,51 +449,98 @@
       }
       renderGlow();
 
-      // Recuperação de senha
+      // ---------- Recuperação de senha ----------
+      const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let cooldownTimer = null;
+
+      function setMensagem(texto, cor) {
+        mensagem.style.color = cor;
+        mensagem.textContent = texto;
+      }
+
+      function setLoading(isLoading) {
+        btnText.style.display = isLoading ? 'none' : 'inline';
+        btnSpinner.style.display = isLoading ? 'block' : 'none';
+        btnRecover.disabled = isLoading;
+      }
+
+      function startCooldown(segundos) {
+        let restante = segundos;
+        btnRecover.disabled = true;
+        btnText.textContent = `Reenviar em ${restante}s`;
+        clearInterval(cooldownTimer);
+        cooldownTimer = setInterval(() => {
+          restante -= 1;
+          if (restante <= 0) {
+            clearInterval(cooldownTimer);
+            btnRecover.disabled = false;
+            btnText.textContent = 'Enviar link';
+            btnRecover.style.background = '';
+          } else {
+            btnText.textContent = `Reenviar em ${restante}s`;
+          }
+        }, 1000);
+      }
+
       recoverForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('emailInput').value.trim();
 
-        mensagem.textContent = '';
-        btnText.style.display = 'none';
-        btnSpinner.style.display = 'block';
-        btnRecover.style.pointerEvents = 'none';
+        const email = emailInput.value.trim();
+        setMensagem('', '');
+        emailGroup.classList.remove('input-error');
+
+        // Validação client-side antes de bater na API
+        if (!email || !EMAIL_REGEX.test(email)) {
+          emailGroup.classList.add('input-error');
+          setMensagem('Digite um e-mail válido.', '#ef4444');
+          cardContainer.classList.add('shake');
+          setTimeout(() => cardContainer.classList.remove('shake'), 400);
+          emailInput.focus();
+          return;
+        }
+
+        setLoading(true);
 
         auth.sendPasswordResetEmail(email)
           .then(() => {
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnText.textContent = 'Link enviado!';
+            setLoading(false);
             btnRecover.style.background = '#16a34a';
-
-            mensagem.style.color = '#16a34a';
-            mensagem.textContent = 'Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.';
-
-            setTimeout(() => {
-              btnText.textContent = 'Enviar link';
-              btnRecover.style.background = '';
-            }, 3000);
+            setMensagem('Verifique sua caixa de entrada (e o spam) e siga as instruções para redefinir sua senha.', '#16a34a');
+            // Cooldown de 60s antes de permitir reenvio, evitando spam de e-mails
+            startCooldown(60);
           })
           .catch((error) => {
-            btnSpinner.style.display = 'none';
-            btnText.style.display = 'inline';
-            btnRecover.style.pointerEvents = 'auto';
+            setLoading(false);
+            emailGroup.classList.add('input-error');
 
-            mensagem.style.color = '#ef4444';
             switch (error.code) {
               case 'auth/user-not-found':
-                mensagem.textContent = 'E-mail não cadastrado.';
+                setMensagem('E-mail não cadastrado.', '#ef4444');
                 break;
               case 'auth/invalid-email':
-                mensagem.textContent = 'Formato de e-mail inválido.';
+                setMensagem('Formato de e-mail inválido.', '#ef4444');
+                break;
+              case 'auth/missing-email':
+                setMensagem('Digite um e-mail.', '#ef4444');
+                break;
+              case 'auth/too-many-requests':
+                setMensagem('Muitas tentativas. Aguarde um pouco antes de tentar novamente.', '#ef4444');
+                break;
+              case 'auth/network-request-failed':
+                setMensagem('Falha de conexão. Verifique sua internet e tente novamente.', '#ef4444');
                 break;
               default:
-                mensagem.textContent = 'Erro ao enviar e-mail. Tente novamente.';
+                setMensagem('Erro ao enviar e-mail. Tente novamente.', '#ef4444');
             }
 
             cardContainer.classList.add('shake');
             setTimeout(() => cardContainer.classList.remove('shake'), 400);
           });
+      });
+
+      // Remove o destaque de erro assim que o usuário começa a digitar de novo
+      emailInput.addEventListener('input', () => {
+        emailGroup.classList.remove('input-error');
       });
     });
   </script>
