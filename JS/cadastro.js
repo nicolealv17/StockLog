@@ -1,292 +1,240 @@
-  document.addEventListener('DOMContentLoaded', () => {
-      // =====================================================================
-      // MAPEAMENTO DOS ELEMENTOS
-      // =====================================================================
-      const htmlElement = document.documentElement;
-      const themeToggle = document.getElementById('themeToggle');
-      const themeIcon = themeToggle ? themeToggle.querySelector('i') : null;
-      const mouseGlow = document.getElementById('mouseGlow');
+document.addEventListener("DOMContentLoaded", () => {
+  const registerForm = document.getElementById("registerForm");
+  const mensagem = document.getElementById("mensagem");
+  const btnRegister = document.getElementById("btnRegister");
+  const btnSpinner = document.getElementById("btnSpinner");
+  const btnText = document.getElementById("btnText");
+  const passwordInput = document.getElementById("passwordInput");
+  const togglePassword = document.getElementById("togglePassword");
+  const strengthBars = document.querySelectorAll(".strength-bar");
+  const strengthLabel = document.getElementById("strengthLabel");
+  const listaContainer = document.getElementById("listaContainer");
+  const listaBody = document.getElementById("listaBody");
+  const contadorLista = document.getElementById("contadorLista");
 
-      const registerForm = document.getElementById('registerForm');
-      const cpfInput = document.getElementById('cpfInput');
-      const passwordInput = document.getElementById('passwordInput');
+  // --- 1. MOSTRAR / OCULTAR SENHA ---
+  if (togglePassword && passwordInput) {
+    togglePassword.addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      togglePassword.classList.toggle("fa-eye", !isPassword);
+      togglePassword.classList.toggle("fa-eye-slash", isPassword);
+    });
+  }
 
-      const togglePassword = document.getElementById('togglePassword');
-      const btnRegister = document.getElementById('btnRegister');
-      const btnText = document.getElementById('btnText');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const cardContainer = document.getElementById('cardContainer');
-      const mensagem = document.getElementById('mensagem');
+  // --- 2. MEDIDOR DE FORÇA DA SENHA ---
+  if (passwordInput && strengthBars.length > 0) {
+    passwordInput.addEventListener("input", () => {
+      const val = passwordInput.value;
+      const result = calcularForcaSenha(val);
+      atualizarMedidorSenha(result.score, result.texto, result.cor);
+    });
+  }
 
-      // Trava contra envios duplicados
-      let enviando = false;
+  function calcularForcaSenha(senha) {
+    if (!senha) return { score: 0, texto: "", cor: "transparent" };
+    
+    let score = 0;
+    if (senha.length >= 6) score++;
+    if (senha.length >= 10) score++;
+    if (/[A-Z]/.test(senha) && /[a-z]/.test(senha)) score++;
+    if (/[0-9]/.test(senha) && /[^A-Za-z0-9]/.test(senha)) score++;
 
-      // =====================================================================
-      // A) GERENCIAMENTO DE TEMA
-      // =====================================================================
-      const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
-      setTheme(savedTheme);
+    let texto = "";
+    let cor = "";
 
-      if (themeToggle) {
-          themeToggle.addEventListener('click', () => {
-              const currentTheme = htmlElement.getAttribute('data-theme');
-              const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-              setTheme(newTheme);
-          });
+    switch (score) {
+      case 1:
+        texto = "Senha Fraca";
+        cor = "var(--red-bar)";
+        break;
+      case 2:
+        texto = "Senha Média";
+        cor = "var(--amber-bar)";
+        break;
+      case 3:
+        texto = "Senha Boa";
+        cor = "var(--orange-bar)";
+        break;
+      case 4:
+        texto = "Senha Forte";
+        cor = "var(--green-bar)";
+        break;
+      default:
+        texto = "Muito Fraca";
+        cor = "var(--red-bar)";
+    }
+
+    return { score, texto, cor };
+  }
+
+  function atualizarMedidorSenha(score, texto, cor) {
+    strengthBars.forEach((bar, index) => {
+      if (index < score) {
+        bar.style.backgroundColor = cor;
+      } else {
+        bar.style.backgroundColor = "var(--border)";
+      }
+    });
+
+    if (strengthLabel) {
+      strengthLabel.textContent = texto;
+      strengthLabel.style.color = cor;
+    }
+  }
+
+  // --- 3. SUBMISSÃO DO FORMULÁRIO E SALVAMENTO NO FIREBASE ---
+  if (registerForm) {
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      ocultarMensagem();
+
+      const nome = document.getElementById("nomeInput").value.trim();
+      const cpf = document.getElementById("cpfInput").value.trim();
+      const email = document.getElementById("emailInput").value.trim();
+      const area = document.getElementById("areaSelect").value;
+      const senha = passwordInput ? passwordInput.value : "";
+
+      if (!nome || !cpf || !email || !area || !senha) {
+        exibirMensagem("Preencha todos os campos obrigatórios (*).", "error");
+        return;
       }
 
-      function setTheme(theme) {
-          htmlElement.setAttribute('data-theme', theme);
-          localStorage.setItem('stocklog-theme', theme);
+      setLoading(true);
 
-          if (themeIcon) {
-              themeIcon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-          }
+      try {
+        // Envia direto para o nó "usuarios" no Realtime Database do Firebase
+        const novoUsuarioRef = firebase.database().ref("usuarios").push();
+
+        await novoUsuarioRef.set({
+          nome: nome,
+          cpf: cpf,
+          email: email,
+          area: area,
+          status: "Ativo",
+          criadoEm: new Date().toISOString()
+        });
+
+        exibirMensagem("Funcionário cadastrado com sucesso!", "success");
+        limparForm();
+        carregarUsuariosListados();
+
+      } catch (error) {
+        console.error("Erro ao salvar no Firebase:", error);
+        exibirMensagem("Erro ao salvar os dados: " + error.message, "error");
+      } finally {
+        setLoading(false);
+      }
+    });
+  }
+
+  // --- 4. RENDERIZAR E LISTAR FUNCIONÁRIOS DO FIREBASE ---
+  function carregarUsuariosListados() {
+    if (!listaBody) return;
+
+    const dbRef = firebase.database().ref("usuarios");
+    dbRef.on("value", (snapshot) => {
+      listaBody.innerHTML = "";
+      const data = snapshot.val();
+
+      if (!data) {
+        listaBody.innerHTML = '<div class="lista-vazia">Nenhum funcionário cadastrado até o momento.</div>';
+        if (contadorLista) contadorLista.textContent = "0";
+        return;
       }
 
-      // =====================================================================
-      // B) EFEITO GLOW NO MOUSE
-      // =====================================================================
-      if (mouseGlow) {
-          document.addEventListener('mousemove', (e) => {
-              mouseGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-          });
-      }
+      const lista = Object.values(data);
+      if (contadorLista) contadorLista.textContent = lista.length;
 
-      // =====================================================================
-      // C) MÁSCARA DE CPF
-      // =====================================================================
-      if (cpfInput) {
-          cpfInput.addEventListener('input', (e) => {
-              let value = e.target.value.replace(/\D/g, '');
-              if (value.length > 11) value = value.slice(0, 11);
+      lista.reverse().forEach((user) => {
+        const item = document.createElement("div");
+        item.className = "lista-item";
+        item.innerHTML = `
+          <div class="info">
+            <span class="nome">${escapeHtml(user.nome)}</span>
+            <span class="detalhe">${escapeHtml(user.area)} · ${escapeHtml(user.email)}</span>
+          </div>
+          <span class="status-pill ${(user.status || 'ativo').toLowerCase()}">${escapeHtml(user.status || 'Ativo')}</span>
+        `;
+        listaBody.appendChild(item);
+      });
+    });
+  }
 
-              value = value.replace(/(\d{3})(\d)/, '$1.$2');
-              value = value.replace(/(\d{3})(\d)/, '$1.$2');
-              value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  // Executa ao carregar a página para montar a lista
+  carregarUsuariosListados();
 
-              e.target.value = value;
-          });
-      }
+  // --- FUNÇÕES AUXILIARES ---
+  function exibirMensagem(texto, tipo) {
+    if (!mensagem) return;
+    mensagem.textContent = texto;
+    mensagem.className = `mensagem-alerta ${tipo}`;
+    mensagem.style.display = "flex";
+  }
 
-      // =====================================================================
-      // D) MOSTRAR / OCULTAR SENHA
-      // =====================================================================
-      if (togglePassword && passwordInput) {
-          togglePassword.addEventListener('click', () => {
-              const isPassword = passwordInput.getAttribute('type') === 'password';
-              passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-              togglePassword.classList.toggle('fa-eye', !isPassword);
-              togglePassword.classList.toggle('fa-eye-slash', isPassword);
-          });
-      }
+  function ocultarMensagem() {
+    if (!mensagem) return;
+    mensagem.className = "mensagem-alerta";
+    mensagem.style.display = "none";
+    mensagem.textContent = "";
+  }
 
-      // =====================================================================
-      // E) SUBMISSÃO DO FORMULÁRIO
-      // =====================================================================
-      if (registerForm) {
-          registerForm.addEventListener('submit', (e) => {
-              e.preventDefault();
+  function setLoading(carregando) {
+    if (!btnRegister) return;
+    if (carregando) {
+      btnRegister.disabled = true;
+      if (btnSpinner) btnSpinner.style.display = "inline-block";
+      if (btnText) btnText.style.display = "none";
+    } else {
+      btnRegister.disabled = false;
+      if (btnSpinner) btnSpinner.style.display = "none";
+      if (btnText) btnText.style.display = "inline";
+    }
+  }
 
-              if (enviando) return;
-              enviando = true;
+  function escapeHtml(string) {
+    return String(string || "").replace(/[&<>"']/g, (s) => {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[s];
+    });
+  }
+});
 
-              if (mensagem) {
-                  mensagem.innerText = '';
-                  mensagem.style.color = 'inherit';
-              }
+// --- FUNÇÕES GLOBAIS (Acessadas pelos botões inline HTML) ---
+function mascaraCPF(input) {
+  let v = input.value.replace(/\D/g, "");
+  v = v.replace(/(\d{3})(\d)/, "$1.$2");
+  v = v.replace(/(\d{3})(\d)/, "$1.$2");
+  v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  input.value = v;
+}
 
-              // Captura dos valores
-              const cpfFormatado = cpfInput ? cpfInput.value.trim() : '';
-              const cpfLimpo = cpfFormatado.replace(/\D/g, '');
+function limparForm() {
+  const form = document.getElementById("registerForm");
+  if (form) form.reset();
 
-              const nomeInput = document.getElementById('nomeInput');
-              const nome = nomeInput ? nomeInput.value.trim() : '';
+  const mensagem = document.getElementById("mensagem");
+  if (mensagem) {
+    mensagem.style.display = "none";
+    mensagem.textContent = "";
+  }
 
-              const emailInput = document.getElementById('emailInput');
-              const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+  const strengthBars = document.querySelectorAll(".strength-bar");
+  strengthBars.forEach(bar => bar.style.backgroundColor = "var(--border)");
+  
+  const strengthLabel = document.getElementById("strengthLabel");
+  if (strengthLabel) strengthLabel.textContent = "";
+}
 
-              const setorInput = document.getElementById('setorSelect');
-              const setor = setorInput ? setorInput.value : '';
-
-              const senha = passwordInput ? passwordInput.value : '';
-
-              // --- VALIDAÇÕES ---
-              if (!validarCPF(cpfLimpo)) {
-                  exibirErro("Erro: Digite um CPF válido!");
-                  enviando = false;
-                  return;
-              }
-
-              const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-              if (!regexEmail.test(email)) {
-                  exibirErro("Erro: Digite um e-mail válido!");
-                  enviando = false;
-                  return;
-              }
-
-              if (!nome) {
-                  exibirErro("Erro: Digite seu nome completo!");
-                  enviando = false;
-                  return;
-              }
-
-              if (!setor) {
-                  exibirErro("Erro: Selecione um setor!");
-                  enviando = false;
-                  return;
-              }
-
-              const regexSenhaForte = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#._-])[A-Za-z\d@$!%*?&#._-]{8,}$/;
-              if (!regexSenhaForte.test(senha)) {
-                  exibirErro("A senha deve ter no mínimo 8 caracteres, com maiúsculas, minúsculas, números e símbolos.");
-                  enviando = false;
-                  return;
-              }
-
-              // Ativa estado de carregamento
-              ativarCarregamento(true);
-
-              // ============================================================
-              // CADASTRO COM FIREBASE AUTHENTICATION
-              // ============================================================
-              auth.createUserWithEmailAndPassword(email, senha)
-                  .then((userCredential) => {
-                      // Usuário criado no Firebase Auth (senha hasheada lá dentro)
-                      const user = userCredential.user;
-
-                      // Salva os dados NÃO sensíveis no Realtime Database
-                      const dadosUsuario = {
-                          uid: user.uid,
-                          nome: nome,
-                          cpf: cpfFormatado,
-                          setor: setor,
-                          email: email,
-                          dataCadastro: new Date().toISOString()
-                          // senha NÃO é salva aqui
-                      };
-
-                      return db.ref('funcionarios/' + user.uid).set(dadosUsuario);
-                  })
-                  .then(() => {
-                      // Sucesso total
-                      if (btnSpinner) btnSpinner.style.display = 'none';
-                      if (btnText) {
-                          btnText.style.display = 'inline';
-                          btnText.textContent = 'Conta Criada com Sucesso!';
-                      }
-                      if (btnRegister) {
-                          btnRegister.style.background = '#16a34a';
-                          btnRegister.disabled = true;
-                      }
-
-                      if (mensagem) {
-                          mensagem.innerText = "Cadastro realizado! Redirecionando...";
-                          mensagem.style.color = "green";
-                      }
-
-                      registerForm.reset();
-
-                      // Animação de saída + redirecionamento
-                      setTimeout(() => {
-                          if (cardContainer) {
-                              cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                              cardContainer.style.opacity = '0';
-                              cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
-                          }
-
-                          setTimeout(() => {
-                              window.location.href = "login.html";
-                          }, 400);
-                      }, 800);
-                  })
-                  .catch((erro) => {
-                      console.error("Erro no cadastro:", erro);
-                      enviando = false;
-
-                      // Traduz erros comuns do Firebase Auth
-                      let msgErro = "Erro ao realizar o cadastro. Tente novamente!";
-
-                      switch (erro.code) {
-                          case 'auth/email-already-in-use':
-                              msgErro = "Este e-mail já está cadastrado!";
-                              break;
-                          case 'auth/invalid-email':
-                              msgErro = "E-mail inválido!";
-                              break;
-                          case 'auth/weak-password':
-                              msgErro = "Senha muito fraca! Use letras, números e símbolos.";
-                              break;
-                          case 'auth/network-request-failed':
-                              msgErro = "Erro de conexão. Verifique sua internet.";
-                              break;
-                      }
-
-                      exibirErro(msgErro);
-                  });
-          });
-      }
-
-      // =====================================================================
-      // FUNÇÕES AUXILIARES
-      // =====================================================================
-
-      function validarCPF(cpf) {
-          cpf = cpf.replace(/\D/g, '');
-
-          if (cpf.length !== 11) return false;
-          if (/^(\d)\1+$/.test(cpf)) return false;
-
-          let soma = 0;
-          let resto;
-
-          for (let i = 1; i <= 9; i++) {
-              soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-          }
-          resto = (soma * 10) % 11;
-          if (resto === 10 || resto === 11) resto = 0;
-          if (resto !== parseInt(cpf.substring(9, 10))) return false;
-
-          soma = 0;
-          for (let i = 1; i <= 10; i++) {
-              soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-          }
-          resto = (soma * 10) % 11;
-          if (resto === 10 || resto === 11) resto = 0;
-          if (resto !== parseInt(cpf.substring(10, 11))) return false;
-
-          return true;
-      }
-
-      function ativarCarregamento(carregando) {
-          if (carregando) {
-              if (btnText) btnText.style.display = 'none';
-              if (btnSpinner) btnSpinner.style.display = 'block';
-              if (btnRegister) {
-                  btnRegister.disabled = true;
-                  btnRegister.style.pointerEvents = 'none';
-              }
-          } else {
-              if (btnSpinner) btnSpinner.style.display = 'none';
-              if (btnText) btnText.style.display = 'inline';
-              if (btnRegister) {
-                  btnRegister.disabled = false;
-                  btnRegister.style.pointerEvents = 'auto';
-              }
-          }
-      }
-
-      function exibirErro(msg) {
-          if (mensagem) {
-              mensagem.innerText = msg;
-              mensagem.style.color = "red";
-          }
-
-          if (cardContainer) {
-              cardContainer.classList.add('shake');
-              setTimeout(() => cardContainer.classList.remove('shake'), 400);
-          }
-
-          ativarCarregamento(false);
-      }
-  });
+function toggleLista() {
+  const lista = document.getElementById("listaContainer");
+  if (lista) {
+    lista.classList.toggle("visible");
+  }
+}
