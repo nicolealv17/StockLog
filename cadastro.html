@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StockLog · Cadastro</title>
+
+    <!-- Fontes e Ícones -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,12 +16,15 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+
+    <!-- Estilos Locais -->
     <link rel="stylesheet" href="components/css/sidebar.css" />
     <link rel="stylesheet" href="components/css/header.css" />
     <link rel="stylesheet" href="components/css/chat.css" />
     <link rel="stylesheet" href="components/css/footer.css" />
     <link rel="stylesheet" href="components/css/modoescuro.css" />
     <link rel="stylesheet" href="components/css/responsive.css" />
+
     <style>
       :root {
         --bg-body: #f1f5f9;
@@ -221,16 +226,6 @@
       .btn-sm:hover {
         border-color: var(--border-hover);
         color: var(--text-main);
-      }
-
-      .btn-sm.primary {
-        background: var(--primary);
-        color: #fff;
-        border-color: var(--primary);
-      }
-
-      .btn-sm.primary:hover {
-        background: var(--primary-hover);
       }
 
       .form-grid {
@@ -467,7 +462,6 @@
         animation: spin 0.8s linear infinite;
       }
 
-      /* ============ LISTA DE FUNCIONÁRIOS ============ */
       .lista-container {
         display: none;
         margin-top: 20px;
@@ -563,7 +557,6 @@
         font-size: 14px;
       }
 
-      /* ============ ANIMAÇÕES ============ */
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
@@ -639,7 +632,7 @@
               <span class="icon-badge"><i class="fa-solid fa-user-plus"></i></span>
               Novo Funcionário
             </span>
-            <button class="btn-sm" onclick="toggleLista()">
+            <button class="btn-sm" id="btnToggleLista" onclick="toggleLista()">
               <i class="fa-solid fa-users"></i> Ver cadastrados
             </button>
           </div>
@@ -661,7 +654,14 @@
               <label for="cpfInput">CPF <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-id-card input-icon"></i>
-                <input type="text" id="cpfInput" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" required />
+                <input 
+                  type="text" 
+                  id="cpfInput" 
+                  placeholder="000.000.000-00" 
+                  maxlength="14" 
+                  oninput="mascaraCPF(this)" 
+                  required 
+                />
               </div>
             </div>
 
@@ -692,7 +692,7 @@
               <label for="passwordInput">Senha de Acesso <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-lock input-icon"></i>
-                <input type="password" id="passwordInput" placeholder="Crie uma senha segura" autocomplete="new-password" required />
+                <input type="password" id="passwordInput" placeholder="Crie uma senha segura" autocomplete="new-password" required minlength="6" />
                 <i class="fa-regular fa-eye toggle-password" id="togglePassword" role="button" aria-label="Mostrar ou ocultar senha" tabindex="0"></i>
               </div>
 
@@ -708,7 +708,7 @@
             </div>
 
             <div class="form-actions">
-              <button type="button" class="btn-cancel" onclick="limparForm()">
+              <button type="button" class="btn-cancel" id="btnLimpar" onclick="limparForm()">
                 <i class="fa-solid fa-rotate-left"></i> Limpar
               </button>
               <button type="submit" class="btn-submit" id="btnRegister">
@@ -718,7 +718,7 @@
             </div>
           </form>
 
-          <!-- LISTA DE FUNCIONÁRIOS (oculta por padrão) -->
+          <!-- LISTA DE FUNCIONÁRIOS -->
           <div class="lista-container" id="listaContainer">
             <div class="lista-header">
               <h4><i class="fa-solid fa-users" style="color:var(--primary)"></i> Funcionários cadastrados</h4>
@@ -734,11 +734,12 @@
       <div id="footer-root"></div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
+    <!-- Inicialização Firebase -->
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
@@ -749,196 +750,10 @@
         messagingSenderId: "787537499919",
         appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
       };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
 
-      // ========== DADOS MOCK ==========
-      let funcionarios = [
-        { id: 1, nome: "Roberto Silva", cpf: "123.456.789-00", email: "roberto.silva@empresa.com", setor: "Produção", status: "ativo" },
-        { id: 2, nome: "Ana Oliveira", cpf: "987.654.321-00", email: "ana.oliveira@empresa.com", setor: "Qualidade", status: "ativo" },
-        { id: 3, nome: "Carlos Mendes", cpf: "456.789.123-00", email: "carlos.mendes@empresa.com", setor: "Usinagem", status: "ativo" },
-        { id: 4, nome: "Fernanda Costa", cpf: "321.654.987-00", email: "fernanda.costa@empresa.com", setor: "Logística", status: "inativo" },
-      ];
-
-      // ========== CPF MÁSCARA ==========
-      const cpfInput = document.getElementById('cpfInput');
-      cpfInput.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        e.target.value = v;
-      });
-
-      // ========== TOGGLE SENHA ==========
-      const togglePassword = document.getElementById('togglePassword');
-      const passwordInput = document.getElementById('passwordInput');
-
-      function togglePasswordVisibility() {
-        const isPassword = passwordInput.type === 'password';
-        passwordInput.type = isPassword ? 'text' : 'password';
-        togglePassword.className = isPassword ? 'fa-regular fa-eye-slash toggle-password' : 'fa-regular fa-eye toggle-password';
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
       }
-
-      togglePassword.addEventListener('click', togglePasswordVisibility);
-      togglePassword.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          togglePasswordVisibility();
-        }
-      });
-
-      // ========== INDICADOR DE FORÇA ==========
-      const strengthBars = document.querySelectorAll('.strength-bar');
-      const strengthLabel = document.getElementById('strengthLabel');
-
-      passwordInput.addEventListener('input', () => {
-        const v = passwordInput.value;
-        if (!v) {
-          strengthBars.forEach(bar => bar.style.backgroundColor = '');
-          strengthLabel.textContent = '';
-          return;
-        }
-
-        let score = 0;
-        if (v.length >= 6) score++;
-        if (v.length >= 8 && /[A-Z]/.test(v)) score++;
-        if (/[0-9]/.test(v)) score++;
-        if (/[^A-Za-z0-9]/.test(v)) score++;
-
-        const levels = [
-          { text: '', color: '' },
-          { text: 'Muito Fraca', color: 'var(--red-bar)' },
-          { text: 'Fraca', color: 'var(--orange-bar)' },
-          { text: 'Média', color: 'var(--amber-bar)' },
-          { text: 'Forte', color: 'var(--green-bar)' }
-        ];
-
-        const current = levels[score] || levels[1];
-        strengthBars.forEach((bar, i) => {
-          bar.style.backgroundColor = i < score ? current.color : 'var(--border)';
-        });
-        strengthLabel.textContent = current.text;
-        strengthLabel.style.color = current.color;
-      });
-
-      // ========== LIMPAR FORMULÁRIO ==========
-      function limparForm() {
-        document.getElementById('registerForm').reset();
-        strengthBars.forEach(bar => bar.style.backgroundColor = '');
-        strengthLabel.textContent = '';
-        document.getElementById('mensagem').className = 'mensagem-alerta';
-        document.getElementById('mensagem').innerHTML = '';
-      }
-
-      // ========== MOSTRAR/OCULTAR LISTA ==========
-      function toggleLista() {
-        const container = document.getElementById('listaContainer');
-        container.classList.toggle('visible');
-        if (container.classList.contains('visible')) {
-          renderizarLista();
-        }
-      }
-
-      // ========== RENDERIZAR LISTA SIMPLES ==========
-      function renderizarLista() {
-        const body = document.getElementById('listaBody');
-        const contador = document.getElementById('contadorLista');
-
-        if (funcionarios.length === 0) {
-          body.innerHTML = `<div class="lista-vazia">Nenhum funcionário cadastrado ainda.</div>`;
-          contador.textContent = '0';
-          return;
-        }
-
-        contador.textContent = funcionarios.length;
-
-        body.innerHTML = funcionarios.map(f => `
-          <div class="lista-item">
-            <div class="info">
-              <span class="nome">${f.nome}</span>
-              <span class="detalhe">${f.setor} · ${f.email}</span>
-            </div>
-            <span class="status-pill ${f.status}">${f.status === 'ativo' ? 'Ativo' : 'Inativo'}</span>
-          </div>
-        `).join('');
-      }
-
-      // ========== SUBMISSÃO DO FORMULÁRIO ==========
-      const form = document.getElementById('registerForm');
-      const mensagem = document.getElementById('mensagem');
-      const btnRegister = document.getElementById('btnRegister');
-      const btnText = document.getElementById('btnText');
-      const btnSpinner = document.getElementById('btnSpinner');
-
-      function showMessage(text, type) {
-        mensagem.className = 'mensagem-alerta ' + (type || '');
-        mensagem.innerHTML = type === 'error'
-          ? `<i class="fa-solid fa-circle-exclamation"></i> <span>${text}</span>`
-          : type === 'success'
-            ? `<i class="fa-solid fa-circle-check"></i> <span>${text}</span>`
-            : `<span>${text}</span>`;
-      }
-
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const nome = document.getElementById('nomeInput').value.trim();
-        const cpf = document.getElementById('cpfInput').value.replace(/\D/g, '');
-        const email = document.getElementById('emailInput').value.trim();
-        const setor = document.getElementById('areaSelect').value;
-
-        if (!nome || !cpf || !email || !setor) {
-          showMessage('Preencha todos os campos obrigatórios.', 'error');
-          document.getElementById('cardContainer').classList.add('shake');
-          setTimeout(() => document.getElementById('cardContainer').classList.remove('shake'), 400);
-          return;
-        }
-
-        if (cpf.length !== 11) {
-          showMessage('CPF inválido. Digite 11 dígitos.', 'error');
-          return;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          showMessage('Informe um e-mail válido.', 'error');
-          return;
-        }
-
-        btnText.style.display = 'none';
-        btnSpinner.style.display = 'block';
-        btnRegister.disabled = true;
-
-        setTimeout(() => {
-          const novo = {
-            id: funcionarios.length + 1,
-            nome,
-            cpf: document.getElementById('cpfInput').value,
-            email,
-            setor,
-            status: 'ativo'
-          };
-          funcionarios.push(novo);
-
-          btnText.style.display = 'inline-flex';
-          btnSpinner.style.display = 'none';
-          btnRegister.disabled = false;
-
-          showMessage('Cadastro realizado com sucesso!', 'success');
-          limparForm();
-
-          // Atualiza a lista se estiver visível
-          if (document.getElementById('listaContainer').classList.contains('visible')) {
-            renderizarLista();
-          }
-
-          setTimeout(() => {
-            mensagem.className = 'mensagem-alerta';
-            mensagem.innerHTML = '';
-          }, 3000);
-        }, 1500);
-      });
     </script>
 
     <!-- Componentes Globais -->
@@ -949,43 +764,7 @@
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
 
-    <!-- Sincronização do Modo Escuro -->
-    <script>
-      (function () {
-        const STORAGE_KEY = 'stocklog-theme';
-
-        function applyTheme(theme) {
-          const isDark = theme === 'dark';
-          document.documentElement.setAttribute('data-theme', theme);
-          document.body.classList.toggle('dark', isDark);
-          try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
-        }
-
-        const saved = (() => {
-          try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
-        })() || 'light';
-        applyTheme(saved);
-
-        const observer = new MutationObserver(() => {
-          const bodyIsDark = document.body.classList.contains('dark');
-          const htmlIsDark = document.documentElement.getAttribute('data-theme') === 'dark';
-          if (bodyIsDark !== htmlIsDark) {
-            applyTheme(bodyIsDark ? 'dark' : 'light');
-          }
-        });
-        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-        document.addEventListener('click', (e) => {
-          const btn = e.target.closest('#themeToggle, .theme-toggle, [data-theme-toggle]');
-          if (!btn) return;
-          setTimeout(() => {
-            const current = document.body.classList.contains('dark') ||
-                            document.documentElement.getAttribute('data-theme') === 'dark';
-            applyTheme(current ? 'dark' : 'light');
-          }, 50);
-        });
-      })();
-    </script>
+    <!-- Lógica de Cadastro Principal -->
+    <script src="cadastro.js"></script>
   </body>
 </html>
