@@ -349,9 +349,7 @@ body.dark {
   font-weight: 500;
 }
 
-/* ================================================================ */
-   RESPONSIVIDADE
-   ============================================================ */
+
 @media (max-width: 768px) {
   .header {
     padding: 8px 12px;
@@ -386,28 +384,62 @@ body.dark {
 }
 
 @media (max-width: 480px) {
+  .header {
+    flex-wrap: wrap;
+    padding: 6px 10px;
+  }
+
+  .header-left {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .header-right {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  /* A busca agora ocupa toda a largura na segunda linha */
   .header-search {
-    max-width: 120px;
-    min-width: 80px;
+    order: 10; /* Coloca a busca após todos os elementos */
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-top: 4px;
   }
+
   .header-search input {
-    font-size: 12px;
+    font-size: 13px;
+    padding: 6px 0;
   }
+
   .header-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 12px;
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
   }
-.user-profile {
-    width: 30px;
-    height: 30px;
+
+  .user-profile {
+    width: 34px;
+    height: 34px;
     padding: 0;
   }
   .user-avatar-wrapper {
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
   }
   .user-avatar-wrapper i {
-    font-size: 18px;
+    font-size: 20px;
+  }
+  .user-profile-name {
+    display: none;
+  }
+
+  /* Notificações: dropdown ocupa quase toda a tela */
+  .notif-dropdown {
+    width: calc(100vw - 20px);
+    right: -10px;
+    max-height: 70vh;
   }
 }

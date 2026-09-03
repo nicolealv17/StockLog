@@ -262,15 +262,102 @@
     // Ações de busca
     var searchInput = header.querySelector('.header-search input');
     if (searchInput) {
-      searchInput.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          var query = this.value.trim();
-          if (query) {
-            console.log("[StockLog] Busca:", query);
-          }
-        }
-      });
+ // ========== BUSCA FUNCIONAL ==========
+function performSearch(query) {
+  if (!query) {
+    // Se a busca estiver vazia, mostra todos os itens novamente
+    showAllItems();
+    return;
+  }
+
+  // 1. Obtém o seletor de itens a partir do atributo data-search-items no body
+  var itemsSelector = document.body.getAttribute('data-search-items');
+  if (!itemsSelector) {
+    // 2. Tentativa automática: detectar tabelas ou cards
+    if (document.querySelector('table tbody')) {
+      itemsSelector = 'table tbody tr';
+    } else if (document.querySelector('.card')) {
+      itemsSelector = '.card';
+    } else if (document.querySelector('.item')) {
+      itemsSelector = '.item';
+    } else {
+      // Fallback: busca em qualquer elemento que tenha texto e seja filho de main ou section
+      itemsSelector = 'main > *, section > *';
+    }
+  }
+
+  var items = document.querySelectorAll(itemsSelector);
+  var found = 0;
+
+  items.forEach(function (item) {
+    var text = item.textContent || item.innerText || '';
+    var matches = text.toLowerCase().includes(query.toLowerCase());
+    if (matches) {
+      item.style.display = ''; // mostra
+      found++;
+    } else {
+      item.style.display = 'none'; // esconde
+    }
+  });
+
+  // 3. Exibe mensagem se nenhum resultado
+  var msgContainer = document.getElementById('search-feedback');
+  if (!msgContainer) {
+    msgContainer = document.createElement('div');
+    msgContainer.id = 'search-feedback';
+    msgContainer.style.cssText = 'padding:10px; text-align:center; color:var(--text-muted); font-size:14px; margin-top:10px;';
+    var mainContent = document.querySelector('main') || document.body;
+    mainContent.prepend(msgContainer);
+  }
+
+  if (found === 0) {
+    msgContainer.textContent = 'Nenhum resultado encontrado para "' + query + '"';
+    msgContainer.style.display = 'block';
+  } else {
+    msgContainer.textContent = '';
+    msgContainer.style.display = 'none';
+  }
+}
+
+function showAllItems() {
+  var itemsSelector = document.body.getAttribute('data-search-items');
+  if (!itemsSelector) {
+    if (document.querySelector('table tbody')) itemsSelector = 'table tbody tr';
+    else if (document.querySelector('.card')) itemsSelector = '.card';
+    else if (document.querySelector('.item')) itemsSelector = '.item';
+    else itemsSelector = 'main > *, section > *';
+  }
+  document.querySelectorAll(itemsSelector).forEach(function (el) {
+    el.style.display = '';
+  });
+  var msg = document.getElementById('search-feedback');
+  if (msg) msg.style.display = 'none';
+}
+
+// Agora, no evento keydown:
+searchInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    var query = this.value.trim();
+    performSearch(query);
+  }
+});
+
+// Opcional: adicionar um botão "limpar" ao lado da busca
+var searchWrapper = searchInput.closest('.header-search');
+if (searchWrapper) {
+  var clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.innerHTML = '<i class="fas fa-times-circle"></i>';
+  clearBtn.style.cssText = 'background:transparent; border:none; color:var(--text-muted); cursor:pointer; padding:0 4px; font-size:14px;';
+  clearBtn.setAttribute('aria-label', 'Limpar busca');
+  clearBtn.addEventListener('click', function () {
+    searchInput.value = '';
+    performSearch('');
+    searchInput.focus();
+  });
+  searchWrapper.appendChild(clearBtn);
+}
     }
 
     // Atualiza o header quando o perfil for atualizado

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Detalhe da Peça</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/chat.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+    <link rel="stylesheet" href="components/css/responsive.css" />
+
+    <style>
+      :root {
+        --bg-body: #edf3f8;
+        --bg-card: #ffffff;
+        --bg-soft: #f4f8fc;
+        --border: #d4e2f0;
+        --text-main: #0c1e2e;
+        --text-secondary: #3b5a75;
+        --text-muted: #718da8;
+        --primary: #006bb3;
+        --primary-light: #e3f0fb;
+        --green: #15803d;
+        --green-bg: #dcfce7;
+        --green-bar: #16a34a;
+        --amber: #b45309;
+        --amber-bg: #fef3c7;
+        --amber-bar: #d97706;
+        --red: #b91c1c;
+        --red-bg: #fee2e2;
+        --red-bar: #dc2626;
+        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
+      }
+
+      body.dark {
+        --bg-body: #0a131d;
+        --bg-card: #111f2e;
+        --bg-soft: #16283b;
+        --border: #1e364f;
+        --text-main: #e2edf8;
+        --text-secondary: #9cb5cd;
+        --text-muted: #6482a0;
+        --primary: #38bdf8;
+        --primary-light: #17324d;
+        --green: #4ade80;
+        --green-bg: #143823;
+        --green-bar: #22c55e;
+        --amber: #fbbf24;
+        --amber-bg: #3d2d11;
+        --amber-bar: #f59e0b;
+        --red: #f87171;
+        --red-bg: #3e1919;
+        --red-bar: #ef4444;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        transition: background-color 0.2s, color 0.2s;
+      }
+
+      .main-wrapper { flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+
+      .detail-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 24px 16px 40px;
+      }
+
+      .detail-card {
+        width: 100%;
+        max-width: 480px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .detail-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .detail-header .item-code-big {
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 12.5px;
+        color: var(--primary);
+        background: var(--primary-light);
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+
+      .detail-header h1 {
+        font-size: 19px;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+
+      .detail-header .item-sub-big {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .status-pill-big {
+        font-size: 12.5px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 20px;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .status-pill-big.ok { background: var(--green-bg); color: var(--green); }
+      .status-pill-big.baixo { background: var(--amber-bg); color: var(--amber); }
+      .status-pill-big.critico { background: var(--red-bg); color: var(--red); }
+
+      .detail-body { padding: 22px 24px; }
+
+      .qty-hero {
+        text-align: center;
+        padding: 18px 12px 22px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .qty-hero .qty-number {
+        font-size: 42px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .qty-hero .qty-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        margin-top: 6px;
+      }
+
+      .progress-bar-bg { width: 100%; height: 8px; background: var(--border); border-radius: 6px; overflow: hidden; margin-top: 14px; }
+      .progress-bar-fill { height: 100%; border-radius: 6px; }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .info-block {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+
+      .info-block .label {
+        font-size: 11px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .info-block .value {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .flow-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 14px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 13.5px;
+        font-weight: 700;
+      }
+
+      .flow-row .flow-in { color: var(--green); }
+      .flow-row .flow-out { color: var(--red); }
+
+      .back-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        font-weight: 700;
+        font-size: 13.5px;
+        text-decoration: none;
+        transition: 0.15s;
+      }
+
+      .back-link:hover { border-color: var(--primary); color: var(--primary); }
+
+      .not-found {
+        text-align: center;
+        padding: 50px 20px;
+      }
+
+      .not-found i { font-size: 44px; color: var(--border); margin-bottom: 14px; display: block; }
+      .not-found h2 { font-size: 17px; margin-bottom: 6px; }
+      .not-found p { font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px; }
+      .not-found code {
+        font-family: monospace;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        padding: 2px 8px;
+        border-radius: 6px;
+        color: var(--primary);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sidebar-root"></div>
+
+    <div class="main-wrapper">
+      <div id="header-root"></div>
+
+      <div class="detail-container">
+        <div class="detail-card" id="detailCard">
+          <!-- Preenchido via JS -->
+        </div>
+      </div>
+
+      <div id="footer-root"></div>
+    </div>
+
+    <script>
+      const STORAGE_KEY = 'stocklog_estoque_itens_v1';
+
+      function getCodigoFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return (params.get('codigo') || '').trim();
+      }
+
+      function loadItems() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {
+          console.warn('Falha ao ler localStorage.', e);
+        }
+        return [];
+      }
+
+      function renderNotFound(codigo) {
+        document.getElementById('detailCard').innerHTML = `
+          <div class="not-found">
+            <i class="fas fa-box-open"></i>
+            <h2>Peça não encontrada</h2>
+            <p>Nenhum item de estoque corresponde ao código ${codigo ? `<code>${codigo}</code>` : 'informado'}.</p>
+            <a class="back-link" href="leitor-qr.html" style="display:inline-flex;">
+              <i class="fas fa-qrcode"></i> Voltar ao leitor de QR Code
+            </a>
+          </div>
+        `;
+      }
+
+      function statusLabel(status) {
+        if (status === 'critico') return { text: 'Crítico', icon: 'fa-circle-exclamation' };
+        if (status === 'baixo') return { text: 'Baixo', icon: 'fa-triangle-exclamation' };
+        return { text: 'Normal', icon: 'fa-check-circle' };
+      }
+
+      function renderDetail(item) {
+        const perc = Math.min(100, Math.round((item.atual / item.maximo) * 100));
+        let barColor = 'var(--green-bar)';
+        if (item.status === 'baixo') barColor = 'var(--amber-bar)';
+        if (item.status === 'critico') barColor = 'var(--red-bar)';
+
+        const st = statusLabel(item.status);
+
+        document.getElementById('detailCard').innerHTML = `
+          <div class="detail-header">
+            <div>
+              <span class="item-code-big">${item.codigo}</span>
+              <h1>${item.nome}</h1>
+              <div class="item-sub-big">${item.sub}</div>
+            </div>
+            <span class="status-pill-big ${item.status}"><i class="fas ${st.icon}"></i> ${st.text}</span>
+          </div>
+          <div class="detail-body">
+            <div class="qty-hero">
+              <div class="qty-number">${item.atual}</div>
+              <div class="qty-label">unidades em estoque</div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width:${perc}%; background:${barColor};"></div>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-block">
+                <div class="label">Categoria</div>
+                <div class="value">${item.categoria}</div>
+              </div>
+              <div class="info-block">
+                <div class="label">Localização</div>
+                <div class="value"><i class="fas fa-location-dot" style="color:var(--text-muted); font-size:0.8em;"></i> ${item.local}</div>
+              </div>
+              <div class="info-block">
+                <div class="label">Mínimo</div>
+                <div class="value">${item.minimo} un</div>
+              </div>
+              <div class="info-block">
+                <div class="label">Máximo</div>
+                <div class="value">${item.maximo} un</div>
+              </div>
+            </div>
+
+            <div class="flow-row">
+              <span class="flow-in"><i class="fas fa-arrow-down"></i> +${item.entradas} entradas hoje</span>
+              <span class="flow-out"><i class="fas fa-arrow-up"></i> -${item.saidas} saídas hoje</span>
+            </div>
+
+            <a class="back-link" href="leitor-qr.html">
+              <i class="fas fa-qrcode"></i> Ler outro QR Code
+            </a>
+          </div>
+        `;
+      }
+
+      function init() {
+        const codigo = getCodigoFromUrl();
+        if (!codigo) {
+          renderNotFound(null);
+          return;
+        }
+        const items = loadItems();
+        const item = items.find(i => i.codigo.toLowerCase() === codigo.toLowerCase());
+        if (!item) {
+          renderNotFound(codigo);
+          return;
+        }
+        renderDetail(item);
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/chat.js"></script>
+    <script src="components/js/config.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
+  </body>
+</html>

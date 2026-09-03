@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Leitor de QR Code</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/chat.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+    <link rel="stylesheet" href="components/css/responsive.css" />
+
+    <!-- Biblioteca para leitura de QR Code pela câmera -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <style>
+      :root {
+        --bg-body: #edf3f8;
+        --bg-card: #ffffff;
+        --bg-soft: #f4f8fc;
+        --border: #d4e2f0;
+        --text-main: #0c1e2e;
+        --text-secondary: #3b5a75;
+        --text-muted: #718da8;
+        --primary: #006bb3;
+        --primary-light: #e3f0fb;
+        --green: #15803d;
+        --green-bg: #dcfce7;
+        --red: #b91c1c;
+        --red-bg: #fee2e2;
+        --amber: #b45309;
+        --amber-bg: #fef3c7;
+        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
+      }
+
+      body.dark {
+        --bg-body: #0a131d;
+        --bg-card: #111f2e;
+        --bg-soft: #16283b;
+        --border: #1e364f;
+        --text-main: #e2edf8;
+        --text-secondary: #9cb5cd;
+        --text-muted: #6482a0;
+        --primary: #38bdf8;
+        --primary-light: #17324d;
+        --green: #4ade80;
+        --green-bg: #143823;
+        --red: #f87171;
+        --red-bg: #3e1919;
+        --amber: #fbbf24;
+        --amber-bg: #3d2d11;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        transition:
+          background-color 0.2s,
+          color 0.2s;
+      }
+
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-width: 0;
+      }
+
+      .scan-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 24px 16px 40px;
+      }
+
+      .scan-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 440px;
+        padding: 24px;
+        text-align: center;
+      }
+
+      .scan-card h1 {
+        font-size: 19px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .scan-card h1 i {
+        color: var(--primary);
+      }
+
+      .scan-sub {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+
+      #reader {
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #000;
+        min-height: 260px;
+        display: none;
+      }
+
+      #reader.active {
+        display: block;
+      }
+
+      .scan-placeholder {
+        width: 100%;
+        min-height: 260px;
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: var(--text-muted);
+        background: var(--bg-soft);
+      }
+
+      .scan-placeholder i {
+        font-size: 40px;
+        color: var(--border);
+      }
+
+      .scan-btn {
+        margin-top: 20px;
+        width: 100%;
+        padding: 13px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14.5px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: 0.15s;
+      }
+
+      .scan-btn.start {
+        background: var(--primary);
+        color: #fff;
+      }
+      .scan-btn.start:hover {
+        filter: brightness(0.93);
+      }
+
+      .scan-btn.stop {
+        background: var(--bg-soft);
+        color: var(--red);
+        border: 1px solid var(--red-bg);
+        margin-top: 10px;
+      }
+      .scan-btn.stop:hover {
+        border-color: var(--red);
+      }
+
+      .scan-status {
+        margin-top: 16px;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 10px 14px;
+        border-radius: 8px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-align: left;
+      }
+
+      .scan-status.show {
+        display: flex;
+      }
+      .scan-status.error {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+      .scan-status.warn {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+      .scan-status.success {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+
+      .manual-entry {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+        text-align: left;
+      }
+
+      .manual-entry label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .manual-entry-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .manual-entry input {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        color: var(--text-main);
+        font-family: monospace;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .manual-entry input:focus {
+        border-color: var(--primary);
+      }
+
+      .manual-entry button {
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--primary);
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .manual-entry button:hover {
+        background: var(--primary);
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sidebar-root"></div>
+
+    <div class="main-wrapper">
+      <div id="header-root"></div>
+
+      <div class="scan-container">
+        <div class="scan-card">
+          <h1><i class="fas fa-qrcode"></i> Leitor de QR Code</h1>
+          <div class="scan-sub">
+            Aponte a câmera para o QR Code colado na peça
+          </div>
+
+          <div class="scan-placeholder" id="scanPlaceholder">
+            <i class="fas fa-camera"></i>
+            <span>A câmera aparecerá aqui</span>
+          </div>
+          <div id="reader"></div>
+
+          <button class="scan-btn start" id="startBtn" onclick="startScanner()">
+            <i class="fas fa-video"></i> Iniciar leitura
+          </button>
+          <button
+            class="scan-btn stop"
+            id="stopBtn"
+            style="display: none"
+            onclick="stopScanner()"
+          >
+            <i class="fas fa-stop"></i> Parar leitura
+          </button>
+
+          <div class="scan-status" id="scanStatus"></div>
+
+          <div class="manual-entry">
+            <label for="manualCode"
+              >Ou digite o código da peça manualmente</label
+            >
+            <div class="manual-entry-row">
+              <input type="text" id="manualCode" placeholder="Ex: MP-1042" />
+              <button onclick="goToManualCode()">Buscar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="footer-root"></div>
+    </div>
+
+    <script>
+      let html5QrCode = null;
+      let isScanning = false;
+
+      function setStatus(message, type) {
+        const el = document.getElementById("scanStatus");
+        el.className = "scan-status show " + type;
+        el.innerHTML = message;
+      }
+
+      function clearStatus() {
+        const el = document.getElementById("scanStatus");
+        el.className = "scan-status";
+        el.innerHTML = "";
+      }
+
+      function goToCode(codigo) {
+        if (!codigo) return;
+        const clean = codigo.trim();
+        window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
+      }
+
+      function goToManualCode() {
+        const input = document.getElementById("manualCode");
+        if (input.value.trim()) goToCode(input.value);
+      }
+
+      document
+        .getElementById("manualCode")
+        .addEventListener("keyup", function (e) {
+          if (e.key === "Enter") goToManualCode();
+        });
+
+      async function startScanner() {
+        clearStatus();
+
+        // Leitura de câmera exige HTTPS ou localhost (protocolo de segurança do navegador)
+        const isSecure =
+          window.location.protocol === "https:" ||
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1";
+        if (!isSecure) {
+          setStatus(
+            '<i class="fas fa-triangle-exclamation"></i> A câmera só funciona em HTTPS ou localhost. Rode este arquivo com um servidor local (ex: Live Server) em vez de abrir direto do disco.',
+            "error",
+          );
+          return;
+        }
+
+        if (typeof Html5Qrcode === "undefined") {
+          setStatus(
+            '<i class="fas fa-triangle-exclamation"></i> Não foi possível carregar a biblioteca de leitura. Verifique sua conexão com a internet.',
+            "error",
+          );
+          return;
+        }
+
+        document.getElementById("scanPlaceholder").style.display = "none";
+        document.getElementById("reader").classList.add("active");
+        document.getElementById("startBtn").style.display = "none";
+        document.getElementById("stopBtn").style.display = "flex";
+
+        html5QrCode = new Html5Qrcode("reader");
+
+        try {
+          await html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 230, height: 230 } },
+            onScanSuccess,
+            onScanFailure,
+          );
+          isScanning = true;
+        } catch (err) {
+          console.error(err);
+          resetScannerUI();
+          if (
+            String(err).toLowerCase().includes("permission") ||
+            String(err).toLowerCase().includes("notallowed")
+          ) {
+            setStatus(
+              '<i class="fas fa-ban"></i> Permissão da câmera negada. Habilite o acesso à câmera nas configurações do navegador e tente novamente.',
+              "error",
+            );
+          } else {
+            setStatus(
+              '<i class="fas fa-triangle-exclamation"></i> Não foi possível acessar a câmera. Verifique se o dispositivo tem câmera disponível.',
+              "error",
+            );
+          }
+        }
+      }
+
+      function onScanSuccess(decodedText) {
+        if (!isScanning) return;
+        isScanning = false;
+        setStatus(
+          `<i class="fas fa-circle-check"></i> QR Code reconhecido: <strong>&nbsp;${decodedText}</strong> — redirecionando...`,
+          "success",
+        );
+
+        html5QrCode
+          .stop()
+          .then(() => {
+            html5QrCode.clear();
+            setTimeout(() => goToCode(decodedText), 500);
+          })
+          .catch(() => {
+            setTimeout(() => goToCode(decodedText), 500);
+          });
+      }
+
+      function onScanFailure() {
+        // Chamado a cada frame sem QR detectado — silenciar, é o comportamento normal
+      }
+
+      function stopScanner() {
+        if (html5QrCode && isScanning) {
+          html5QrCode
+            .stop()
+            .then(() => {
+              html5QrCode.clear();
+              resetScannerUI();
+              clearStatus();
+            })
+            .catch(() => resetScannerUI());
+        } else {
+          resetScannerUI();
+        }
+        isScanning = false;
+      }
+
+      function resetScannerUI() {
+        document.getElementById("scanPlaceholder").style.display = "flex";
+        document.getElementById("reader").classList.remove("active");
+        document.getElementById("startBtn").style.display = "flex";
+        document.getElementById("stopBtn").style.display = "none";
+      }
+    </script>
+
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/chat.js"></script>
+    <script src="components/js/config.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
+  </body>
+</html>

@@ -27,48 +27,35 @@
         --bg-card: #ffffff;
         --bg-soft: #f4f8fc;
         --border: #d4e2f0;
-
         --text-main: #0c1e2e;
         --text-secondary: #3b5a75;
         --text-muted: #718da8;
-
         --primary: #006bb3;
         --primary-light: #e3f0fb;
-
         --green: #15803d;
         --green-bg: #dcfce7;
         --green-bar: #16a34a;
-
         --amber: #b45309;
         --amber-bg: #fef3c7;
         --amber-bar: #d97706;
-
         --red: #b91c1c;
         --red-bg: #fee2e2;
         --red-bar: #dc2626;
-
         --purple: #6b21a8;
         --purple-bg: #f3e8ff;
         --purple-bar: #8b5cf6;
-
         --blue: #0369a1;
         --blue-bg: #e0f2fe;
         --blue-bar: #0284c7;
-
         --teal: #0f766e;
         --teal-bg: #ccfbf1;
         --teal-bar: #14b8a6;
-
         --row-stripe: #f5f9fd;
         --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
-
-        /* Tipografia fluida */
         --fs-base: clamp(14px, 0.9vw + 12px, 16px);
         --fs-h1: clamp(19px, 1.2vw + 14px, 24px);
         --fs-title: clamp(15px, 1vw + 12px, 18px);
         --fs-table: clamp(12.5px, 0.5vw + 11.5px, 14px);
-
-        /* Espaçamentos fluidos */
         --pad-content: 16px 20px;
         --gap-grid: clamp(14px, 1vw, 22px);
         --pad-card: clamp(18px, 1.4vw, 28px);
@@ -79,38 +66,29 @@
         --bg-card: #111f2e;
         --bg-soft: #16283b;
         --border: #1e364f;
-
         --text-main: #e2edf8;
         --text-secondary: #9cb5cd;
         --text-muted: #6482a0;
-
         --primary: #38bdf8;
         --primary-light: #17324d;
-
         --green: #4ade80;
         --green-bg: #143823;
         --green-bar: #22c55e;
-
         --amber: #fbbf24;
         --amber-bg: #3d2d11;
         --amber-bar: #f59e0b;
-
         --red: #f87171;
         --red-bg: #3e1919;
         --red-bar: #ef4444;
-
         --purple: #c084fc;
         --purple-bg: #331d48;
         --purple-bar: #a855f7;
-
         --blue: #38bdf8;
         --blue-bg: #123147;
         --blue-bar: #38bdf8;
-
         --teal: #2dd4bf;
         --teal-bg: #0e3733;
         --teal-bar: #2dd4bf;
-
         --row-stripe: #152638;
         --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
@@ -634,6 +612,183 @@
         gap: 10px;
       }
 
+      /* ===== ESTILOS DO MODAL DE ADICIONAR ITEM ===== */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal {
+        background: var(--bg-card);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 24px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+      }
+
+      .modal-overlay.active .modal {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .modal-header h2 {
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .modal-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.15s;
+      }
+
+      .modal-close:hover {
+        background: var(--bg-soft);
+        color: var(--text-main);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-group.full-width {
+        grid-column: span 2;
+      }
+
+      .form-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 9px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-soft);
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: var(--primary);
+      }
+
+      .form-group input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .form-actions {
+        margin-top: 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.15s;
+        border: 1px solid transparent;
+      }
+
+      .btn-secondary {
+        background: var(--bg-soft);
+        border-color: var(--border);
+        color: var(--text-secondary);
+      }
+
+      .btn-secondary:hover {
+        background: var(--border);
+        color: var(--text-main);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        filter: brightness(1.1);
+      }
+
+      .btn-add-item {
+        background: var(--primary);
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 8px;
+        border: 1px solid var(--primary);
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.15s;
+      }
+
+      .btn-add-item:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+      }
+
       .toast-popup {
         position: fixed;
         bottom: 24px;
@@ -687,6 +842,18 @@
           width: 100%;
         }
 
+        .modal {
+          padding: 16px;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width {
+          grid-column: span 1;
+        }
+
         .toast-popup {
           left: 16px;
           right: 16px;
@@ -704,6 +871,11 @@
         .filter-chip {
           padding: 6px 10px;
           font-size: 11.5px;
+        }
+
+        .btn-add-item {
+          padding: 6px 12px;
+          font-size: 12px;
         }
       }
     </style>
@@ -748,6 +920,10 @@
                 <option value="Consumíveis">Consumíveis</option>
                 <option value="Ferramental">Ferramental</option>
               </select>
+              <!-- BOTÃO ADICIONAR ITEM -->
+              <button class="btn-add-item" onclick="openAddModal()">
+                <i class="fas fa-plus"></i> Adicionar Item
+              </button>
             </div>
           </div>
 
@@ -787,6 +963,73 @@
       <div id="footer-root"></div>
     </div>
 
+    <!-- MODAL DE ADICIONAR ITEM -->
+    <div id="addItemModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2><i class="fas fa-box-open" style="color: var(--primary);"></i> Adicionar Novo Item</h2>
+          <button class="modal-close" onclick="closeAddModal()">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <form id="addItemForm" onsubmit="handleAddItem(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="newCodigo">Código *</label>
+              <input type="text" id="newCodigo" placeholder="Ex: MP-1103" required />
+            </div>
+            <div class="form-group">
+              <label for="newNome">Nome do Item *</label>
+              <input type="text" id="newNome" placeholder="Nome do produto" required />
+            </div>
+            <div class="form-group full-width">
+              <label for="newSub">Descrição Complementar</label>
+              <input type="text" id="newSub" placeholder="Ex: Especificação, unidade, etc." />
+            </div>
+            <div class="form-group">
+              <label for="newCategoria">Categoria *</label>
+              <select id="newCategoria" required>
+                <option value="">Selecione...</option>
+                <option value="Matéria-Prima">Matéria-Prima</option>
+                <option value="Componentes">Componentes</option>
+                <option value="Embalagens">Embalagens</option>
+                <option value="Consumíveis">Consumíveis</option>
+                <option value="Ferramental">Ferramental</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="newLocal">Localização *</label>
+              <input type="text" id="newLocal" placeholder="Ex: A-02-05" required />
+            </div>
+            <div class="form-group">
+              <label for="newAtual">Quantidade Atual *</label>
+              <input type="number" id="newAtual" min="0" step="1" placeholder="0" required />
+            </div>
+            <div class="form-group">
+              <label for="newMinimo">Estoque Mínimo *</label>
+              <input type="number" id="newMinimo" min="0" step="1" placeholder="0" required />
+            </div>
+            <div class="form-group">
+              <label for="newMaximo">Estoque Máximo *</label>
+              <input type="number" id="newMaximo" min="0" step="1" placeholder="0" required />
+            </div>
+            <div class="form-group">
+              <label for="newEntradas">Entradas (hoje)</label>
+              <input type="number" id="newEntradas" min="0" step="1" value="0" />
+            </div>
+            <div class="form-group">
+              <label for="newSaidas">Saídas (hoje)</label>
+              <input type="number" id="newSaidas" min="0" step="1" value="0" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Salvar Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div id="toastPopup" class="toast-popup">
       <i class="fas fa-circle-check" style="font-size: 18px;"></i>
       <span>Dados atualizados com sucesso!</span>
@@ -809,6 +1052,8 @@
       ];
 
       let currentStatus = 'todos';
+
+      // ===================== FUNÇÕES DE RENDERIZAÇÃO =====================
 
       function renderCatProgress() {
         const catListEl = document.getElementById('catProgressList');
@@ -974,6 +1219,8 @@
         renderTable();
       }
 
+      // ===================== FUNÇÕES DE INTERAÇÃO =====================
+
       function changeQty(id, delta) {
         const item = items.find(i => i.id === id);
         if (!item) return;
@@ -1025,6 +1272,116 @@
           }, 3000);
         }
       }
+
+      // ===================== FUNÇÕES DO MODAL DE ADICIONAR =====================
+
+      function openAddModal() {
+        const modal = document.getElementById('addItemModal');
+        if (modal) modal.classList.add('active');
+        // Focar no primeiro campo
+        setTimeout(() => {
+          const firstInput = document.getElementById('newCodigo');
+          if (firstInput) firstInput.focus();
+        }, 100);
+      }
+
+      function closeAddModal() {
+        const modal = document.getElementById('addItemModal');
+        if (modal) modal.classList.remove('active');
+        document.getElementById('addItemForm').reset();
+      }
+
+      function handleAddItem(event) {
+        event.preventDefault();
+        
+        // Coletar valores do formulário
+        const codigo = document.getElementById('newCodigo').value.trim();
+        const nome = document.getElementById('newNome').value.trim();
+        const sub = document.getElementById('newSub').value.trim();
+        const categoria = document.getElementById('newCategoria').value;
+        const local = document.getElementById('newLocal').value.trim();
+        const atual = parseInt(document.getElementById('newAtual').value) || 0;
+        const minimo = parseInt(document.getElementById('newMinimo').value) || 0;
+        const maximo = parseInt(document.getElementById('newMaximo').value) || 0;
+        const entradas = parseInt(document.getElementById('newEntradas').value) || 0;
+        const saidas = parseInt(document.getElementById('newSaidas').value) || 0;
+
+        // Validações básicas
+        if (!codigo || !nome || !categoria || !local) {
+          alert('Preencha todos os campos obrigatórios (Código, Nome, Categoria e Localização).');
+          return;
+        }
+
+        if (minimo > maximo) {
+          alert('O estoque mínimo não pode ser maior que o máximo.');
+          return;
+        }
+
+        // Verificar se código já existe
+        if (items.some(item => item.codigo.toLowerCase() === codigo.toLowerCase())) {
+          alert('Já existe um item com esse código. Use um código único.');
+          return;
+        }
+
+        // Determinar status automaticamente
+        let status = 'ok';
+        if (atual <= Math.round(minimo * 0.3)) {
+          status = 'critico';
+        } else if (atual <= minimo) {
+          status = 'baixo';
+        }
+
+        // Gerar novo ID (maior ID existente + 1)
+        const newId = items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1;
+
+        // Criar novo item
+        const newItem = {
+          id: newId,
+          codigo,
+          nome,
+          sub: sub || '—',
+          categoria,
+          local,
+          atual,
+          minimo,
+          maximo,
+          entradas,
+          saidas,
+          status
+        };
+
+        // Adicionar ao array
+        items.push(newItem);
+
+        // Fechar modal e re-renderizar
+        closeAddModal();
+        renderAll();
+
+        // Mostrar toast de sucesso personalizado
+        const toast = document.getElementById('toastPopup');
+        if (toast) {
+          toast.innerHTML = `<i class="fas fa-circle-check" style="font-size: 18px;"></i><span>Item "${nome}" adicionado com sucesso!</span>`;
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 3000);
+        }
+      }
+
+      // Fechar modal ao clicar fora dele
+      document.addEventListener('click', function(event) {
+        const modal = document.getElementById('addItemModal');
+        if (event.target === modal) {
+          closeAddModal();
+        }
+      });
+
+      // Fechar modal com tecla ESC
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          closeAddModal();
+        }
+      });
 
       document.addEventListener('DOMContentLoaded', renderAll);
     </script>
