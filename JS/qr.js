@@ -13,10 +13,27 @@ function clearStatus() {
   el.innerHTML = "";
 }
 
+// Função que identifica qual produto foi lido
 function goToCode(codigo) {
   if (!codigo) return;
   const clean = codigo.trim();
-  window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
+
+  // Se o QR Code tiver o link completo (ex: .../produto1.html) ou apenas o nome do arquivo
+  if (clean.includes("produto1")) {
+    window.location.href = "produto1.html";
+  } 
+  else if (clean.includes("produto2")) {
+    window.location.href = "produto2.html";
+  }
+  else if (clean.includes("produto3")) {
+    window.location.href = "produto3.html";
+  }
+  // Caso o QR Code seja um código de peça genérico (ex: MP-1042, P-0248)
+  else {
+    // Tenta abrir a página de detalhes genérica (se existir). 
+    // Se não existir, você pode trocar para um alerta ou redirecionar para a home.
+    window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
+  }
 }
 
 function goToManualCode() {
@@ -33,14 +50,13 @@ document
 async function startScanner() {
   clearStatus();
 
-  // Leitura de câmera exige HTTPS ou localhost (protocolo de segurança do navegador)
   const isSecure =
     window.location.protocol === "https:" ||
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1";
   if (!isSecure) {
     setStatus(
-      '<i class="fas fa-triangle-exclamation"></i> A câmera só funciona em HTTPS ou localhost. Rode este arquivo com um servidor local (ex: Live Server) em vez de abrir direto do disco.',
+      '<i class="fas fa-triangle-exclamation"></i> A câmera só funciona em HTTPS ou localhost.',
       "error",
     );
     return;
@@ -48,7 +64,7 @@ async function startScanner() {
 
   if (typeof Html5Qrcode === "undefined") {
     setStatus(
-      '<i class="fas fa-triangle-exclamation"></i> Não foi possível carregar a biblioteca de leitura. Verifique sua conexão com a internet.',
+      '<i class="fas fa-triangle-exclamation"></i> Biblioteca não carregada.',
       "error",
     );
     return;
@@ -77,12 +93,12 @@ async function startScanner() {
       String(err).toLowerCase().includes("notallowed")
     ) {
       setStatus(
-        '<i class="fas fa-ban"></i> Permissão da câmera negada. Habilite o acesso à câmera nas configurações do navegador e tente novamente.',
+        '<i class="fas fa-ban"></i> Permissão da câmera negada.',
         "error",
       );
     } else {
       setStatus(
-        '<i class="fas fa-triangle-exclamation"></i> Não foi possível acessar a câmera. Verifique se o dispositivo tem câmera disponível.',
+        '<i class="fas fa-triangle-exclamation"></i> Não foi possível acessar a câmera.',
         "error",
       );
     }
@@ -92,8 +108,9 @@ async function startScanner() {
 function onScanSuccess(decodedText) {
   if (!isScanning) return;
   isScanning = false;
+  
   setStatus(
-    `<i class="fas fa-circle-check"></i> QR Code reconhecido: <strong>&nbsp;${decodedText}</strong> — redirecionando...`,
+    `<i class="fas fa-circle-check"></i> QR Code lido! Redirecionando...`,
     "success",
   );
 
@@ -109,7 +126,7 @@ function onScanSuccess(decodedText) {
 }
 
 function onScanFailure() {
-  // Chamado a cada frame sem QR detectado — silenciar, é o comportamento normal
+  // Silencioso
 }
 
 function stopScanner() {

@@ -1,247 +1,214 @@
-  document.addEventListener('DOMContentLoaded', () => {
-      // =====================================================================
-      // MAPEAMENTO DOS ELEMENTOS
-      // =====================================================================
-      const htmlElement = document.documentElement;
-      const themeToggle = document.getElementById('themeToggle');
-      const themeIcon = themeToggle ? themeToggle.querySelector('i') : null;
-      const mouseGlow = document.getElementById('mouseGlow');
+document.addEventListener('DOMContentLoaded', () => {
 
-      const loginForm = document.getElementById('loginForm') || document.getElementById('form-login');
-      const cpfInput = document.getElementById('cpfInput') || document.getElementById('cpf');
-      const passwordInput = document.getElementById('passwordInput') || document.getElementById('senha');
+    // =====================================================================
+    // 1. GERENCIAMENTO DE TEMA (CLARO / ESCURO)
+    // =====================================================================
+    const htmlElement = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
 
-      const togglePassword = document.getElementById('togglePassword');
-      const btnLogin = document.getElementById('btnLogin') || document.getElementById('btnRegister');
-      const btnText = document.getElementById('btnText');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const cardContainer = document.getElementById('cardContainer');
-      const mensagem = document.getElementById('mensagem');
+    function applyTheme(theme) {
+        htmlElement.setAttribute('data-theme', theme);
+        localStorage.setItem('stocklog-theme', theme);
 
-      let enviando = false;
+        if (themeIcon) {
+            themeIcon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+    }
 
-      // =====================================================================
-      // A) GERENCIAMENTO DE TEMA
-      // =====================================================================
-      const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
-      setTheme(savedTheme);
+    const savedTheme = localStorage.getItem('stocklog-theme') || 'light';
+    applyTheme(savedTheme);
 
-      if (themeToggle) {
-          themeToggle.addEventListener('click', () => {
-              const currentTheme = htmlElement.getAttribute('data-theme');
-              const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-              setTheme(newTheme);
-          });
-      }
+    if (themeToggle) {
+        themeToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const currentTheme = htmlElement.getAttribute('data-theme') || 'light';
+            applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+    }
 
-      function setTheme(theme) {
-          htmlElement.setAttribute('data-theme', theme);
-          localStorage.setItem('stocklog-theme', theme);
+    // =====================================================================
+    // 2. EFEITO MOUSE GLOW (BRILHO DO CURSOR)
+    // =====================================================================
+    const mouseGlow = document.getElementById('mouseGlow');
 
-          if (themeIcon) {
-              themeIcon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-          }
-      }
+    if (mouseGlow) {
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let glowX = mouseX;
+        let glowY = mouseY;
 
-      // =====================================================================
-      // B) GLOW DO MOUSE (otimizado com transform)
-      // =====================================================================
-      if (mouseGlow) {
-          document.addEventListener('mousemove', (e) => {
-              mouseGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-          });
-      }
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
 
-      // =====================================================================
-      // C) MÁSCARA DE CPF
-      // =====================================================================
-      if (cpfInput) {
-          cpfInput.addEventListener('input', (e) => {
-              let value = e.target.value.replace(/\D/g, '');
-              if (value.length > 11) value = value.slice(0, 11);
+        function animateGlow() {
+            glowX += (mouseX - glowX) * 0.1;
+            glowY += (mouseY - glowY) * 0.1;
 
-              value = value.replace(/(\d{3})(\d)/, '$1.$2');
-              value = value.replace(/(\d{3})(\d)/, '$1.$2');
-              value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            mouseGlow.style.left = '0px';
+            mouseGlow.style.top = '0px';
+            mouseGlow.style.transform = `translate3d(${glowX - 250}px, ${glowY - 250}px, 0px)`;
 
-              e.target.value = value;
-          });
-      }
+            requestAnimationFrame(animateGlow);
+        }
 
-      // =====================================================================
-      // D) MOSTRAR / OCULTAR SENHA
-      // =====================================================================
-      if (togglePassword && passwordInput) {
-          togglePassword.addEventListener('click', () => {
-              const isPassword = passwordInput.getAttribute('type') === 'password';
-              passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-              togglePassword.classList.toggle('fa-eye', !isPassword);
-              togglePassword.classList.toggle('fa-eye-slash', isPassword);
-          });
-      }
+        animateGlow();
+    }
 
-      // =====================================================================
-      // E) SUBMISSÃO DO LOGIN
-      // =====================================================================
-      if (loginForm) {
-          loginForm.addEventListener('submit', (e) => {
-              e.preventDefault();
+    // =====================================================================
+    // 3. VISIBILIDADE DA SENHA
+    // =====================================================================
+    const passwordInput = document.getElementById('passwordInput');
+    const togglePassword = document.getElementById('togglePassword');
 
-              if (enviando) return;
-              enviando = true;
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', () => {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            togglePassword.classList.toggle('fa-eye', !isPassword);
+            togglePassword.classList.toggle('fa-eye-slash', isPassword);
+        });
+    }
 
-              if (mensagem) {
-                  mensagem.innerText = '';
-                  mensagem.style.color = 'inherit';
-              }
+    // =====================================================================
+    // 4. AUTENTICAÇÃO VIA E-MAIL E SENHA (FIREBASE AUTH)
+    // =====================================================================
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('emailInput');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const cardContainer = document.getElementById('cardContainer');
+    const mensagem = document.getElementById('mensagem');
+    let enviando = false;
 
-              const cpfFormatado = cpfInput ? cpfInput.value.trim() : '';
-              const cpfLimpo = cpfFormatado.replace(/\D/g, '');
-              const senha = passwordInput ? passwordInput.value : '';
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-              // Validação básica
-              if (cpfLimpo.length !== 11) {
-                  exibirErro("Digite um CPF válido!");
-                  enviando = false;
-                  return;
-              }
+            if (enviando) return;
+            enviando = true;
 
-              if (!senha) {
-                  exibirErro("Digite sua senha!");
-                  enviando = false;
-                  return;
-              }
+            if (mensagem) {
+                mensagem.textContent = '';
+                mensagem.style.color = 'inherit';
+            }
 
-              ativarCarregamento(true);
+            const email = emailInput ? emailInput.value.trim() : '';
+            const senha = passwordInput ? passwordInput.value : '';
 
-              // ============================================================
-              // BUSCA O EMAIL ASSOCIADO AO CPF NO REALTIME DATABASE
-              // ============================================================
-              db.ref('funcionarios')
-                  .orderByChild('cpf')
-                  .equalTo(cpfFormatado)
-                  .once('value')
-                  .then((snapshot) => {
-                      if (!snapshot.exists()) {
-                          throw new Error('CREDENCIAIS_INVALIDAS');
-                      }
+            if (!email) {
+                exibirErro("Digite seu e-mail!");
+                enviando = false;
+                return;
+            }
 
-                      // Pega o email do usuário
-                      const funcionarios = snapshot.val();
-                      const uid = Object.keys(funcionarios)[0];
-                      const dados = funcionarios[uid];
+            if (!senha) {
+                exibirErro("Digite sua senha!");
+                enviando = false;
+                return;
+            }
 
-                      if (!dados || !dados.email) {
-                          throw new Error('CREDENCIAIS_INVALIDAS');
-                      }
+            ativarCarregamento(true);
 
-                      // Autentica com Firebase Auth usando o email encontrado
-                      return auth.signInWithEmailAndPassword(dados.email, senha)
-                          .then((userCredential) => {
-                              return { user: userCredential.user, dados };
-                          });
-                  })
-                  .then(({ user, dados }) => {
-                      // Login bem-sucedido
-                      if (btnSpinner) btnSpinner.style.display = 'none';
-                      if (btnText) {
-                          btnText.style.display = 'inline';
-                          btnText.textContent = 'Acessando...';
-                      }
-                      if (btnLogin) {
-                          btnLogin.style.background = '#16a34a';
-                          btnLogin.disabled = true;
-                      }
+            // Resgata a instância do Firebase Auth declarada no HTML
+            const autenticacao = (typeof auth !== 'undefined') ? auth : firebase.auth();
 
-                      if (mensagem) {
-                          mensagem.innerText = "Login realizado com sucesso! Redirecionando...";
-                          mensagem.style.color = "green";
-                      }
+            autenticacao.signInWithEmailAndPassword(email, senha)
+                .then((userCredential) => {
+                    const user = userCredential.user;
 
-                      // Salva dados do usuário na sessão
-                      sessionStorage.setItem('usuarioLogado', JSON.stringify({
-                          uid: user.uid,
-                          nome: dados.nome,
-                          cpf: dados.cpf,
-                          setor: dados.setor,
-                          email: dados.email
-                      }));
+                    if (btnSpinner) btnSpinner.style.display = 'none';
+                    if (btnText) {
+                        btnText.style.display = 'inline';
+                        btnText.textContent = 'Sucesso!';
+                    }
+                    if (btnLogin) {
+                        btnLogin.style.background = '#16a34a';
+                        btnLogin.disabled = true;
+                    }
 
-                      // Animação de saída
-                      setTimeout(() => {
-                          if (cardContainer) {
-                              cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                              cardContainer.style.opacity = '0';
-                              cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
-                          }
+                    if (mensagem) {
+                        mensagem.textContent = "Login realizado com sucesso! Redirecionando...";
+                        mensagem.style.color = "#16a34a";
+                    }
 
-                          setTimeout(() => {
-                              window.location.href = "dashboard.html";
-                          }, 400);
-                      }, 800);
-                  })
-                  .catch((erro) => {
-                      console.error("Erro no login:", erro);
-                      enviando = false;
+                    sessionStorage.setItem('usuarioLogado', JSON.stringify({
+                        uid: user.uid,
+                        email: user.email
+                    }));
 
-                      let msgErro = "CPF ou senha incorretos.";
+                    setTimeout(() => {
+                        if (cardContainer) {
+                            cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                            cardContainer.style.opacity = '0';
+                            cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
+                        }
 
-                      switch (erro.message) {
-                          case 'CREDENCIAIS_INVALIDAS':
-                              msgErro = "CPF ou senha incorretos.";
-                              break;
-                      }
+                        setTimeout(() => {
+                            window.location.href = "index.html";
+                        }, 400);
+                    }, 500);
+                })
+                .catch((erro) => {
+                    console.error("Erro no login:", erro);
+                    enviando = false;
 
-                      if (erro.code === 'auth/wrong-password') {
-                          msgErro = "CPF ou senha incorretos.";
-                      } else if (erro.code === 'auth/user-not-found') {
-                          msgErro = "CPF ou senha incorretos.";
-                      } else if (erro.code === 'auth/invalid-email') {
-                          msgErro = "CPF ou senha incorretos.";
-                      } else if (erro.code === 'auth/network-request-failed') {
-                          msgErro = "Erro de conexão. Verifique sua internet.";
-                      } else if (erro.code === 'auth/too-many-requests') {
-                          msgErro = "Muitas tentativas. Aguarde alguns minutos.";
-                      }
+                    let msgErro = "E-mail ou senha incorretos.";
+                    
+                    if (erro.code === 'auth/invalid-email') {
+                        msgErro = "E-mail inválido.";
+                    } else if (erro.code === 'auth/user-not-found' || erro.code === 'auth/wrong-password') {
+                        msgErro = "E-mail ou senha incorretos.";
+                    } else if (erro.code === 'auth/network-request-failed') {
+                        msgErro = "Erro de conexão. Verifique sua internet.";
+                    } else if (erro.code === 'auth/too-many-requests') {
+                        msgErro = "Muitas tentativas. Aguarde alguns minutos.";
+                    }
 
-                      exibirErro(msgErro);
-                  });
-          });
-      }
+                    exibirErro(msgErro);
+                });
+        });
+    }
 
-      // =====================================================================
-      // FUNÇÕES AUXILIARES
-      // =====================================================================
+    // =====================================================================
+    // 5. FUNÇÕES AUXILIARES DA INTERFACE
+    // =====================================================================
+    function ativarCarregamento(carregando) {
+        if (carregando) {
+            if (btnText) btnText.style.display = 'none';
+            if (btnSpinner) btnSpinner.style.display = 'block';
+            if (btnLogin) {
+                btnLogin.disabled = true;
+                btnLogin.style.pointerEvents = 'none';
+            }
+        } else {
+            if (btnSpinner) btnSpinner.style.display = 'none';
+            if (btnText) {
+                btnText.style.display = 'inline';
+                btnText.textContent = 'Entrar';
+            }
+            if (btnLogin) {
+                btnLogin.disabled = false;
+                btnLogin.style.pointerEvents = 'auto';
+                btnLogin.style.background = '';
+            }
+        }
+    }
 
-      function ativarCarregamento(carregando) {
-          if (carregando) {
-              if (btnText) btnText.style.display = 'none';
-              if (btnSpinner) btnSpinner.style.display = 'block';
-              if (btnLogin) {
-                  btnLogin.disabled = true;
-                  btnLogin.style.pointerEvents = 'none';
-              }
-          } else {
-              if (btnSpinner) btnSpinner.style.display = 'none';
-              if (btnText) btnText.style.display = 'inline';
-              if (btnLogin) {
-                  btnLogin.disabled = false;
-                  btnLogin.style.pointerEvents = 'auto';
-              }
-          }
-      }
+    function exibirErro(msg) {
+        if (mensagem) {
+            mensagem.textContent = msg;
+            mensagem.style.color = "#ef4444";
+        }
 
-      function exibirErro(msg) {
-          if (mensagem) {
-              mensagem.innerText = msg;
-              mensagem.style.color = "red";
-          }
+        if (cardContainer) {
+            cardContainer.classList.add('shake');
+            setTimeout(() => cardContainer.classList.remove('shake'), 400);
+        }
 
-          if (cardContainer) {
-              cardContainer.classList.add('shake');
-              setTimeout(() => cardContainer.classList.remove('shake'), 400);
-          }
-
-          ativarCarregamento(false);
-      }
-  });
+        ativarCarregamento(false);
+    }
+});
