@@ -130,7 +130,7 @@ function renderizarHistorico() {
       </span>
       <span class="registros">${item.registros} registros</span>
       <button class="btn-redownload" data-id="${item.id}" title="Re-baixar este arquivo">
-        <i class="fas fa-download"></i> Rebaixar
+        <i class="fas fa-download"></i> Baixar novamente
       </button>
     </div>
   `).join('');
