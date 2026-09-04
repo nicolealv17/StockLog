@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StockLog · Relatórios</title>
+    <link rel="icon" type="image/png" href="IMG/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -1413,7 +1414,7 @@
             </span>
             <span class="registros">${item.registros} registros</span>
             <button class="btn-redownload" data-id="${item.id}" title="Re-baixar este arquivo">
-              <i class="fas fa-download"></i> Rebaixar
+              <i class="fas fa-download"></i> Baixar novamente
             </button>
           </div>
         `).join('');
@@ -1496,7 +1497,61 @@
         };
       }
 
+      function exportarConsolidadoPDF() {
+        const tipos = ['pedidos', 'producao', 'estoque', 'logistica', 'desempenho'];
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'pt', 'a4');
+
+        // Capa / Cabeçalho Geral
+        doc.setFontSize(22);
+        doc.setTextColor(10, 31, 51);
+        doc.text(`Relatório Consolidado Geral`, 40, 60);
+        doc.setFontSize(12);
+        doc.setTextColor(123, 146, 178);
+        doc.text(`Sistema StockLog - Gestão Industrial`, 40, 80);
+        doc.text(`Gerado em: ${formatarDataHora(new Date())}`, 40, 95);
+        doc.line(40, 105, 560, 105);
+
+        let totalRegistros = 0;
+        let currentY = 120;
+
+        tipos.forEach((tipo, index) => {
+          const data = getDadosParaExportar(tipo);
+          if (!data) return;
+
+          totalRegistros += data.rows.length;
+
+          doc.setFontSize(14);
+          doc.setTextColor(0, 107, 179);
+          doc.text(`Seção: ${data.nome}`, 40, currentY);
+
+          doc.autoTable({
+            head: [data.headers],
+            body: data.rows,
+            startY: currentY + 15,
+            margin: { left: 40, right: 40 },
+            styles: { fontSize: 9, cellPadding: 5, textColor: [10, 31, 51] },
+            headStyles: { fillColor: [0, 107, 179], textColor: [255, 255, 255], fontSize: 9, fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [245, 250, 255] },
+          });
+
+          currentY = doc.lastAutoTable.finalY + 30;
+
+          if (index < tipos.length - 1) {
+            doc.addPage();
+            currentY = 40;
+          }
+        });
+
+        const nomeArquivo = `Relatorio_Consolidado_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(nomeArquivo);
+
+        adicionarHistorico('Consolidado', 'PDF', totalRegistros);
+        showToast(`Relatório Consolidado com ${totalRegistros} registros baixado!`, 'success');
+      }
+
       function exportarPDF(tipo) {
+
         const data = getDadosParaExportar(tipo);
         if (!data) return;
         
@@ -1778,9 +1833,7 @@ const C = {
             const tipo = this.dataset.tipo;
             const formato = this.dataset.formato;
             if (tipo === 'consolidado') {
-              // Simula consolidado
-              showToast('Relatório consolidado em PDF gerado!', 'success');
-              adicionarHistorico('Consolidado', 'PDF', 27);
+              exportarConsolidadoPDF();
               return;
             }
             if (formato === 'pdf') exportarPDF(tipo);
@@ -1791,14 +1844,7 @@ const C = {
         
         // Gerar todos
         document.getElementById('gerarTodosBtn').addEventListener('click', function() {
-          const tipos = ['producao', 'pedidos', 'estoque', 'logistica', 'desempenho'];
-          let total = 0;
-          tipos.forEach(t => {
-            const data = DADOS_PREVIEW[t];
-            if (data) total += data.linhas.length;
-          });
-          showToast(`Consolidado com ${total} registros gerado em PDF!`, 'success');
-          adicionarHistorico('Consolidado', 'PDF', total);
+          exportarConsolidadoPDF();
         });
         
         // Limpar histórico

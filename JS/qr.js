@@ -1,6 +1,14 @@
 let html5QrCode = null;
 let isScanning = false;
 
+// Dicionário que liga o código digitado/lido à página correta
+const produtosMap = {
+  "MP-1042": "produto1.html",
+  "MP-1043": "produto2.html",
+  "DS-7012": "produto3.html",
+  "QT-3050": "produto4.html"
+};
+
 function setStatus(message, type) {
   const el = document.getElementById("scanStatus");
   el.className = "scan-status show " + type;
@@ -16,24 +24,45 @@ function clearStatus() {
 // Função que identifica qual produto foi lido
 function goToCode(codigo) {
   if (!codigo) return;
-  const clean = codigo.trim();
+  const clean = codigo.trim().toUpperCase(); // Deixa tudo maiúsculo para não dar erro de digitação
 
-  // Se o QR Code tiver o link completo (ex: .../produto1.html) ou apenas o nome do arquivo
-  if (clean.includes("produto1")) {
-    window.location.href = "produto1.html";
+  // 1. Verifica se é o link do QR Code (ex: .../produto4.html)
+  if (clean.includes("PRODUTO1")) { window.location.href = "produto1.html"; return; }
+  else if (clean.includes("PRODUTO2")) { window.location.href = "produto2.html"; return; }
+  else if (clean.includes("PRODUTO3")) { window.location.href = "produto3.html"; return; }
+  else if (clean.includes("PRODUTO4")) { window.location.href = "produto4.html"; return; }
+
+  // 2. Verifica se o código digitado existe no nosso "dicionário"
+  if (produtosMap[clean]) {
+    window.location.href = produtosMap[clean];
   } 
-  else if (clean.includes("produto2")) {
-    window.location.href = "produto2.html";
-  }
-  else if (clean.includes("produto3")) {
-    window.location.href = "produto3.html";
-  }
-  // Caso o QR Code seja um código de peça genérico (ex: MP-1042, P-0248)
+  // 3. Se não existe, mostra o erro
   else {
-    // Tenta abrir a página de detalhes genérica (se existir). 
-    // Se não existir, você pode trocar para um alerta ou redirecionar para a home.
-    window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
+    showErrorModal(clean);
   }
+}
+
+// Função que mostra o modal de erro (chamada quando o código não é encontrado)
+function showErrorModal(codigoErrado) {
+  const modal = document.getElementById("errorModal");
+  const codigoSpan = document.getElementById("errorCodigo");
+  
+  if (codigoSpan) {
+    codigoSpan.innerText = codigoErrado;
+  }
+  
+  if (modal) {
+    modal.style.display = "flex";
+  } else {
+    // Caso o modal não exista no HTML, usa um alerta simples
+    alert(`O código "${codigoErrado}" não está cadastrado no sistema!`);
+  }
+}
+
+// Função para fechar o modal (chamada no botão "Entendi")
+function closeErrorModal() {
+  const modal = document.getElementById("errorModal");
+  if (modal) modal.style.display = "none";
 }
 
 function goToManualCode() {
@@ -80,7 +109,7 @@ async function startScanner() {
   try {
     await html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 230, height: 230 } },
+      { fps: 10, qrbox: { width: 300, height: 300 }, aspectRatio: 1.0 },
       onScanSuccess,
       onScanFailure,
     );
