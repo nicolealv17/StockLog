@@ -33,6 +33,28 @@ function initSecondaryApp() {
 }
 
 /**
+ * Gera um ID numérico aleatório de 6 dígitos (ex: 104829)
+ */
+function gerarIdNumerico() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+/**
+ * Garante que o ID gerado de 6 dígitos não exista previamente no banco
+ */
+async function obterIdUnico() {
+  let idProposto = gerarIdNumerico();
+  let snapshot = await db.ref(`funcionarios/${idProposto}`).once('value');
+  
+  while (snapshot.exists()) {
+    idProposto = gerarIdNumerico();
+    snapshot = await db.ref(`funcionarios/${idProposto}`).once('value');
+  }
+  
+  return idProposto;
+}
+
+/**
  * Configuração dos Eventos do Formulário
  */
 function initFormEvents() {
@@ -68,15 +90,18 @@ function initFormEvents() {
     setLoading(true);
 
     try {
-      // 1. Criar credencial de acesso no Firebase Auth (A senha é gerida apenas pelo Auth)
+      // 1. Criar credencial no Firebase Auth (gera a string UID do Auth)
       const authInstance = secondaryAuth || firebase.auth();
       const userCredential = await authInstance.createUserWithEmailAndPassword(email, password);
-      const uid = userCredential.user.uid;
+      const authUid = userCredential.user.uid;
 
-      // 2. Gravar os dados cadastrais do funcionário no Realtime Database
-      // NOTA: A SENHA NÃO É SALVA AQUI por motivos de segurança.
-      await db.ref(`funcionarios/${uid}`).set({
-        uid: uid,
+      // 2. Gera o ID de 6 dígitos único
+      const idCurto = await obterIdUnico();
+
+      // 3. Salva no Realtime Database usando o ID curto de 6 dígitos como chave do nó
+      await db.ref(`funcionarios/${idCurto}`).set({
+        id: idCurto,
+        uidAuth: authUid,
         nome: nome,
         cpf: cpf,
         email: email,
@@ -85,12 +110,12 @@ function initFormEvents() {
         criadoEm: new Date().toISOString()
       });
 
-      // Se usou o app secundário, encerra a sessão temporária nele
+      // Encerra sessão do app secundário se existir
       if (secondaryAuth) {
         await secondaryAuth.signOut();
       }
 
-      exibirMensagem('Funcionário cadastrado com sucesso!', 'success');
+      exibirMensagem(`Funcionário cadastrado com sucesso! ID: ${idCurto}`, 'success');
       limparForm();
 
     } catch (error) {
@@ -225,7 +250,7 @@ function carregarListaFuncionarios() {
       item.className = 'lista-item';
       item.innerHTML = `
         <div class="info">
-          <span class="nome">${escapeHtml(func.nome)}</span>
+          <span class="nome">${escapeHtml(func.nome)} <small style="color:var(--primary)">(ID: ${func.id || 'N/A'})</small></span>
           <span class="detalhe">${escapeHtml(func.email)} · ${escapeHtml(func.area)}</span>
         </div>
         <span class="status-pill ${func.status === 'ativo' ? 'ativo' : 'inativo'}">
@@ -290,3 +315,173 @@ function escapeHtml(str) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
   });
 }
+
+// Função para aplicar máscara no CPF
+function mascaraCPF(input) {
+  let value = input.value.replace(/\D/g, "");
+  if (value.length > 11) value = value.slice(0, 11);
+  
+  value = value.replace(/(\d{3})(\d)/, "$1.$2");
+  value = value.replace(/(\d{3})(\d)/, "$1.$2");
+  value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  
+  input.value = value;
+}
+
+// Alternar exibição do painel da lista
+function toggleLista() {
+  const container = document.getElementById("listaContainer");
+  container.classList.toggle("visible");
+}
+
+// Limpar formulário de cadastro
+function limparForm() {
+  document.getElementById("registerForm").reset();
+  const label = document.getElementById("strengthLabel");
+  if (label) label.textContent = "";
+}
+
+// Exibir alertas na tela
+function exibirMensagem(texto, tipo) {
+  const msgEl = document.getElementById("mensagem");
+  msgEl.className = `mensagem-alerta ${tipo}`;
+  msgEl.innerHTML = `<i class="fa-solid fa-${tipo === 'success' ? 'circle-check' : 'triangle-exclamation'}"></i> ${texto}`;
+  
+  setTimeout(() => {
+    msgEl.className = "mensagem-alerta";
+    msgEl.innerHTML = "";
+  }, 4000);
+}
+
+// Carregar Lista em Tempo Real
+function carregarFuncionarios() {
+  db.ref("funcionarios").on("value", (snapshot) => {
+    const listaBody = document.getElementById("listaBody");
+    const contador = document.getElementById("contadorLista");
+    listaBody.innerHTML = "";
+
+    if (!snapshot.exists()) {
+      contador.textContent = "0";
+      listaBody.innerHTML = `<tr><td colspan="5" class="lista-vazia">Nenhum funcionário cadastrado.</td></tr>`;
+      return;
+    }
+
+    let qtd = 0;
+    snapshot.forEach((childSnapshot) => {
+      qtd++;
+      const id = childSnapshot.key;
+      const func = childSnapshot.val();
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${func.nome}</strong></td>
+        <td>${func.cpf}</td>
+        <td>${func.email}</td>
+        <td>${func.area}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn-action" onclick="abrirModalEdicao('${id}')" title="Editar">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="btn-action btn-delete" onclick="excluirFuncionario('${id}')" title="Excluir">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      `;
+      listaBody.appendChild(tr);
+    });
+
+    contador.textContent = qtd;
+  });
+}
+
+// Abrir modal e carregar dados para edição
+function abrirModalEdicao(id) {
+  db.ref("funcionarios/" + id).once("value").then((snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      document.getElementById("editId").value = id;
+      document.getElementById("editNome").value = data.nome || "";
+      document.getElementById("editCpf").value = data.cpf || "";
+      document.getElementById("editEmail").value = data.email || "";
+      document.getElementById("editArea").value = data.area || "Gestão";
+
+      document.getElementById("editModal").classList.add("active");
+    }
+  });
+}
+
+// Fechar Modal
+function fecharModalEdicao() {
+  document.getElementById("editModal").classList.remove("active");
+}
+
+// Salvar as alterações no Firebase
+function salvarEdicao(event) {
+  event.preventDefault();
+  const id = document.getElementById("editId").value;
+  
+  const dadosAtualizados = {
+    nome: document.getElementById("editNome").value,
+    cpf: document.getElementById("editCpf").value,
+    email: document.getElementById("editEmail").value,
+    area: document.getElementById("editArea").value
+  };
+
+  db.ref("funcionarios/" + id).update(dadosAtualizados)
+    .then(() => {
+      exibirMensagem("Funcionário atualizado com sucesso!", "success");
+      fecharModalEdicao();
+    })
+    .catch((error) => {
+      exibirMensagem("Erro ao atualizar: " + error.message, "error");
+    });
+}
+
+// Excluir registro do Firebase
+function excluirFuncionario(id) {
+  if (confirm("Deseja realmente excluir este funcionário?")) {
+    db.ref("funcionarios/" + id).remove()
+      .then(() => {
+        exibirMensagem("Funcionário removido com sucesso!", "success");
+      })
+      .catch((error) => {
+        exibirMensagem("Erro ao excluir: " + error.message, "error");
+      });
+  }
+}
+
+// Evento de Submissão do Cadastro Inicial
+document.getElementById("registerForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nome = document.getElementById("nomeInput").value;
+  const cpf = document.getElementById("cpfInput").value;
+  const email = document.getElementById("emailInput").value;
+  const area = document.getElementById("areaSelect").value;
+  const pass = document.getElementById("passwordInput").value;
+
+  if (!nome || !cpf || !email || !area || !pass) {
+    exibirMensagem("Por favor, preencha todos os campos obrigatórios.", "error");
+    return;
+  }
+
+  const novoRef = db.ref("funcionarios").push();
+  novoRef.set({
+    nome: nome,
+    cpf: cpf,
+    email: email,
+    area: area
+  }).then(() => {
+    exibirMensagem("Funcionário cadastrado com sucesso!", "success");
+    limparForm();
+  }).catch((err) => {
+    exibirMensagem("Erro ao cadastrar: " + err.message, "error");
+  });
+});
+
+// Inicializar listagem ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+  carregarFuncionarios();
+});
