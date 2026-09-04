@@ -1,12 +1,16 @@
-/* =========================================================
-   StockLog · Componente LogBot (Integrado ao OpenRouter)
-   ========================================================= */
+const OPENROUTER_MODEL = "openai/gpt-4o-mini"; 
 
-// 🔑 COLOQUE SUA CHAVE DA API DO OPEN ROUTER AQUI
-const OPENROUTER_MODEL = "openai/gpt-4o-mini"; // Ou o modelo de sua preferência (ex: "meta-llama/llama-3.1-8b-instruct")
+function obterChaveAPI() {
+  if (typeof CONFIG !== "undefined" && CONFIG.OPENROUTER_API_KEY) {
+    return CONFIG.OPENROUTER_API_KEY.trim();
+  }
+  if (typeof OPENROUTER_API_KEY !== "undefined" && OPENROUTER_API_KEY) {
+    return OPENROUTER_API_KEY.trim();
+  }
+  return "";
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Injeção dinâmica do HTML do Chatbot
   function inicializarDOMChatbot() {
     let root = document.getElementById("chatbot-root");
     if (!root) {
@@ -15,49 +19,38 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(root);
     }
 
-    root.innerHTML = `
-      <button class="chatbot-toggle" id="chatbot-toggle-btn" aria-label="Abrir Chat LogBot">
-        <i class="fa-solid fa-comments"></i>
-      </button>
-
-      <div class="chatbot-window" id="chatbot-window">
-        <div class="chatbot-header">
-          <div class="chatbot-avatar">
-            <i class="fa-solid fa-comment-dots"></i>
-          </div>
-          <div class="chatbot-info">
-            <h4>LogBot</h4>
-            <p>Assistente StockLog</p>
-          </div>
-          <button class="chatbot-close" id="chatbot-close-btn" aria-label="Fechar">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-
-        <div class="chatbot-messages" id="chatbot-messages"></div>
-
-        <div class="chatbot-input-area">
-          <input 
-            type="text" 
-            id="chatbot-input" 
-            class="chatbot-input" 
-            placeholder="Digite ou pergunte algo..."
-            autocomplete="off"
-          />
-          <button class="chatbot-voice" id="chatbot-voice-btn" title="Falar por Voz">
-            <i class="fa-solid fa-microphone"></i>
-          </button>
-          <button class="chatbot-send" id="chatbot-send-btn" title="Enviar Mensagem">
-            <i class="fa-solid fa-paper-plane"></i>
-          </button>
-        </div>
-      </div>
-    `;
+    root.innerHTML = 
+      '<button class="chatbot-toggle" id="chatbot-toggle-btn" aria-label="Abrir Chat LogBot">' +
+        '<i class="fa-solid fa-comments"></i>' +
+      '</button>' +
+      '<div class="chatbot-window" id="chatbot-window">' +
+        '<div class="chatbot-header">' +
+          '<div class="chatbot-avatar">' +
+            '<i class="fa-solid fa-comment-dots"></i>' +
+          '</div>' +
+          '<div class="chatbot-info">' +
+            '<h4>LogBot</h4>' +
+            '<p>Assistente StockLog</p>' +
+          '</div>' +
+          '<button class="chatbot-close" id="chatbot-close-btn" aria-label="Fechar">' +
+            '<i class="fa-solid fa-xmark"></i>' +
+          '</button>' +
+        '</div>' +
+        '<div class="chatbot-messages" id="chatbot-messages"></div>' +
+        '<div class="chatbot-input-area">' +
+          '<input type="text" id="chatbot-input" class="chatbot-input" placeholder="Digite ou pergunte algo..." autocomplete="off" />' +
+          '<button class="chatbot-voice" id="chatbot-voice-btn" title="Falar por Voz">' +
+            '<i class="fa-solid fa-microphone"></i>' +
+          '</button>' +
+          '<button class="chatbot-send" id="chatbot-send-btn" title="Enviar Mensagem">' +
+            '<i class="fa-solid fa-paper-plane"></i>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
   }
 
   inicializarDOMChatbot();
 
-  // 2. Elementos DOM
   const toggleBtn = document.getElementById("chatbot-toggle-btn");
   const closeBtn = document.getElementById("chatbot-close-btn");
   const chatWindow = document.getElementById("chatbot-window");
@@ -66,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendBtn = document.getElementById("chatbot-send-btn");
   const voiceBtn = document.getElementById("chatbot-voice-btn");
 
-  // 3. BASE DE DADOS DO SISTEMA (Fornecida como Contexto para a IA)
   const dadosSistema = {
     maquinas: [
       { nome: "Corte Laser 01 (Fiber)", status: "Operando", op: "OP-2024-88", operador: "Carlos Silva", eficiencias: "94%" },
@@ -138,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const hora = obterHoraAtual();
     adicionarMensagem(
       "bot",
-      `Olá! Eu sou o **LogBot**, assistente inteligente do StockLog.\n\nComo posso te ajudar com a fábrica, estoque ou sistema agora?`,
+      'Olá! Eu sou o **LogBot**, assistente inteligente do StockLog.\n\nComo posso te ajudar com a fábrica, estoque ou sistema agora?',
       hora
     );
     exibirSugestoes();
@@ -150,15 +142,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function adicionarMensagem(autor, texto, hora) {
     const msgDiv = document.createElement("div");
-    msgDiv.className = `chatbot-msg ${autor}`;
+    msgDiv.className = 'chatbot-msg ' + autor;
 
     let textoFormatado = texto.replace(/\n/g, '<br>');
     textoFormatado = textoFormatado.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    msgDiv.innerHTML = `
-      ${textoFormatado}
-      <span class="msg-time">${hora || obterHoraAtual()}</span>
-    `;
+    msgDiv.innerHTML = textoFormatado + '<span class="msg-time">' + (hora || obterHoraAtual()) + '</span>';
 
     chatMessages.appendChild(msgDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -200,28 +189,29 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typing) typing.remove();
   }
 
-  // 4. FUNÇÃO QUE FAZ A CHAMADA À API DO OPEN ROUTER
   async function chamarOpenRouter(mensagemUsuario) {
-    const promptSistema = `
-      Você é o LogBot, assistente do sistema industrial StockLog.
-      Responda dúvidas sobre o sistema, status em tempo real da fábrica, estoque, logística e metalurgia.
-      
-      DADOS EM TEMPO REAL DO SISTEMA:
-      ${JSON.stringify(dadosSistema, null, 2)}
-      
-      RESUMO DAS PÁGINAS DO SISTEMA:
-      ${JSON.stringify(basePaginas, null, 2)}
-      
-      Regras:
-      1. Se a pergunta for fora de contexto de indústria, metalurgia, logística ou do sistema StockLog, recuse educadamente.
-      2. Mantenha respostas diretas e bem formatadas usando negrito e tópicos quando necessário.
-    `;
+    const apiKey = obterChaveAPI();
+
+    if (!apiKey) {
+      return "⚠️ **Erro:** A chave da API não foi encontrada no arquivo `config.js` ou nas tags HTML.";
+    }
+
+    const promptSistema = 
+      'Você é o LogBot, assistente do sistema industrial StockLog.\n' +
+      'Responda dúvidas sobre o sistema, status em tempo real da fábrica, estoque, logística e metalurgia.\n\n' +
+      'DADOS EM TEMPO REAL DO SISTEMA:\n' + JSON.stringify(dadosSistema, null, 2) + '\n\n' +
+      'RESUMO DAS PÁGINAS DO SISTEMA:\n' + JSON.stringify(basePaginas, null, 2) + '\n\n' +
+      'Regras:\n' +
+      '1. Se a pergunta for fora de contexto de indústria, metalurgia, logística ou do sistema StockLog, recuse educadamente.\n' +
+      '2. Mantenha respostas diretas e bem formatadas usando negrito e tópicos quando necessário.';
 
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Authorization": "Bearer " + apiKey,
+          "HTTP-Referer": window.location.origin,
+          "X-Title": "StockLog",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -234,18 +224,19 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Erro API OpenRouter: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Erro da API OpenRouter:", response.status, errorData);
+        return "⚠️ **Erro da API (" + response.status + "):** Verifique se a sua chave no `config.js` possui créditos suficientes.";
       }
 
       const data = await response.json();
       return data.choices[0].message.content;
     } catch (error) {
       console.error("Erro na comunicação com OpenRouter:", error);
-      return "⚠️ **Erro de Conexão:** Não foi possível consultar a API do OpenRouter. Verifique se a chave API foi configurada corretamente.";
+      return "⚠️ **Erro de Conexão:** Não foi possível conectar ao servidor da OpenRouter.";
     }
   }
 
-  // 5. PROCESSAMENTO DE ENVIO ASSÍNCRONO
   async function processarEnvio() {
     const texto = chatInput.value.trim();
     if (!texto) return;
@@ -258,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     mostrarTyping();
 
-    // Chamada à API OpenRouter
     const respostaIA = await chamarOpenRouter(texto);
 
     removerTyping();
@@ -271,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") processarEnvio();
   });
 
-  // 6. Reconhecimento de Voz
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (SpeechRecognition) {
