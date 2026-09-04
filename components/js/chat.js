@@ -196,10 +196,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiKey = obterChaveAPI();
 
     if (!apiKey) {
-      return "⚠️ **Erro:** A chave da API não foi encontrada no arquivo `config.js` ou nas tags HTML.";
+      return gerarRespostaSimulada(mensagemUsuario);
     }
 
-    const promptSistema = 
+    const promptSistema =
       "Você é o LogBot, assistente do sistema industrial StockLog.\n" +
       "Responda dúvidas sobre o sistema, status em tempo real da fábrica, estoque, logística e metalurgia.\n\n" +
       "DADOS EM TEMPO REAL DO SISTEMA:\n" + JSON.stringify(dadosSistema, null, 2) + "\n\n" +
@@ -238,6 +238,28 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Erro na comunicação com OpenRouter:", error);
       return "⚠️ **Erro de Conexão:** Não foi possível conectar ao servidor da OpenRouter.";
     }
+  }
+
+  function gerarRespostaSimulada(msg) {
+    const texto = msg.toLowerCase();
+
+    if (texto.includes("olá") || texto.includes("oi") || texto.includes("quem é você")) {
+      return "Olá! Eu sou o **LogBot**, seu assistente virtual. <br><br>Estou operando em <b>modo offline (simulado)</b> porque a chave da API não foi configurada. Mas ainda posso te ajudar com informações básicas do sistema!";
+    }
+    if (texto.includes("máquina") || texto.includes("produção")) {
+      return "Atualmente temos máquinas operando com eficiência média de **91%**. A Prensa Hidráulica 01 está com a OP-2025-001 em andamento!";
+    }
+    if (texto.includes("estoque") || texto.includes("falta") || texto.includes("item")) {
+      return "Identifiquei itens em nível **crítico** de estoque, especialmente a Chapa de Aço Inox 304. Recomendo verificar a aba de Itens em Estoque.";
+    }
+    if (texto.includes("pedido") || texto.includes("op")) {
+      return "Existem **42 pedidos** em aberto no momento. A maioria está em fase de usinagem e solda.";
+    }
+    if (texto.includes("ajuda") || texto.includes("como usar")) {
+      return "Você pode me perguntar sobre: <br>• Status das máquinas <br>• Níveis de estoque <br>• Prazo de pedidos <br>• Navegação no sistema";
+    }
+
+    return "Entendi sua pergunta sobre '" + msg + "'. Como estou em <b>modo simulado</b>, não consigo acessar a IA agora, mas você pode encontrar esses detalhes nas abas de <b>Relatórios</b> ou <b>Produção</b>!";
   }
 
   async function processarEnvio() {
