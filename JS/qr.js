@@ -13,28 +13,25 @@ function clearStatus() {
   el.innerHTML = "";
 }
 
-// Função que decide para onde ir baseado no que foi lido
+// Função que identifica qual produto foi lido
 function goToCode(codigo) {
   if (!codigo) return;
   const clean = codigo.trim();
 
-  // Se o QR Code contém o link completo do GitHub (ex: https://.../produto1.html)
-  // Ou se contém apenas o nome do arquivo (ex: produto1.html)
-  if (clean.includes("produto1") || clean.includes("produto2") || clean.includes("produto3")) {
-    
-    // Lógica para redirecionar para o arquivo certo
-    if (clean.includes("produto1")) {
-        window.location.href = `produto1.html`;
-    } else if (clean.includes("produto2")) {
-        window.location.href = `produto2.html`;
-    } else {
-        window.location.href = `produto3.html`;
-    }
+  // Se o QR Code tiver o link completo (ex: .../produto1.html) ou apenas o nome do arquivo
+  if (clean.includes("produto1")) {
+    window.location.href = "produto1.html";
   } 
-  // Se o QR Code tiver apenas o código da peça (ex: MP-1042 ou P-0248)
+  else if (clean.includes("produto2")) {
+    window.location.href = "produto2.html";
+  }
+  else if (clean.includes("produto3")) {
+    window.location.href = "produto3.html";
+  }
+  // Caso o QR Code seja um código de peça genérico (ex: MP-1042, P-0248)
   else {
-    // Aqui mantemos a lógica de ir para uma página de detalhes caso exista, 
-    // ou você pode trocar para `produto1.html` se for o padrão.
+    // Tenta abrir a página de detalhes genérica (se existir). 
+    // Se não existir, você pode trocar para um alerta ou redirecionar para a home.
     window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
   }
 }
@@ -59,7 +56,7 @@ async function startScanner() {
     window.location.hostname === "127.0.0.1";
   if (!isSecure) {
     setStatus(
-      '<i class="fas fa-triangle-exclamation"></i> A câmera só funciona em HTTPS ou localhost. Rode este arquivo com um servidor local (ex: Live Server) em vez de abrir direto do disco.',
+      '<i class="fas fa-triangle-exclamation"></i> A câmera só funciona em HTTPS ou localhost.',
       "error",
     );
     return;
@@ -67,7 +64,7 @@ async function startScanner() {
 
   if (typeof Html5Qrcode === "undefined") {
     setStatus(
-      '<i class="fas fa-triangle-exclamation"></i> Não foi possível carregar a biblioteca de leitura. Verifique sua conexão com a internet.',
+      '<i class="fas fa-triangle-exclamation"></i> Biblioteca não carregada.',
       "error",
     );
     return;
@@ -96,12 +93,12 @@ async function startScanner() {
       String(err).toLowerCase().includes("notallowed")
     ) {
       setStatus(
-        '<i class="fas fa-ban"></i> Permissão da câmera negada. Habilite o acesso à câmera nas configurações do navegador e tente novamente.',
+        '<i class="fas fa-ban"></i> Permissão da câmera negada.',
         "error",
       );
     } else {
       setStatus(
-        '<i class="fas fa-triangle-exclamation"></i> Não foi possível acessar a câmera. Verifique se o dispositivo tem câmera disponível.',
+        '<i class="fas fa-triangle-exclamation"></i> Não foi possível acessar a câmera.',
         "error",
       );
     }
@@ -112,9 +109,8 @@ function onScanSuccess(decodedText) {
   if (!isScanning) return;
   isScanning = false;
   
-  // Mostra na tela o que foi lido e que está redirecionando
   setStatus(
-    `<i class="fas fa-circle-check"></i> QR Code reconhecido: <strong>&nbsp;${decodedText}</strong> — redirecionando...`,
+    `<i class="fas fa-circle-check"></i> QR Code lido! Redirecionando...`,
     "success",
   );
 
@@ -122,10 +118,10 @@ function onScanSuccess(decodedText) {
     .stop()
     .then(() => {
       html5QrCode.clear();
-      setTimeout(() => goToCode(decodedText), 800);
+      setTimeout(() => goToCode(decodedText), 500);
     })
     .catch(() => {
-      setTimeout(() => goToCode(decodedText), 800);
+      setTimeout(() => goToCode(decodedText), 500);
     });
 }
 
