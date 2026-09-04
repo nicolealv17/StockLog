@@ -1,6 +1,7 @@
 /* ================================================================
-   COMPONENTE: HEADER (StockLog)
-   Cabeçalho superior com título, logo mobile, busca e ações.
+   COMPONENTE: HEADER & NOTIFICAÇÕES (StockLog)
+   Cabeçalho superior com título, logo mobile, busca, perfil e 
+   dropdown de notificações totalmente responsivo.
    ================================================================ */
 
 :root {
@@ -110,7 +111,7 @@ body.dark {
 }
 
 /* ============================================================
-   BOTÕES DO HEADER - TODOS COM O MESMO ESTILO
+   BOTÕES DO HEADER
    ============================================================ */
 .header-btn {
   display: flex;
@@ -133,21 +134,9 @@ body.dark {
   color: var(--primary, #006bb3);
   background: var(--primary-light, #e1eefb);
 }
-.header-btn .badge {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  background: var(--red, #b93a3a);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 0 4px;
-  border-radius: 10px;
-  border: 1.5px solid var(--header-bg);
-}
 
 /* ============================================================
-   PERFIL DO USUÁRIO - MESMO ESTILO DOS BOTÕES
+   PERFIL DO USUÁRIO
    ============================================================ */
 .user-profile {
   display: flex;
@@ -171,157 +160,6 @@ body.dark {
   background: var(--primary-light, #e1eefb);
 }
 
-/* Container relativo para o ícone no header */
-.notif-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-/* Painel Suspenso de Notificações (AUMENTADO) */
-.notif-dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 450px; /* Aumentado de 360px */
-  max-width: calc(100vw - 20px); /* Previne estourar a tela em dispositivos móveis */
-  max-height: 580px; /* Aumentado de 480px */
-  background-color: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-  display: none;
-  flex-direction: column;
-  z-index: 9999;
-  overflow: hidden;
-}
-
-.notif-dropdown.active {
-  display: flex;
-}
-
-.notif-dropdown-header {
-  padding: 16px 20px; /* Aumentado espaçamento */
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--bg-soft);
-}
-
-.notif-dropdown-header h4 {
-  font-size: 16px; /* Aumentado de 14px */
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.notif-btn-clear {
-  background: transparent;
-  border: none;
-  color: var(--primary);
-  font-size: 13px; /* Aumentado de 12px */
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.notif-btn-clear:hover {
-  opacity: 0.8;
-}
-
-.notif-dropdown-body {
-  padding: 12px; /* Aumentado de 8px */
-  overflow-y: auto;
-  max-height: 480px; /* Aumentado de 380px */
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* Aumentado espaçamento entre itens */
-}
-
-/* Item Compacto da Notificação (AUMENTADO) */
-.notif-item-sm {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 14px; /* Aumentado de 10px */
-  background: var(--bg-soft);
-  border-radius: 10px;
-  border-left: 4px solid var(--primary);
-  position: relative;
-  transition: background 0.15s;
-}
-
-.notif-item-sm.unread {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--primary);
-}
-
-.notif-item-sm.type-atraso { border-left-color: var(--red); }
-.notif-item-sm.type-estoque { border-left-color: var(--amber); }
-.notif-item-sm.type-maquina { border-left-color: var(--purple); }
-.notif-item-sm.type-tarefa { border-left-color: var(--blue); }
-.notif-item-sm.type-entrega { border-left-color: var(--teal); }
-
-.notif-icon-sm {
-  width: 32px; /* Aumentado de 28px */
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px; /* Aumentado de 12px */
-  flex-shrink: 0;
-}
-
-.notif-info-sm {
-  flex: 1;
-}
-
-.notif-title-sm {
-  font-size: 13.5px; /* Aumentado de 12.5px */
-  font-weight: 700;
-  color: var(--text-main);
-  line-height: 1.3;
-}
-
-.notif-desc-sm {
-  font-size: 12.5px; /* Aumentado de 11.5px */
-  color: var(--text-secondary);
-  margin-top: 3px;
-  line-height: 1.35;
-}
-
-.notif-time-sm {
-  font-size: 11px; /* Aumentado de 10px */
-  color: var(--text-muted);
-  margin-top: 5px;
-}
-
-.notif-del-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 13px; /* Aumentado de 11px */
-  padding: 2px 4px;
-}
-
-.notif-del-btn:hover { color: var(--red); }
-
-/* Badge de Notificações no Ícone do Header */
-.notif-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: var(--red);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 5px;
-  border-radius: 10px;
-}
-
-/* Avatar dentro do perfil */
 .user-avatar-wrapper {
   display: inline-flex;
   align-items: center;
@@ -330,12 +168,12 @@ body.dark {
   height: 28px;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--primary-light);
+  background: var(--primary-light, #e1eefb);
   flex-shrink: 0;
 }
 .user-avatar-wrapper i {
   font-size: 22px;
-  color: var(--primary);
+  color: var(--primary, #006bb3);
 }
 
 .header-avatar-img {
@@ -349,6 +187,201 @@ body.dark {
   font-weight: 500;
 }
 
+/* ============================================================
+   COMPONENTE: NOTIFICAÇÕES (RESPONSIVO)
+   ============================================================ */
+
+/* Container relativo para o ícone no header */
+.notif-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Badge de Notificações no Ícone do Header */
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--red, #b93a3a);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 10px;
+  line-height: 1;
+  pointer-events: none;
+  box-shadow: 0 0 0 2px var(--header-bg, #ffffff);
+}
+
+/* Painel Suspenso de Notificações */
+.notif-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  max-height: min(580px, 80vh);
+  background-color: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e2ecf6);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  display: none;
+  flex-direction: column;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.notif-dropdown.active {
+  display: flex;
+}
+
+.notif-dropdown-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border, #e2ecf6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--bg-soft, #f5faff);
+  flex-shrink: 0;
+}
+
+.notif-dropdown-header h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main, #0a1f33);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.notif-btn-clear {
+  background: transparent;
+  border: none;
+  color: var(--primary, #006bb3);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s, opacity 0.2s;
+  white-space: nowrap;
+}
+
+.notif-btn-clear:hover {
+  opacity: 0.8;
+  background: rgba(0, 107, 179, 0.08);
+}
+
+.notif-dropdown-body {
+  padding: 10px;
+  overflow-y: auto;
+  max-height: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scroll-behavior: smooth;
+}
+
+/* Barra de rolagem discreta */
+.notif-dropdown-body::-webkit-scrollbar {
+  width: 5px;
+}
+.notif-dropdown-body::-webkit-scrollbar-thumb {
+  background: var(--header-text-muted, #7b97b2);
+  border-radius: 4px;
+}
+
+/* Item Compacto da Notificação */
+.notif-item-sm {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg-soft, #f5faff);
+  border-radius: 10px;
+  border-left: 4px solid var(--primary, #006bb3);
+  position: relative;
+  transition: background-color 0.15s;
+}
+
+.notif-item-sm:hover {
+  background: var(--primary-light, #e1eefb);
+}
+
+.notif-item-sm.unread {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e2ecf6);
+  border-left: 4px solid var(--primary, #006bb3);
+}
+
+/* Tipos de Notificações por Cor */
+.notif-item-sm.type-atraso { border-left-color: var(--red, #b93a3a); }
+.notif-item-sm.type-estoque { border-left-color: var(--amber, #d97706); }
+.notif-item-sm.type-maquina { border-left-color: var(--purple, #8b5cf6); }
+.notif-item-sm.type-tarefa { border-left-color: var(--blue, #2563eb); }
+.notif-item-sm.type-entrega { border-left-color: var(--teal, #0d9488); }
+
+.notif-info-sm {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.notif-title-sm {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main, #0a1f33);
+  line-height: 1.3;
+}
+
+.notif-desc-sm {
+  font-size: 12px;
+  color: var(--text-secondary, #4a637b);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.notif-time-sm {
+  font-size: 11px;
+  color: var(--text-muted, #7b97b2);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Botões de Ação dentro da Notificação */
+.notif-read-btn,
+.notif-del-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #7b97b2);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background-color 0.15s;
+  flex-shrink: 0;
+}
+
+.notif-read-btn:hover {
+  color: var(--primary, #006bb3);
+  background: rgba(0, 107, 179, 0.1);
+}
+
+.notif-del-btn:hover {
+  color: var(--red, #b93a3a);
+  background: rgba(185, 58, 58, 0.1);
+}
+
+/* ============================================================
+   RESPONSIVIDADE GERAL DO HEADER & NOTIFICAÇÕES
+   ============================================================ */
 
 @media (max-width: 768px) {
   .header {
@@ -372,14 +405,16 @@ body.dark {
   .user-profile-name {
     display: none;
   }
-.user-profile {
+
+  .user-profile {
     padding: 4px;
     width: 38px;
     justify-content: center;
   }
 
   .notif-dropdown {
-    width: 380px; /* Ajuste ligeiramente menor em tablets para melhor encaixe */
+    width: 360px;
+    max-width: calc(100vw - 24px);
   }
 }
 
@@ -400,9 +435,9 @@ body.dark {
     gap: 4px;
   }
 
-  /* A busca agora ocupa toda a largura na segunda linha */
+  /* A busca ocupa toda a largura na segunda linha em celulares */
   .header-search {
-    order: 10; /* Coloca a busca após todos os elementos */
+    order: 10;
     flex: 1 1 100%;
     max-width: 100%;
     min-width: 0;
@@ -425,21 +460,58 @@ body.dark {
     height: 34px;
     padding: 0;
   }
+
   .user-avatar-wrapper {
     width: 26px;
     height: 26px;
   }
+
   .user-avatar-wrapper i {
     font-size: 20px;
   }
+
   .user-profile-name {
     display: none;
   }
 
-  /* Notificações: dropdown ocupa quase toda a tela */
+  /* Notificações em telas pequenas: posicionamento fixo centralizado */
   .notif-dropdown {
-    width: calc(100vw - 20px);
-    right: -10px;
-    max-height: 70vh;
+    position: fixed;
+    top: 56px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100vh - 70px);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25);
+  }
+
+  .notif-dropdown-header {
+    padding: 12px 14px;
+  }
+
+  .notif-dropdown-header h4 {
+    font-size: 14px;
+  }
+
+  .notif-btn-clear {
+    font-size: 11px;
+  }
+
+  .notif-dropdown-body {
+    max-height: calc(100vh - 130px);
+    padding: 8px;
+  }
+
+  .notif-item-sm {
+    padding: 10px;
+  }
+
+  .notif-title-sm {
+    font-size: 12.5px;
+  }
+
+  .notif-desc-sm {
+    font-size: 11.5px;
   }
 }
