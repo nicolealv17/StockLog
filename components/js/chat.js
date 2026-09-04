@@ -243,23 +243,71 @@ document.addEventListener("DOMContentLoaded", () => {
   function gerarRespostaSimulada(msg) {
     const texto = msg.toLowerCase();
 
-    if (texto.includes("olá") || texto.includes("oi") || texto.includes("quem é você")) {
-      return "Olá! Eu sou o **LogBot**, seu assistente virtual. <br><br>Estou operando em <b>modo offline (simulado)</b> porque a chave da API não foi configurada. Mas ainda posso te ajudar com informações básicas do sistema!";
-    }
-    if (texto.includes("máquina") || texto.includes("produção")) {
-      return "Atualmente temos máquinas operando com eficiência média de **91%**. A Prensa Hidráulica 01 está com a OP-2025-001 em andamento!";
-    }
-    if (texto.includes("estoque") || texto.includes("falta") || texto.includes("item")) {
-      return "Identifiquei itens em nível **crítico** de estoque, especialmente a Chapa de Aço Inox 304. Recomendo verificar a aba de Itens em Estoque.";
-    }
-    if (texto.includes("pedido") || texto.includes("op")) {
-      return "Existem **42 pedidos** em aberto no momento. A maioria está em fase de usinagem e solda.";
-    }
-    if (texto.includes("ajuda") || texto.includes("como usar")) {
-      return "Você pode me perguntar sobre: <br>• Status das máquinas <br>• Níveis de estoque <br>• Prazo de pedidos <br>• Navegação no sistema";
+    // 1. Saudações e Identidade
+    if (texto.includes("olá") || texto.includes("oi") || texto.includes("quem é você") || texto.includes("seu nome")) {
+      return "Olá! Eu sou o **LogBot**, seu assistente virtual inteligente do StockLog. <br><br>Estou operando em <b style='color: #006bb3;'>modo de simulação offline</b> porque a chave da API não foi configurada no <code>config.js</code>. Mas não se preocupe! Eu conheço todo o sistema e posso te dar informações reais sobre a fábrica e te guiar pelas páginas!";
     }
 
-    return "Entendi sua pergunta sobre '" + msg + "'. Como estou em <b>modo simulado</b>, não consigo acessar a IA agora, mas você pode encontrar esses detalhes nas abas de <b>Relatórios</b> ou <b>Produção</b>!";
+    // 2. Ajuda e Navegação Geral
+    if (texto.includes("ajuda") || texto.includes("como usar") || texto.includes("o que você faz") || texto.includes("funcionalidades")) {
+      return "Eu posso te ajudar a monitorar a fábrica rapidamente! Tente me perguntar sobre:<br>• <b>Máquinas:</b> 'Quais máquinas estão operando?'<br>• <b>Estoque:</b> 'O que está em falta no estoque?'<br>• <b>Pedidos:</b> 'Qual o status das OPs?'<br>• <b>Logística:</b> 'Onde estão as entregas?'<br>• <b>Navegação:</b> 'Para que serve a página de Relatórios?'";
+    }
+
+    // 3. Máquinas e Produção (Usa dadosSistema)
+    if (texto.includes("máquina") || texto.includes("produção") || texto.includes("operando") || texto.includes("parada")) {
+      const operando = dadosSistema.maquinas.filter(m => m.status === "Operando");
+      const paradas = dadosSistema.maquinas.filter(m => m.status !== "Operando");
+
+      let res = "<b>Status da Produção:</b><br>";
+      res += `✅ <b>${operando.length} máquinas operando:</b> ${operando.map(m => m.nome).join(", ")}.<br>`;
+      if (paradas.length > 0) {
+        res += `<br>⚠️ <b>${paradas.length} máquinas com alerta:</b><br>`;
+        paradas.forEach(m => res += `- ${m.nome}: ${m.motivo || m.status}<br>`);
+      }
+      return res;
+    }
+
+    // 4. Estoque e Insumos (Usa dadosSistema)
+    if (texto.includes("estoque") || texto.includes("falta") || texto.includes("item") || texto.includes("matéria-prima")) {
+      const criticos = dadosSistema.estoqueEmFalta.filter(i => i.status.includes("Crítico") || i.status.includes("Esgotado"));
+      let res = "<b>Alerta de Estoque:</b><br>";
+      if (criticos.length > 0) {
+        res += "Identifiquei itens em nível <b>crítico</b>:<br>";
+        criticos.forEach(i => res += `- ${i.item} (${i.quantidade}) - ${i.status}<br>`);
+        res += "<br>Recomendo acessar a aba <b>Itens em Estoque</b> para realizar a reposição.";
+      } else {
+        res += "No momento, não há itens em nível crítico. Tudo sob controle!";
+      }
+      return res;
+    }
+
+    // 5. Pedidos e OPs (Usa dadosSistema)
+    if (texto.includes("pedido") || texto.includes("op") || texto.includes("prazo") || texto.includes("andamento")) {
+      let res = "<b>Ordens de Produção (OPs) em Andamento:</b><br>";
+      dadosSistema.pedidosAndamento.forEach(p => {
+        res += `- <b>${p.op}</b> (${p.cliente}): ${p.produto} - Progresso: ${p.progresso} (Prazo: ${p.prazo})<br>`;
+      });
+      return res;
+    }
+
+    // 6. Logística e Entregas (Usa dadosSistema)
+    if (texto.includes("logística") || texto.includes("entrega") || texto.includes("motorista") || texto.includes("rastreamento")) {
+      let res = "<b>Status de Logística:</b><br>";
+      dadosSistema.entregasLogisticas.forEach(e => {
+        res += `- <b>${e.id}</b> para ${e.destino}: ${e.status} (Motorista: ${e.motorista}) - Previsão: ${e.previsao}<br>`;
+      });
+      return res;
+    }
+
+    // 7. Guia de Páginas do Sistema (Usa basePaginas)
+    for (const [pagina, descricao] of Object.entries(basePaginas)) {
+      if (texto.includes(pagina) || texto.includes(pagina.charAt(0).toUpperCase() + pagina.slice(1))) {
+        return `A página de <b>${pagina.charAt(0).toUpperCase() + pagina.slice(1)}</b> serve para: ${descricao}`;
+      }
+    }
+
+    // 8. Fallback Inteligente
+    return "Entendi que você quer saber sobre '" + msg + "'. <br><br>Como estou em <b>modo simulado</b>, não consigo processar essa pergunta complexa via IA, mas posso te dizer que a maioria das informações de gestão está concentrada nas abas de <b>Relatórios</b>, <b>Produção</b> ou <b>Estoque</b>. Tente perguntar sobre 'máquinas', 'estoque' ou 'entregas'!";
   }
 
   async function processarEnvio() {
