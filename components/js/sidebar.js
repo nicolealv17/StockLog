@@ -83,11 +83,6 @@
       "</div>" +
       '<button class="sidebar-open-btn" type="button" aria-label="Expandir menu"><i class="fas fa-bars"></i></button>' +
       "<nav>" + buildNavHTML() + "</nav>" +
-      '<div class="sidebar-user">' +
-      '<div class="sidebar-user-avatar"><i class="fas fa-user"></i></div>' +
-      '<div class="sidebar-user-info">' +
-      '<span class="sidebar-user-name">Minha Conta</span>' +
-      '<span class="sidebar-user-version">StockLog v1.0</span>' +
       "</div>" +
       "</div>" +
       "</aside>"
