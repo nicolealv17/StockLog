@@ -25,6 +25,7 @@
         { href: basePath + "pedidos.html", icon: "fa-clipboard-list", label: "Pedidos de Produção" },
         { href: basePath + "producao.html", icon: "fa-industry", label: "Controle de Produção" },
         { href: basePath + "kanban.html", icon: "fa-columns", label: "Kanban" },
+        { href: basePath + "qr.html", icon: "fa-qrcode", label: "QR Code" }, // NOVO ITEM
         { href: basePath + "itens.html", icon: "fa-warehouse", label: "Itens em Estoque" },
       ],
     },
@@ -83,8 +84,6 @@
       "</div>" +
       '<button class="sidebar-open-btn" type="button" aria-label="Expandir menu"><i class="fas fa-bars"></i></button>' +
       "<nav>" + buildNavHTML() + "</nav>" +
-      "</div>" +
-      "</div>" +
       "</aside>"
     );
   }
@@ -117,12 +116,6 @@
     var sidebar = refs.sidebar;
     var overlay = refs.overlay;
 
-    // matchMedia em vez de checar innerWidth a cada 'resize': o listener só
-    // dispara quando o breakpoint realmente é cruzado. Isso corrige o bug de
-    // o menu abrir/fechar sozinho e travar no mobile — antes, o evento
-    // 'resize' disparava a cada pequena mudança de viewport (ex.: a barra de
-    // endereço do navegador aparecendo/sumindo durante o scroll), o que
-    // chamava closeSidebar() repetidamente e deixava a animação "presa".
     var mobileMQ = window.matchMedia("(max-width: 768px)");
     function isMobile() { return mobileMQ.matches; }
 
@@ -173,8 +166,6 @@
       if (e.key === "Escape" && isMobile() && sidebar.classList.contains("open")) closeSidebar();
     });
 
-    // Só reage quando o breakpoint muda de fato (desktop <-> mobile),
-    // nunca a cada pixel de resize.
     function handleBreakpointChange() {
       if (isMobile()) {
         closeSidebar();
@@ -189,7 +180,6 @@
     if (mobileMQ.addEventListener) {
       mobileMQ.addEventListener("change", handleBreakpointChange);
     } else if (mobileMQ.addListener) {
-      // Safari antigo
       mobileMQ.addListener(handleBreakpointChange);
     }
   }
