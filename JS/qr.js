@@ -13,10 +13,30 @@ function clearStatus() {
   el.innerHTML = "";
 }
 
+// Função que decide para onde ir baseado no que foi lido
 function goToCode(codigo) {
   if (!codigo) return;
   const clean = codigo.trim();
-  window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
+
+  // Se o QR Code contém o link completo do GitHub (ex: https://.../produto1.html)
+  // Ou se contém apenas o nome do arquivo (ex: produto1.html)
+  if (clean.includes("produto1") || clean.includes("produto2") || clean.includes("produto3")) {
+    
+    // Lógica para redirecionar para o arquivo certo
+    if (clean.includes("produto1")) {
+        window.location.href = `produto1.html`;
+    } else if (clean.includes("produto2")) {
+        window.location.href = `produto2.html`;
+    } else {
+        window.location.href = `produto3.html`;
+    }
+  } 
+  // Se o QR Code tiver apenas o código da peça (ex: MP-1042 ou P-0248)
+  else {
+    // Aqui mantemos a lógica de ir para uma página de detalhes caso exista, 
+    // ou você pode trocar para `produto1.html` se for o padrão.
+    window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
+  }
 }
 
 function goToManualCode() {
@@ -33,7 +53,6 @@ document
 async function startScanner() {
   clearStatus();
 
-  // Leitura de câmera exige HTTPS ou localhost (protocolo de segurança do navegador)
   const isSecure =
     window.location.protocol === "https:" ||
     window.location.hostname === "localhost" ||
@@ -92,6 +111,8 @@ async function startScanner() {
 function onScanSuccess(decodedText) {
   if (!isScanning) return;
   isScanning = false;
+  
+  // Mostra na tela o que foi lido e que está redirecionando
   setStatus(
     `<i class="fas fa-circle-check"></i> QR Code reconhecido: <strong>&nbsp;${decodedText}</strong> — redirecionando...`,
     "success",
@@ -101,15 +122,15 @@ function onScanSuccess(decodedText) {
     .stop()
     .then(() => {
       html5QrCode.clear();
-      setTimeout(() => goToCode(decodedText), 500);
+      setTimeout(() => goToCode(decodedText), 800);
     })
     .catch(() => {
-      setTimeout(() => goToCode(decodedText), 500);
+      setTimeout(() => goToCode(decodedText), 800);
     });
 }
 
 function onScanFailure() {
-  // Chamado a cada frame sem QR detectado — silenciar, é o comportamento normal
+  // Silencioso
 }
 
 function stopScanner() {
