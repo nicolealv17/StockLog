@@ -174,10 +174,11 @@ body:not(.dark) .sidebar-user { color: #d6e7f8; border-top: 1px solid rgba(255, 
 
   .sidebar {
     position: fixed; left: 0; top: 0; height: 100dvh; z-index: 300;
-    width: min(var(--sidebar-width-open), 78vw); align-items: stretch; padding: 24px 16px 0;
+    width: 280px; max-width: 80vw; align-items: stretch; padding: 24px 16px 0;
     transform: translateX(-100%); transition: transform 0.28s ease; box-shadow: none; will-change: transform;
+    display: flex; flex-direction: column;
   }
-  .sidebar.open { width: min(var(--sidebar-width-open), 78vw); transform: translateX(0); box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25); }
+  .sidebar.open { width: 280px; max-width: 80vw; transform: translateX(0); box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25); }
 
   .sidebar .sidebar-logo { justify-content: flex-start; padding: 0 4px; }
   .sidebar .sidebar-logo .logo-text { opacity: 1; }
