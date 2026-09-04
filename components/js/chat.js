@@ -1,4 +1,4 @@
-const OPENROUTER_MODEL = "openai/gpt-4o-mini"; 
+const OPENROUTER_MODEL = "openai/gpt-4o-mini";
 
 function obterChaveAPI() {
   if (typeof CONFIG !== "undefined" && CONFIG.OPENROUTER_API_KEY) {
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
       '<div class="chatbot-window" id="chatbot-window">' +
         '<div class="chatbot-header">' +
           '<div class="chatbot-avatar">' +
-            '<i class="fa-solid fa-comment-dots"></i>' +
+            '<i class="fa-solid fa-robot"></i>' +
           '</div>' +
           '<div class="chatbot-info">' +
             '<h4>LogBot</h4>' +
@@ -126,37 +126,18 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleBtn.addEventListener("click", abrirChat);
   closeBtn.addEventListener("click", fecharChat);
 
-  function iniciarConversa() {
-    const hora = obterHoraAtual();
-    adicionarMensagem(
-      "bot",
-      'Olá! Eu sou o **LogBot**, assistente inteligente do StockLog.\n\nComo posso te ajudar com a fábrica, estoque ou sistema agora?',
-      hora
-    );
-    exibirSugestoes();
-  }
-
   function obterHoraAtual() {
     return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  function adicionarMensagem(autor, texto, hora) {
+  /* Cria o balão inicial contendo as sugestões exclusivamente em seu interior */
+  function iniciarConversa() {
     const msgDiv = document.createElement("div");
-    msgDiv.className = 'chatbot-msg ' + autor;
+    msgDiv.className = "chatbot-msg bot";
 
-    let textoFormatado = texto.replace(/\n/g, '<br>');
-    textoFormatado = textoFormatado.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    const textoBase = "Olá! Eu sou o <strong>LogBot</strong>, assistente inteligente do StockLog.<br><br>Como posso te ajudar com a fábrica, estoque ou sistema agora?";
 
-    msgDiv.innerHTML = textoFormatado + '<span class="msg-time">' + (hora || obterHoraAtual()) + '</span>';
-
-    chatMessages.appendChild(msgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  function exibirSugestoes() {
-    const sugestaoAntiga = document.querySelector(".chatbot-suggestions");
-    if (sugestaoAntiga) sugestaoAntiga.remove();
-
+    // Cria o bloco container das sugestões
     const suggestionsDiv = document.createElement("div");
     suggestionsDiv.className = "chatbot-suggestions";
 
@@ -171,7 +152,29 @@ document.addEventListener("DOMContentLoaded", () => {
       suggestionsDiv.appendChild(btn);
     });
 
-    chatMessages.appendChild(suggestionsDiv);
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "msg-time";
+    timeSpan.innerText = obterHoraAtual();
+
+    // Adiciona elementos ordenadamente no mesmo balão de mensagem
+    msgDiv.innerHTML = textoBase;
+    msgDiv.appendChild(suggestionsDiv);
+    msgDiv.appendChild(timeSpan);
+
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function adicionarMensagem(autor, texto, hora) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "chatbot-msg " + autor;
+
+    let textoFormatado = texto.replace(/\n/g, "<br>");
+    textoFormatado = textoFormatado.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+    msgDiv.innerHTML = textoFormatado + '<span class="msg-time">' + (hora || obterHoraAtual()) + "</span>";
+
+    chatMessages.appendChild(msgDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
@@ -197,13 +200,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const promptSistema = 
-      'Você é o LogBot, assistente do sistema industrial StockLog.\n' +
-      'Responda dúvidas sobre o sistema, status em tempo real da fábrica, estoque, logística e metalurgia.\n\n' +
-      'DADOS EM TEMPO REAL DO SISTEMA:\n' + JSON.stringify(dadosSistema, null, 2) + '\n\n' +
-      'RESUMO DAS PÁGINAS DO SISTEMA:\n' + JSON.stringify(basePaginas, null, 2) + '\n\n' +
-      'Regras:\n' +
-      '1. Se a pergunta for fora de contexto de indústria, metalurgia, logística ou do sistema StockLog, recuse educadamente.\n' +
-      '2. Mantenha respostas diretas e bem formatadas usando negrito e tópicos quando necessário.';
+      "Você é o LogBot, assistente do sistema industrial StockLog.\n" +
+      "Responda dúvidas sobre o sistema, status em tempo real da fábrica, estoque, logística e metalurgia.\n\n" +
+      "DADOS EM TEMPO REAL DO SISTEMA:\n" + JSON.stringify(dadosSistema, null, 2) + "\n\n" +
+      "RESUMO DAS PÁGINAS DO SISTEMA:\n" + JSON.stringify(basePaginas, null, 2) + "\n\n" +
+      "Regras:\n" +
+      "1. Se a pergunta for fora de contexto de indústria, metalurgia, logística ou do sistema StockLog, recuse educadamente.\n" +
+      "2. Mantenha respostas diretas e bem formatadas usando negrito e tópicos quando necessário.";
 
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -226,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error("Erro da API OpenRouter:", response.status, errorData);
-        return "⚠️ **Erro da API (" + response.status + "):** Verifique se a sua chave no `config.js` possui créditos suficientes.";
+        return "⚠️ **Erro da API (" + response.status + "):** Verifique se a sua chave possui créditos suficientes.";
       }
 
       const data = await response.json();
@@ -241,9 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const texto = chatInput.value.trim();
     if (!texto) return;
 
-    const sugestaoAntiga = document.querySelector(".chatbot-suggestions");
-    if (sugestaoAntiga) sugestaoAntiga.remove();
-
     adicionarMensagem("user", texto);
     chatInput.value = "";
 
@@ -253,7 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     removerTyping();
     adicionarMensagem("bot", respostaIA);
-    exibirSugestoes();
   }
 
   sendBtn.addEventListener("click", processarEnvio);
