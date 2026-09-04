@@ -15,7 +15,9 @@
   --sidebar-width-open: 265px;
   --sidebar-width-rail: 76px;
 }
-
+.sidebar, .sidebar * {
+  box-sizing: border-box;
+}
 .sidebar {
   width: var(--sidebar-width-rail);
   background:
