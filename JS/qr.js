@@ -80,7 +80,7 @@ async function startScanner() {
   try {
     await html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 230, height: 230 } },
+    { fps: 10, qrbox: { width: 300, height: 300 }, aspectRatio: 1.0 },
       onScanSuccess,
       onScanFailure,
     );
