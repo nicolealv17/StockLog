@@ -1,475 +1,544 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StockLog · Leitor de QR Code</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="components/css/sidebar.css" />
-    <link rel="stylesheet" href="components/css/header.css" />
-    <link rel="stylesheet" href="components/css/chat.css" />
-    <link rel="stylesheet" href="components/css/footer.css" />
-    <link rel="stylesheet" href="components/css/modoescuro.css" />
-    <link rel="stylesheet" href="components/css/responsive.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockLog · QR Code</title>
+  
+  <!-- Fontes e Ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-    <!-- Biblioteca para leitura de QR Code pela câmera -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <!-- Componentes CSS -->
+  <link rel="stylesheet" href="components/css/sidebar.css" />
+  <link rel="stylesheet" href="components/css/header.css" />
+  <link rel="stylesheet" href="components/css/chat.css" />
+  <link rel="stylesheet" href="components/css/footer.css" />
+  <link rel="stylesheet" href="components/css/modoescuro.css" />
+  <link rel="stylesheet" href="components/css/responsive.css" />
 
-    <style>
-      :root {
-        --bg-body: #edf3f8;
-        --bg-card: #ffffff;
-        --bg-soft: #f4f8fc;
-        --border: #d4e2f0;
-        --text-main: #0c1e2e;
-        --text-secondary: #3b5a75;
-        --text-muted: #718da8;
-        --primary: #006bb3;
-        --primary-light: #e3f0fb;
-        --green: #15803d;
-        --green-bg: #dcfce7;
-        --red: #b91c1c;
-        --red-bg: #fee2e2;
-        --amber: #b45309;
-        --amber-bg: #fef3c7;
-        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
-      }
+  <!-- Biblioteca para leitura de QR Code pela câmera -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-      body.dark {
-        --bg-body: #0a131d;
-        --bg-card: #111f2e;
-        --bg-soft: #16283b;
-        --border: #1e364f;
-        --text-main: #e2edf8;
-        --text-secondary: #9cb5cd;
-        --text-muted: #6482a0;
-        --primary: #38bdf8;
-        --primary-light: #17324d;
-        --green: #4ade80;
-        --green-bg: #143823;
-        --red: #f87171;
-        --red-bg: #3e1919;
-        --amber: #fbbf24;
-        --amber-bg: #3d2d11;
-        --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      }
+  <style>
+    /* ============================================================
+       PALETA DE CORES (mesmo padrão do perfil)
+       ============================================================ */
+    :root {
+      --bg-body: #f0f5fc;
+      --bg-card: #ffffff;
+      --bg-soft: #f5faff;
+      --border: #e2ecf6;
+      --border-hover: #c6daea;
+      --primary: #006bb3;
+      --primary-dark: #004d80;
+      --primary-light: #e1eefb;
+      --primary-gradient: linear-gradient(135deg, #0077be 0%, #005a8c 100%);
+      
+      --text-main: #0a1f33;
+      --text-secondary: #3d5f7e;
+      --text-muted: #7b92b2;
+      
+      --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
+      --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
+      
+      --green: #1a7b72; --green-bg: #e0f2ea;
+      --amber: #c47a1f; --amber-bg: #faecd6;
+      --red: #b2433a; --red-bg: #fae2e0;
+      --purple: #6f4c4e; --purple-bg: #ede6f5;
+    }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+    body.dark {
+      --bg-body: #0d1727;
+      --bg-card: #14243e;
+      --bg-soft: #0f1f30;
+      --border: #1d344b;
+      --border-hover: #2a4866;
+      --text-main: #e2edf8;
+      --text-secondary: #a5bed6;
+      --text-muted: #6f8daa;
+      --primary-light: #1d3a55;
+      --green-bg: #123a2a; --amber-bg: #3a2f15; --red-bg: #3a1f1f;
+      --purple-bg: #2a1f3d;
+      --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
+      --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
+    }
 
-      body {
-        font-family: "Inter", sans-serif;
-        background-color: var(--bg-body);
-        color: var(--text-main);
-        display: flex;
-        min-height: 100vh;
-        transition:
-          background-color 0.2s,
-          color 0.2s;
-      }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Inter", sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; transition: background 0.3s, color 0.3s; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
 
-      .main-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        min-width: 0;
-      }
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+    .content { flex: 1; padding: 40px; width: 100%; max-width: 1400px; margin: 0 auto; }
 
-      .scan-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 24px 16px 40px;
-      }
+    /* ============================================================
+       BANNER
+       ============================================================ */
+    .welcome-banner {
+      background: var(--primary-gradient);
+      border-radius: 20px;
+      padding: 48px 56px;
+      margin-bottom: 32px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 119, 190, 0.2);
+    }
+    
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+    }
+    
+    .welcome-banner h1 { font-size: 32px; font-weight: 700; margin-bottom: 12px; position: relative; z-index: 1; }
+    .welcome-banner h1 i { margin-right: 12px; }
+    .welcome-banner p { font-size: 16px; opacity: 0.95; position: relative; z-index: 1; }
+    
+    .welcome-banner .last-access {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255, 255, 255, 0.2); padding: 8px 20px;
+      border-radius: 20px; font-size: 14px; margin-top: 20px;
+      backdrop-filter: blur(10px); position: relative; z-index: 1;
+    }
 
-      .scan-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        box-shadow: var(--shadow);
-        width: 100%;
-        max-width: 440px;
-        padding: 24px;
-        text-align: center;
-      }
+    /* ============================================================
+       GRID PRINCIPAL
+       ============================================================ */
+    .qr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 
-      .scan-card h1 {
-        font-size: 19px;
-        font-weight: 700;
-        margin-bottom: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-      }
+    /* ============================================================
+       CARD DO LEITOR
+       ============================================================ */
+    .scanner-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      transition: 0.3s;
+      position: sticky;
+      top: 20px;
+    }
+    
+    .scanner-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    
+    .scanner-header {
+      background: var(--primary-gradient);
+      padding: 24px 32px;
+      color: white;
+    }
+    
+    .scanner-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .scanner-header p {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 6px;
+    }
 
-      .scan-card h1 i {
-        color: var(--primary);
-      }
+    .scanner-body { padding: 32px; }
 
-      .scan-sub {
-        font-size: 13px;
-        color: var(--text-muted);
-        margin-bottom: 20px;
-      }
+    #reader {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      min-height: 300px;
+      display: none;
+    }
 
-      #reader {
-        width: 100%;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #000;
-        min-height: 260px;
-        display: none;
-      }
+    #reader.active {
+      display: block;
+    }
 
-      #reader.active {
-        display: block;
-      }
+    .scan-placeholder {
+      width: 100%;
+      min-height: 300px;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--text-muted);
+      background: var(--bg-soft);
+      transition: 0.3s;
+    }
 
-      .scan-placeholder {
-        width: 100%;
-        min-height: 260px;
-        border: 2px dashed var(--border);
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        color: var(--text-muted);
-        background: var(--bg-soft);
-      }
+    .scan-placeholder i {
+      font-size: 56px;
+      color: var(--border);
+    }
 
-      .scan-placeholder i {
-        font-size: 40px;
-        color: var(--border);
-      }
+    .scan-placeholder span {
+      font-size: 15px;
+      font-weight: 500;
+    }
 
-      .scan-btn {
-        margin-top: 20px;
-        width: 100%;
-        padding: 13px 18px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 14.5px;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        transition: 0.15s;
-      }
+    .scan-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: 0.2s;
+    }
 
-      .scan-btn.start {
-        background: var(--primary);
-        color: #fff;
-      }
-      .scan-btn.start:hover {
-        filter: brightness(0.93);
-      }
+    .scan-btn.start {
+      background: var(--primary-gradient);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 119, 190, 0.3);
+    }
+    .scan-btn.start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 119, 190, 0.4);
+    }
 
-      .scan-btn.stop {
-        background: var(--bg-soft);
-        color: var(--red);
-        border: 1px solid var(--red-bg);
-        margin-top: 10px;
-      }
-      .scan-btn.stop:hover {
-        border-color: var(--red);
-      }
+    .scan-btn.stop {
+      background: var(--bg-soft);
+      color: var(--red);
+      border: 1px solid var(--red-bg);
+      margin-top: 10px;
+    }
+    .scan-btn.stop:hover {
+      border-color: var(--red);
+      background: var(--red-bg);
+    }
 
-      .scan-status {
-        margin-top: 16px;
-        font-size: 13px;
-        font-weight: 600;
-        padding: 10px 14px;
-        border-radius: 8px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        text-align: left;
-      }
+    .scan-status {
+      margin-top: 18px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: left;
+    }
 
-      .scan-status.show {
-        display: flex;
-      }
-      .scan-status.error {
-        background: var(--red-bg);
-        color: var(--red);
-      }
-      .scan-status.warn {
-        background: var(--amber-bg);
-        color: var(--amber);
-      }
-      .scan-status.success {
-        background: var(--green-bg);
-        color: var(--green);
-      }
+    .scan-status.show { display: flex; }
+    .scan-status.error { background: var(--red-bg); color: var(--red); }
+    .scan-status.warn { background: var(--amber-bg); color: var(--amber); }
+    .scan-status.success { background: var(--green-bg); color: var(--green); }
 
-      .manual-entry {
-        margin-top: 22px;
-        padding-top: 18px;
-        border-top: 1px solid var(--border);
-        text-align: left;
-      }
+    /* ============================================================
+       CARD DE ENTRADA MANUAL
+       ============================================================ */
+    .manual-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      transition: 0.3s;
+      padding: 32px;
+    }
+    
+    .manual-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    
+    .manual-card .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+    }
+    
+    .manual-card .card-title i { color: var(--primary); font-size: 20px; }
 
-      .manual-entry label {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        display: block;
-        margin-bottom: 8px;
-      }
+    .manual-entry-row {
+      display: flex;
+      gap: 12px;
+    }
 
-      .manual-entry-row {
-        display: flex;
-        gap: 8px;
-      }
+    .manual-entry-row input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      color: var(--text-main);
+      font-family: 'Inter', monospace;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s;
+    }
 
-      .manual-entry input {
-        flex: 1;
-        padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        background: var(--bg-soft);
-        color: var(--text-main);
-        font-family: monospace;
-        font-size: 14px;
-        outline: none;
-      }
+    .manual-entry-row input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
 
-      .manual-entry input:focus {
-        border-color: var(--primary);
-      }
+    .manual-entry-row button {
+      padding: 14px 24px;
+      border-radius: 12px;
+      border: none;
+      background: var(--primary-gradient);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 119, 190, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-      .manual-entry button {
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: 1px solid var(--primary);
-        background: var(--primary-light);
-        color: var(--primary);
-        font-weight: 700;
-        font-size: 13px;
-        cursor: pointer;
-      }
+    .manual-entry-row button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 119, 190, 0.4);
+    }
 
-      .manual-entry button:hover {
-        background: var(--primary);
-        color: #fff;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="sidebar-root"></div>
+    .manual-hint {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    <div class="main-wrapper">
-      <div id="header-root"></div>
+    /* ============================================================
+       CARD DE QR CODES RECENTES
+       ============================================================ */
+    .recent-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      transition: 0.3s;
+      padding: 32px;
+      margin-top: 32px;
+    }
+    
+    .recent-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    
+    .recent-card .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+    }
+    
+    .recent-card .card-title i { color: var(--primary); font-size: 20px; }
 
-      <div class="scan-container">
-        <div class="scan-card">
-          <h1><i class="fas fa-qrcode"></i> Leitor de QR Code</h1>
-          <div class="scan-sub">
-            Aponte a câmera para o QR Code colado na peça
+    .recent-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .recent-item:hover {
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .recent-item .code-info { display: flex; align-items: center; gap: 14px; }
+    .recent-item .code-info i { font-size: 20px; color: var(--primary); }
+    .recent-item .code-info .code { font-weight: 600; font-size: 14px; color: var(--text-main); }
+    .recent-item .code-info .date { font-size: 12px; color: var(--text-muted); }
+    .recent-item .code-status { 
+      padding: 4px 14px; 
+      border-radius: 20px; 
+      font-size: 12px; 
+      font-weight: 600;
+    }
+    .recent-item .code-status.success { background: var(--green-bg); color: var(--green); }
+    .recent-item .code-status.pending { background: var(--amber-bg); color: var(--amber); }
+
+    /* ============================================================
+       RESPONSIVIDADE
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .qr-grid { grid-template-columns: 1fr; }
+      .scanner-card { position: static; }
+      .content { padding: 32px; }
+    }
+
+    @media (max-width: 768px) {
+      .content { padding: 24px; }
+      .welcome-banner { padding: 28px 24px; }
+      .welcome-banner h1 { font-size: 26px; }
+      .manual-entry-row { flex-direction: column; }
+      .manual-entry-row button { width: 100%; justify-content: center; }
+      .scanner-body { padding: 20px; }
+      .recent-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .recent-item .code-status { align-self: flex-start; }
+    }
+
+    @media (max-width: 480px) {
+      .content { padding: 16px; }
+      .welcome-banner { padding: 20px; }
+      .welcome-banner h1 { font-size: 22px; }
+      .scanner-header { padding: 18px 20px; }
+      .scanner-body { padding: 16px; }
+      .scan-placeholder { min-height: 200px; }
+      .scan-placeholder i { font-size: 40px; }
+      #reader { min-height: 200px; }
+      .manual-card { padding: 20px; }
+      .recent-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar-root"></div>
+
+  <div class="main-wrapper">
+    <div id="header-root"></div>
+
+    <main class="content" role="main">
+      <!-- Banner -->
+      <div class="welcome-banner">
+        <h1><i class="fas fa-qrcode"></i> QR Code</h1>
+        <p>Leia QR Codes de peças e produtos ou consulte códigos manualmente</p>
+        <span class="last-access">
+          <i class="fas fa-clock"></i> Última leitura: hoje às 14:32
+        </span>
+      </div>
+
+      <div class="qr-grid">
+        <!-- Coluna 1: Leitor -->
+        <div>
+          <div class="scanner-card">
+            <div class="scanner-header">
+              <h2><i class="fas fa-camera"></i> Leitor de QR Code</h2>
+              <p>Aponte a câmera para o QR Code colado na peça</p>
+            </div>
+            <div class="scanner-body">
+              <div class="scan-placeholder" id="scanPlaceholder">
+                <i class="fas fa-camera"></i>
+                <span>A câmera aparecerá aqui</span>
+                <span style="font-size: 12px; color: var(--text-muted);">Clique em "Iniciar leitura" para começar</span>
+              </div>
+              <div id="reader"></div>
+
+              <button class="scan-btn start" id="startBtn" onclick="startScanner()">
+                <i class="fas fa-video"></i> Iniciar leitura
+              </button>
+              <button class="scan-btn stop" id="stopBtn" style="display: none;" onclick="stopScanner()">
+                <i class="fas fa-stop"></i> Parar leitura
+              </button>
+
+              <div class="scan-status" id="scanStatus"></div>
+            </div>
           </div>
+        </div>
 
-          <div class="scan-placeholder" id="scanPlaceholder">
-            <i class="fas fa-camera"></i>
-            <span>A câmera aparecerá aqui</span>
-          </div>
-          <div id="reader"></div>
-
-          <button class="scan-btn start" id="startBtn" onclick="startScanner()">
-            <i class="fas fa-video"></i> Iniciar leitura
-          </button>
-          <button
-            class="scan-btn stop"
-            id="stopBtn"
-            style="display: none"
-            onclick="stopScanner()"
-          >
-            <i class="fas fa-stop"></i> Parar leitura
-          </button>
-
-          <div class="scan-status" id="scanStatus"></div>
-
-          <div class="manual-entry">
-            <label for="manualCode"
-              >Ou digite o código da peça manualmente</label
-            >
+        <!-- Coluna 2: Entrada Manual e Recentes -->
+        <div>
+          <!-- Entrada Manual -->
+          <div class="manual-card">
+            <div class="card-title"><i class="fas fa-keyboard"></i> Entrada Manual</div>
             <div class="manual-entry-row">
-              <input type="text" id="manualCode" placeholder="Ex: MP-1042" />
-              <button onclick="goToManualCode()">Buscar</button>
+              <input type="text" id="manualCode" placeholder="Ex: MP-1042 ou P-0248" />
+              <button onclick="goToManualCode()">
+                <i class="fas fa-search"></i> Buscar
+              </button>
+            </div>
+            <div class="manual-hint">
+              <i class="fas fa-info-circle"></i>
+              Digite o código da peça e clique em Buscar
+            </div>
+          </div>
+
+          <!-- QR Codes Recentes -->
+          <div class="recent-card">
+            <div class="card-title"><i class="fas fa-history"></i> Leituras Recentes</div>
+            <div class="recent-list">
+              <div class="recent-item" onclick="goToCode('MP-1042')">
+                <div class="code-info">
+                  <i class="fas fa-qrcode"></i>
+                  <div>
+                    <div class="code">MP-1042</div>
+                    <div class="date">Hoje, 14:32</div>
+                  </div>
+                </div>
+                <span class="code-status success">Lido</span>
+              </div>
+              <div class="recent-item" onclick="goToCode('P-0248')">
+                <div class="code-info">
+                  <i class="fas fa-qrcode"></i>
+                  <div>
+                    <div class="code">P-0248</div>
+                    <div class="date">Hoje, 13:15</div>
+                  </div>
+                </div>
+                <span class="code-status success">Lido</span>
+              </div>
+              <div class="recent-item" onclick="goToCode('MP-1075')">
+                <div class="code-info">
+                  <i class="fas fa-qrcode"></i>
+                  <div>
+                    <div class="code">MP-1075</div>
+                    <div class="date">Ontem, 16:48</div>
+                  </div>
+                </div>
+                <span class="code-status pending">Pendente</span>
+              </div>
+              <div class="recent-item" onclick="goToCode('L-0321')">
+                <div class="code-info">
+                  <i class="fas fa-qrcode"></i>
+                  <div>
+                    <div class="code">L-0321</div>
+                    <div class="date">Ontem, 11:02</div>
+                  </div>
+                </div>
+                <span class="code-status success">Lido</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </main>
 
-      <div id="footer-root"></div>
-    </div>
+    <div id="footer-root"></div>
+  </div>
 
-    <script>
-      let html5QrCode = null;
-      let isScanning = false;
+  <script src="components/js/modoescuro.js"></script>
+  <script src="components/js/header.js"></script>
+  <script src="components/js/sidebar.js"></script>
+  <script src="components/js/chat.js"></script>
+  <script src="components/js/config.js"></script>
+  <script src="components/js/footer.js"></script>
 
-      function setStatus(message, type) {
-        const el = document.getElementById("scanStatus");
-        el.className = "scan-status show " + type;
-        el.innerHTML = message;
-      }
-
-      function clearStatus() {
-        const el = document.getElementById("scanStatus");
-        el.className = "scan-status";
-        el.innerHTML = "";
-      }
-
-      function goToCode(codigo) {
-        if (!codigo) return;
-        const clean = codigo.trim();
-        window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
-      }
-
-      function goToManualCode() {
-        const input = document.getElementById("manualCode");
-        if (input.value.trim()) goToCode(input.value);
-      }
-
-      document
-        .getElementById("manualCode")
-        .addEventListener("keyup", function (e) {
-          if (e.key === "Enter") goToManualCode();
-        });
-
-      async function startScanner() {
-        clearStatus();
-
-        // Leitura de câmera exige HTTPS ou localhost (protocolo de segurança do navegador)
-        const isSecure =
-          window.location.protocol === "https:" ||
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
-        if (!isSecure) {
-          setStatus(
-            '<i class="fas fa-triangle-exclamation"></i> A câmera só funciona em HTTPS ou localhost. Rode este arquivo com um servidor local (ex: Live Server) em vez de abrir direto do disco.',
-            "error",
-          );
-          return;
-        }
-
-        if (typeof Html5Qrcode === "undefined") {
-          setStatus(
-            '<i class="fas fa-triangle-exclamation"></i> Não foi possível carregar a biblioteca de leitura. Verifique sua conexão com a internet.',
-            "error",
-          );
-          return;
-        }
-
-        document.getElementById("scanPlaceholder").style.display = "none";
-        document.getElementById("reader").classList.add("active");
-        document.getElementById("startBtn").style.display = "none";
-        document.getElementById("stopBtn").style.display = "flex";
-
-        html5QrCode = new Html5Qrcode("reader");
-
-        try {
-          await html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 230, height: 230 } },
-            onScanSuccess,
-            onScanFailure,
-          );
-          isScanning = true;
-        } catch (err) {
-          console.error(err);
-          resetScannerUI();
-          if (
-            String(err).toLowerCase().includes("permission") ||
-            String(err).toLowerCase().includes("notallowed")
-          ) {
-            setStatus(
-              '<i class="fas fa-ban"></i> Permissão da câmera negada. Habilite o acesso à câmera nas configurações do navegador e tente novamente.',
-              "error",
-            );
-          } else {
-            setStatus(
-              '<i class="fas fa-triangle-exclamation"></i> Não foi possível acessar a câmera. Verifique se o dispositivo tem câmera disponível.',
-              "error",
-            );
-          }
-        }
-      }
-
-      function onScanSuccess(decodedText) {
-        if (!isScanning) return;
-        isScanning = false;
-        setStatus(
-          `<i class="fas fa-circle-check"></i> QR Code reconhecido: <strong>&nbsp;${decodedText}</strong> — redirecionando...`,
-          "success",
-        );
-
-        html5QrCode
-          .stop()
-          .then(() => {
-            html5QrCode.clear();
-            setTimeout(() => goToCode(decodedText), 500);
-          })
-          .catch(() => {
-            setTimeout(() => goToCode(decodedText), 500);
-          });
-      }
-
-      function onScanFailure() {
-        // Chamado a cada frame sem QR detectado — silenciar, é o comportamento normal
-      }
-
-      function stopScanner() {
-        if (html5QrCode && isScanning) {
-          html5QrCode
-            .stop()
-            .then(() => {
-              html5QrCode.clear();
-              resetScannerUI();
-              clearStatus();
-            })
-            .catch(() => resetScannerUI());
-        } else {
-          resetScannerUI();
-        }
-        isScanning = false;
-      }
-
-      function resetScannerUI() {
-        document.getElementById("scanPlaceholder").style.display = "flex";
-        document.getElementById("reader").classList.remove("active");
-        document.getElementById("startBtn").style.display = "flex";
-        document.getElementById("stopBtn").style.display = "none";
-      }
-    </script>
-
-    <script src="components/js/header.js"></script>
-    <script src="components/js/sidebar.js"></script>
-    <script src="components/js/chat.js"></script>
-    <script src="components/js/config.js"></script>
-    <script src="components/js/footer.js"></script>
-    <script src="components/js/modoescuro.js"></script>
-  </body>
+  <script src="JS/qr.js" defer></script>
+</body>
 </html>
