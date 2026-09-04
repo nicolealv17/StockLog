@@ -129,14 +129,32 @@
       .column-empty { text-align: center; padding: 24px 12px; color: var(--text-muted); font-size: 12px; border: 2px dashed var(--border); border-radius: 10px; margin: 4px; font-style: italic; }
 
       /* Cartão colorido por prioridade: fundo + faixa lateral variam conforme alta/média/baixa */
-      .kanban-card { border: 2px solid var(--text-muted); border-radius: 10px; padding: 12px; cursor: grab; transition: 0.2s; position: relative; user-select: none; background: var(--bg-card); }
-      .kanban-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-      .kanban-card:active { cursor: grabbing; }
-      .kanban-card.dragging { opacity: 0.5; transform: rotate(1.5deg); cursor: grabbing; }
-      .kanban-card.priority-alta { background: var(--bg-card); border-color: var(--red); }
-      .kanban-card.priority-media { background: var(--bg-card); border-color: var(--amber); }
-      .kanban-card.priority-baixa { background: var(--bg-card); border-color: var(--green); }
-      .kanban-card.overdue { border-color: var(--red); box-shadow: inset 0 0 0 1px rgba(178, 67, 58, 0.25); }
+     .kanban-card {
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--text-muted);
+  border-radius: 10px;
+  padding: 12px;
+  cursor: grab;
+  transition: 0.2s;
+  position: relative;
+  user-select: none;
+  background: var(--bg-card);
+}
+
+/* Prioridade Alta - borda esquerda vermelha */
+.kanban-card.priority-alta {
+  border-left: 6px solid var(--red);
+}
+
+/* Prioridade Média - borda esquerda laranja */
+.kanban-card.priority-media {
+  border-left: 6px solid var(--amber);
+}
+
+/* Prioridade Baixa - borda esquerda verde */
+.kanban-card.priority-baixa {
+  border-left: 6px solid var(--green);
+}
 
       .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
       .card-id { font-size: 10.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.04em; }
