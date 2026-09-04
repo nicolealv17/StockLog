@@ -143,16 +143,6 @@
         gap: 12px;
       }
 
-      .header-title-group h1 {
-        font-size: var(--fs-h1);
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
-
-      .header-title-group h1 span {
-        color: var(--primary);
-      }
-
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -287,11 +277,6 @@
         color: var(--text-muted);
       }
 
-      .input-wrapper input:hover,
-      .input-wrapper select:hover {
-        border-color: var(--border-hover);
-      }
-
       .input-wrapper select {
         cursor: pointer;
         appearance: none;
@@ -327,11 +312,6 @@
         font-size: 14px;
         padding: 6px;
         border-radius: 6px;
-        transition: color 0.2s ease;
-      }
-
-      .toggle-password:hover {
-        color: var(--text-main);
       }
 
       .strength-meter-container {
@@ -356,7 +336,6 @@
         margin-top: 6px;
         font-weight: 600;
         display: block;
-        transition: color 0.3s ease;
       }
 
       .mensagem-alerta {
@@ -405,13 +384,11 @@
         padding: 12px 28px;
         font-size: 14.5px;
         font-weight: 600;
-        font-family: inherit;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
         min-height: 48px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
       }
@@ -419,16 +396,6 @@
       .btn-submit:hover {
         background-color: var(--primary-hover);
         box-shadow: 0 4px 12px var(--primary-glow);
-      }
-
-      .btn-submit:active {
-        transform: scale(0.985);
-      }
-
-      .btn-submit:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
       }
 
       .btn-cancel {
@@ -439,20 +406,12 @@
         padding: 12px 24px;
         font-size: 14.5px;
         font-weight: 600;
-        font-family: inherit;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: 0.2s ease;
         min-height: 48px;
-      }
-
-      .btn-cancel:hover {
-        border-color: var(--border-hover);
-        color: var(--text-main);
-        background: var(--bg-card);
       }
 
       .btn-spinner {
@@ -465,6 +424,7 @@
         animation: spin 0.8s linear infinite;
       }
 
+      /* Tabela e Botões de Ação */
       .lista-container {
         display: none;
         margin-top: 20px;
@@ -481,146 +441,165 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-        gap: 8px;
+        margin-bottom: 16px;
       }
 
-      .lista-container .lista-header h4 {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-secondary);
+      .table-responsive {
+        width: 100%;
+        overflow-x: auto;
       }
 
-      .lista-container .lista-header .badge {
-        background: var(--primary-light);
-        color: var(--primary);
-        padding: 2px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-      }
-
-      .lista-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 12px;
-        border-bottom: 1px solid var(--border);
+      .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
         font-size: 13.5px;
       }
 
-      .lista-item:last-child {
-        border-bottom: 0;
-      }
-
-      .lista-item:hover {
-        background: var(--bg-soft);
-        border-radius: 8px;
-      }
-
-      .lista-item .info {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .lista-item .info .nome {
+      .custom-table th {
+        padding: 12px;
+        color: var(--text-secondary);
         font-weight: 600;
+        border-bottom: 1px solid var(--border);
+        text-transform: uppercase;
+        font-size: 11.5px;
+        letter-spacing: 0.05em;
+      }
+
+      .custom-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
         color: var(--text-main);
       }
 
-      .lista-item .info .detalhe {
-        font-size: 12px;
-        color: var(--text-muted);
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
       }
 
-      .lista-item .status-pill {
-        font-size: 11px;
-        font-weight: 600;
-        padding: 3px 10px;
-        border-radius: 20px;
-        text-transform: uppercase;
+      .btn-action {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid #dbeafe;
+        background-color: #eff6ff;
+        color: #1e40af;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 13px;
       }
 
-      .status-pill.ativo {
-        background: var(--green-bg);
-        color: var(--green);
+      .btn-action:hover {
+        background-color: #dbeafe;
+        transform: translateY(-1px);
       }
 
-      .status-pill.inativo {
-        background: var(--red-bg);
+      .btn-action.btn-delete:hover {
+        background-color: var(--red-bg);
         color: var(--red);
+        border-color: #fecaca;
       }
 
-      .lista-vazia {
-        text-align: center;
+      /* Estilos do Modal de Edição */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.2s ease;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal-card {
+        background: var(--bg-card);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 580px;
+        padding: 24px 28px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border);
+        animation: fadeInUp 0.25s ease;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 20px;
+      }
+
+      .modal-header h3 {
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-main);
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 18px;
         color: var(--text-muted);
-        padding: 24px;
-        font-style: italic;
-        font-size: 14px;
+        cursor: pointer;
       }
 
-      @keyframes spin {
-        to { transform: rotate(360deg); }
+      .modal-close:hover {
+        color: var(--text-main);
       }
 
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
       }
 
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
       }
 
-      .shake {
-        animation: shake 0.35s ease-in-out;
+      .modal-footer .btn-save {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
 
-      @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-5px); }
-        40%, 80% { transform: translateX(5px); }
+      .modal-footer .btn-save:hover {
+        background: var(--primary-hover);
       }
 
-      @media (max-width: 868px) {
-        .form-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .dashboard-container {
-          padding: 16px;
-        }
-
-        .card {
-          border-radius: 12px;
-        }
-
-        .form-actions {
-          flex-direction: column;
-        }
-
-        .btn-submit, .btn-cancel {
-          width: 100%;
-        }
-
-        .top-header {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .lista-item {
-          flex-wrap: wrap;
-          gap: 4px;
-        }
-      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
   </head>
   <body>
@@ -630,8 +609,7 @@
       <div id="header-root"></div>
 
       <div class="dashboard-container">
-        <div class="top-header">
-        </div>
+        <div class="top-header"></div>
 
         <!-- CARD: FORMULÁRIO -->
         <section class="card" id="cardContainer">
@@ -662,14 +640,7 @@
               <label for="cpfInput">CPF <span class="req">*</span></label>
               <div class="input-wrapper">
                 <i class="fa-solid fa-id-card input-icon"></i>
-                <input 
-                  type="text" 
-                  id="cpfInput" 
-                  placeholder="000.000.000-00" 
-                  maxlength="14" 
-                  oninput="mascaraCPF(this)" 
-                  required 
-                />
+                <input type="text" id="cpfInput" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" required />
               </div>
             </div>
 
@@ -726,14 +697,27 @@
             </div>
           </form>
 
-          <!-- LISTA DE FUNCIONÁRIOS -->
+          <!-- LISTA DE FUNCIONÁRIOS COM TABELA -->
           <div class="lista-container" id="listaContainer">
             <div class="lista-header">
               <h4><i class="fa-solid fa-users" style="color:var(--primary)"></i> Funcionários cadastrados</h4>
               <span class="badge" id="contadorLista">0</span>
             </div>
-            <div id="listaBody">
-              <!-- Preenchido via JS -->
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Área</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="listaBody">
+                  <!-- Preenchido via JS -->
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
@@ -741,8 +725,64 @@
 
       <div id="footer-root"></div>
     </div>
-  </body>
-</html>
+
+    <!-- MODAL DE EDIÇÃO DE FUNCIONÁRIO -->
+    <div class="modal-overlay" id="editModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-pen"></i> Editar Funcionário</h3>
+          <button class="modal-close" onclick="fecharModalEdicao()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="editForm" onsubmit="salvarEdicao(event)">
+          <input type="hidden" id="editId" />
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="editNome">Nome Completo *</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" id="editNome" required />
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="editCpf">CPF *</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-id-card input-icon"></i>
+                  <input type="text" id="editCpf" maxlength="14" oninput="mascaraCPF(this)" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="editArea">Área de Atuação *</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-sitemap input-icon"></i>
+                  <select id="editArea" required>
+                    <option value="Gestão">Gestão</option>
+                    <option value="Estoque">Estoque</option>
+                    <option value="Produção">Produção</option>
+                    <option value="Logística">Logística</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down select-arrow"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editEmail">E-mail *</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input type="email" id="editEmail" required />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="fecharModalEdicao()">Cancelar</button>
+            <button type="submit" class="btn-save"><i class="fa-solid fa-check"></i> Salvar Funcionário</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -761,13 +801,12 @@
         appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
       };
 
-    if (!firebase.apps.length) {
+      if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
-    }
+      }
 
-    // 🔥 CRIA AS INSTÂNCIAS DO FIREBASE
-    const db = firebase.database();
-    const auth = firebase.auth();
+      const db = firebase.database();
+      const auth = firebase.auth();
     </script>
 
     <!-- Componentes Globais -->
@@ -779,6 +818,6 @@
     <script src="components/js/modoescuro.js"></script>
 
     <!-- Lógica de Cadastro Principal -->
-    <script src="cadastro.js"></script>
+    <script src="JS/cadastro.js"></script>
   </body>
 </html>
