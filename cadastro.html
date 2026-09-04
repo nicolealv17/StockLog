@@ -761,9 +761,13 @@
         appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
       };
 
-      if (!firebase.apps.length) {
+    if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
-      }
+    }
+
+    // 🔥 CRIA AS INSTÂNCIAS DO FIREBASE
+    const db = firebase.database();
+    const auth = firebase.auth();
     </script>
 
     <!-- Componentes Globais -->
