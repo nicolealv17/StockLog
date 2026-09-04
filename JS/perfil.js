@@ -31,26 +31,30 @@ document.getElementById('avatarUploadInput').addEventListener('change', function
   reader.readAsDataURL(file);
 });
 
-// Salvar Perfil
+// Salvar Perfil (sem editar o cargo)
 function saveProfile(event) {
   event.preventDefault();
+
+  // Obtém apenas nome e e-mail
   const name = document.getElementById('editName').value.trim();
   const email = document.getElementById('editEmail').value.trim();
-  const role = document.getElementById('editRole').value.trim();
 
-  if (!name || !email || !role) {
-    showToast('error', 'Campos obrigatórios', 'Preencha todos os campos antes de salvar.');
+  // Valida apenas nome e e-mail
+  if (!name || !email) {
+    showToast('error', 'Campos obrigatórios', 'Preencha o nome e o e-mail antes de salvar.');
     return;
   }
 
+  // Atualiza a interface (cargo NÃO é alterado)
   document.querySelector('.profile-name').textContent = name;
   document.getElementById('profile-email').textContent = email;
-  document.getElementById('profile-role-text').textContent = role;
+  // O cargo permanece o mesmo (não é atualizado)
 
+  // Salva no localStorage (apenas nome e e-mail)
   try {
     localStorage.setItem('stocklog_profile_name', name);
     localStorage.setItem('stocklog_profile_email', email);
-    localStorage.setItem('stocklog_profile_role', role);
+    // Não salva o cargo, pois ele é fixo
   } catch (e) {
     console.warn('Erro ao salvar perfil:', e);
   }
@@ -62,6 +66,7 @@ function saveProfile(event) {
 // Carregar dados salvos ao iniciar
 document.addEventListener('DOMContentLoaded', function() {
   try {
+    // Avatar
     const savedPhoto = localStorage.getItem('stocklog_profile_photo');
     if (savedPhoto) {
       const avatarImg = document.getElementById('avatarImage');
@@ -71,23 +76,22 @@ document.addEventListener('DOMContentLoaded', function() {
       avatarImg.src = savedPhoto;
     }
 
+    // Nome
     const savedName = localStorage.getItem('stocklog_profile_name');
     if (savedName) {
       document.querySelector('.profile-name').textContent = savedName;
       document.getElementById('editName').value = savedName;
     }
 
+    // E-mail
     const savedEmail = localStorage.getItem('stocklog_profile_email');
     if (savedEmail) {
       document.getElementById('profile-email').textContent = savedEmail;
       document.getElementById('editEmail').value = savedEmail;
     }
 
-    const savedRole = localStorage.getItem('stocklog_profile_role');
-    if (savedRole) {
-      document.getElementById('profile-role-text').textContent = savedRole;
-      document.getElementById('editRole').value = savedRole;
-    }
+    // Cargo: NÃO é carregado do localStorage, pois é fixo.
+    // Se quiser carregar, você pode definir um valor padrão, mas não é editável.
   } catch (e) {
     console.warn('Erro ao carregar dados do localStorage:', e);
   }
@@ -132,7 +136,6 @@ function savePreferences() {
     ai: toggles[4].classList.contains('active')
   };
 
-  // Aplicar modo escuro imediatamente
   if (prefs.darkMode) {
     document.body.classList.add('dark');
   } else {
@@ -164,7 +167,6 @@ function changePassword(event) {
     showToast('error', 'Erro', 'A nova senha deve ter pelo menos 6 caracteres!');
     return;
   }
-  // Simulação de verificação de senha atual (substitua pela lógica real)
   if (currentPassword === '123456') {
     closeModal('passwordModal');
     document.getElementById('passwordForm').reset();
@@ -186,7 +188,6 @@ function confirmLogout() {
 
 // Toast Notification
 function showToast(type, title, message) {
-  // Remove toast existente
   const existingToast = document.querySelector('.toast');
   if (existingToast) existingToast.remove();
 
