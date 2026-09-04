@@ -63,10 +63,11 @@ let map, mapPolyline, mapMarkers = [];
 let tileLayer;
 
 function initMap() {
-  const isDark = document.body.classList.contains('dark');
   map = L.map('map', { zoomControl: false }).setView([-23.5505, -46.6333], 9);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
-  updateMapTiles(isDark);
+  
+  // Carrega sempre os tiles no modo claro
+  updateMapTiles();
   renderList();
   selectDelivery(selectedId);
 
@@ -75,11 +76,11 @@ function initMap() {
   setTimeout(() => map.invalidateSize(), 600);
 }
 
-function updateMapTiles(isDark) {
+function updateMapTiles() {
   if (tileLayer) map.removeLayer(tileLayer);
-  const tileUrl = isDark
-    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+  
+  // URL fixa do mapa claro (Voyager)
+  const tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
   tileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
 }
 
@@ -134,9 +135,9 @@ function selectDelivery(id) {
   mapMarkers = [];
   if (mapPolyline) map.removeLayer(mapPolyline);
 
-  const isDark = document.body.classList.contains('dark');
+  // Linha da rota fixa em azul visível para mapa claro
   mapPolyline = L.polyline(data.route, {
-    color: isDark ? '#38bdf8' : '#006bb3',
+    color: '#006bb3',
     weight: 5,
     dashArray: '6, 6'
   }).addTo(map);
@@ -161,15 +162,7 @@ function filterStatus(status, btn) {
   renderList();
 }
 
-// Atualiza mapa quando o tema mudar
-const themeObserver = new MutationObserver(() => {
-  if (!map) return;
-  const isDark = document.body.classList.contains('dark');
-  updateMapTiles(isDark);
-  if (selectedId) selectDelivery(selectedId);
-});
-
+// Inicializa o mapa assim que o DOM estiver pronto
 window.addEventListener('DOMContentLoaded', () => {
   initMap();
-  themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 });
