@@ -67,7 +67,8 @@
       "fornecedores.html": "Fornecedores",
       "rastreamento.html": "Rastreamento",
       "calendario.html": "Calendário",
-      "perfil.html": "Minha Conta"
+      "perfil.html": "Minha Conta",
+      "cadastro.html": "Cadastro de Funcionários"
     };
     var currentFile = window.location.pathname.split("/").pop() || "index.html";
     return titles[currentFile] || "StockLog";
