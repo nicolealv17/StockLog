@@ -18,7 +18,6 @@ function goToCode(codigo) {
   if (!codigo) return;
   const clean = codigo.trim();
 
-  // Se o QR Code tiver o link completo (ex: .../produto1.html) ou apenas o nome do arquivo
   if (clean.includes("produto1")) {
     window.location.href = "produto1.html";
   } 
@@ -28,10 +27,11 @@ function goToCode(codigo) {
   else if (clean.includes("produto3")) {
     window.location.href = "produto3.html";
   }
-  // Caso o QR Code seja um código de peça genérico (ex: MP-1042, P-0248)
+  else if (clean.includes("produto4")) { // <--- LINHA ADICIONADA AQUI
+    window.location.href = "produto4.html";
+  }
+  // Caso o QR Code seja um código de peça genérico
   else {
-    // Tenta abrir a página de detalhes genérica (se existir). 
-    // Se não existir, você pode trocar para um alerta ou redirecionar para a home.
     window.location.href = `detalhe-peca.html?codigo=${encodeURIComponent(clean)}`;
   }
 }
@@ -80,7 +80,7 @@ async function startScanner() {
   try {
     await html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 230, height: 230 } },
+    { fps: 10, qrbox: { width: 300, height: 300 }, aspectRatio: 1.0 },
       onScanSuccess,
       onScanFailure,
     );
