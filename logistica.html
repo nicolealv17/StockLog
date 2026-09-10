@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StockLog · Logística</title>
-    <link rel="icon" type="image/png" href="IMG/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -55,7 +54,7 @@
         --teal-bg: #e0f2ea;
         --rose: #b2433a;
         --rose-bg: #fae2e0;
-        
+       
         /* CHAT - Ajuste de z-index e posicionamento */
         --chat-z-index: 900;
         --chat-bottom-offset: 100px;
@@ -232,7 +231,7 @@
 
       .log-kanban { display: grid; grid-template-columns: repeat(5, minmax(230px, 1fr)); gap: 14px; margin-bottom: 28px; }
       .log-col { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 0; min-height: 240px; display: flex; flex-direction: column; overflow: hidden; transition: border-color 0.2s ease; }
-      
+     
       .log-col-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 14px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border); border-top: 3px solid var(--accent, var(--primary)); }
       .log-col-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 8px; color: var(--text-main); }
       .log-col-title i { width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; background: var(--accent-bg, var(--primary-light)); color: var(--accent, var(--primary)); }
@@ -249,7 +248,7 @@
       .log-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
       .log-card-num { font-size: 15px; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
       .log-card-num small { display: block; font-size: 9.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 1px; }
-      
+     
       .log-badge-urgente {
         font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: var(--rose);
         background: var(--rose-bg); padding: 3px 8px; border-radius: 20px; letter-spacing: 0.05em;
@@ -281,7 +280,7 @@
       .card-title i { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
       .card-subtitle { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; margin-left: 42px; }
       .card-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-      
+     
       .util-info { font-size: 12px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 20px; }
       .util-info strong { color: var(--text-main); font-weight: 700; }
 
@@ -372,7 +371,7 @@
         right: var(--chat-right-offset, 28px) !important;
         z-index: var(--chat-z-index, 900) !important;
       }
-      
+     
       .chat-widget {
         position: fixed !important;
         bottom: calc(var(--chat-bottom-offset, 100px) + 70px) !important;
@@ -523,24 +522,6 @@
 }
 .log-stat::after { display: none; } /* tira a barrinha lateral colorida */
 
-      /* ALERTA LOGÍSTICO */
-      .log-alert-list { display: flex; flex-direction: column; gap: 10px; }
-      .log-alert-item {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 10px 12px; background: var(--bg-soft); border: 1px solid var(--border);
-        border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s;
-      }
-      .log-alert-item:hover { border-color: var(--primary); background: var(--bg-card); }
-      .log-alert-left { display: flex; align-items: center; gap: 10px; }
-      .log-alert-icon {
-        width: 30px; height: 30px; border-radius: 6px; display: flex;
-        align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;
-        background: var(--rose-bg); color: var(--rose);
-      }
-      .log-alert-info { display: flex; flex-direction: column; }
-      .log-alert-title { font-weight: 700; color: var(--text-main); }
-      .log-alert-sub { font-size: 11.5px; color: var(--text-muted); }
-
 /* Kanban: uma cor só de destaque (primária), exceto o último (Entregue) */
 .log-col-head { border-top-color: var(--border) !important; }
 .log-col:last-child .log-col-head { border-top-color: var(--teal) !important; }
@@ -574,15 +555,7 @@
 
       <main class="content" role="main">
         <!-- Estatísticas / Indicadores -->
-        <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 14px; margin-bottom: 20px;">
-          <div class="log-stats" id="log-stats"></div>
-          <div class="card">
-            <div class="card-header-title">
-              <span class="title-text"><i class="fas fa-triangle-exclamation" style="color:var(--rose);"></i> Alertas Logísticos</span>
-            </div>
-            <div class="log-alert-list" id="logAlertList"></div>
-          </div>
-        </div>
+        <div class="log-stats" id="log-stats"></div>
 
         <!-- Barra de ações -->
         <div class="log-toolbar">
@@ -735,10 +708,6 @@
           <div class="form-group">
             <label>Observações</label>
             <textarea class="form-textarea" id="log-ord-obs" placeholder="Instruções de separação, embalagem especial, etc."></textarea>
-          </div>
-          <div class="form-group">
-            <label>Motivo do Atraso / Alerta</label>
-            <input type="text" class="form-input" id="log-ord-motivo" placeholder="Ex: Falta de produto, Alta demanda, etc.">
           </div>
         </div>
         <div class="modal-foot">
@@ -918,45 +887,11 @@
 
       function logRender() {
         logRenderStats();
-        logRenderAlerts();
         logRenderToolbar();
         logRenderKanban();
         logRenderVehicles();
         logRenderActivity();
       }
-
-      function logRenderAlerts() {
-        const alertList = document.getElementById("logAlertList");
-        if (!alertList) return;
-
-        const delayedOrders = logState.orders.filter(o => o.motivoAtraso);
-
-        if (delayedOrders.length === 0) {
-          alertList.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px; font-size:12px; font-style:italic">Sem alertas no momento.</div>`;
-          return;
-        }
-
-        alertList.innerHTML = delayedOrders.map(o => `
-          <div class="log-alert-item" onclick="logShowAlertReason('${o.id}')">
-            <div class="log-alert-left">
-              <div class="log-alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-              <div class="log-alert-info">
-                <span class="log-alert-title">Pedido #${o.numero}</span>
-                <span class="log-alert-sub">${escapeHtml(o.cliente)}</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="font-size:10px; color:var(--text-muted)"></i>
-          </div>
-        `).join("");
-      }
-
-      function logShowAlertReason(id) {
-        const o = logState.orders.find(x => x.id === id);
-        if (!o) return;
-        showToast(`Motivo do Atraso: ${escapeHtml(o.motivoAtraso)}`, "warning");
-      }
-
-      function logRenderStats() {
 
       function logRenderStats() {
         const counts = { aguardando: 0, separacao: 0, embalagem: 0, expedicao: 0, entregue: 0 };
@@ -1051,7 +986,7 @@
         // ATRIBUIÇÃO DE MOTORISTA: SÓ APARECE A PARTIR DA ETAPA DE EMBALAGEM
         // (Aguardando Separação e Em Separação NÃO mostram motorista/placa)
         const showDriver = o.status === "embalagem" || o.status === "expedicao" || o.status === "entregue";
-        
+       
         // Apenas mostra veículo se estiver nas etapas corretas E se houver veículo designado
         const showVehicle = showDriver && veh;
 
@@ -1064,7 +999,7 @@
               ${o.prioridade === "urgente" ? '<span class="log-badge-urgente">Urgente</span>' : ""}
             </div>
             <div class="log-card-cliente">${escapeHtml(o.cliente)}</div>
-            ${o.motivoAtraso ? `<div style="font-size:11px; color:var(--rose); font-weight:600; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(o.motivoAtraso)}</div>` : ""}
+
             <div class="log-card-info">
               <div class="item"><i class="fa-solid fa-boxes-stacked"></i> <strong>${o.itens || 0}</strong>&nbsp;itens</div>
               <div class="item"><i class="fa-solid fa-calendar"></i> ${logFmtBR(o.data)}</div>
@@ -1119,7 +1054,7 @@
         grid.innerHTML = logState.vehicles.map(v => {
           const theme = VEHICLE_STATUS_THEME[v.status] || "var(--primary)";
           const initials = (v.motorista || "?").split(" ").slice(0, 2).map(s => s[0]).join("").toUpperCase();
-          
+         
           // Ocupação de carga baseada no status e peso dos pedidos associados
           let utilPctVehicle = 10; // base ocioso
           if (v.status === "em_rota") {
@@ -1257,7 +1192,6 @@
         document.getElementById("log-ord-status").value = o.status;
         document.getElementById("log-ord-prioridade").value = o.prioridade || "normal";
         document.getElementById("log-ord-obs").value = o.obs || "";
-        document.getElementById("log-ord-motivo").value = o.motivoAtraso || "";
         logPopulateVehicleSelect(o.veiculoId);
         document.getElementById("log-modal-title").innerHTML = '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar pedido';
         document.getElementById("log-ord-btn-delete").style.display = "inline-flex";
@@ -1282,7 +1216,6 @@
           prioridade: document.getElementById("log-ord-prioridade").value,
           veiculoId: document.getElementById("log-ord-veiculo").value,
           obs: document.getElementById("log-ord-obs").value.trim(),
-          motivoAtraso: document.getElementById("log-ord-motivo").value.trim(),
         };
 
         if (id) {
@@ -1412,4 +1345,4 @@
       logRender();
     </script>
   </body>
-</html>
+</html>   
