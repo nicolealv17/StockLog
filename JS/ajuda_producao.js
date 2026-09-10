@@ -19,15 +19,15 @@ const MOCK_STOCK = [
   { codigo: "CS-7040", nome: "Solda Eletrodo E6013", atual: 130, minimo: 80 },
 ];
 
-// Categorias (usadas para a cor do rótulo, não para ícones)
+// Categorias — label, ícone (FontAwesome) usado nos filtros
 const CATEGORIES = {
-  chapas:     { label: "Corte e Chapas" },
-  usinados:   { label: "Usinados" },
-  conexoes:   { label: "Conexões" },
-  fixacao:    { label: "Fixação" },
-  estrutural: { label: "Estrutural" },
-  embalagem:  { label: "Embalagem Industrial" },
-  pneus:      { label: "Pneus e Borracha" },
+  chapas:     { label: "Corte e Chapas",       icon: "fa-solid fa-scissors" },
+  usinados:   { label: "Usinados",             icon: "fa-solid fa-gear" },
+  conexoes:   { label: "Conexões",             icon: "fa-solid fa-link" },
+  fixacao:    { label: "Fixação",              icon: "fa-solid fa-screwdriver" },
+  estrutural: { label: "Estrutural",           icon: "fa-solid fa-building" },
+  embalagem:  { label: "Embalagem Industrial", icon: "fa-solid fa-box" },
+  pneus:      { label: "Pneus e Borracha",     icon: "fa-solid fa-circle-notch" },
 };
 
 // Definição de "Receitas" de Produção — cada uma com uma foto real representando o insumo/produto
@@ -126,13 +126,56 @@ const RECIPES = [
   }
 ];
 
+function stockFor(codigo) {
+  return MOCK_STOCK.find(s => s.codigo === codigo);
+}
+
+function availabilitySummary(recipe) {
+  const total = recipe.ingredients.length;
+  const disponiveis = recipe.ingredients.filter(ing => {
+    const item = stockFor(ing.codigo);
+    return item && item.atual > 0;
+  }).length;
+  return { total, disponiveis, pronto: disponiveis === total, bloqueado: disponiveis === 0 };
+}
+
+function statusInfo({ total, disponiveis, pronto, bloqueado }) {
+  if (pronto) {
+    return { cls: "ready", icon: "fa-solid fa-circle-check", text: "Pronto para produção" };
+  }
+  if (bloqueado) {
+    return { cls: "blocked", icon: "fa-solid fa-circle-xmark", text: `0/${total} disponíveis` };
+  }
+  return { cls: "partial", icon: "fa-solid fa-triangle-exclamation", text: `${disponiveis}/${total} disponíveis` };
+}
+
+function renderSummary() {
+  const el = document.getElementById('pageSummary');
+  if (!el) return;
+  const prontos = RECIPES.filter(r => availabilitySummary(r).pronto).length;
+  el.innerHTML = `
+    <span class="dot"><i class="fa-solid fa-check"></i></span>
+    <span>${prontos} de ${RECIPES.length} itens prontos para produção agora</span>
+  `;
+}
+
 function renderFilters() {
   const bar = document.getElementById('filterBar');
   if (!bar) return;
 
-  const chips = [`<button class="filter-chip active" data-categoria="todas">Todas</button>`];
+  const countFor = key => key === 'todas' ? RECIPES.length : RECIPES.filter(r => r.categoria === key).length;
+
+  const chips = [
+    `<button class="filter-chip active" data-categoria="todas">
+      <i class="fa-solid fa-grip"></i> Todas <span class="count">${countFor('todas')}</span>
+    </button>`
+  ];
   Object.entries(CATEGORIES).forEach(([key, cat]) => {
-    chips.push(`<button class="filter-chip" data-categoria="${key}">${cat.label}</button>`);
+    chips.push(`
+      <button class="filter-chip" data-categoria="${key}">
+        <i class="${cat.icon}"></i> ${cat.label} <span class="count">${countFor(key)}</span>
+      </button>
+    `);
   });
   bar.innerHTML = chips.join('');
 
@@ -145,15 +188,6 @@ function renderFilters() {
   });
 }
 
-function availabilitySummary(recipe) {
-  const total = recipe.ingredients.length;
-  const disponiveis = recipe.ingredients.filter(ing => {
-    const item = MOCK_STOCK.find(s => s.codigo === ing.codigo);
-    return item && item.atual > 0;
-  }).length;
-  return { total, disponiveis, pronto: disponiveis === total };
-}
-
 function renderRecipes(filtro = "todas") {
   const grid = document.getElementById('recipeGrid');
   if (!grid) return;
@@ -162,9 +196,13 @@ function renderRecipes(filtro = "todas") {
   const cat = key => CATEGORIES[key];
 
   grid.innerHTML = lista.map(recipe => {
-    const { total, disponiveis, pronto } = availabilitySummary(recipe);
+    const summary = availabilitySummary(recipe);
+    const status = statusInfo(summary);
     return `
-    <div class="recipe-card" data-cat="${recipe.categoria}" onclick="openRecipeModal('${recipe.id}')">
+    <div class="recipe-card" data-cat="${recipe.categoria}" tabindex="0" role="button"
+         aria-label="Ver detalhes de ${recipe.nome}"
+         onclick="openRecipeModal('${recipe.id}')"
+         onkeydown="if(event.key==='Enter'){openRecipeModal('${recipe.id}')}">
       <div class="recipe-image">
         <img src="${recipe.imagem}" alt="${recipe.nome}" loading="lazy" />
         <span class="category-tag cat-${recipe.categoria}">${cat(recipe.categoria).label}</span>
@@ -172,16 +210,19 @@ function renderRecipes(filtro = "todas") {
       <div class="recipe-body">
         <h3>${recipe.nome}</h3>
         <p>${recipe.descricao}</p>
-        <div class="recipe-footer">
-          <span class="insumo-count">${total} insumos</span>
-          <span class="availability-badge ${pronto ? 'avail-yes' : 'avail-no'}">
-            ${pronto ? 'Pronto para produção' : `${disponiveis}/${total} disponíveis`}
-          </span>
-        </div>
+        <div class="insumo-meta"><i class="fa-solid fa-list-ul"></i> ${summary.total} insumo${summary.total > 1 ? 's' : ''}</div>
+      </div>
+      <div class="status-footer ${status.cls}">
+        <i class="${status.icon}"></i> ${status.text}
       </div>
     </div>
   `;
-  }).join('') || `<p class="empty-state">Nenhuma receita cadastrada nessa categoria.</p>`;
+  }).join('') || `
+    <div class="empty-state">
+      <i class="fa-solid fa-box-open"></i>
+      <span>Nenhuma receita cadastrada nessa categoria.</span>
+    </div>
+  `;
 }
 
 function openRecipeModal(recipeId) {
@@ -193,14 +234,28 @@ function openRecipeModal(recipeId) {
   document.getElementById('modalImage').src = recipe.imagem;
   document.getElementById('modalImage').alt = recipe.nome;
 
+  const summary = availabilitySummary(recipe);
+  const pct = Math.round((summary.disponiveis / summary.total) * 100);
+  const fill = document.getElementById('modalProgressFill');
+  fill.style.width = `${pct}%`;
+  fill.style.background = summary.pronto ? 'var(--green)' : (summary.bloqueado ? 'var(--red)' : 'var(--amber)');
+  document.getElementById('modalProgressLabel').textContent = `${summary.disponiveis}/${summary.total} disponíveis`;
+
+  // insumos indisponíveis aparecem primeiro, para chamar atenção do que falta
+  const ordenados = [...recipe.ingredients].sort((a, b) => {
+    const aOk = stockFor(a.codigo)?.atual > 0;
+    const bOk = stockFor(b.codigo)?.atual > 0;
+    return (aOk === bOk) ? 0 : (aOk ? 1 : -1);
+  });
+
   const listEl = document.getElementById('ingredientList');
-  listEl.innerHTML = recipe.ingredients.map(ing => {
-    const stockItem = MOCK_STOCK.find(s => s.codigo === ing.codigo);
+  listEl.innerHTML = ordenados.map(ing => {
+    const stockItem = stockFor(ing.codigo);
     const isAvailable = stockItem && stockItem.atual > 0;
     const isLow = stockItem && stockItem.atual <= stockItem.minimo;
 
     return `
-      <div class="ingredient-item">
+      <div class="ingredient-item ${isAvailable ? '' : 'unavailable'}">
         <div class="ingredient-name">
           <div>
             <div>${ing.label} <small class="codigo-tag">${ing.codigo}</small></div>
@@ -225,6 +280,7 @@ function closeRecipeModal() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  renderSummary();
   renderFilters();
   renderRecipes();
 });

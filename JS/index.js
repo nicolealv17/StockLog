@@ -5,11 +5,14 @@
      DADOS DOS ALERTAS
      Em produção isso viria da sua API — troque ATRASO_DATA / LOGISTICO_DATA
      pela resposta do backend quando integrar.
+     Cada item agora tem um campo "motivo", que explica de forma clara
+     a causa do atraso/ocorrência (exibido na lista de alertas).
      ================================================================== */
   const ATRASO_DATA = [
     {
       id: 'PED-1042',
       title: 'Pedido #1042 – Atraso na produção',
+      motivo: 'Falha na máquina de corte a laser, parada para manutenção corretiva.',
       meta: [
         { icon: 'fa-calendar-times', text: 'Venceu há 5 dias' },
         { icon: 'fa-building', text: 'Qualidade' }
@@ -23,6 +26,7 @@
     {
       id: 'PED-1031',
       title: 'Pedido #1031 – Aguardando matéria-prima',
+      motivo: 'Fornecedor não entregou o lote de aço ABNT 1045 no prazo combinado.',
       meta: [
         { icon: 'fa-calendar-times', text: 'Venceu há 12 dias' },
         { icon: 'fa-industry', text: 'Produção' }
@@ -36,6 +40,7 @@
     {
       id: 'OP-2026-007',
       title: 'OP-2026-007 – Prazo crítico de entrega',
+      motivo: 'Fila de usinagem sobrecarregada por acúmulo de ordens simultâneas.',
       meta: [
         { icon: 'fa-clock', text: 'Vence em 2 dias' },
         { icon: 'fa-industry', text: 'Produção' }
@@ -49,6 +54,7 @@
     {
       id: 'PED-1038',
       title: 'Pedido #1038 – Retrabalho solicitado',
+      motivo: 'Não conformidade dimensional identificada no controle de qualidade.',
       meta: [
         { icon: 'fa-calendar-times', text: 'Venceu há 3 dias' },
         { icon: 'fa-building', text: 'Qualidade' }
@@ -62,6 +68,7 @@
     {
       id: 'PED-1019',
       title: 'Pedido #1019 – Aguardando aprovação do cliente',
+      motivo: 'Cliente ainda não validou o desenho técnico revisado.',
       meta: [
         { icon: 'fa-clock', text: 'Venceu há 1 dia' },
         { icon: 'fa-handshake', text: 'Comercial' }
@@ -75,12 +82,97 @@
     {
       id: 'OP-2026-004',
       title: 'OP-2026-004 – Atraso na usinagem',
+      motivo: 'Quebra de ferramenta de corte; aguardando substituição do almoxarifado.',
       meta: [
         { icon: 'fa-clock', text: 'Vence amanhã' },
         { icon: 'fa-industry', text: 'Produção' }
       ],
       severity: 'medium',
       severityLabel: 'Médio',
+      actionLabel: 'Revisar',
+      actionIcon: 'fa-search',
+      actionType: 'revisar'
+    },
+    {
+      id: 'PED-1055',
+      title: 'Pedido #1055 – Atraso na soldagem',
+      motivo: 'Falta de soldador certificado (nível 2) no turno da tarde.',
+      meta: [
+        { icon: 'fa-calendar-times', text: 'Venceu há 2 dias' },
+        { icon: 'fa-industry', text: 'Produção' }
+      ],
+      severity: 'high',
+      severityLabel: 'Alto',
+      actionLabel: 'Revisar',
+      actionIcon: 'fa-search',
+      actionType: 'revisar'
+    },
+    {
+      id: 'PED-1061',
+      title: 'Pedido #1061 – Pintura atrasada',
+      motivo: 'Cabine de pintura em manutenção corretiva não programada.',
+      meta: [
+        { icon: 'fa-clock', text: 'Vence em 4 dias' },
+        { icon: 'fa-industry', text: 'Produção' }
+      ],
+      severity: 'medium',
+      severityLabel: 'Médio',
+      actionLabel: 'Revisar',
+      actionIcon: 'fa-search',
+      actionType: 'revisar'
+    },
+    {
+      id: 'OP-2026-009',
+      title: 'OP-2026-009 – Montagem parada',
+      motivo: 'Aguardando componente importado, com previsão de 2 semanas em trânsito.',
+      meta: [
+        { icon: 'fa-calendar-times', text: 'Venceu há 8 dias' },
+        { icon: 'fa-industry', text: 'Produção' }
+      ],
+      severity: 'critical',
+      severityLabel: 'Crítico',
+      actionLabel: 'Revisar',
+      actionIcon: 'fa-search',
+      actionType: 'revisar'
+    },
+    {
+      id: 'PED-1073',
+      title: 'Pedido #1073 – Inspeção final pendente',
+      motivo: 'Equipe de qualidade reduzida por período de férias coletivas.',
+      meta: [
+        { icon: 'fa-clock', text: 'Vence em 1 dia' },
+        { icon: 'fa-building', text: 'Qualidade' }
+      ],
+      severity: 'medium',
+      severityLabel: 'Médio',
+      actionLabel: 'Revisar',
+      actionIcon: 'fa-search',
+      actionType: 'revisar'
+    },
+    {
+      id: 'OP-2026-011',
+      title: 'OP-2026-011 – Caldeiraria parada',
+      motivo: 'Parada não programada da prensa hidráulica principal.',
+      meta: [
+        { icon: 'fa-calendar-times', text: 'Venceu há 1 dia' },
+        { icon: 'fa-industry', text: 'Produção' }
+      ],
+      severity: 'high',
+      severityLabel: 'Alto',
+      actionLabel: 'Revisar',
+      actionIcon: 'fa-search',
+      actionType: 'revisar'
+    },
+    {
+      id: 'PED-1088',
+      title: 'Pedido #1088 – Alteração de escopo do cliente',
+      motivo: 'Cliente solicitou mudança de especificação após início da produção.',
+      meta: [
+        { icon: 'fa-clock', text: 'Vence em 6 dias' },
+        { icon: 'fa-handshake', text: 'Comercial' }
+      ],
+      severity: 'low',
+      severityLabel: 'Baixo',
       actionLabel: 'Revisar',
       actionIcon: 'fa-search',
       actionType: 'revisar'
@@ -91,6 +183,7 @@
     {
       id: 'EST-ACO',
       title: 'Estoque de aço abaixo do limite',
+      motivo: 'Consumo acima da média nas últimas 2 semanas, sem reposição programada.',
       meta: [
         { icon: 'fa-calendar', text: 'Vence em 8 dias' },
         { icon: 'fa-warehouse', text: 'Almoxarifado' }
@@ -104,6 +197,7 @@
     {
       id: 'ENT-1047',
       title: 'Entrega #1047 em rota',
+      motivo: 'Transporte segue dentro do previsto, sem ocorrências.',
       meta: [
         { icon: 'fa-truck', text: 'Chegada prevista hoje' },
         { icon: 'fa-route', text: 'Rota 03' }
@@ -117,6 +211,7 @@
     {
       id: 'EST-INOX',
       title: 'Estoque crítico: Chapa Inox 304',
+      motivo: 'Pedido de compra ainda não aprovado pelo setor financeiro.',
       meta: [
         { icon: 'fa-exclamation-circle', text: 'Reposição urgente' },
         { icon: 'fa-warehouse', text: 'Almoxarifado' }
@@ -130,6 +225,7 @@
     {
       id: 'EST-LUVA',
       title: 'Estoque crítico: Luva Nitrílica',
+      motivo: 'Fornecedor principal sem estoque disponível no momento.',
       meta: [
         { icon: 'fa-exclamation-circle', text: 'Reposição urgente' },
         { icon: 'fa-hard-hat', text: 'EPI' }
@@ -143,6 +239,7 @@
     {
       id: 'ENT-1052',
       title: 'Entrega #1052 atrasada',
+      motivo: 'Veículo com pane mecânica na Rota 01, reboque acionado.',
       meta: [
         { icon: 'fa-calendar-times', text: 'Atraso de 2 dias' },
         { icon: 'fa-route', text: 'Rota 01' }
@@ -156,8 +253,79 @@
     {
       id: 'TRANSP-01',
       title: 'Transportadora sem confirmação',
+      motivo: 'Falha de comunicação com o sistema de rastreio da transportadora.',
       meta: [
         { icon: 'fa-clock', text: 'Aguardando retorno' },
+        { icon: 'fa-route', text: 'Logística' }
+      ],
+      severity: 'low',
+      severityLabel: 'Baixo',
+      actionLabel: 'Acompanhar',
+      actionIcon: 'fa-truck',
+      actionType: 'acompanhar'
+    },
+    {
+      id: 'EST-PARAF',
+      title: 'Estoque baixo de parafusos M10',
+      motivo: 'Alta demanda simultânea de múltiplas ordens de produção.',
+      meta: [
+        { icon: 'fa-calendar', text: 'Vence em 5 dias' },
+        { icon: 'fa-warehouse', text: 'Almoxarifado' }
+      ],
+      severity: 'medium',
+      severityLabel: 'Médio',
+      actionLabel: 'Ver Estoque',
+      actionIcon: 'fa-warehouse',
+      actionType: 'estoque'
+    },
+    {
+      id: 'ENT-1060',
+      title: 'Entrega #1060 devolvida',
+      motivo: 'Cliente recusou o recebimento por divergência na nota fiscal.',
+      meta: [
+        { icon: 'fa-calendar-times', text: 'Ocorreu ontem' },
+        { icon: 'fa-route', text: 'Rota 02' }
+      ],
+      severity: 'high',
+      severityLabel: 'Alto',
+      actionLabel: 'Acompanhar',
+      actionIcon: 'fa-truck',
+      actionType: 'acompanhar'
+    },
+    {
+      id: 'ROTA-05',
+      title: 'Rota 05 com atraso generalizado',
+      motivo: 'Bloqueio de via por obras públicas na região central.',
+      meta: [
+        { icon: 'fa-clock', text: 'Atraso médio de 3h' },
+        { icon: 'fa-route', text: 'Rota 05' }
+      ],
+      severity: 'medium',
+      severityLabel: 'Médio',
+      actionLabel: 'Acompanhar',
+      actionIcon: 'fa-truck',
+      actionType: 'acompanhar'
+    },
+    {
+      id: 'EST-EPI',
+      title: 'Estoque crítico: Capacete de segurança',
+      motivo: 'Compra emergencial ainda em fase de cotação com fornecedores.',
+      meta: [
+        { icon: 'fa-exclamation-circle', text: 'Reposição urgente' },
+        { icon: 'fa-hard-hat', text: 'EPI' }
+      ],
+      severity: 'critical',
+      severityLabel: 'Crítico',
+      actionLabel: 'Ver Estoque',
+      actionIcon: 'fa-warehouse',
+      actionType: 'estoque'
+    },
+    {
+      id: 'ENT-1065',
+      title: 'Entrega #1065 aguardando liberação fiscal',
+      motivo: 'Nota fiscal eletrônica pendente de emissão pelo setor fiscal.',
+      meta: [
+        { icon: 'fa-clock', text: 'Aguardando há 6h' },
         { icon: 'fa-route', text: 'Logística' }
       ],
       severity: 'low',
@@ -262,6 +430,11 @@
             return '<span><i class="fas ' + m.icon + '"></i>' + m.text + '</span>';
           })
           .join('');
+        const reasonHtml = item.motivo
+          ? '<div class="alert-reason"><i class="fas fa-circle-info"></i><span><strong>Motivo:</strong> ' +
+            item.motivo +
+            '</span></div>'
+          : '';
         return (
           '<div class="alert-item" data-alert-id="' +
           item.id +
@@ -270,6 +443,7 @@
           '<div class="alert-title">' +
           item.title +
           '</div>' +
+          reasonHtml +
           '<div class="alert-meta">' +
           metaHtml +
           '</div>' +
@@ -358,6 +532,11 @@
     if (!activeList) return;
     activeList.classList.toggle('expanded', state.expanded);
     verMaisBtn.classList.toggle('expanded', state.expanded);
+    // Sempre volta ao topo da lista ao recolher, garantindo que a rolagem
+    // funcione corretamente na próxima expansão.
+    if (!state.expanded) {
+      activeList.scrollTop = 0;
+    }
     label.textContent = state.expanded ? 'Ver menos' : 'Ver mais';
   }
 
@@ -380,6 +559,7 @@
         bodyHtml:
           detailRow('Identificador', item.id) +
           detailRow('Status', item.severityLabel) +
+          (item.motivo ? detailRow('Motivo', item.motivo) : '') +
           item.meta.map(function (m) { return detailRow('Info', m.text); }).join(''),
         buttons: [
           { label: 'Fechar', onClick: closeModal },
@@ -403,6 +583,7 @@
         bodyHtml:
           detailRow('Identificador', item.id) +
           detailRow('Situação', item.severityLabel) +
+          (item.motivo ? detailRow('Motivo', item.motivo) : '') +
           item.meta.map(function (m) { return detailRow('Info', m.text); }).join('') +
           '<div style="margin-top:14px;font-size:12.5px;color:var(--text-secondary)">' +
           'Acompanhamento em tempo real integra com o rastreio da transportadora.' +

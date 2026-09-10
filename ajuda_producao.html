@@ -39,7 +39,8 @@
         --amber-bg: #fcf3e6;
         --red: #b2433a;
         --red-bg: #faeeed;
-        --shadow: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
+        --shadow: 0 1px 2px rgba(0, 40, 80, 0.04), 0 2px 8px rgba(0, 40, 80, 0.03);
+        --shadow-hover: 0 8px 20px rgba(0, 40, 80, 0.10), 0 2px 6px rgba(0, 40, 80, 0.06);
 
         --cat-chapas: #45607d; --cat-chapas-bg: #e9eef4;
         --cat-usinados: #6d4fa3; --cat-usinados-bg: #efe9f8;
@@ -48,6 +49,18 @@
         --cat-estrutural: #47586b; --cat-estrutural-bg: #eef1f4;
         --cat-embalagem: #1a7b72; --cat-embalagem-bg: #e6f3f1;
         --cat-pneus: #5a4a3f; --cat-pneus-bg: #efece7;
+
+        /* escala de espaçamento — usada em todos os componentes desta página */
+        --sp-1: 4px;
+        --sp-2: 8px;
+        --sp-3: 12px;
+        --sp-4: 16px;
+        --sp-5: 20px;
+        --sp-6: 24px;
+        --sp-7: 32px;
+
+        --radius-card: 14px;
+        --radius-chip: 10px;
       }
 
       body.dark {
@@ -66,7 +79,8 @@
         --amber-bg: #3a2f15;
         --red: #c96a61;
         --red-bg: #3a1f1f;
-        --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15);
+        --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.35);
 
         --cat-chapas: #9db2c8; --cat-chapas-bg: #1c2a3a;
         --cat-usinados: #c3aee8; --cat-usinados-bg: #2a2140;
@@ -88,16 +102,49 @@
       }
 
       .main-wrapper { flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
-      .dashboard-container { padding: 20px; display: flex; flex-direction: column; gap: 22px; }
+      .dashboard-container { padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-6); }
 
-      .page-header h1 { font-size: 24px; font-weight: 700; }
+      .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-4); flex-wrap: wrap; }
+      .page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
       .page-header h1 span { color: var(--primary); }
       .page-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
 
+      .page-summary {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-2);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 14px 6px 6px;
+        box-shadow: var(--shadow);
+      }
+      .page-summary .dot {
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--green-bg);
+        color: var(--green);
+        font-size: 12px;
+      }
+
+      /* ---------- Filtros ---------- */
       .filter-bar {
         display: flex;
+        align-items: center;
+        gap: var(--sp-2);
         flex-wrap: wrap;
-        gap: 8px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 5px;
+        box-shadow: var(--shadow);
+        width: fit-content;
+        max-width: 100%;
+        overflow-x: auto;
       }
 
       .filter-chip {
@@ -105,44 +152,83 @@
         font-size: 13px;
         font-weight: 600;
         color: var(--text-secondary);
-        background: var(--bg-card);
-        border: 1px solid var(--border);
+        background: transparent;
+        border: none;
         border-radius: 999px;
-        padding: 7px 16px;
+        padding: 8px 16px;
         cursor: pointer;
-        transition: 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+        transition: background-color 0.15s, color 0.15s;
       }
 
-      .filter-chip:hover { border-color: var(--primary); color: var(--primary); }
-      .filter-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+      .filter-chip i { font-size: 12px; opacity: 0.85; }
 
+      .filter-chip:hover { background: var(--bg-soft); color: var(--text-main); }
+
+      .filter-chip.active {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 107, 179, 0.35);
+      }
+      .filter-chip.active i { opacity: 1; }
+
+      .filter-chip .count {
+        font-size: 11px;
+        font-weight: 700;
+        opacity: 0.75;
+      }
+
+      /* ---------- Grid de receitas ---------- */
       .recipe-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-        gap: 20px;
+        gap: var(--sp-5);
       }
 
-      .empty-state { color: var(--text-muted); font-size: 14px; padding: 30px 0; }
+      .empty-state {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-3);
+        color: var(--text-muted);
+        font-size: 14px;
+        padding: 60px 0;
+        text-align: center;
+      }
+      .empty-state i { font-size: 26px; color: var(--border); }
 
       .recipe-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: var(--radius-card);
         overflow: hidden;
         cursor: pointer;
-        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
         box-shadow: var(--shadow);
       }
 
-      .recipe-card:hover {
+      .recipe-card:hover,
+      .recipe-card:focus-visible {
         border-color: var(--primary);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 24px rgba(0, 40, 80, 0.12);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
       }
 
+      .recipe-card:hover .recipe-image img { transform: scale(1.06); }
+      .recipe-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+      /* imagem em proporção fixa para todos os cards ficarem no mesmo tamanho,
+         independente do formato/tamanho original da foto */
       .recipe-image {
         position: relative;
-        height: 150px;
+        aspect-ratio: 4 / 3;
         overflow: hidden;
         background: var(--bg-soft);
       }
@@ -150,17 +236,27 @@
       .recipe-image img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: cover;
         display: block;
+        transition: transform 0.35s ease;
+      }
+
+      .recipe-image::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.16) 100%);
+        pointer-events: none;
       }
 
       .category-tag {
         position: absolute;
-        top: 12px; left: 12px;
+        top: var(--sp-3); left: var(--sp-3);
         font-size: 11px;
         font-weight: 700;
         padding: 4px 10px;
         border-radius: 999px;
+        z-index: 1;
       }
 
       .category-tag.cat-chapas { background: var(--cat-chapas-bg); color: var(--cat-chapas); }
@@ -171,22 +267,56 @@
       .category-tag.cat-embalagem { background: var(--cat-embalagem-bg); color: var(--cat-embalagem); }
       .category-tag.cat-pneus { background: var(--cat-pneus-bg); color: var(--cat-pneus); }
 
-      .recipe-body { padding: 16px 18px 18px; }
-
-      .recipe-body h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-      .recipe-body p { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
-
-      .recipe-footer {
+      .recipe-body {
+        padding: var(--sp-4) var(--sp-4) 0;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-top: 12px;
-        border-top: 1px solid var(--border);
+        flex-direction: column;
+        flex: 1;
       }
 
-      .insumo-count { font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+      .recipe-body h3 { font-size: 15px; font-weight: 700; margin-bottom: 3px; line-height: 1.3; }
 
-      /* Modal */
+      .recipe-body p {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 37px;
+      }
+
+      .insumo-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-top: var(--sp-3);
+      }
+      .insumo-meta i { font-size: 11px; }
+
+      /* Status de produção é o elemento de maior peso do card — ocupa a base inteira */
+      .status-footer {
+        margin-top: var(--sp-4);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: var(--sp-3) var(--sp-4);
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      .status-footer i { font-size: 13px; }
+
+      .status-footer.ready { background: var(--green-bg); color: var(--green); }
+      .status-footer.partial { background: var(--amber-bg); color: var(--amber); }
+      .status-footer.blocked { background: var(--red-bg); color: var(--red); }
+
+      /* ---------- Modal ---------- */
       .modal-overlay {
         position: fixed;
         inset: 0;
@@ -209,17 +339,17 @@
         max-height: 90vh;
         overflow-y: auto;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        animation: slideUp 0.3s ease;
+        animation: slideUp 0.25s ease;
       }
 
       @keyframes slideUp {
-        from { transform: translateY(20px); opacity: 0; }
+        from { transform: translateY(16px); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
       }
 
       .modal-image {
         position: relative;
-        height: 160px;
+        height: 170px;
       }
 
       .modal-image img {
@@ -227,7 +357,6 @@
         height: 100%;
         object-fit: cover;
         display: block;
-        border-radius: 16px 16px 0 0;
       }
 
       .close-btn {
@@ -246,27 +375,49 @@
         box-shadow: var(--shadow);
       }
 
-      .modal-body { padding: 20px 24px 24px; }
+      .modal-body { padding: var(--sp-5) var(--sp-6) var(--sp-6); }
 
       .modal-body h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-      .modal-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+      .modal-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: var(--sp-4); }
+
+      .modal-progress {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-3);
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: var(--sp-3);
+        margin-bottom: var(--sp-5);
+      }
+      .modal-progress-bar {
+        flex: 1;
+        height: 6px;
+        background: var(--border);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .modal-progress-fill { height: 100%; border-radius: 999px; background: var(--green); }
+      .modal-progress-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); white-space: nowrap; }
 
       .ingredient-list {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: var(--sp-3);
       }
 
       .ingredient-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px;
+        padding: var(--sp-3);
         background: var(--bg-soft);
         border: 1px solid var(--border);
         border-radius: 10px;
         gap: 10px;
       }
+
+      .ingredient-item.unavailable { border-color: var(--red); border-style: dashed; }
 
       .ingredient-name {
         font-weight: 600;
@@ -306,6 +457,10 @@
 
       .avail-yes { background: var(--green-bg); color: var(--green); }
       .avail-no { background: var(--red-bg); color: var(--red); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .recipe-card, .recipe-image img, .modal { transition: none; animation: none; }
+      }
     </style>
   </head>
   <body>
@@ -314,6 +469,13 @@
       <div id="header-root"></div>
       <div class="dashboard-container">
 
+        <div class="page-header">
+          <div>
+            <h1>Ajuda de <span>Produção</span></h1>
+            <p>Consulte os insumos necessários para cada item e veja o que está disponível em estoque.</p>
+          </div>
+          <div class="page-summary" id="pageSummary"></div>
+        </div>
 
         <div class="filter-bar" id="filterBar"></div>
 
@@ -333,6 +495,10 @@
         <div class="modal-body">
           <h2 id="modalTitle">Detalhes da Produção</h2>
           <p class="modal-subtitle" id="modalSubtitle"></p>
+          <div class="modal-progress" id="modalProgress">
+            <div class="modal-progress-bar"><div class="modal-progress-fill" id="modalProgressFill"></div></div>
+            <span class="modal-progress-label" id="modalProgressLabel"></span>
+          </div>
           <div class="ingredient-list" id="ingredientList">
             <!-- Ingredientes injetados via JS -->
           </div>
