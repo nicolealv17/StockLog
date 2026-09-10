@@ -523,6 +523,24 @@
 }
 .log-stat::after { display: none; } /* tira a barrinha lateral colorida */
 
+      /* ALERTA LOGÍSTICO */
+      .log-alert-list { display: flex; flex-direction: column; gap: 10px; }
+      .log-alert-item {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 12px; background: var(--bg-soft); border: 1px solid var(--border);
+        border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s;
+      }
+      .log-alert-item:hover { border-color: var(--primary); background: var(--bg-card); }
+      .log-alert-left { display: flex; align-items: center; gap: 10px; }
+      .log-alert-icon {
+        width: 30px; height: 30px; border-radius: 6px; display: flex;
+        align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;
+        background: var(--rose-bg); color: var(--rose);
+      }
+      .log-alert-info { display: flex; flex-direction: column; }
+      .log-alert-title { font-weight: 700; color: var(--text-main); }
+      .log-alert-sub { font-size: 11.5px; color: var(--text-muted); }
+
 /* Kanban: uma cor só de destaque (primária), exceto o último (Entregue) */
 .log-col-head { border-top-color: var(--border) !important; }
 .log-col:last-child .log-col-head { border-top-color: var(--teal) !important; }
@@ -556,7 +574,15 @@
 
       <main class="content" role="main">
         <!-- Estatísticas / Indicadores -->
-        <div class="log-stats" id="log-stats"></div>
+        <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 14px; margin-bottom: 20px;">
+          <div class="log-stats" id="log-stats"></div>
+          <div class="card">
+            <div class="card-header-title">
+              <span class="title-text"><i class="fas fa-triangle-exclamation" style="color:var(--rose);"></i> Alertas Logísticos</span>
+            </div>
+            <div class="log-alert-list" id="logAlertList"></div>
+          </div>
+        </div>
 
         <!-- Barra de ações -->
         <div class="log-toolbar">
@@ -892,11 +918,45 @@
 
       function logRender() {
         logRenderStats();
+        logRenderAlerts();
         logRenderToolbar();
         logRenderKanban();
         logRenderVehicles();
         logRenderActivity();
       }
+
+      function logRenderAlerts() {
+        const alertList = document.getElementById("logAlertList");
+        if (!alertList) return;
+
+        const delayedOrders = logState.orders.filter(o => o.motivoAtraso);
+
+        if (delayedOrders.length === 0) {
+          alertList.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px; font-size:12px; font-style:italic">Sem alertas no momento.</div>`;
+          return;
+        }
+
+        alertList.innerHTML = delayedOrders.map(o => `
+          <div class="log-alert-item" onclick="logShowAlertReason('${o.id}')">
+            <div class="log-alert-left">
+              <div class="log-alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="log-alert-info">
+                <span class="log-alert-title">Pedido #${o.numero}</span>
+                <span class="log-alert-sub">${escapeHtml(o.cliente)}</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="font-size:10px; color:var(--text-muted)"></i>
+          </div>
+        `).join("");
+      }
+
+      function logShowAlertReason(id) {
+        const o = logState.orders.find(x => x.id === id);
+        if (!o) return;
+        showToast(`Motivo do Atraso: ${escapeHtml(o.motivoAtraso)}`, "warning");
+      }
+
+      function logRenderStats() {
 
       function logRenderStats() {
         const counts = { aguardando: 0, separacao: 0, embalagem: 0, expedicao: 0, entregue: 0 };
