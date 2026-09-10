@@ -14,7 +14,7 @@ const MAX_EVENTS_PER_DAY = 3;
 let calState = {
   events: [],
   view: "month",
-  cursor: new Date(2026, 7, 1),
+  cursor: new Date(),
   selectedDate: null,
   type: "reuniao",
   activeFilter: "all"
@@ -34,14 +34,14 @@ function calDefaultEvents() {
   return [
     { id: "e1", title: "Reunião de alinhamento semanal", type: "reuniao", date: "2026-08-21", time: "09:00", duration: 60, setor: "Qualidade", desc: "Pauta: revisão de KPIs e alertas." },
     { id: "e2", title: "Treinamento POP-018 — Recepção de Insumos", type: "treinamento", date: "2026-08-24", time: "14:00", duration: 120, setor: "Estoque", desc: "Capacitação Almoxarifado." },
-    { id: "e3", title: "🔴 Data Limite OP-2026-001 (Flange Aço)", type: "prazo-op", date: "2026-08-25", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-001. 500 unidades." },
+    { id: "e3", title: " Data Limite OP-2026-001 (Flange Aço)", type: "prazo-op", date: "2026-08-25", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-001. 500 unidades." },
     { id: "e4", title: "Visita técnica fornecedor Inox do Brasil", type: "compromisso", date: "2026-08-27", time: "10:30", duration: 180, setor: "Compras", desc: "Levantar novos itens para cotação." },
     { id: "e5", title: "Auditoria interna — Qualidade", type: "urgente", date: "2026-08-28", time: "08:00", duration: 240, setor: "Qualidade", desc: "Atender auditores." },
     { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, setor: "Produção", desc: "Capacitar 4 operadores." },
-    { id: "e7", title: "🔴 Data Limite OP-2026-002 (Eixo Vazado)", type: "prazo-op", date: "2026-08-28", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-002. 120 unidades." },
-    { id: "e8", title: "🛠️ Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-08-26", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Troca de rolamentos e calibragem." },
-    { id: "e9", title: "🔴 Data Limite OP-2026-003 (Suporte Estrutural)", type: "prazo-op", date: "2026-08-29", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-003. 80 unidades." },
-    { id: "e10", title: "🛠️ Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-08-27", time: "08:00", duration: 360, setor: "Fresa CNC 05", desc: "Substituição de ferramentas e revisão elétrica." },
+    { id: "e7", title: " Data Limite OP-2026-002 (Eixo Vazado)", type: "prazo-op", date: "2026-08-28", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-002. 120 unidades." },
+    { id: "e8", title: " Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-08-26", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Troca de rolamentos e calibragem." },
+    { id: "e9", title: " Data Limite OP-2026-003 (Suporte Estrutural)", type: "prazo-op", date: "2026-08-29", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-003. 80 unidades." },
+    { id: "e10", title: " Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-08-27", time: "08:00", duration: 360, setor: "Fresa CNC 05", desc: "Substituição de ferramentas e revisão elétrica." },
   ];
 }
 
@@ -181,7 +181,7 @@ function calRenderUpcoming() {
   }
   list.innerHTML = items.map(e => {
     const [y, m, d] = e.date.split("-");
-    const icon = e.type === "prazo-op" ? '🔴 ' : e.type === "manutencao" ? '🛠️ ' : '';
+    
     return `
       <div class="upcoming-item" onclick="calEdit('${e.id}')">
         <div class="upcoming-date">
@@ -239,7 +239,7 @@ function calNavMonth(delta) { calState.cursor.setMonth(calState.cursor.getMonth(
 function calGoToday() { calState.cursor = new Date(); calRender(); }
 function calSetView(view, btn) {
   calState.view = view;
-  document.querySelectorAll(".cal-view-btn").forEach(b => b.classList.remove("active");
+  document.querySelectorAll(".cal-view-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   calRender();
 }

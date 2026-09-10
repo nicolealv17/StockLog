@@ -61,6 +61,7 @@
       "pedidos.html": "Pedidos de Produção",
       "kanban.html": "Kanban",
       "producao.html": "Controle de Produção",
+      "ajuda_producao.html": "Ajuda de Produção",
       "itens.html": "Itens em Estoque",
       "logistica.html": "Logística",
       "relatorios.html": "Relatórios",

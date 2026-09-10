@@ -48,7 +48,7 @@ const RECIPES = [
     nome: "Flange Industrial ø50mm",
     descricao: "Peça de conexão em aço inox para tubulações",
     categoria: "conexoes",
-    imagem: "https://images.pexels.com/photos/36325392/pexels-photo-36325392.jpeg?auto=compress&cs=tinysrgb&w=600",
+    imagem: "https://m.media-amazon.com/images/I/51RFJvy25EL._AC_UF894,1000_QL80_.jpg",
     ingredients: [
       { codigo: "MP-1042", qty: "5kg", label: "Chapa Inox 304" },
       { codigo: "CP-3045", qty: "4 un", label: "Parafusos de Fixação" },
@@ -60,7 +60,7 @@ const RECIPES = [
     nome: "Engrenagem Usinada Z40",
     descricao: "Componente de transmissão em bronze usinado",
     categoria: "usinados",
-    imagem: "https://images.pexels.com/photos/9579221/pexels-photo-9579221.jpeg?auto=compress&cs=tinysrgb&w=600",
+    imagem: "https://www.policompcomponentes.com.br/content/images/1fecf3cc1c54531455341db57cd103a3.png",
     ingredients: [
       { codigo: "MP-1120", qty: "2kg", label: "Barra de Bronze TM23" },
       { codigo: "CS-7023", qty: "0.5L", label: "Óleo de Usinagem" },
@@ -71,7 +71,7 @@ const RECIPES = [
     nome: "Kit Parafusaria Sextavada M8",
     descricao: "Conjunto padronizado de fixação para montagem",
     categoria: "fixacao",
-    imagem: "https://images.pexels.com/photos/28119514/pexels-photo-28119514.jpeg?auto=compress&cs=tinysrgb&w=600",
+    imagem: "https://http2.mlstatic.com/D_NQ_NP_862287-MLB90049153639_082025-O-kit-10-parafusos-meia-rosca--parcial-sextavado-inox-m840mm.webp",
     ingredients: [
       { codigo: "CP-3045", qty: "20 un", label: "Parafuso Sextavado M8x30" },
       { codigo: "CP-3050", qty: "20 un", label: "Porca Sextavada M8" },
@@ -83,7 +83,7 @@ const RECIPES = [
     nome: "Suporte Estrutural Perfil U",
     descricao: "Estrutura galvanizada para fixação de equipamentos",
     categoria: "estrutural",
-    imagem: "https://images.pexels.com/photos/36003978/pexels-photo-36003978.jpeg?auto=compress&cs=tinysrgb&w=600",
+    imagem: "https://www.paulisteel.com.br/blog/wp-content/uploads/2025/04/218909fb-d901-4894-a066-2fa8882af140.jpg",
     ingredients: [
       { codigo: "MP-1135", qty: "3m", label: "Perfil U Aço Galvanizado" },
       { codigo: "MP-1140", qty: "0.2L", label: "Primer Anticorrosivo" },
@@ -106,7 +106,7 @@ const RECIPES = [
     nome: "Pneu de Carga HeavyDuty",
     descricao: "Produção de pneu reforçado para caminhões",
     categoria: "pneus",
-    imagem: "https://images.pexels.com/photos/33653651/pexels-photo-33653651.jpeg?auto=compress&cs=tinysrgb&w=600",
+    imagem: "https://www.acheipneus.com.br/media/catalog/product/p/n/pneu-155r12-sunset-over-cargo-b3-8886q-8pr-1.png",
     ingredients: [
       { codigo: "MP-1088", qty: "50kg", label: "Borracha ABS/Polímero" },
       { codigo: "MP-1042", qty: "10kg", label: "Reforço de Aço" },
@@ -125,20 +125,6 @@ const RECIPES = [
     ]
   }
 ];
-
-function renderStats() {
-  const totalReceitas = RECIPES.length;
-  const codigosUnicos = new Set(RECIPES.flatMap(r => r.ingredients.map(i => i.codigo)));
-  let alertas = 0;
-  codigosUnicos.forEach(codigo => {
-    const item = MOCK_STOCK.find(s => s.codigo === codigo);
-    if (item && item.atual <= item.minimo) alertas++;
-  });
-
-  document.getElementById('statReceitas').textContent = totalReceitas;
-  document.getElementById('statInsumos').textContent = codigosUnicos.size;
-  document.getElementById('statAlertas').textContent = alertas;
-}
 
 function renderFilters() {
   const bar = document.getElementById('filterBar');
@@ -239,7 +225,6 @@ function closeRecipeModal() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderStats();
   renderFilters();
   renderRecipes();
 });
