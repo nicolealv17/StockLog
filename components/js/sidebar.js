@@ -24,6 +24,7 @@
       items: [
         { href: basePath + "pedidos.html", icon: "fa-clipboard-list", label: "Pedidos de Produção" },
         { href: basePath + "producao.html", icon: "fa-industry", label: "Controle de Produção" },
+        { href: basePath + "ajuda_producao.html", icon: "fa-book-open", label: "Ajuda de Produção" },
         { href: basePath + "kanban.html", icon: "fa-columns", label: "Kanban" },
         { href: basePath + "qr.html", icon: "fa-qrcode", label: "QR Code" }, // NOVO ITEM
         { href: basePath + "itens.html", icon: "fa-warehouse", label: "Itens em Estoque" },

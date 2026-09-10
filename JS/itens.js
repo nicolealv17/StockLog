@@ -140,7 +140,7 @@ function renderTable() {
           <td><span class="cat-tag" style="${catStyle}">${item.categoria}</span></td>
           <td><div class="loc-cell"><i class="fas fa-location-dot"></i> ${item.local}</div></td>
           <td>
-            <span class="qty-cell">${item.atual}</span> 
+            <span class="qty-cell">${item.atual}</span>
             <span class="qty-min">/ min ${item.minimo}</span>
           </td>
           <td>
@@ -159,9 +159,10 @@ function renderTable() {
           </td>
           <td>${statusPill}</td>
           <td>
-            <div class="qty-btns">
-              <button class="qty-btn" onclick="changeQty(${item.id}, -1)" title="Diminuir 1">-</button>
-              <button class="qty-btn" onclick="changeQty(${item.id}, 1)" title="Aumentar 1">+</button>
+            <div class="qty-btns" style="align-items: center; gap: 5px;">
+              <input type="number" id="qty-input-${item.id}" value="1" min="1" style="width: 45px; padding: 4px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-size: 12px; text-align: center;">
+              <button class="qty-btn" onclick="updateQtyCustom(${item.id}, 'in')" title="Entrada" style="color: var(--green);"><i class="fas fa-plus"></i></button>
+              <button class="qty-btn" onclick="updateQtyCustom(${item.id}, 'out')" title="Saída" style="color: var(--red);"><i class="fas fa-minus"></i></button>
             </div>
           </td>
         </tr>
@@ -182,6 +183,30 @@ function renderAll() {
 }
 
 // ===================== FUNÇÕES DE INTERAÇÃO =====================
+
+function updateQtyCustom(id, type) {
+  const input = document.getElementById(`qty-input-${id}`);
+  const amount = parseInt(input.value) || 1;
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+
+  if (type === 'in') {
+    item.atual += amount;
+    item.entradas += amount;
+  } else {
+    item.atual = Math.max(0, item.atual - amount);
+    item.saidas += amount;
+  }
+
+  if (item.atual <= Math.round(item.minimo * 0.3)) {
+    item.status = 'critico';
+  } else if (item.atual <= item.minimo) {
+    item.status = 'baixo';
+  } else {
+    item.status = 'ok';
+  }
+  renderAll();
+}
 
 function changeQty(id, delta) {
   const item = items.find(i => i.id === id);

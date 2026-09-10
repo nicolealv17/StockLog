@@ -710,6 +710,10 @@
             <label>Observações</label>
             <textarea class="form-textarea" id="log-ord-obs" placeholder="Instruções de separação, embalagem especial, etc."></textarea>
           </div>
+          <div class="form-group">
+            <label>Motivo do Atraso / Alerta</label>
+            <input type="text" class="form-input" id="log-ord-motivo" placeholder="Ex: Falta de produto, Alta demanda, etc.">
+          </div>
         </div>
         <div class="modal-foot">
           <button class="btn btn-secondary" onclick="closeModal('logPedido')"><i class="fa-solid fa-xmark"></i> Cancelar</button>
@@ -1000,7 +1004,7 @@
               ${o.prioridade === "urgente" ? '<span class="log-badge-urgente">Urgente</span>' : ""}
             </div>
             <div class="log-card-cliente">${escapeHtml(o.cliente)}</div>
-
+            ${o.motivoAtraso ? `<div style="font-size:11px; color:var(--rose); font-weight:600; margin-bottom:10px;"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(o.motivoAtraso)}</div>` : ""}
             <div class="log-card-info">
               <div class="item"><i class="fa-solid fa-boxes-stacked"></i> <strong>${o.itens || 0}</strong>&nbsp;itens</div>
               <div class="item"><i class="fa-solid fa-calendar"></i> ${logFmtBR(o.data)}</div>
@@ -1193,6 +1197,7 @@
         document.getElementById("log-ord-status").value = o.status;
         document.getElementById("log-ord-prioridade").value = o.prioridade || "normal";
         document.getElementById("log-ord-obs").value = o.obs || "";
+        document.getElementById("log-ord-motivo").value = o.motivoAtraso || "";
         logPopulateVehicleSelect(o.veiculoId);
         document.getElementById("log-modal-title").innerHTML = '<i class="fa-solid fa-pen" style="color:var(--primary);margin-right:8px"></i>Editar pedido';
         document.getElementById("log-ord-btn-delete").style.display = "inline-flex";
@@ -1217,6 +1222,7 @@
           prioridade: document.getElementById("log-ord-prioridade").value,
           veiculoId: document.getElementById("log-ord-veiculo").value,
           obs: document.getElementById("log-ord-obs").value.trim(),
+          motivoAtraso: document.getElementById("log-ord-motivo").value.trim(),
         };
 
         if (id) {
