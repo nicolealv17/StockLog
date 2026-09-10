@@ -31,6 +31,7 @@ const CATEGORIES = {
 };
 
 // Definição de "Receitas" de Produção — cada uma com uma foto real representando o insumo/produto
+// qty agora em número + unidade, para conseguirmos comparar com o estoque
 const RECIPES = [
   {
     id: "chapa-01",
@@ -39,8 +40,8 @@ const RECIPES = [
     categoria: "chapas",
     imagem: "https://images.pexels.com/photos/8940223/pexels-photo-8940223.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "MP-1050", qty: "1 un", label: "Chapa de Aço Carbono 10mm" },
-      { codigo: "CS-7040", qty: "0.3kg", label: "Solda de Acabamento" },
+      { codigo: "MP-1050", qty: 1,    unidade: "un", label: "Chapa de Aço Carbono 10mm" },
+      { codigo: "CS-7040", qty: 0.3,  unidade: "kg", label: "Solda de Acabamento" },
     ]
   },
   {
@@ -50,9 +51,9 @@ const RECIPES = [
     categoria: "conexoes",
     imagem: "https://m.media-amazon.com/images/I/51RFJvy25EL._AC_UF894,1000_QL80_.jpg",
     ingredients: [
-      { codigo: "MP-1042", qty: "5kg", label: "Chapa Inox 304" },
-      { codigo: "CP-3045", qty: "4 un", label: "Parafusos de Fixação" },
-      { codigo: "CP-3070", qty: "1 un", label: "Anel de Vedação" },
+      { codigo: "MP-1042", qty: 5, unidade: "kg", label: "Chapa Inox 304" },
+      { codigo: "CP-3045", qty: 4, unidade: "un", label: "Parafusos de Fixação" },
+      { codigo: "CP-3070", qty: 1, unidade: "un", label: "Anel de Vedação" },
     ]
   },
   {
@@ -62,8 +63,19 @@ const RECIPES = [
     categoria: "usinados",
     imagem: "https://www.policompcomponentes.com.br/content/images/1fecf3cc1c54531455341db57cd103a3.png",
     ingredients: [
-      { codigo: "MP-1120", qty: "2kg", label: "Barra de Bronze TM23" },
-      { codigo: "CS-7023", qty: "0.5L", label: "Óleo de Usinagem" },
+      { codigo: "MP-1120", qty: 2,   unidade: "kg", label: "Barra de Bronze TM23" },
+      { codigo: "CS-7023", qty: 0.5, unidade: "L",  label: "Óleo de Usinagem" },
+    ]
+  },
+  {
+    id: "rolamento-01",
+    nome: "Mancal com Rolamento Blindado",
+    descricao: "Conjunto de apoio para eixos em alta rotação",
+    categoria: "usinados",
+    imagem: "https://kohlerpneus.com.br/images/rolamentos/mancais-snt.png",
+    ingredients: [
+      { codigo: "CP-3011", qty: 100, unidade: "un", label: "Rolamento Blindado 6204-2RS" },
+      { codigo: "MP-1120", qty: 1,   unidade: "kg", label: "Barra de Bronze TM23" },
     ]
   },
   {
@@ -73,9 +85,9 @@ const RECIPES = [
     categoria: "fixacao",
     imagem: "https://http2.mlstatic.com/D_NQ_NP_862287-MLB90049153639_082025-O-kit-10-parafusos-meia-rosca--parcial-sextavado-inox-m840mm.webp",
     ingredients: [
-      { codigo: "CP-3045", qty: "20 un", label: "Parafuso Sextavado M8x30" },
-      { codigo: "CP-3050", qty: "20 un", label: "Porca Sextavada M8" },
-      { codigo: "CP-3055", qty: "20 un", label: "Arruela de Pressão M8" },
+      { codigo: "CP-3045", qty: 20, unidade: "un", label: "Parafuso Sextavado M8x30" },
+      { codigo: "CP-3050", qty: 20, unidade: "un", label: "Porca Sextavada M8" },
+      { codigo: "CP-3055", qty: 20, unidade: "un", label: "Arruela de Pressão M8" },
     ]
   },
   {
@@ -85,9 +97,9 @@ const RECIPES = [
     categoria: "estrutural",
     imagem: "https://www.paulisteel.com.br/blog/wp-content/uploads/2025/04/218909fb-d901-4894-a066-2fa8882af140.jpg",
     ingredients: [
-      { codigo: "MP-1135", qty: "3m", label: "Perfil U Aço Galvanizado" },
-      { codigo: "MP-1140", qty: "0.2L", label: "Primer Anticorrosivo" },
-      { codigo: "CP-3045", qty: "6 un", label: "Parafusos de Fixação" },
+      { codigo: "MP-1135", qty: 3,   unidade: "m",  label: "Perfil U Aço Galvanizado" },
+      { codigo: "MP-1140", qty: 0.2, unidade: "L",  label: "Primer Anticorrosivo" },
+      { codigo: "CP-3045", qty: 6,   unidade: "un", label: "Parafusos de Fixação" },
     ]
   },
   {
@@ -97,8 +109,8 @@ const RECIPES = [
     categoria: "embalagem",
     imagem: "https://images.pexels.com/photos/615670/pexels-photo-615670.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "EM-5020", qty: "1 un", label: "Tambor Metálico Vazio" },
-      { codigo: "EM-5030", qty: "2 un", label: "Lacre de Segurança" },
+      { codigo: "EM-5020", qty: 1, unidade: "un", label: "Tambor Metálico Vazio" },
+      { codigo: "EM-5030", qty: 2, unidade: "un", label: "Lacre de Segurança" },
     ]
   },
   {
@@ -108,9 +120,9 @@ const RECIPES = [
     categoria: "pneus",
     imagem: "https://www.acheipneus.com.br/media/catalog/product/p/n/pneu-155r12-sunset-over-cargo-b3-8886q-8pr-1.png",
     ingredients: [
-      { codigo: "MP-1088", qty: "50kg", label: "Borracha ABS/Polímero" },
-      { codigo: "MP-1042", qty: "10kg", label: "Reforço de Aço" },
-      { codigo: "CS-7023", qty: "2L", label: "Lubrificante de Molde" },
+      { codigo: "MP-1088", qty: 50, unidade: "kg", label: "Borracha ABS/Polímero" },
+      { codigo: "MP-1042", qty: 10, unidade: "kg", label: "Reforço de Aço" },
+      { codigo: "CS-7023", qty: 2,  unidade: "L",  label: "Lubrificante de Molde" },
     ]
   },
   {
@@ -120,33 +132,61 @@ const RECIPES = [
     categoria: "embalagem",
     imagem: "https://images.pexels.com/photos/6169028/pexels-photo-6169028.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "EM-5012", qty: "1 un", label: "Caixa de Papelão" },
-      { codigo: "MP-1102", qty: "100ml", label: "Resina de Selagem" },
+      { codigo: "EM-5012", qty: 1,   unidade: "un",  label: "Caixa de Papelão" },
+      { codigo: "MP-1102", qty: 100, unidade: "ml",  label: "Resina de Selagem" },
     ]
   }
 ];
 
+/* ---------------------------------------------------------------
+   Regras de disponibilidade
+   - Se estoque atual <= 0               → indisponível (zerado)
+   - Se estoque atual < quantidade req.  → indisponível (insuficiente)
+   - Se estoque atual <= mínimo          → disponível, mas com aviso "abaixo do mínimo"
+   --------------------------------------------------------------- */
 function stockFor(codigo) {
   return MOCK_STOCK.find(s => s.codigo === codigo);
 }
 
-function availabilitySummary(recipe) {
-  const total = recipe.ingredients.length;
-  const disponiveis = recipe.ingredients.filter(ing => {
-    const item = stockFor(ing.codigo);
-    return item && item.atual > 0;
-  }).length;
-  return { total, disponiveis, pronto: disponiveis === total, bloqueado: disponiveis === 0 };
+function ingredientStatus(ing) {
+  const item = stockFor(ing.codigo);
+  if (!item) return { disponivel: false, motivo: "Item não cadastrado no estoque" };
+  if (item.atual <= 0) return { disponivel: false, motivo: "Estoque zerado" };
+  if (item.atual < ing.qty) {
+    return {
+      disponivel: false,
+      motivo: `Estoque insuficiente — restam ${item.atual} ${ing.unidade}, precisa ${ing.qty}`
+    };
+  }
+  const baixo = item.atual <= item.minimo;
+  return {
+    disponivel: true,
+    baixoMinimo: baixo,
+    motivo: baixo ? `Abaixo do mínimo (mín. ${item.minimo})` : null
+  };
 }
 
-function statusInfo({ total, disponiveis, pronto, bloqueado }) {
+function availabilitySummary(recipe) {
+  const total = recipe.ingredients.length;
+  const disponiveis = recipe.ingredients.filter(ing => ingredientStatus(ing).disponivel).length;
+  const faltando = total - disponiveis;
+  return {
+    total,
+    disponiveis,
+    faltando,
+    pronto: faltando === 0,
+    bloqueado: disponiveis === 0
+  };
+}
+
+function statusInfo({ total, disponiveis, faltando, pronto, bloqueado }) {
   if (pronto) {
     return { cls: "ready", icon: "fa-solid fa-circle-check", text: "Pronto para produção" };
   }
   if (bloqueado) {
-    return { cls: "blocked", icon: "fa-solid fa-circle-xmark", text: `0/${total} disponíveis` };
+    return { cls: "blocked", icon: "fa-solid fa-circle-xmark", text: `Bloqueado · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
   }
-  return { cls: "partial", icon: "fa-solid fa-triangle-exclamation", text: `${disponiveis}/${total} disponíveis` };
+  return { cls: "partial", icon: "fa-solid fa-triangle-exclamation", text: `Parcial · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
 }
 
 function renderSummary() {
@@ -154,8 +194,8 @@ function renderSummary() {
   if (!el) return;
   const prontos = RECIPES.filter(r => availabilitySummary(r).pronto).length;
   el.innerHTML = `
-    <span class="dot"><i class="fa-solid fa-check"></i></span>
-    <span>${prontos} de ${RECIPES.length} itens prontos para produção agora</span>
+    <span class="dot"><i class="fa-solid fa-circle-check"></i></span>
+    ${prontos} de ${RECIPES.length} receitas prontas para produção
   `;
 }
 
@@ -243,29 +283,30 @@ function openRecipeModal(recipeId) {
 
   // insumos indisponíveis aparecem primeiro, para chamar atenção do que falta
   const ordenados = [...recipe.ingredients].sort((a, b) => {
-    const aOk = stockFor(a.codigo)?.atual > 0;
-    const bOk = stockFor(b.codigo)?.atual > 0;
+    const aOk = ingredientStatus(a).disponivel;
+    const bOk = ingredientStatus(b).disponivel;
     return (aOk === bOk) ? 0 : (aOk ? 1 : -1);
   });
 
   const listEl = document.getElementById('ingredientList');
   listEl.innerHTML = ordenados.map(ing => {
-    const stockItem = stockFor(ing.codigo);
-    const isAvailable = stockItem && stockItem.atual > 0;
-    const isLow = stockItem && stockItem.atual <= stockItem.minimo;
+    const st = ingredientStatus(ing);
+    const aviso = !st.disponivel
+      ? `<small class="low-stock-warning"><i class="fa-solid fa-triangle-exclamation"></i> ${st.motivo}</small>`
+      : (st.baixoMinimo ? `<small class="low-stock-warning"><i class="fa-solid fa-triangle-exclamation"></i> ${st.motivo}</small>` : '');
 
     return `
-      <div class="ingredient-item ${isAvailable ? '' : 'unavailable'}">
+      <div class="ingredient-item ${st.disponivel ? '' : 'unavailable'}">
         <div class="ingredient-name">
           <div>
             <div>${ing.label} <small class="codigo-tag">${ing.codigo}</small></div>
-            ${isLow ? '<small class="low-stock-warning">Abaixo do estoque mínimo</small>' : ''}
+            ${aviso}
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:12px;">
-          <span class="ingredient-qty">${ing.qty}</span>
-          <span class="availability-badge ${isAvailable ? 'avail-yes' : 'avail-no'}">
-            ${isAvailable ? 'Disponível' : 'Indisponível'}
+          <span class="ingredient-qty">${ing.qty} ${ing.unidade}</span>
+          <span class="availability-badge ${st.disponivel ? 'avail-yes' : 'avail-no'}">
+            ${st.disponivel ? 'Disponível' : 'Em falta'}
           </span>
         </div>
       </div>

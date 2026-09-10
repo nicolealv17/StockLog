@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -39,16 +39,25 @@
         --amber-bg: #fcf3e6;
         --red: #b2433a;
         --red-bg: #faeeed;
-        --shadow: 0 1px 2px rgba(0, 40, 80, 0.04), 0 2px 8px rgba(0, 40, 80, 0.03);
-        --shadow-hover: 0 8px 20px rgba(0, 40, 80, 0.10), 0 2px 6px rgba(0, 40, 80, 0.06);
+        --shadow:
+          0 1px 2px rgba(0, 40, 80, 0.04), 0 2px 8px rgba(0, 40, 80, 0.03);
+        --shadow-hover:
+          0 8px 20px rgba(0, 40, 80, 0.1), 0 2px 6px rgba(0, 40, 80, 0.06);
 
-        --cat-chapas: #45607d; --cat-chapas-bg: #e9eef4;
-        --cat-usinados: #6d4fa3; --cat-usinados-bg: #efe9f8;
-        --cat-conexoes: #006bb3; --cat-conexoes-bg: #e1eefb;
-        --cat-fixacao: #c47a1f; --cat-fixacao-bg: #fcf3e6;
-        --cat-estrutural: #47586b; --cat-estrutural-bg: #eef1f4;
-        --cat-embalagem: #1a7b72; --cat-embalagem-bg: #e6f3f1;
-        --cat-pneus: #5a4a3f; --cat-pneus-bg: #efece7;
+        --cat-chapas: #45607d;
+        --cat-chapas-bg: #e9eef4;
+        --cat-usinados: #6d4fa3;
+        --cat-usinados-bg: #efe9f8;
+        --cat-conexoes: #006bb3;
+        --cat-conexoes-bg: #e1eefb;
+        --cat-fixacao: #c47a1f;
+        --cat-fixacao-bg: #fcf3e6;
+        --cat-estrutural: #47586b;
+        --cat-estrutural-bg: #eef1f4;
+        --cat-embalagem: #1a7b72;
+        --cat-embalagem-bg: #e6f3f1;
+        --cat-pneus: #5a4a3f;
+        --cat-pneus-bg: #efece7;
 
         /* escala de espaçamento — usada em todos os componentes desta página */
         --sp-1: 4px;
@@ -82,32 +91,75 @@
         --shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15);
         --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.35);
 
-        --cat-chapas: #9db2c8; --cat-chapas-bg: #1c2a3a;
-        --cat-usinados: #c3aee8; --cat-usinados-bg: #2a2140;
-        --cat-conexoes: #38bdf8; --cat-conexoes-bg: #16324a;
-        --cat-fixacao: #e3b568; --cat-fixacao-bg: #3a2f15;
-        --cat-estrutural: #a9b7c6; --cat-estrutural-bg: #1e2a38;
-        --cat-embalagem: #6fc2b3; --cat-embalagem-bg: #123a2a;
-        --cat-pneus: #c9b8a3; --cat-pneus-bg: #2c2620;
+        --cat-chapas: #9db2c8;
+        --cat-chapas-bg: #1c2a3a;
+        --cat-usinados: #c3aee8;
+        --cat-usinados-bg: #2a2140;
+        --cat-conexoes: #38bdf8;
+        --cat-conexoes-bg: #16324a;
+        --cat-fixacao: #e3b568;
+        --cat-fixacao-bg: #3a2f15;
+        --cat-estrutural: #a9b7c6;
+        --cat-estrutural-bg: #1e2a38;
+        --cat-embalagem: #6fc2b3;
+        --cat-embalagem-bg: #123a2a;
+        --cat-pneus: #c9b8a3;
+        --cat-pneus-bg: #2c2620;
       }
 
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
       body {
         font-family: "Inter", sans-serif;
         background-color: var(--bg-body);
         color: var(--text-main);
         display: flex;
         min-height: 100vh;
-        transition: background-color 0.2s, color 0.2s;
+        transition:
+          background-color 0.2s,
+          color 0.2s;
       }
 
-      .main-wrapper { flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
-      .dashboard-container { padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-6); }
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+      .dashboard-container {
+        padding: 0 0 var(--sp-5) 0; /* sem padding em cima/laterais */
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp-5);
+        flex: 1;
+      }
 
-      .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-4); flex-wrap: wrap; }
-      .page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
-      .page-header h1 span { color: var(--primary); }
-      .page-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+      .page-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--sp-4);
+        flex-wrap: wrap;
+      }
+      .page-header h1 {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .page-header h1 span {
+        color: var(--primary);
+      }
+      .page-header p {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
 
       .page-summary {
         display: flex;
@@ -123,29 +175,33 @@
         box-shadow: var(--shadow);
       }
       .page-summary .dot {
-        width: 26px; height: 26px;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: var(--green-bg);
         color: var(--green);
         font-size: 12px;
       }
 
       /* ---------- Filtros ---------- */
-      .filter-bar {
-        display: flex;
-        align-items: center;
-        gap: var(--sp-2);
-        flex-wrap: wrap;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 5px;
-        box-shadow: var(--shadow);
-        width: fit-content;
-        max-width: 100%;
-        overflow-x: auto;
-      }
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 10px var(--sp-5);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0;
+}
 
       .filter-chip {
         font-family: inherit;
@@ -161,19 +217,29 @@
         align-items: center;
         gap: 7px;
         white-space: nowrap;
-        transition: background-color 0.15s, color 0.15s;
+        transition:
+          background-color 0.15s,
+          color 0.15s;
       }
 
-      .filter-chip i { font-size: 12px; opacity: 0.85; }
+      .filter-chip i {
+        font-size: 12px;
+        opacity: 0.85;
+      }
 
-      .filter-chip:hover { background: var(--bg-soft); color: var(--text-main); }
+      .filter-chip:hover {
+        background: var(--bg-soft);
+        color: var(--text-main);
+      }
 
       .filter-chip.active {
         background: var(--primary);
         color: #fff;
         box-shadow: 0 2px 6px rgba(0, 107, 179, 0.35);
       }
-      .filter-chip.active i { opacity: 1; }
+      .filter-chip.active i {
+        opacity: 1;
+      }
 
       .filter-chip .count {
         font-size: 11px;
@@ -182,11 +248,12 @@
       }
 
       /* ---------- Grid de receitas ---------- */
-      .recipe-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-        gap: var(--sp-5);
-      }
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: var(--sp-5);
+  padding: 0 var(--sp-5);   /* respiro lateral só no grid */
+}
 
       .empty-state {
         grid-column: 1 / -1;
@@ -200,7 +267,10 @@
         padding: 60px 0;
         text-align: center;
       }
-      .empty-state i { font-size: 26px; color: var(--border); }
+      .empty-state i {
+        font-size: 26px;
+        color: var(--border);
+      }
 
       .recipe-card {
         background: var(--bg-card);
@@ -210,7 +280,10 @@
         cursor: pointer;
         display: flex;
         flex-direction: column;
-        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease,
+          border-color 0.18s ease;
         box-shadow: var(--shadow);
       }
 
@@ -221,8 +294,13 @@
         box-shadow: var(--shadow-hover);
       }
 
-      .recipe-card:hover .recipe-image img { transform: scale(1.06); }
-      .recipe-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+      .recipe-card:hover .recipe-image img {
+        transform: scale(1.06);
+      }
+      .recipe-card:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
 
       /* imagem em proporção fixa para todos os cards ficarem no mesmo tamanho,
          independente do formato/tamanho original da foto */
@@ -245,13 +323,18 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.16) 100%);
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0) 60%,
+          rgba(0, 0, 0, 0.16) 100%
+        );
         pointer-events: none;
       }
 
       .category-tag {
         position: absolute;
-        top: var(--sp-3); left: var(--sp-3);
+        top: var(--sp-3);
+        left: var(--sp-3);
         font-size: 11px;
         font-weight: 700;
         padding: 4px 10px;
@@ -259,13 +342,34 @@
         z-index: 1;
       }
 
-      .category-tag.cat-chapas { background: var(--cat-chapas-bg); color: var(--cat-chapas); }
-      .category-tag.cat-usinados { background: var(--cat-usinados-bg); color: var(--cat-usinados); }
-      .category-tag.cat-conexoes { background: var(--cat-conexoes-bg); color: var(--cat-conexoes); }
-      .category-tag.cat-fixacao { background: var(--cat-fixacao-bg); color: var(--cat-fixacao); }
-      .category-tag.cat-estrutural { background: var(--cat-estrutural-bg); color: var(--cat-estrutural); }
-      .category-tag.cat-embalagem { background: var(--cat-embalagem-bg); color: var(--cat-embalagem); }
-      .category-tag.cat-pneus { background: var(--cat-pneus-bg); color: var(--cat-pneus); }
+      .category-tag.cat-chapas {
+        background: var(--cat-chapas-bg);
+        color: var(--cat-chapas);
+      }
+      .category-tag.cat-usinados {
+        background: var(--cat-usinados-bg);
+        color: var(--cat-usinados);
+      }
+      .category-tag.cat-conexoes {
+        background: var(--cat-conexoes-bg);
+        color: var(--cat-conexoes);
+      }
+      .category-tag.cat-fixacao {
+        background: var(--cat-fixacao-bg);
+        color: var(--cat-fixacao);
+      }
+      .category-tag.cat-estrutural {
+        background: var(--cat-estrutural-bg);
+        color: var(--cat-estrutural);
+      }
+      .category-tag.cat-embalagem {
+        background: var(--cat-embalagem-bg);
+        color: var(--cat-embalagem);
+      }
+      .category-tag.cat-pneus {
+        background: var(--cat-pneus-bg);
+        color: var(--cat-pneus);
+      }
 
       .recipe-body {
         padding: var(--sp-4) var(--sp-4) 0;
@@ -274,7 +378,12 @@
         flex: 1;
       }
 
-      .recipe-body h3 { font-size: 15px; font-weight: 700; margin-bottom: 3px; line-height: 1.3; }
+      .recipe-body h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 3px;
+        line-height: 1.3;
+      }
 
       .recipe-body p {
         font-size: 13px;
@@ -296,7 +405,9 @@
         font-weight: 600;
         margin-top: var(--sp-3);
       }
-      .insumo-meta i { font-size: 11px; }
+      .insumo-meta i {
+        font-size: 11px;
+      }
 
       /* Status de produção é o elemento de maior peso do card — ocupa a base inteira */
       .status-footer {
@@ -310,11 +421,22 @@
         letter-spacing: 0.01em;
       }
 
-      .status-footer i { font-size: 13px; }
+      .status-footer i {
+        font-size: 13px;
+      }
 
-      .status-footer.ready { background: var(--green-bg); color: var(--green); }
-      .status-footer.partial { background: var(--amber-bg); color: var(--amber); }
-      .status-footer.blocked { background: var(--red-bg); color: var(--red); }
+      .status-footer.ready {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .status-footer.partial {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+      .status-footer.blocked {
+        background: var(--red-bg);
+        color: var(--red);
+      }
 
       /* ---------- Modal ---------- */
       .modal-overlay {
@@ -329,7 +451,9 @@
         padding: 20px;
       }
 
-      .modal-overlay.active { display: flex; }
+      .modal-overlay.active {
+        display: flex;
+      }
 
       .modal {
         background: var(--bg-card);
@@ -343,8 +467,14 @@
       }
 
       @keyframes slideUp {
-        from { transform: translateY(16px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+        from {
+          transform: translateY(16px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
 
       .modal-image {
@@ -361,7 +491,8 @@
 
       .close-btn {
         position: absolute;
-        top: 12px; right: 12px;
+        top: 12px;
+        right: 12px;
         background: var(--bg-card);
         border: none;
         border-radius: 8px;
@@ -375,10 +506,20 @@
         box-shadow: var(--shadow);
       }
 
-      .modal-body { padding: var(--sp-5) var(--sp-6) var(--sp-6); }
+      .modal-body {
+        padding: var(--sp-5) var(--sp-6) var(--sp-6);
+      }
 
-      .modal-body h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-      .modal-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: var(--sp-4); }
+      .modal-body h2 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .modal-subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: var(--sp-4);
+      }
 
       .modal-progress {
         display: flex;
@@ -397,8 +538,17 @@
         border-radius: 999px;
         overflow: hidden;
       }
-      .modal-progress-fill { height: 100%; border-radius: 999px; background: var(--green); }
-      .modal-progress-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); white-space: nowrap; }
+      .modal-progress-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--green);
+      }
+      .modal-progress-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
 
       .ingredient-list {
         display: flex;
@@ -417,7 +567,10 @@
         gap: 10px;
       }
 
-      .ingredient-item.unavailable { border-color: var(--red); border-style: dashed; }
+      .ingredient-item.unavailable {
+        border-color: var(--red);
+        border-style: dashed;
+      }
 
       .ingredient-name {
         font-weight: 600;
@@ -455,11 +608,22 @@
         white-space: nowrap;
       }
 
-      .avail-yes { background: var(--green-bg); color: var(--green); }
-      .avail-no { background: var(--red-bg); color: var(--red); }
+      .avail-yes {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .avail-no {
+        background: var(--red-bg);
+        color: var(--red);
+      }
 
       @media (prefers-reduced-motion: reduce) {
-        .recipe-card, .recipe-image img, .modal { transition: none; animation: none; }
+        .recipe-card,
+        .recipe-image img,
+        .modal {
+          transition: none;
+          animation: none;
+        }
       }
     </style>
   </head>
@@ -468,14 +632,7 @@
     <div class="main-wrapper">
       <div id="header-root"></div>
       <div class="dashboard-container">
-
-        <div class="page-header">
-          <div>
-            <h1>Ajuda de <span>Produção</span></h1>
-            <p>Consulte os insumos necessários para cada item e veja o que está disponível em estoque.</p>
-          </div>
-          <div class="page-summary" id="pageSummary"></div>
-        </div>
+     
 
         <div class="filter-bar" id="filterBar"></div>
 
@@ -490,13 +647,17 @@
       <div class="modal">
         <div class="modal-image">
           <img id="modalImage" src="" alt="" />
-          <button class="close-btn" onclick="closeRecipeModal()">&times;</button>
+          <button class="close-btn" onclick="closeRecipeModal()">
+            &times;
+          </button>
         </div>
         <div class="modal-body">
           <h2 id="modalTitle">Detalhes da Produção</h2>
           <p class="modal-subtitle" id="modalSubtitle"></p>
           <div class="modal-progress" id="modalProgress">
-            <div class="modal-progress-bar"><div class="modal-progress-fill" id="modalProgressFill"></div></div>
+            <div class="modal-progress-bar">
+              <div class="modal-progress-fill" id="modalProgressFill"></div>
+            </div>
             <span class="modal-progress-label" id="modalProgressLabel"></span>
           </div>
           <div class="ingredient-list" id="ingredientList">
