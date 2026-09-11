@@ -135,22 +135,48 @@ document.addEventListener('DOMContentLoaded', () => {
                         mensagem.style.color = "#16a34a";
                     }
 
-                    sessionStorage.setItem('usuarioLogado', JSON.stringify({
-                        uid: user.uid,
-                        email: user.email
-                    }));
+                    // Busca a função (área) do usuário no Realtime Database
+                    const userUid = user.uid;
+                    const dbRef = firebase.database();
 
-                    setTimeout(() => {
-                        if (cardContainer) {
-                            cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                            cardContainer.style.opacity = '0';
-                            cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
-                        }
+                    dbRef.ref('funcionarios').orderByChild('uidAuth').equalTo(userUid).once('value')
+                        .then((snapshot) => {
+                            let userRole = 'Visitante'; // Default
+                            if (snapshot.exists()) {
+                                const userData = snapshot.val();
+                                // O snapshot é um objeto com chaves (IDs), pegamos a primeira ocorrência
+                                const firstKey = Object.keys(userData)[0];
+                                userRole = userData[firstKey].area || 'Visitante';
+                            }
 
-                        setTimeout(() => {
+                            sessionStorage.setItem('usuarioLogado', JSON.stringify({
+                                uid: user.uid,
+                                email: user.email,
+                                area: userRole
+                            }));
+
+                            setTimeout(() => {
+                                if (cardContainer) {
+                                    cardContainer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                                    cardContainer.style.opacity = '0';
+                                    cardContainer.style.transform = 'translateY(-30px) scale(0.95)';
+                                }
+
+                                setTimeout(() => {
+                                    window.location.href = "index.html";
+                                }, 400);
+                            }, 500);
+                        })
+                        .catch((err) => {
+                            console.error("Erro ao buscar função do usuário:", err);
+                            // Mesmo com erro no banco, permite entrar mas como visitante
+                            sessionStorage.setItem('usuarioLogado', JSON.stringify({
+                                uid: user.uid,
+                                email: user.email,
+                                area: 'Visitante'
+                            }));
                             window.location.href = "index.html";
-                        }, 400);
-                    }, 500);
+                        });
                 })
                 .catch((erro) => {
                     console.error("Erro no login:", erro);

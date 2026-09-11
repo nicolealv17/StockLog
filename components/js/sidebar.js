@@ -15,34 +15,34 @@
     {
       label: "Visão Geral",
       items: [
-        { href: basePath + "index.html", icon: "fa-chart-pie", label: "Dashboard" },
-        { href: basePath + "calendario.html", icon: "fa-calendar-alt", label: "Calendário" },
+        { href: basePath + "index.html", icon: "fa-chart-pie", label: "Dashboard", roles: ["Gestão", "Produção", "Logística", "Estoque"] },
+        { href: basePath + "calendario.html", icon: "fa-calendar-alt", label: "Calendário", roles: ["Gestão", "Produção", "Logística", "Estoque"] },
       ],
     },
     {
       label: "Operações & PCP",
       items: [
-        { href: basePath + "pedidos.html", icon: "fa-clipboard-list", label: "Pedidos de Produção" },
-        { href: basePath + "producao.html", icon: "fa-industry", label: "Controle de Produção" },
-        { href: basePath + "ajuda_producao.html", icon: "fa-book-open", label: "Ajuda de Produção" },
-        { href: basePath + "kanban.html", icon: "fa-columns", label: "Kanban" },
-        { href: basePath + "qr.html", icon: "fa-qrcode", label: "QR Code" }, // NOVO ITEM
-        { href: basePath + "itens.html", icon: "fa-warehouse", label: "Itens em Estoque" },
+        { href: basePath + "pedidos.html", icon: "fa-clipboard-list", label: "Pedidos de Produção", roles: ["Gestão", "Produção"] },
+        { href: basePath + "producao.html", icon: "fa-industry", label: "Controle de Produção", roles: ["Gestão", "Produção"] },
+        { href: basePath + "ajuda_producao.html", icon: "fa-book-open", label: "Ajuda de Produção", roles: ["Gestão", "Produção"] },
+        { href: basePath + "kanban.html", icon: "fa-columns", label: "Kanban", roles: ["Gestão", "Produção", "Estoque"] },
+        { href: basePath + "qr.html", icon: "fa-qrcode", label: "QR Code", roles: ["Gestão", "Produção", "Estoque"] },
+        { href: basePath + "itens.html", icon: "fa-warehouse", label: "Itens em Estoque", roles: ["Gestão", "Produção", "Estoque"] },
       ],
     },
     {
       label: "Logística & Cadeia",
       items: [
-        { href: basePath + "logistica.html", icon: "fa-truck", label: "Logística" },
-        { href: basePath + "rastreamento.html", icon: "fa-route", label: "Rastreamento" },
-        { href: basePath + "fornecedores.html", icon: "fa-handshake", label: "Fornecedores" },
+        { href: basePath + "logistica.html", icon: "fa-truck", label: "Logística", roles: ["Gestão", "Logística"] },
+        { href: basePath + "rastreamento.html", icon: "fa-route", label: "Rastreamento", roles: ["Gestão", "Logística"] },
+        { href: basePath + "fornecedores.html", icon: "fa-handshake", label: "Fornecedores", roles: ["Gestão", "Logística"] },
       ],
     },
     {
       label: "Sistema & Análise",
       items: [
-        { href: basePath + "relatorios.html", icon: "fa-chart-bar", label: "Relatórios" },
-        { href: basePath + "cadastro.html", icon: "fa-address-card", label: "Cadastro" },
+        { href: basePath + "relatorios.html", icon: "fa-chart-bar", label: "Relatórios", roles: ["Gestão", "Produção", "Logística", "Estoque"] },
+        { href: basePath + "cadastro.html", icon: "fa-address-card", label: "Cadastro", roles: ["Gestão"] },
       ],
     },
   ];
@@ -55,8 +55,18 @@
   }
 
   function buildNavHTML() {
+    // Obtém a área do usuário do sessionStorage
+    var userSession = JSON.parse(localStorage.getItem('usuarioLogado') || sessionStorage.getItem('usuarioLogado') || '{}');
+    var userRole = userSession.area || 'Visitante';
+
     return NAV_GROUPS.map(function (group) {
-      var itemsHTML = group.items
+      var filteredItems = group.items.filter(function(item) {
+        return item.roles.indexOf(userRole) !== -1;
+      });
+
+      if (filteredItems.length === 0) return ""; // Não renderiza a seção se não houver itens permitidos
+
+      var itemsHTML = filteredItems
         .map(function (item) {
           var isActive = isCurrentPage(item.href);
           return (
