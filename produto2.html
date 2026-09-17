@@ -355,7 +355,7 @@
       }
     </style>
   </head>
-<body>
+<body data-product-id="produto2">
     <div id="sidebar-root"></div>
 
     <div class="main-wrapper">
@@ -391,11 +391,11 @@
               <span class="label">Em estoque</span>
             </div>
             <div class="actions-row">
-              <button class="action-btn">
-                <i class="fas fa-pen"></i> Editar
+              <button class="action-btn" onclick="changeStock(-1)" title="Diminuir Estoque">
+                <i class="fas fa-minus"></i> Diminuir
               </button>
-              <button class="action-btn primary">
-                <i class="fas fa-right-left"></i> Movimentar
+              <button class="action-btn primary" onclick="changeStock(1)" title="Aumentar Estoque">
+                <i class="fas fa-plus"></i> Aumentar
               </button>
             </div>
           </div>

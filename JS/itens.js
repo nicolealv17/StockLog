@@ -10,7 +10,11 @@ let items = [
   { id: 9, codigo: "FR-9010", nome: "Broca Metal Duro Ø8mm", sub: "Revestimento TiAlN", categoria: "Ferramental", local: "E-01-02", atual: 18, minimo: 10, maximo: 40, entradas: 5, saidas: 2, status: "ok" },
   { id: 10, codigo: "MP-1095", nome: "Tubo Alumínio Estrutural", sub: "Diâmetro 50mm x 3m", categoria: "Matéria-Prima", local: "A-03-05", atual: 95, minimo: 100, maximo: 300, entradas: 0, saidas: 18, status: "baixo" },
   { id: 11, codigo: "CP-3099", nome: "Sensor Indutivo M12 PNP", sub: "Alcance 4mm - Cabo 2m", categoria: "Componentes", local: "B-01-03", atual: 42, minimo: 20, maximo: 80, entradas: 10, saidas: 4, status: "ok" },
-  { id: 12, codigo: "MP-1102", nome: "Resina Epóxi Industrial", sub: "Galão 5 Litros + Endurecedor", categoria: "Matéria-Prima", local: "A-04-01", atual: 5, minimo: 20, maximo: 60, entradas: 0, saidas: 8, status: "critico" }
+  { id: 12, codigo: "MP-1102", nome: "Resina Epóxi Industrial", sub: "Galão 5 Litros + Endurecedor", categoria: "Matéria-Prima", local: "A-04-01", atual: 5, minimo: 20, maximo: 60, entradas: 0, saidas: 8, status: "critico" },
+  { id: 13, codigo: "PROD-01", nome: "PRODUTO 1 (Arduino)", sub: "Componente Especial", categoria: "Componentes", local: "E-05-01", atual: 50, minimo: 10, maximo: 200, entradas: 0, saidas: 0, status: "ok" },
+  { id: 14, codigo: "PROD-02", nome: "PRODUTO 2", sub: "Componente Especial", categoria: "Componentes", local: "E-05-02", atual: 50, minimo: 10, maximo: 200, entradas: 0, saidas: 0, status: "ok" },
+  { id: 15, codigo: "PROD-03", nome: "PRODUTO 3", sub: "Componente Especial", categoria: "Componentes", local: "E-05-03", atual: 50, minimo: 10, maximo: 200, entradas: 0, saidas: 0, status: "ok" },
+  { id: 16, codigo: "PROD-04", nome: "PRODUTO 4", sub: "Componente Especial", categoria: "Componentes", local: "E-05-04", atual: 50, minimo: 10, maximo: 200, entradas: 0, saidas: 0, status: "ok" }
 ];
 
 let currentStatus = 'todos';
@@ -57,7 +61,7 @@ function renderAlerts() {
   if (!alertListEl) return;
 
   const alerts = items.filter(i => i.status === 'critico' || i.status === 'baixo');
-  
+
   if (badgeEl) badgeEl.innerText = alerts.length;
   if (alertCountBadge) alertCountBadge.innerText = `${alerts.length} pendentes`;
 
@@ -91,10 +95,29 @@ function renderTable() {
   const search = searchInput ? searchInput.value.toLowerCase() : '';
   const category = categoryFilter ? categoryFilter.value : 'todas';
 
-  let filtered = items.filter(item => {
-    const matchesSearch = item.codigo.toLowerCase().includes(search) || 
-                             item.nome.toLowerCase().includes(search) || 
-                             item.sub.toLowerCase().includes(search);
+  // Sincroniza quantidades dos produtos específicos via localStorage
+  const productsMap = {
+    "PROD-01": "produto1",
+    "PROD-02": "produto2",
+    "PROD-03": "produto3",
+    "PROD-04": "produto4"
+  };
+
+  let syncedItems = items.map(item => {
+    const productKey = productsMap[item.codigo];
+    if (productKey) {
+      const savedQty = localStorage.getItem('stocklog_product_qty_' + productKey);
+      if (savedQty !== null) {
+        return { ...item, atual: parseInt(savedQty) };
+      }
+    }
+    return item;
+  });
+
+  let filtered = syncedItems.filter(item => {
+    const matchesSearch = item.codigo.toLowerCase().includes(search) ||
+                         item.nome.toLowerCase().includes(search) ||
+                         item.sub.toLowerCase().includes(search);
     const matchesCategory = category === 'todas' || item.categoria === category;
     const matchesStatus = currentStatus === 'todos' || item.status === currentStatus;
     return matchesSearch && matchesCategory && matchesStatus;
@@ -198,6 +221,18 @@ function updateQtyCustom(id, type) {
     item.saidas += amount;
   }
 
+  // Sincroniza com localStorage para produtos específicos
+  const productsMap = {
+    "PROD-01": "produto1",
+    "PROD-02": "produto2",
+    "PROD-03": "produto3",
+    "PROD-04": "produto4"
+  };
+  const productKey = productsMap[item.codigo];
+  if (productKey) {
+    localStorage.setItem('stocklog_product_qty_' + productKey, item.atual.toString());
+  }
+
   if (item.atual <= Math.round(item.minimo * 0.3)) {
     item.status = 'critico';
   } else if (item.atual <= item.minimo) {
@@ -214,6 +249,18 @@ function changeQty(id, delta) {
   item.atual = Math.max(0, item.atual + delta);
   if (delta > 0) item.entradas++;
   if (delta < 0) item.saidas++;
+
+  // Sincroniza com localStorage para produtos específicos
+  const productsMap = {
+    "PROD-01": "produto1",
+    "PROD-02": "produto2",
+    "PROD-03": "produto3",
+    "PROD-04": "produto4"
+  };
+  const productKey = productsMap[item.codigo];
+  if (productKey) {
+    localStorage.setItem('stocklog_product_qty_' + productKey, item.atual.toString());
+  }
 
   if (item.atual <= Math.round(item.minimo * 0.3)) {
     item.status = 'critico';
@@ -279,7 +326,7 @@ function closeAddModal() {
 
 function handleAddItem(event) {
   event.preventDefault();
-  
+
   const codigo = document.getElementById('newCodigo').value.trim();
   const nome = document.getElementById('newNome').value.trim();
   const sub = document.getElementById('newSub').value.trim();

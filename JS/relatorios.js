@@ -250,14 +250,29 @@ function exportarPDF(tipo) {
 function exportarExcel(tipo) {
   const data = getDadosParaExportar(tipo);
   if (!data) return;
-  
+
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet([data.headers, ...data.rows]);
+
+  // 1. Criação de dados com título e espaçamento
+  const rows = [
+    [ `Relatório de ${data.nome} - StockLog` ],
+    [ `Gerado em: ${formatarDataHora(new Date())}` ],
+    [], // Linha vazia
+    data.headers,
+    ...data.rows
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+
+  // 2. Ajuste básico de larguras de coluna (estimado)
+  const colWidths = data.headers.map(() => ({ wpx: 150 }));
+  ws['!cols'] = colWidths;
+
   XLSX.utils.book_append_sheet(wb, ws, 'Dados');
-  
+
   const nomeArquivo = `Relatorio_${data.nome}_${new Date().toISOString().slice(0,10)}.xlsx`;
   XLSX.writeFile(wb, nomeArquivo);
-  
+
   adicionarHistorico(data.nome, 'Excel', data.rows.length);
   showToast(`Excel do relatório de ${data.nome} baixado!`, 'success');
 }

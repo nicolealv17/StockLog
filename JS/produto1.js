@@ -1,109 +1,62 @@
-const STORAGE_KEY = 'stocklog_estoque_itens_v1';
+/* ================================================================
+   SISTEMA DE CONTROLE DE ESTOQUE - PÁGINAS DE PRODUTO
+   Este arquivo é compartilhado por produto1.html, produto2.html, etc.
+   ================================================================ */
 
-function getCodigoFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return (params.get('codigo') || '').trim();
+// Chave para persistência do estoque de produtos específicos
+const STOCK_KEY_PREFIX = 'stocklog_product_qty_';
+
+// Mapeamento de IDs para Nomes/Códigos (Sincronizado com itens.js)
+const PRODUCT_MAP = {
+  'produto1': { nome: 'Arduino Uno R3', codigo: 'MP-1042' },
+  'produto2': { nome: 'Produto 2', codigo: 'MP-1050' },
+  'produto3': { nome: 'Produto 3', codigo: 'MP-1088' },
+  'produto4': { nome: 'Produto 4', codigo: 'MP-1102' },
+};
+
+function getProductId() {
+  return document.body.getAttribute('data-product-id');
 }
 
-function loadItems() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) {
-    console.warn('Falha ao ler localStorage.', e);
+function getStockValue(productId) {
+  const val = localStorage.getItem(STOCK_KEY_PREFIX + productId);
+  return val ? parseInt(val) : 50; // Valor padrão 50 se não existir
+}
+
+function setStockValue(productId, value) {
+  localStorage.setItem(STOCK_KEY_PREFIX + productId, value.toString());
+}
+
+function updateQtyDisplay(value) {
+  const qtyEl = document.querySelector('.qty-box .value');
+  if (qtyEl) {
+    qtyEl.textContent = value + ' un.';
   }
-  return [];
 }
 
-function renderNotFound(codigo) {
-  document.getElementById('detailCard').innerHTML = `
-    <div class="not-found">
-      <i class="fas fa-box-open"></i>
-      <h2>Peça não encontrada</h2>
-      <p>Nenhum item de estoque corresponde ao código ${codigo ? `<code>${codigo}</code>` : 'informado'}.</p>
-      <a class="back-link" href="leitor-qr.html" style="display:inline-flex;">
-        <i class="fas fa-qrcode"></i> Voltar ao leitor de QR Code
-      </a>
-    </div>
-  `;
-}
+function changeStock(delta) {
+  const productId = getProductId();
+  if (!productId) return;
 
-function statusLabel(status) {
-  if (status === 'critico') return { text: 'Crítico', icon: 'fa-circle-exclamation' };
-  if (status === 'baixo') return { text: 'Baixo', icon: 'fa-triangle-exclamation' };
-  return { text: 'Normal', icon: 'fa-check-circle' };
-}
+  let currentQty = getStockValue(productId);
+  let newQty = Math.max(0, currentQty + delta);
 
-function renderDetail(item) {
-  const perc = Math.min(100, Math.round((item.atual / item.maximo) * 100));
-  let barColor = 'var(--green-bar)';
-  if (item.status === 'baixo') barColor = 'var(--amber-bar)';
-  if (item.status === 'critico') barColor = 'var(--red-bar)';
+  setStockValue(productId, newQty);
+  updateQtyDisplay(newQty);
 
-  const st = statusLabel(item.status);
-
-  document.getElementById('detailCard').innerHTML = `
-    <div class="detail-header">
-      <div>
-        <span class="item-code-big">${item.codigo}</span>
-        <h1>${item.nome}</h1>
-        <div class="item-sub-big">${item.sub}</div>
-      </div>
-      <span class="status-pill-big ${item.status}"><i class="fas ${st.icon}"></i> ${st.text}</span>
-    </div>
-    <div class="detail-body">
-      <div class="qty-hero">
-        <div class="qty-number">${item.atual}</div>
-        <div class="qty-label">unidades em estoque</div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" style="width:${perc}%; background:${barColor};"></div>
-        </div>
-      </div>
-
-      <div class="info-grid">
-        <div class="info-block">
-          <div class="label">Categoria</div>
-          <div class="value">${item.categoria}</div>
-        </div>
-        <div class="info-block">
-          <div class="label">Localização</div>
-          <div class="value"><i class="fas fa-location-dot" style="color:var(--text-muted); font-size:0.8em;"></i> ${item.local}</div>
-        </div>
-        <div class="info-block">
-          <div class="label">Mínimo</div>
-          <div class="value">${item.minimo} un</div>
-        </div>
-        <div class="info-block">
-          <div class="label">Máximo</div>
-          <div class="value">${item.maximo} un</div>
-        </div>
-      </div>
-
-      <div class="flow-row">
-        <span class="flow-in"><i class="fas fa-arrow-down"></i> +${item.entradas} entradas hoje</span>
-        <span class="flow-out"><i class="fas fa-arrow-up"></i> -${item.saidas} saídas hoje</span>
-      </div>
-
-      <a class="back-link" href="leitor-qr.html">
-        <i class="fas fa-qrcode"></i> Ler outro QR Code
-      </a>
-    </div>
-  `;
+  // Opcional: Mostrar um pequeno toast ou feedback visual
+  console.log(`Estoque de ${productId} atualizado para ${newQty}`);
 }
 
 function init() {
-  const codigo = getCodigoFromUrl();
-  if (!codigo) {
-    renderNotFound(null);
+  const productId = getProductId();
+  if (!productId) {
+    console.error('ID do produto não encontrado no corpo da página (data-product-id).');
     return;
   }
-  const items = loadItems();
-  const item = items.find(i => i.codigo.toLowerCase() === codigo.toLowerCase());
-  if (!item) {
-    renderNotFound(codigo);
-    return;
-  }
-  renderDetail(item);
+
+  const currentQty = getStockValue(productId);
+  updateQtyDisplay(currentQty);
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -116,6 +116,7 @@
       }
 
       .kpi-card {
+        display: block;
         background: var(--bg-card);
         border-radius: 14px;
         padding: 20px 22px;
@@ -124,6 +125,7 @@
         transition: 0.3s;
         position: relative;
         overflow: hidden;
+        cursor: pointer;
       }
 
       .kpi-card:hover {
@@ -1239,7 +1241,7 @@
       <main class="content" role="main">
         <!-- KPIs -->
         <section class="kpi-grid">
-          <div class="kpi-card">
+          <a href="pedidos.html" class="kpi-card">
             <div class="kpi-top">
               <div>
                 <div class="kpi-label">
@@ -1262,9 +1264,9 @@
               <span class="trend-up"><i class="fas fa-arrow-up"></i> 8 novos hoje</span>
               12 em produção
             </div>
-          </div>
+          </a>
 
-          <div class="kpi-card">
+          <a href="relatorios.html" class="kpi-card">
             <div class="kpi-top">
               <div>
                 <div class="kpi-label">
@@ -1287,9 +1289,9 @@
               <span class="trend-up"><i class="fas fa-check"></i> No prazo</span>
               <span class="trend-down"><i class="fas fa-exclamation-triangle"></i> 4 vencidos</span>
             </div>
-          </div>
+          </a>
 
-          <div class="kpi-card">
+          <a href="itens.html" class="kpi-card">
             <div class="kpi-top">
               <div>
                 <div class="kpi-label">
@@ -1310,9 +1312,9 @@
               <span class="trend-warn"><i class="fas fa-exclamation-circle"></i> 7 abaixo do limite</span>
               6 setores
             </div>
-          </div>
+          </a>
 
-          <div class="kpi-card">
+          <a href="producao.html" class="kpi-card">
             <div class="kpi-top">
               <div>
                 <div class="kpi-label">
@@ -1333,7 +1335,7 @@
               <span class="trend-up"><i class="fas fa-plus"></i> 5 iniciadas hoje</span>
               32.500 unid.
             </div>
-          </div>
+          </a>
         </section>
 
         <!-- Row 2 -->
