@@ -293,35 +293,6 @@ function renderSummary() {
   `;
 }
 
-function renderFilters() {
-  const bar = document.getElementById('filterBar');
-  if (!bar) return;
-
-  const countFor = key => key === 'todas' ? RECIPES.length : RECIPES.filter(r => r.categoria === key).length;
-
-  const chips = [
-    `<button class="filter-chip active" data-categoria="todas">
-      <i class="fa-solid fa-grip"></i> Todas <span class="count">${countFor('todas')}</span>
-    </button>`
-  ];
-  Object.entries(CATEGORIES).forEach(([key, cat]) => {
-    chips.push(`
-      <button class="filter-chip" data-categoria="${key}">
-        <i class="${cat.icon}"></i> ${cat.label} <span class="count">${countFor(key)}</span>
-      </button>
-    `);
-  });
-  bar.innerHTML = chips.join('');
-
-  bar.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      bar.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      renderRecipes(chip.dataset.categoria);
-    });
-  });
-}
-
 function renderRecipes(filtro = "todas") {
   const grid = document.getElementById('recipeGrid');
   if (!grid) return;
@@ -434,6 +405,7 @@ function closeRecipeModal() {
 /* ---------------------------------------------------------------
    Geração de PDF — Ficha de Procedimento de Produção
    Usa jsPDF (carregado via CDN em ajuda_producao.html)
+   Layout industrial baseado em Procedimento Operacional Padrão (POP)
    --------------------------------------------------------------- */
 
 // Tenta carregar uma imagem externa e devolvê-la como dataURL, para
@@ -473,7 +445,7 @@ async function generatePDF(recipeId) {
     const pageHeight = doc.internal.pageSize.getHeight();
     const marginX = 15;
     const contentWidth = pageWidth - marginX * 2;
-    const bottomLimit = pageHeight - 18;
+    const bottomLimit = pageHeight - 22;
 
     const catInfo = CATEGORIES[recipe.categoria];
     const catColor = CATEGORY_COLORS_PDF[recipe.categoria] || CATEGORY_COLORS_PDF.chapas;
@@ -484,47 +456,61 @@ async function generatePDF(recipeId) {
     const now = new Date();
     const dataEmissao = now.toLocaleDateString("pt-BR");
     const horaEmissao = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    const codigoDoc = `PROC-${recipe.id.toUpperCase()}`;
+    const codigoDoc = `POP-${recipe.id.toUpperCase()}`;
+    const revisao = "02";
 
     let y = 0;
 
     // Tenta buscar a foto do produto (não bloqueia o PDF se falhar)
     const imgDataUrl = await loadImageAsDataURL(recipe.imagem);
 
+    // ---------- Funções auxiliares de desenho ----------
     function drawHeader() {
+      // Faixa superior azul industrial
       doc.setFillColor(...PRIMARY_PDF);
-      doc.rect(0, 0, pageWidth, 34, "F");
+      doc.rect(0, 0, pageWidth, 28, "F");
 
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.text("STOCKLOG", marginX, 15);
+      doc.setFontSize(16);
+      doc.text("STOCKLOG", marginX, 12);
 
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.text("Sistema Integrado de Gestão de Estoque, Produção e Logística", marginX, 21);
+      doc.setFontSize(7.5);
+      doc.text("Sistema Integrado de Gestão de Estoque, Produção e Logística", marginX, 18);
 
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.text("FICHA DE PROCEDIMENTO DE PRODUÇÃO", pageWidth - marginX, 14, { align: "right" });
+      doc.setFontSize(10);
+      doc.text("PROCEDIMENTO OPERACIONAL PADRÃO", pageWidth - marginX, 11, { align: "right" });
 
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.text(`Código do documento: ${codigoDoc}`, pageWidth - marginX, 20, { align: "right" });
-      doc.text(`Emitido em ${dataEmissao} às ${horaEmissao}`, pageWidth - marginX, 25, { align: "right" });
+      doc.setFontSize(7.5);
+      doc.text(`Código: ${codigoDoc}`, pageWidth - marginX, 17, { align: "right" });
+      doc.text(`Revisão: ${revisao}`, pageWidth - marginX, 21, { align: "right" });
 
-      y = 44;
+      y = 36;
     }
 
     function drawFooter(pageNum, totalPages) {
+      // Linha superior do rodapé
       doc.setDrawColor(...BORDER_PDF);
-      doc.setLineWidth(0.2);
-      doc.line(marginX, pageHeight - 14, pageWidth - marginX, pageHeight - 14);
+      doc.setLineWidth(0.3);
+      doc.line(marginX, pageHeight - 16, pageWidth - marginX, pageHeight - 16);
+
+      // Tabela de elaboração/aprovação
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(7.5);
+      doc.setFontSize(7);
       doc.setTextColor(...TEXT_MUTED_PDF);
-      doc.text("StockLog © " + now.getFullYear() + " — Documento gerado automaticamente pelo sistema", marginX, pageHeight - 9);
-      doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - marginX, pageHeight - 9, { align: "right" });
+
+      const footerY = pageHeight - 13;
+      const colWidth = contentWidth / 3;
+
+      doc.text("Elaboração: José Correia", marginX, footerY);
+      doc.text("Aprovação: José Correia", marginX + colWidth, footerY);
+      doc.text(`Data: ${dataEmissao}`, marginX + colWidth * 2, footerY);
+
+      doc.setFontSize(6.5);
+      doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - marginX, footerY, { align: "right" });
     }
 
     function checkPageBreak(neededHeight) {
@@ -539,79 +525,111 @@ async function generatePDF(recipeId) {
       doc.setFillColor(...PRIMARY_PDF);
       doc.rect(marginX, y, 3, 6, "F");
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
+      doc.setFontSize(11);
       doc.setTextColor(...TEXT_MAIN_PDF);
       doc.text(text, marginX + 6, y + 5);
       y += 12;
     }
 
+    // Desenha uma caixa de tabela com cabeçalho e linhas
+    function drawInfoTable(rows, startY, col1Width = 38) {
+      const rowHeight = 7.5;
+      const col2Width = contentWidth - col1Width;
+
+      rows.forEach((row, i) => {
+        const rowY = startY + i * rowHeight;
+
+        // Coluna 1 (label)
+        doc.setFillColor(...BORDER_PDF);
+        doc.rect(marginX, rowY, col1Width, rowHeight, "F");
+        doc.setDrawColor(...BORDER_PDF);
+        doc.setLineWidth(0.2);
+        doc.rect(marginX, rowY, col1Width, rowHeight, "S");
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(...TEXT_MAIN_PDF);
+        doc.text(row.label, marginX + 2.5, rowY + 5);
+
+        // Coluna 2 (valor)
+        doc.setFillColor(255, 255, 255);
+        doc.rect(marginX + col1Width, rowY, col2Width, rowHeight, "F");
+        doc.rect(marginX + col1Width, rowY, col2Width, rowHeight, "S");
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(...TEXT_MUTED_PDF);
+        doc.text(row.value, marginX + col1Width + 2.5, rowY + 5);
+      });
+
+      return startY + rows.length * rowHeight;
+    }
+
     // ---------- Cabeçalho ----------
     drawHeader();
 
-    // Foto do produto (se disponível) + bloco de título
-    const hasImage = !!imgDataUrl;
-    const imgW = 40, imgH = 30;
-    const titleX = hasImage ? marginX + imgW + 6 : marginX;
-    const titleWidth = hasImage ? contentWidth - imgW - 6 : contentWidth;
+    // ---------- Tabela de Identificação (estilo POP) ----------
+    const identificacaoRows = [
+      { label: "Aplicação", value: recipe.nome },
+      { label: "Descrição", value: recipe.descricao },
+      { label: "Categoria", value: catInfo ? catInfo.label : recipe.categoria },
+      { label: "Código Interno", value: recipe.id.toUpperCase() },
+      { label: "Data de Emissão", value: `${dataEmissao} às ${horaEmissao}` },
+      { label: "Status", value: statusColor.label },
+    ];
 
+    y = drawInfoTable(identificacaoRows, y);
+    y += 6;
+
+    // ---------- Foto do produto (se disponível) ----------
+    const hasImage = !!imgDataUrl;
     if (hasImage) {
+      checkPageBreak(40);
       try {
+        const imgW = 55, imgH = 38;
         doc.setDrawColor(...BORDER_PDF);
+        doc.setLineWidth(0.3);
         doc.roundedRect(marginX, y, imgW, imgH, 2, 2, "S");
         doc.addImage(imgDataUrl, "JPEG", marginX, y, imgW, imgH, undefined, "FAST");
+
+        // Legenda ao lado da imagem
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(...TEXT_MAIN_PDF);
+        doc.text("REGISTRO FOTOGRÁFICO DO PRODUTO", marginX + imgW + 6, y + 6);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7.5);
+        doc.setTextColor(...TEXT_MUTED_PDF);
+        doc.text(
+          doc.splitTextToSize(
+            "Imagem ilustrativa do item produzido, conforme especificação técnica.",
+            contentWidth - imgW - 10
+          ),
+          marginX + imgW + 6,
+          y + 12
+        );
+
+        y += imgH + 8;
       } catch (e) {
         // se a imagem não for compatível, segue sem ela
       }
     }
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setTextColor(...TEXT_MAIN_PDF);
-    doc.text(recipe.nome, titleX, y + 6);
-
-    // Badge de categoria
-    doc.setFontSize(8.5);
-    const catLabel = catInfo ? catInfo.label : recipe.categoria;
-    const catLabelWidth = doc.getTextWidth(catLabel) + 6;
-    doc.setFillColor(...catColor.bg);
-    doc.roundedRect(titleX, y + 10, catLabelWidth, 6, 3, 3, "F");
-    doc.setTextColor(...catColor.text);
-    doc.setFont("helvetica", "bold");
-    doc.text(catLabel, titleX + 3, y + 14.2);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9.5);
-    doc.setTextColor(...TEXT_MUTED_PDF);
-    const descLines = doc.splitTextToSize(recipe.descricao, titleWidth);
-    doc.text(descLines, titleX, y + 22);
-
-    y += Math.max(imgH, 26) + 6;
-
-    // ---------- Resumo de disponibilidade ----------
-    checkPageBreak(16);
-    doc.setFillColor(...statusColor.bg);
-    doc.roundedRect(marginX, y, contentWidth, 12, 2, 2, "F");
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(9.5);
-    doc.setTextColor(...statusColor.text);
-    const resumoTexto = `${summary.disponiveis}/${summary.total} insumos disponíveis  ·  ${statusColor.label}`;
-    doc.text(resumoTexto, marginX + 5, y + 7.8);
-    y += 18;
-
-    // ---------- Materiais necessários ----------
-    sectionTitle("MATERIAIS NECESSÁRIOS");
+    // ---------- Materiais Necessários ----------
+    sectionTitle("MATERIAIS E INSUMOS NECESSÁRIOS");
 
     const colCodigo = marginX;
-    const colInsumo = marginX + 26;
-    const colQtd = marginX + 118;
+    const colInsumo = marginX + 28;
+    const colQtd = marginX + 120;
     const colStatus = marginX + contentWidth - 32;
 
     checkPageBreak(9);
-    doc.setFillColor(...BORDER_PDF);
+    doc.setFillColor(...PRIMARY_PDF);
     doc.rect(marginX, y, contentWidth, 8, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8.5);
-    doc.setTextColor(...TEXT_MAIN_PDF);
+    doc.setFontSize(8);
+    doc.setTextColor(255, 255, 255);
     doc.text("CÓDIGO", colCodigo + 2, y + 5.3);
     doc.text("INSUMO", colInsumo, y + 5.3);
     doc.text("QTD.", colQtd, y + 5.3);
@@ -630,8 +648,12 @@ async function generatePDF(recipeId) {
         doc.rect(marginX, y, contentWidth, rowHeight, "F");
       }
 
+      doc.setDrawColor(...BORDER_PDF);
+      doc.setLineWidth(0.15);
+      doc.rect(marginX, y, contentWidth, rowHeight, "S");
+
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
+      doc.setFontSize(8);
       doc.setTextColor(...TEXT_MAIN_PDF);
       doc.text(ing.codigo, colCodigo + 2, y + 5.5);
 
@@ -648,27 +670,23 @@ async function generatePDF(recipeId) {
       doc.setFillColor(...badgeColor.bg);
       doc.roundedRect(colStatus - 1, y + 1.3, badgeW, 5.5, 2, 2, "F");
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(7.5);
+      doc.setFontSize(7);
       doc.setTextColor(...badgeColor.text);
       doc.text(badgeLabel, colStatus + 1.3, y + 5.1);
 
       if (rowHasWarning) {
         doc.setFont("helvetica", "italic");
-        doc.setFontSize(7.5);
+        doc.setFontSize(7);
         doc.setTextColor(...STATUS_COLORS_PDF.partial.text);
         doc.text(st.motivo, colInsumo, y + 10);
       }
-
-      doc.setDrawColor(...BORDER_PDF);
-      doc.setLineWidth(0.15);
-      doc.line(marginX, y + rowHeight, marginX + contentWidth, y + rowHeight);
 
       y += rowHeight;
     });
 
     y += 8;
 
-    // ---------- Passo a passo ----------
+    // ---------- Passo a Passo de Produção ----------
     sectionTitle("PASSO A PASSO DE PRODUÇÃO");
 
     const steps = recipe.steps || [];
@@ -676,26 +694,57 @@ async function generatePDF(recipeId) {
 
     steps.forEach((texto, i) => {
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(9.5);
+      doc.setFontSize(9);
       const lines = doc.splitTextToSize(texto, stepTextWidth);
       const stepHeight = Math.max(8, lines.length * 4.6 + 3);
 
       checkPageBreak(stepHeight);
 
+      // Número do passo em círculo azul
       doc.setFillColor(...PRIMARY_PDF);
       doc.circle(marginX + 3, y + 3, 3.2, "F");
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(8.5);
+      doc.setFontSize(8);
       doc.setTextColor(255, 255, 255);
       doc.text(String(i + 1), marginX + 3, y + 4.2, { align: "center" });
 
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(9.5);
+      doc.setFontSize(9);
       doc.setTextColor(...TEXT_MAIN_PDF);
       doc.text(lines, marginX + 10, y + 4.2);
 
+      // Linha divisória pontilhada entre passos
+      if (i < steps.length - 1) {
+        doc.setDrawColor(...BORDER_PDF);
+        doc.setLineWidth(0.1);
+        doc.setLineDashPattern([1, 1], 0);
+        doc.line(marginX + 10, y + stepHeight - 1, marginX + contentWidth, y + stepHeight - 1);
+        doc.setLineDashPattern([], 0);
+      }
+
       y += stepHeight;
     });
+
+    y += 10;
+
+    // ---------- Observações / Rodapé Técnico ----------
+    checkPageBreak(20);
+    doc.setFillColor(...BORDER_PDF);
+    doc.roundedRect(marginX, y, contentWidth, 16, 2, 2, "F");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...TEXT_MAIN_PDF);
+    doc.text("OBSERVAÇÕES:", marginX + 4, y + 6);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...TEXT_MUTED_PDF);
+    doc.text(
+      "Este documento é de uso interno e deve ser seguido rigorosamente. Em caso de dúvidas, contatar o supervisor de produção.",
+      marginX + 4,
+      y + 11
+    );
 
     // ---------- Rodapé em todas as páginas ----------
     const totalPages = doc.internal.getNumberOfPages();
@@ -718,6 +767,5 @@ async function generatePDF(recipeId) {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderSummary();
-  renderFilters();
   renderRecipes();
 });

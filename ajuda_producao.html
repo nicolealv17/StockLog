@@ -189,73 +189,12 @@
         font-size: 12px;
       }
 
-      /* ---------- Filtros ---------- */
-.filter-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  flex-wrap: wrap;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
-  padding: 10px var(--sp-5);
-  box-shadow: var(--shadow);
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  margin: 0;
-}
-
-      .filter-chip {
-        font-family: inherit;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        background: transparent;
-        border: none;
-        border-radius: 999px;
-        padding: 8px 16px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        white-space: nowrap;
-        transition:
-          background-color 0.15s,
-          color 0.15s;
-      }
-
-      .filter-chip i {
-        font-size: 12px;
-        opacity: 0.85;
-      }
-
-      .filter-chip:hover {
-        background: var(--bg-soft);
-        color: var(--text-main);
-      }
-
-      .filter-chip.active {
-        background: var(--primary);
-        color: #fff;
-        box-shadow: 0 2px 6px rgba(0, 107, 179, 0.35);
-      }
-      .filter-chip.active i {
-        opacity: 1;
-      }
-
-      .filter-chip .count {
-        font-size: 11px;
-        font-weight: 700;
-        opacity: 0.75;
-      }
-
       /* ---------- Grid de receitas ---------- */
 .recipe-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: var(--sp-5);
-  padding: 0 var(--sp-5);   /* respiro lateral só no grid */
+  padding: var(--sp-5);   /* respiro em todos os lados, já que os filtros saíram */
 }
 
       .empty-state {
@@ -728,10 +667,6 @@
     <div class="main-wrapper">
       <div id="header-root"></div>
       <div class="dashboard-container">
-     
-
-        <div class="filter-bar" id="filterBar"></div>
-
         <div class="recipe-grid" id="recipeGrid">
           <!-- Receitas injetadas via JS -->
         </div>

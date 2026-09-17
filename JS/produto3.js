@@ -1,5 +1,5 @@
 /* ================================================================
-   SISTEMA DE CONTROLE DE ESTOQUE - PÁGINAS DE PRODUTO
+   SISTEMA DE CONTROLE DE ESTOQUE - PRODUTO 3 (Disco de Desbaste)
    Movimentações de ENTRADA e SAÍDA com valores digitados.
    ================================================================ */
 
@@ -11,14 +11,13 @@ function getProductId() {
 
 function getStockValue(productId) {
   const val = localStorage.getItem(STOCK_KEY_PREFIX + productId);
-  return val ? parseInt(val, 10) : 48; // Valor padrão inicial
+  return val ? parseInt(val, 10) : 14; // Valor padrão inicial
 }
 
 function setStockValue(productId, value) {
   localStorage.setItem(STOCK_KEY_PREFIX + productId, value.toString());
 }
 
-/* Atualiza o display da quantidade (número grande) e o badge de status */
 function updateQtyDisplay(value) {
   const qtyEl = document.getElementById('qtyValue');
   if (qtyEl) qtyEl.textContent = value;
@@ -43,8 +42,7 @@ function updateQtyDisplay(value) {
   }
 }
 
-/* Feedback rápido abaixo do bloco */
-function showFeedback(elementId, message, isError = false) {
+function showFeedback(elementId, message) {
   const el = document.getElementById(elementId);
   if (!el) return;
   el.textContent = message;
@@ -56,7 +54,6 @@ function showFeedback(elementId, message, isError = false) {
   }, 2200);
 }
 
-/* Lê e valida a quantidade digitada em um input */
 function lerQuantidade(inputId) {
   const input = document.getElementById(inputId);
   if (!input) return null;
@@ -69,7 +66,6 @@ function lerQuantidade(inputId) {
   return n;
 }
 
-/* ---------- Registrar ENTRADA ---------- */
 function registrarEntrada() {
   const productId = getProductId();
   if (!productId) return;
@@ -78,7 +74,7 @@ function registrarEntrada() {
   const input = document.getElementById('entradaInput');
 
   if (!qtd) {
-    showFeedback('entradaFeedback', 'Digite uma quantidade válida.', true);
+    showFeedback('entradaFeedback', 'Digite uma quantidade válida.');
     return;
   }
 
@@ -91,7 +87,6 @@ function registrarEntrada() {
   showFeedback('entradaFeedback', `+${qtd} adicionado · total: ${novo}`);
 }
 
-/* ---------- Registrar SAÍDA ---------- */
 function registrarSaida() {
   const productId = getProductId();
   if (!productId) return;
@@ -100,13 +95,13 @@ function registrarSaida() {
   const input = document.getElementById('saidaInput');
 
   if (!qtd) {
-    showFeedback('saidaFeedback', 'Digite uma quantidade válida.', true);
+    showFeedback('saidaFeedback', 'Digite uma quantidade válida.');
     return;
   }
 
   const atual = getStockValue(productId);
   if (qtd > atual) {
-    showFeedback('saidaFeedback', `Estoque insuficiente (disponível: ${atual})`, true);
+    showFeedback('saidaFeedback', `Estoque insuficiente (disponível: ${atual})`);
     return;
   }
 
@@ -117,7 +112,6 @@ function registrarSaida() {
   showFeedback('saidaFeedback', `-${qtd} retirado · total: ${novo}`);
 }
 
-/* ---------- Inicialização ---------- */
 function init() {
   const productId = getProductId();
   if (!productId) {
@@ -128,7 +122,6 @@ function init() {
   const atual = getStockValue(productId);
   updateQtyDisplay(atual);
 
-  // Permitir Enter nos inputs para acionar o botão correspondente
   const entradaInput = document.getElementById('entradaInput');
   const saidaInput = document.getElementById('saidaInput');
 

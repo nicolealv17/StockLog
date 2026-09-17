@@ -22,23 +22,21 @@
     <link rel="stylesheet" href="components/css/modoescuro.css" />
     <link rel="stylesheet" href="components/css/responsive.css" />
 
-    <!-- Bibliotecas para gerar PDF e Excel reais (download no navegador) -->
+    <!-- jsPDF + autotable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- ✅ xlsx-js-style: mesma API do SheetJS, mas com suporte a estilos (cores, fontes, bordas) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-      /* ================================================================
-         TOKENS / VARIÁVEIS (mesmo padrão do restante do StockLog)
-         Paleta discreta: foco em tons de azul/cinza com pequenos
-         acentos semânticos em saturação baixa.
-         ================================================================ */
       :root {
         --bg-body: #f0f5fc;
         --bg-card: #ffffff;
         --bg-soft: #f5faff;
-        --border: #e2ecf6;
+        --border: #d3e0ee;
         --border-hover: #c6daea;
 
         --primary: #006bb3;
@@ -50,27 +48,15 @@
         --text-secondary: #3d5f7e;
         --text-muted: #7b92b2;
 
-        --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
+        --shadow-card: 0 2px 6px rgba(0, 40, 80, 0.08), 0 8px 20px rgba(0, 40, 80, 0.05);
         --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
 
-        /* Cores semânticas em versão sóbria (chips, badges, sparklines) */
-        --neutral: #5a7390;
-        --neutral-bg: #eaf0f7;
-
-        --slate: #3d5f7e;
-        --slate-bg: #e1eaf3;
-
-        --teal: #4a7c82;
-        --teal-bg: #dde9ec;
-
-        --sand: #a88555;
-        --sand-bg: #f1e8d8;
-
-        --rose: #a55a64;
-        --rose-bg: #f1dde0;
-        
-        --green: #4a8c6a;
-        --green-bg: #ddeade;
+        --neutral: #2f6fb0; --neutral-bg: #d7e6f7;
+        --slate:   #34517a; --slate-bg:   #d9e2ef;
+        --teal:    #1f8a7e; --teal-bg:    #cdeae5;
+        --sand:    #c17d2e; --sand-bg:    #f5e2c2;
+        --rose:    #c0454f; --rose-bg:    #f6d9db;
+        --green:   #2f9e5c; --green-bg:   #d3f0dd;
       }
 
       body.dark {
@@ -79,28 +65,15 @@
         --bg-soft: #0f1f30;
         --border: #1d344b;
         --border-hover: #2a4866;
-
         --text-main: #e2edf8;
         --text-secondary: #a5bed6;
         --text-muted: #6f8daa;
-
         --primary-light: #1d3a55;
-        --neutral-bg: #1a2b41;
-        --slate-bg: #1d2f47;
-        --teal-bg: #1a2f33;
-        --sand-bg: #2f2718;
-        --rose-bg: #2f1d20;
-        --green-bg: #1a2f22;
-
         --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.2);
         --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 16px 48px rgba(0, 0, 0, 0.2);
       }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
       body {
         font-family: "Inter", sans-serif;
         background: var(--bg-body);
@@ -109,797 +82,224 @@
         min-height: 100vh;
         transition: background 0.3s, color 0.3s;
       }
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-      button {
-        cursor: pointer;
-        font-family: inherit;
-        border: none;
-        background: none;
-      }
+      a { text-decoration: none; color: inherit; }
+      button { cursor: pointer; font-family: inherit; border: none; background: none; }
 
-      .main-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        min-width: 0;
-      }
+      .main-wrapper { flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+      .content { flex: 1; padding: 28px 32px 20px; }
 
-      .content {
-        flex: 1;
-        padding: 28px 32px 20px;
-      }
-
-      /* ========== CABEÇALHO DA PÁGINA ========== */
       .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-        gap: 14px;
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 24px; flex-wrap: wrap; gap: 14px;
       }
-      .page-header h1 {
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .page-header h1 i {
-        color: var(--primary);
-      }
-      .page-header p {
-        color: var(--text-secondary);
-        font-size: 14px;
-        margin-top: 4px;
-      }
-      .periodo-info {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 16px;
-        font-size: 13px;
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .periodo-info i {
-        color: var(--primary);
-      }
+      .page-header h1 { font-size: 24px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px; }
+      .page-header h1 i { color: var(--primary); }
+      .page-header p { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
 
-      /* ========== CARD GENÉRICO ========== */
       .card {
-        background: var(--bg-card);
-        border-radius: 14px;
-        padding: 22px 24px 24px;
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-card);
-        transition: 0.3s;
-        margin-bottom: 24px;
+        background: var(--bg-card); border-radius: 14px; padding: 22px 24px 24px;
+        border: 1px solid var(--border); box-shadow: var(--shadow-card);
+        transition: 0.3s; margin-bottom: 24px;
       }
-      .card:hover {
-        border-color: var(--border-hover);
-        box-shadow: var(--shadow-hover);
-      }
+      .card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-hover); }
       .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-        gap: 10px;
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
       }
-      .card-header h3 {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text-main);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .card-header h3 i {
-        color: var(--primary);
-        font-size: 16px;
-      }
+      .card-header h3 { font-size: 15px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+      .card-header h3 i { color: var(--primary); font-size: 16px; }
       .badge-soft {
-        background: var(--bg-soft);
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        border: 1px solid var(--border);
+        background: var(--bg-soft); padding: 4px 14px; border-radius: 20px;
+        font-size: 12px; font-weight: 600; color: var(--text-secondary); border: 1px solid var(--border);
       }
 
-      /* ========== FILTROS ========== */
-      .filtros {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 14px;
+      .filtros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .campo { display: flex; flex-direction: column; gap: 6px; }
+      .campo label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+      .campo input, .campo select {
+        background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px;
+        padding: 11px 14px; font-size: 14px; color: var(--text-main); font-family: inherit; outline: none; transition: 0.2s;
       }
-      .campo {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .campo label {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-      }
-      .campo input,
-      .campo select {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 11px 14px;
-        font-size: 14px;
-        color: var(--text-main);
-        font-family: inherit;
-        outline: none;
-        transition: 0.2s;
-      }
-      .campo input:focus,
-      .campo select:focus {
-        border-color: var(--primary);
-        background: var(--bg-card);
-      }
+      .campo input:focus, .campo select:focus { border-color: var(--primary); background: var(--bg-card); }
 
-      /* ========== GRID DE RELATÓRIOS ========== */
-      .relatorios-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-        gap: 18px;
-      }
-
+      .relatorios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 18px; }
       .relatorio-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 0;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 0;
+        transition: all 0.3s ease; position: relative; overflow: hidden;
+        display: flex; flex-direction: column; border-left: 4px solid var(--border);
       }
-      .relatorio-card:hover {
-        border-color: var(--border-hover);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-hover);
-      }
-      .relatorio-card .card-top {
-        padding: 20px 22px 16px;
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-      }
-      .relatorio-card .card-body {
-        padding: 0 22px 18px;
-        flex: 1;
-      }
-      .relatorio-card .card-footer {
-        padding: 14px 22px;
-        border-top: 1px solid var(--border);
-        background: var(--bg-soft);
-      }
+      .relatorio-card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+      .relatorio-card.neutral { border-left-color: var(--neutral); }
+      .relatorio-card.slate   { border-left-color: var(--slate); }
+      .relatorio-card.teal    { border-left-color: var(--teal); }
+      .relatorio-card.sand    { border-left-color: var(--sand); }
+      .relatorio-card.rose    { border-left-color: var(--rose); }
+      .relatorio-card.primary { border-left-color: var(--primary); }
+
+      .relatorio-card .card-top { padding: 20px 22px 16px; display: flex; align-items: flex-start; gap: 14px; }
+      .relatorio-card .card-body { padding: 0 22px 18px; flex: 1; }
+      .relatorio-card .card-footer { padding: 14px 22px; border-top: 1px solid var(--border); background: var(--bg-soft); }
 
       .relatorio-icone {
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-        background: var(--primary-light);
-        color: var(--primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        flex-shrink: 0;
+        width: 46px; height: 46px; border-radius: 12px; background: var(--primary-light);
+        color: #fff; display: flex; align-items: center; justify-content: center;
+        font-size: 20px; flex-shrink: 0;
       }
-      .relatorio-card.neutral .relatorio-icone {
-        background: var(--neutral-bg);
-        color: var(--neutral);
-      }
-      .relatorio-card.slate .relatorio-icone {
-        background: var(--slate-bg);
-        color: var(--slate);
-      }
-      .relatorio-card.teal .relatorio-icone {
-        background: var(--teal-bg);
-        color: var(--teal);
-      }
-      .relatorio-card.sand .relatorio-icone {
-        background: var(--sand-bg);
-        color: var(--sand);
-      }
-      .relatorio-card.rose .relatorio-icone {
-        background: var(--rose-bg);
-        color: var(--rose);
-      }
-      .relatorio-card.primary .relatorio-icone {
-        background: var(--primary);
-        color: #fff;
-      }
+      .relatorio-card.neutral .relatorio-icone { background: var(--neutral); }
+      .relatorio-card.slate .relatorio-icone   { background: var(--slate); }
+      .relatorio-card.teal .relatorio-icone    { background: var(--teal); }
+      .relatorio-card.sand .relatorio-icone    { background: var(--sand); }
+      .relatorio-card.rose .relatorio-icone    { background: var(--rose); }
+      .relatorio-card.primary .relatorio-icone { background: var(--primary); }
 
-      .relatorio-titulo {
-        font-size: 15.5px;
-        font-weight: 700;
-        color: var(--text-main);
-        margin-bottom: 4px;
-        line-height: 1.3;
-      }
-      .relatorio-descricao {
-        font-size: 12.5px;
-        color: var(--text-muted);
-        line-height: 1.5;
-      }
+      .relatorio-titulo { font-size: 15.5px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; line-height: 1.3; }
+      .relatorio-descricao { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
 
-      /* Badge "atualizado" no canto superior direito */
       .relatorio-tag {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        font-size: 10.5px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        color: var(--text-muted);
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        padding: 3px 9px;
-        border-radius: 20px;
+        position: absolute; top: 16px; right: 16px; font-size: 10.5px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted);
+        background: var(--bg-soft); border: 1px solid var(--border); padding: 3px 9px; border-radius: 20px;
       }
 
-      /* Mini stats (linha de números dentro do card) */
-      .mini-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 4px;
-      }
+      .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 4px; }
       .mini-stat {
-        background: var(--bg-soft);
-        border-radius: 10px;
-        padding: 10px 8px;
-        text-align: center;
-        border: 1px solid var(--border);
+        background: var(--bg-soft); border-radius: 10px; padding: 10px 8px;
+        text-align: center; border: 1px solid var(--border);
       }
-      .mini-stat .valor {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-main);
-        line-height: 1.1;
-      }
-      .mini-stat .rotulo {
-        font-size: 10.5px;
-        color: var(--text-muted);
-        margin-top: 3px;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-      }
-      .mini-stat.destaque .valor {
-        color: var(--primary);
-      }
+      .mini-stat .valor { font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.1; }
+      .mini-stat .rotulo { font-size: 10.5px; color: var(--text-muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.3px; }
+      .mini-stat.destaque .valor { color: var(--primary); }
 
-      /* Mini sparkline (Chart.js) */
-      .spark-wrap {
-        position: relative;
-        height: 70px;
-        margin-top: 6px;
-      }
+      .chart-wrap { position: relative; height: 90px; margin-top: 8px; }
+      .donut-wrap { position: relative; height: 110px; display: flex; justify-content: center; align-items: center; }
+      .donut-wrap canvas { max-height: 110px; max-width: 110px; }
+      .donut-legenda { display: flex; justify-content: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+      .donut-legenda span { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); font-weight: 500; }
+      .donut-legenda i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+      .bar-wrap { position: relative; height: 110px; margin-top: 6px; }
 
-      /* Gráfico um pouco maior para os cards de destaque */
-      .chart-wrap {
-        position: relative;
-        height: 90px;
-        margin-top: 8px;
-      }
-
-      /* Donut com legenda lateral */
-      .donut-wrap {
-        position: relative;
-        height: 110px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .donut-wrap canvas {
-        max-height: 110px;
-        max-width: 110px;
-      }
-      .donut-legenda {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 10px;
-        flex-wrap: wrap;
-      }
-      .donut-legenda span {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 11px;
-        color: var(--text-muted);
-        font-weight: 500;
-      }
-      .donut-legenda i {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-      }
-
-      /* Bar chart altura */
-      .bar-wrap {
-        position: relative;
-        height: 110px;
-        margin-top: 6px;
-      }
-
-      /* Mini tabela */
-      .mini-tabela {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-      }
-      .mini-tabela th {
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-muted);
-        padding: 4px 0 6px;
-        font-size: 10.5px;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        border-bottom: 1px solid var(--border);
-      }
-      .mini-tabela td {
-        padding: 7px 0;
-        color: var(--text-main);
-        border-bottom: 1px solid var(--border);
-      }
-      .mini-tabela tr:last-child td {
-        border-bottom: 0;
-      }
-      .mini-tabela td.num {
-        text-align: right;
-        font-weight: 600;
-        font-variant-numeric: tabular-nums;
-      }
-      .mini-tabela td.ok {
-        color: var(--teal);
-      }
-      .mini-tabela td.warn {
-        color: var(--sand);
-      }
-
-      /* ========== BOTÕES DE EXPORTAÇÃO ========== */
-      .relatorio-acoes {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
+      .relatorio-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
       .btn-export {
-        flex: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 9px 12px;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
-        transition: 0.2s;
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        color: var(--text-secondary);
-        min-width: 70px;
+        flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 9px 12px; border-radius: 10px; font-size: 13px; font-weight: 600;
+        transition: 0.2s; border: 1px solid var(--border); background: var(--bg-card);
+        color: var(--text-secondary); min-width: 70px;
       }
-      .btn-export:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        background: var(--primary-light);
-      }
-      .btn-export i {
-        font-size: 13px;
-        color: var(--primary);
-        transition: 0.2s;
-      }
-      .btn-export:hover i {
-        color: var(--primary-dark);
-      }
-      .btn-export:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+      .btn-export:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+      .btn-export i { font-size: 13px; color: var(--primary); transition: 0.2s; }
+      .btn-export:hover i { color: var(--primary-dark); }
+      .btn-export:disabled { opacity: 0.5; cursor: not-allowed; }
 
-      /* ========== SELETOR DE RELATÓRIO NA PRÉ-VISUALIZAÇÃO ========== */
-      .preview-selector {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-      .preview-selector label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-      }
+      .preview-selector { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+      .preview-selector label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
       .preview-selector select {
-        padding: 8px 14px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: var(--bg-soft);
-        color: var(--text-main);
-        font-family: inherit;
-        font-size: 13px;
-        outline: none;
-        cursor: pointer;
-        transition: 0.2s;
-        appearance: none;
+        padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border);
+        background: var(--bg-soft); color: var(--text-main); font-family: inherit; font-size: 13px;
+        outline: none; cursor: pointer; transition: 0.2s; appearance: none;
         background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b92b2' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 14px;
-        padding-right: 32px;
-        min-width: 200px;
+        background-repeat: no-repeat; background-position: right 10px center; background-size: 14px;
+        padding-right: 32px; min-width: 200px;
       }
-      .preview-selector select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-light);
-      }
+      .preview-selector select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
-      /* ========== BOTÕES DE EXPORTAÇÃO DA PRÉ-VISUALIZAÇÃO ========== */
-      .preview-actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-left: auto;
-      }
-      .preview-actions .btn-export {
-        flex: none;
-        padding: 8px 16px;
-      }
+      .preview-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+      .preview-actions .btn-export { flex: none; padding: 8px 16px; }
 
-      /* ========== PREVIEW DE DADOS ========== */
-      .preview-wrapper {
-        overflow-x: auto;
-        margin-top: 12px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13.5px;
-      }
+      .preview-wrapper { overflow-x: auto; margin-top: 12px; }
+      table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       th {
-        text-align: left;
-        padding: 10px 8px 8px 0;
-        font-weight: 600;
-        color: var(--text-muted);
-        border-bottom: 2px solid var(--border);
-        font-size: 11px;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
+        text-align: left; padding: 10px 8px 8px 0; font-weight: 600; color: var(--text-muted);
+        border-bottom: 2px solid var(--border); font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase;
       }
-      td {
-        padding: 11px 8px 11px 0;
-        border-bottom: 1px solid var(--border);
-        color: var(--text-main);
-      }
-      tr:last-child td {
-        border-bottom: 0;
-      }
-      .status-tag {
-        padding: 3px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        display: inline-block;
-      }
-      .status-tag.ok {
-        background: var(--green-bg);
-        color: var(--green);
-      }
-      .status-tag.warn {
-        background: var(--sand-bg);
-        color: var(--sand);
-      }
-      .status-tag.bad {
-        background: var(--rose-bg);
-        color: var(--rose);
-      }
-      .status-tag.info {
-        background: var(--primary-light);
-        color: var(--primary);
-      }
+      td { padding: 11px 8px 11px 0; border-bottom: 1px solid var(--border); color: var(--text-main); }
+      tr:last-child td { border-bottom: 0; }
 
-      /* ========== TOAST (feedback de download) ========== */
+      .status-tag { padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; }
+      .status-tag.ok   { background: var(--green-bg); color: var(--green); }
+      .status-tag.warn { background: var(--sand-bg); color: var(--sand); }
+      .status-tag.bad  { background: var(--rose-bg); color: var(--rose); }
+      .status-tag.info { background: var(--primary-light); color: var(--primary); }
+
       .toast {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: var(--text-main);
-        color: #fff;
-        padding: 14px 22px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        transform: translateY(100px);
-        opacity: 0;
-        transition: 0.3s;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        position: fixed; bottom: 30px; right: 30px; background: var(--text-main); color: #fff;
+        padding: 14px 22px; border-radius: 10px; font-size: 14px; font-weight: 600;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); transform: translateY(100px); opacity: 0;
+        transition: 0.3s; z-index: 9999; display: flex; align-items: center; gap: 10px;
       }
-      .toast.show {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      .toast.error {
-        background: var(--rose);
-      }
-      .toast.success {
-        background: var(--green);
-      }
+      .toast.show { transform: translateY(0); opacity: 1; }
+      .toast.error { background: var(--rose); }
+      .toast.success { background: var(--green); }
 
-      /* ========== BOTÃO "GERAR TODOS" ========== */
       .gerar-todos {
-        background: var(--primary-gradient);
-        color: #fff;
-        padding: 14px 22px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: 0.25s;
-        box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25);
+        background: var(--primary-gradient); color: #fff; padding: 14px 22px; border-radius: 10px;
+        font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;
+        transition: 0.25s; box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25);
       }
-      .gerar-todos:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(0, 102, 179, 0.35);
-      }
-      .gerar-todos i {
-        font-size: 16px;
-      }
+      .gerar-todos:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 102, 179, 0.35); }
 
-      /* ========== TABS ========== */
       .tabs {
-        display: flex;
-        gap: 4px;
-        background: var(--bg-soft);
-        padding: 4px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        margin-bottom: 18px;
-        width: fit-content;
-        flex-wrap: wrap;
+        display: flex; gap: 4px; background: var(--bg-soft); padding: 4px; border-radius: 12px;
+        border: 1px solid var(--border); margin-bottom: 18px; width: fit-content; flex-wrap: wrap;
       }
       .tab {
-        padding: 8px 18px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        transition: 0.2s;
-        background: transparent;
-        border: none;
+        padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+        color: var(--text-secondary); transition: 0.2s; background: transparent; border: none;
       }
-      .tab:hover {
-        background: var(--bg-card);
-        color: var(--text-main);
-      }
-      .tab.active {
-        background: var(--bg-card);
-        color: var(--primary);
-        box-shadow: 0 2px 6px rgba(0, 40, 80, 0.06);
-      }
-      .tab-content {
-        display: none;
-      }
-      .tab-content.active {
-        display: block;
-        animation: fadeIn 0.2s ease;
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(4px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
+      .tab:hover { background: var(--bg-card); color: var(--text-main); }
+      .tab.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 6px rgba(0, 40, 80, 0.06); }
+      .tab-content { display: none; }
+      .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-      /* ========== HISTÓRICO - LOG MELHORADO ========== */
       .log-area {
-        margin-top: 14px;
-        padding: 14px;
-        background: var(--bg-soft);
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        max-height: 320px;
-        overflow-y: auto;
-        font-size: 13px;
-        color: var(--text-secondary);
+        margin-top: 14px; padding: 14px; background: var(--bg-soft); border-radius: 10px;
+        border: 1px solid var(--border); max-height: 320px; overflow-y: auto;
+        font-size: 13px; color: var(--text-secondary);
       }
       .log-area .linha {
-        padding: 8px 10px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border-bottom: 1px solid var(--border);
-        transition: 0.15s;
-        cursor: default;
-        border-radius: 6px;
+        padding: 8px 10px; display: flex; align-items: center; gap: 12px;
+        border-bottom: 1px solid var(--border); transition: 0.15s; cursor: default; border-radius: 6px;
       }
-      .log-area .linha:hover {
-        background: var(--bg-card);
-      }
-      .log-area .linha:last-child {
-        border-bottom: 0;
-      }
-      .log-area .linha .hora {
-        color: var(--primary);
-        font-weight: 600;
-        white-space: nowrap;
-        font-size: 12px;
-        min-width: 160px;
-      }
-      .log-area .linha .usuario {
-        color: var(--text-muted);
-        font-weight: 500;
-        font-size: 12px;
-        min-width: 80px;
-      }
-      .log-area .linha .descricao {
-        flex: 1;
-        color: var(--text-main);
-      }
+      .log-area .linha:hover { background: var(--bg-card); }
+      .log-area .linha:last-child { border-bottom: 0; }
+      .log-area .linha .hora { color: var(--primary); font-weight: 600; white-space: nowrap; font-size: 12px; min-width: 160px; }
+      .log-area .linha .usuario { color: var(--text-muted); font-weight: 500; font-size: 12px; min-width: 80px; }
+      .log-area .linha .descricao { flex: 1; color: var(--text-main); }
       .log-area .linha .registros {
-        font-size: 11px;
-        color: var(--text-muted);
-        background: var(--bg-soft);
-        padding: 2px 10px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        white-space: nowrap;
+        font-size: 11px; color: var(--text-muted); background: var(--bg-soft);
+        padding: 2px 10px; border-radius: 12px; border: 1px solid var(--border); white-space: nowrap;
       }
       .log-area .linha .btn-redownload {
-        background: transparent;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 4px 12px;
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        transition: 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        cursor: pointer;
+        background: transparent; border: 1px solid var(--border); border-radius: 8px;
+        padding: 4px 12px; font-size: 11px; font-weight: 600; color: var(--text-secondary);
+        transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
       }
-      .log-area .linha .btn-redownload:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        background: var(--primary-light);
-      }
-      .log-area .linha .btn-redownload i {
-        font-size: 11px;
-      }
-      .log-area .empty {
-        text-align: center;
-        color: var(--text-muted);
-        padding: 24px;
-        font-style: italic;
-      }
+      .log-area .linha .btn-redownload:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+      .log-area .empty { text-align: center; color: var(--text-muted); padding: 24px; font-style: italic; }
 
-      /* ========== RESPONSIVIDADE ========== */
-      @media (max-width: 1100px) {
-        .filtros {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
+      @media (max-width: 1100px) { .filtros { grid-template-columns: repeat(2, 1fr); } }
       @media (max-width: 768px) {
-        .content {
-          padding: 18px 16px;
-        }
-        .filtros {
-          grid-template-columns: 1fr;
-        }
-        .page-header {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .preview-selector {
-          flex-direction: column;
-          align-items: stretch;
-        }
-        .preview-actions {
-          margin-left: 0;
-          justify-content: stretch;
-        }
-        .preview-actions .btn-export {
-          flex: 1;
-        }
-        .tabs {
-          width: 100%;
-          justify-content: stretch;
-        }
-        .tab {
-          flex: 1;
-          text-align: center;
-          font-size: 12px;
-          padding: 8px 10px;
-        }
-        .log-area .linha {
-          flex-wrap: wrap;
-          gap: 4px;
-        }
-        .log-area .linha .hora {
-          min-width: 120px;
-          font-size: 11px;
-        }
-        .log-area .linha .usuario {
-          min-width: 60px;
-          font-size: 11px;
-        }
-        .log-area .linha .btn-redownload {
-          padding: 2px 8px;
-          font-size: 10px;
-        }
+        .content { padding: 18px 16px; }
+        .filtros { grid-template-columns: 1fr; }
+        .page-header { flex-direction: column; align-items: flex-start; }
+        .preview-selector { flex-direction: column; align-items: stretch; }
+        .preview-actions { margin-left: 0; justify-content: stretch; }
+        .preview-actions .btn-export { flex: 1; }
+        .tabs { width: 100%; justify-content: stretch; }
+        .tab { flex: 1; text-align: center; font-size: 12px; padding: 8px 10px; }
+        .log-area .linha { flex-wrap: wrap; gap: 4px; }
       }
-      /* ===== Mais contraste / vida na paleta ===== */
-:root {
-  --neutral: #2f6fb0; --neutral-bg: #d7e6f7;
-  --slate:   #34517a; --slate-bg:   #d9e2ef;
-  --teal:    #1f8a7e; --teal-bg:    #cdeae5;
-  --sand:    #c17d2e; --sand-bg:    #f5e2c2;
-  --rose:    #c0454f; --rose-bg:    #f6d9db;
-  --green:   #2f9e5c; --green-bg:   #d3f0dd;
-
-  --border: #d3e0ee;           /* era #e2ecf6, quase invisível */
-  --shadow-card: 0 2px 6px rgba(0, 40, 80, 0.08), 0 8px 20px rgba(0, 40, 80, 0.05);
-}
-
-/* Ícones dos cards com fundo sólido em vez de tint pastel */
-.relatorio-icone { color: #fff !important; }
-.relatorio-card.neutral .relatorio-icone { background: var(--neutral) !important; }
-.relatorio-card.slate .relatorio-icone   { background: var(--slate) !important; }
-.relatorio-card.teal .relatorio-icone    { background: var(--teal) !important; }
-.relatorio-card.sand .relatorio-icone    { background: var(--sand) !important; }
-.relatorio-card.rose .relatorio-icone    { background: var(--rose) !important; }
-
-/* Título do card com mais peso */
-.relatorio-titulo { color: var(--text-main) !important; }
-
-/* Borda esquerda colorida pra identificar a categoria de longe */
-.relatorio-card { border-left: 4px solid var(--border) !important; }
-.relatorio-card.neutral { border-left-color: var(--neutral) !important; }
-.relatorio-card.slate   { border-left-color: var(--slate) !important; }
-.relatorio-card.teal    { border-left-color: var(--teal) !important; }
-.relatorio-card.sand    { border-left-color: var(--sand) !important; }
-.relatorio-card.rose    { border-left-color: var(--rose) !important; }
     </style>
-      <script src="JS/auth-guard.js"></script>
+    <script src="JS/auth-guard.js"></script>
   </head>
   <body>
-    <!-- SIDEBAR -->
     <div id="sidebar-root"></div>
 
-    <!-- MAIN -->
     <div class="main-wrapper">
-      <!-- HEADER -->
       <div id="header-root"></div>
 
-      <!-- CONTEÚDO -->
       <main class="content" role="main">
-
         <!-- Filtros -->
         <section class="card">
           <div class="card-header">
@@ -955,112 +355,64 @@
         <!-- ABA 1: GERAR -->
         <div class="tab-content active" id="tab-gerar">
           <div class="relatorios-grid">
-            <!-- Produção -->
             <div class="relatorio-card teal">
               <div class="card-top">
-                <div class="relatorio-icone">
-                  <i class="fas fa-industry"></i>
-                </div>
+                <div class="relatorio-icone"><i class="fas fa-industry"></i></div>
                 <div>
                   <div class="relatorio-titulo">Relatório de Produção</div>
-                  <div class="relatorio-descricao">
-                    Ordens de produção, quantidades e prazos por setor.
-                  </div>
+                  <div class="relatorio-descricao">Ordens de produção, quantidades e prazos por setor.</div>
                 </div>
               </div>
               <div class="card-body">
                 <div class="mini-stats">
-                  <div class="mini-stat destaque">
-                    <div class="valor">6</div>
-                    <div class="rotulo">OPs ativas</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="valor">7,2k</div>
-                    <div class="rotulo">unidades</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="valor">94%</div>
-                    <div class="rotulo">aproveit.</div>
-                  </div>
+                  <div class="mini-stat destaque"><div class="valor">6</div><div class="rotulo">OPs ativas</div></div>
+                  <div class="mini-stat"><div class="valor">7,2k</div><div class="rotulo">unidades</div></div>
+                  <div class="mini-stat"><div class="valor">94%</div><div class="rotulo">aproveit.</div></div>
                 </div>
-                <div class="chart-wrap">
-                  <canvas id="sparkProducao"></canvas>
-                </div>
+                <div class="chart-wrap"><canvas id="sparkProducao"></canvas></div>
               </div>
               <div class="card-footer">
                 <div class="relatorio-acoes">
-                  <button class="btn-export" data-tipo="producao" data-formato="pdf">
-                    <i class="fas fa-file-pdf"></i> PDF
-                  </button>
-                  <button class="btn-export" data-tipo="producao" data-formato="excel">
-                    <i class="fas fa-file-excel"></i> Excel
-                  </button>
-
+                  <button class="btn-export" data-tipo="producao" data-formato="pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                  <button class="btn-export" data-tipo="producao" data-formato="excel"><i class="fas fa-file-excel"></i> Excel</button>
                 </div>
               </div>
             </div>
 
-            <!-- Pedidos -->
             <div class="relatorio-card sand">
               <div class="card-top">
-                <div class="relatorio-icone">
-                  <i class="fas fa-clipboard-list"></i>
-                </div>
+                <div class="relatorio-icone"><i class="fas fa-clipboard-list"></i></div>
                 <div>
                   <div class="relatorio-titulo">Relatório de Pedidos</div>
-                  <div class="relatorio-descricao">
-                    Pedidos em aberto, concluídos, atrasados e por cliente.
-                  </div>
+                  <div class="relatorio-descricao">Pedidos em aberto, concluídos, atrasados e por cliente.</div>
                 </div>
               </div>
               <div class="card-body">
                 <div class="mini-stats">
-                  <div class="mini-stat destaque">
-                    <div class="valor">6</div>
-                    <div class="rotulo">pedidos</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="valor">R$ 40,5k</div>
-                    <div class="rotulo">total</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="valor">2</div>
-                    <div class="rotulo">atrasos</div>
-                  </div>
+                  <div class="mini-stat destaque"><div class="valor">6</div><div class="rotulo">pedidos</div></div>
+                  <div class="mini-stat"><div class="valor">R$ 40,5k</div><div class="rotulo">total</div></div>
+                  <div class="mini-stat"><div class="valor">2</div><div class="rotulo">atrasos</div></div>
                 </div>
-                <div class="chart-wrap">
-                  <canvas id="sparkPedidos"></canvas>
-                </div>
+                <div class="chart-wrap"><canvas id="sparkPedidos"></canvas></div>
               </div>
               <div class="card-footer">
                 <div class="relatorio-acoes">
-                  <button class="btn-export" data-tipo="pedidos" data-formato="pdf">
-                    <i class="fas fa-file-pdf"></i> PDF
-                  </button>
-                  <button class="btn-export" data-tipo="pedidos" data-formato="excel">
-                    <i class="fas fa-file-excel"></i> Excel
-                  </button>
+                  <button class="btn-export" data-tipo="pedidos" data-formato="pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                  <button class="btn-export" data-tipo="pedidos" data-formato="excel"><i class="fas fa-file-excel"></i> Excel</button>
                 </div>
               </div>
             </div>
 
-            <!-- Estoque -->
             <div class="relatorio-card slate">
               <div class="card-top">
-                <div class="relatorio-icone">
-                  <i class="fas fa-warehouse"></i>
-                </div>
+                <div class="relatorio-icone"><i class="fas fa-warehouse"></i></div>
                 <div>
                   <div class="relatorio-titulo">Relatório de Estoque</div>
-                  <div class="relatorio-descricao">
-                    Posição de estoque, itens críticos, mínimos e máximos.
-                  </div>
+                  <div class="relatorio-descricao">Posição de estoque, itens críticos, mínimos e máximos.</div>
                 </div>
               </div>
               <div class="card-body">
-                <div class="donut-wrap">
-                  <canvas id="chartEstoque"></canvas>
-                </div>
+                <div class="donut-wrap"><canvas id="chartEstoque"></canvas></div>
                 <div class="donut-legenda">
                   <span><i style="background:#3d5f7e;"></i>Normal · 3</span>
                   <span><i style="background:#a88555;"></i>Baixo · 1</span>
@@ -1069,121 +421,69 @@
               </div>
               <div class="card-footer">
                 <div class="relatorio-acoes">
-                  <button class="btn-export" data-tipo="estoque" data-formato="pdf">
-                    <i class="fas fa-file-pdf"></i> PDF
-                  </button>
-                  <button class="btn-export" data-tipo="estoque" data-formato="excel">
-                    <i class="fas fa-file-excel"></i> Excel
-                  </button>
-
+                  <button class="btn-export" data-tipo="estoque" data-formato="pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                  <button class="btn-export" data-tipo="estoque" data-formato="excel"><i class="fas fa-file-excel"></i> Excel</button>
                 </div>
               </div>
             </div>
 
-            <!-- Logística -->
             <div class="relatorio-card neutral">
               <div class="card-top">
-                <div class="relatorio-icone">
-                  <i class="fas fa-truck"></i>
-                </div>
+                <div class="relatorio-icone"><i class="fas fa-truck"></i></div>
                 <div>
                   <div class="relatorio-titulo">Relatório de Logística</div>
-                  <div class="relatorio-descricao">
-                    Entregas, rotas, prazos e ocorrências de transporte.
-                  </div>
+                  <div class="relatorio-descricao">Entregas, rotas, prazos e ocorrências de transporte.</div>
                 </div>
               </div>
               <div class="card-body">
                 <div class="mini-stats">
-                  <div class="mini-stat destaque">
-                    <div class="valor">5</div>
-                    <div class="rotulo">rotas</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="valor">2</div>
-                    <div class="rotulo">em rota</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="valor">1</div>
-                    <div class="rotulo">atraso</div>
-                  </div>
+                  <div class="mini-stat destaque"><div class="valor">5</div><div class="rotulo">rotas</div></div>
+                  <div class="mini-stat"><div class="valor">2</div><div class="rotulo">em rota</div></div>
+                  <div class="mini-stat"><div class="valor">1</div><div class="rotulo">atraso</div></div>
                 </div>
-                <div class="chart-wrap">
-                  <canvas id="sparkLogistica"></canvas>
-                </div>
+                <div class="chart-wrap"><canvas id="sparkLogistica"></canvas></div>
               </div>
               <div class="card-footer">
                 <div class="relatorio-acoes">
-                  <button class="btn-export" data-tipo="logistica" data-formato="pdf">
-                    <i class="fas fa-file-pdf"></i> PDF
-                  </button>
-                  <button class="btn-export" data-tipo="logistica" data-formato="excel">
-                    <i class="fas fa-file-excel"></i> Excel
-                  </button>
-
+                  <button class="btn-export" data-tipo="logistica" data-formato="pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                  <button class="btn-export" data-tipo="logistica" data-formato="excel"><i class="fas fa-file-excel"></i> Excel</button>
                 </div>
               </div>
             </div>
 
-            <!-- Desempenho -->
             <div class="relatorio-card rose">
               <div class="card-top">
-                <div class="relatorio-icone">
-                  <i class="fas fa-chart-line"></i>
-                </div>
+                <div class="relatorio-icone"><i class="fas fa-chart-line"></i></div>
                 <div>
                   <div class="relatorio-titulo">Relatório de Desempenho</div>
-                  <div class="relatorio-descricao">
-                    KPIs operacionais, OEE, gargalos e produtividade por período.
-                  </div>
+                  <div class="relatorio-descricao">KPIs operacionais, OEE, gargalos e produtividade por período.</div>
                 </div>
               </div>
               <div class="card-body">
-                <div class="bar-wrap">
-                  <canvas id="chartDesempenho"></canvas>
-                </div>
+                <div class="bar-wrap"><canvas id="chartDesempenho"></canvas></div>
               </div>
               <div class="card-footer">
                 <div class="relatorio-acoes">
-                  <button class="btn-export" data-tipo="desempenho" data-formato="pdf">
-                    <i class="fas fa-file-pdf"></i> PDF
-                  </button>
-                  <button class="btn-export" data-tipo="desempenho" data-formato="excel">
-                    <i class="fas fa-file-excel"></i> Excel
-                  </button>
-
+                  <button class="btn-export" data-tipo="desempenho" data-formato="pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                  <button class="btn-export" data-tipo="desempenho" data-formato="excel"><i class="fas fa-file-excel"></i> Excel</button>
                 </div>
               </div>
             </div>
 
-            <!-- Consolidado -->
             <div class="relatorio-card primary">
               <span class="relatorio-tag" style="background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.3);">Tudo em 1 PDF</span>
               <div class="card-top">
-                <div class="relatorio-icone">
-                  <i class="fas fa-layer-group"></i>
-                </div>
+                <div class="relatorio-icone"><i class="fas fa-layer-group"></i></div>
                 <div>
                   <div class="relatorio-titulo">Relatório Consolidado</div>
-                  <div class="relatorio-descricao">
-                    Um único PDF com todas as áreas — ideal para gestão e auditoria.
-                  </div>
+                  <div class="relatorio-descricao">Um único PDF com todas as áreas — ideal para gestão e auditoria.</div>
                 </div>
               </div>
               <div class="card-body">
                 <div class="mini-stats" style="grid-template-columns: repeat(5, 1fr);">
-                  <div class="mini-stat destaque" style="background: var(--primary-light);">
-                    <div class="valor">5</div>
-                    <div class="rotulo">áreas</div>
-                  </div>
-                  <div class="mini-stat" style="background: var(--primary-light);">
-                    <div class="valor">27</div>
-                    <div class="rotulo">registros</div>
-                  </div>
-                  <div class="mini-stat" style="background: var(--primary-light);">
-                    <div class="valor">100%</div>
-                    <div class="rotulo">cobert.</div>
-                  </div>
+                  <div class="mini-stat destaque" style="background: var(--primary-light);"><div class="valor">5</div><div class="rotulo">áreas</div></div>
+                  <div class="mini-stat" style="background: var(--primary-light);"><div class="valor">27</div><div class="rotulo">registros</div></div>
+                  <div class="mini-stat" style="background: var(--primary-light);"><div class="valor">100%</div><div class="rotulo">cobert.</div></div>
                 </div>
               </div>
               <div class="card-footer">
@@ -1196,7 +496,6 @@
             </div>
           </div>
 
-          <!-- Botão gerar todos -->
           <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
             <button class="gerar-todos" id="gerarTodosBtn">
               <i class="fas fa-download"></i> Gerar todos em PDF
@@ -1204,15 +503,14 @@
           </div>
         </div>
 
-        <!-- ABA 2: PRÉ-VISUALIZAÇÃO (CORRIGIDA) -->
+        <!-- ABA 2: PRÉ-VISUALIZAÇÃO -->
         <div class="tab-content" id="tab-preview">
           <section class="card">
             <div class="card-header">
               <h3><i class="fas fa-table"></i> Pré-visualização dos dados</h3>
               <span class="badge-soft" id="previewContador">— registros</span>
             </div>
-            
-            <!-- SELETOR DE RELATÓRIO + BOTÕES DE EXPORTAÇÃO -->
+
             <div class="preview-selector">
               <label for="previewTipo">
                 <i class="fas fa-chevron-right" style="color:var(--primary);"></i>
@@ -1226,15 +524,9 @@
                 <option value="desempenho">Relatório de Desempenho</option>
               </select>
               <div class="preview-actions">
-                <button class="btn-export" id="previewExportPdf" data-formato="pdf">
-                  <i class="fas fa-file-pdf"></i> Exportar PDF
-                </button>
-                <button class="btn-export" id="previewExportExcel" data-formato="excel">
-                  <i class="fas fa-file-excel"></i> Exportar Excel
-                </button>
-                <button class="btn-export" id="previewExportCsv" data-formato="csv">
-                  <i class="fas fa-file-csv"></i> Exportar CSV
-                </button>
+                <button class="btn-export" id="previewExportPdf" data-formato="pdf"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+                <button class="btn-export" id="previewExportExcel" data-formato="excel"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                <button class="btn-export" id="previewExportCsv" data-formato="csv"><i class="fas fa-file-csv"></i> Exportar CSV</button>
               </div>
             </div>
 
@@ -1247,7 +539,7 @@
           </section>
         </div>
 
-        <!-- ABA 3: HISTÓRICO (CORRIGIDA) -->
+        <!-- ABA 3: HISTÓRICO -->
         <div class="tab-content" id="tab-historico">
           <section class="card">
             <div class="card-header">
@@ -1256,24 +548,19 @@
                 <i class="fas fa-trash"></i> Limpar
               </button>
             </div>
-            <div class="log-area" id="logArea">
-              <!-- Preenchido via JS -->
-            </div>
+            <div class="log-area" id="logArea"></div>
           </section>
         </div>
       </main>
 
-      <!-- FOOTER -->
       <div id="footer-root"></div>
     </div>
 
-    <!-- TOAST -->
     <div class="toast" id="toast">
       <i class="fas fa-check-circle"></i>
       <span id="toastTexto">Download iniciado</span>
     </div>
 
-    <!-- Componentes -->
     <script src="components/js/header.js"></script>
     <script src="components/js/sidebar.js"></script>
     <script src="components/js/chat.js"></script>
@@ -1281,15 +568,11 @@
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
 
-    <!-- Lógica completa da página -->
     <script>
       /* ================================================================
          RELATÓRIOS - LÓGICA COMPLETA
          ================================================================ */
 
-      // ================================================================
-      // 1. DADOS DE EXEMPLO (com datas no formato BR padronizado)
-      // ================================================================
       const DADOS_PREVIEW = {
         pedidos: {
           colunas: ['Nº Pedido', 'Cliente', 'Produto', 'Qtd.', 'Data Pedido', 'Data Entrega', 'Status'],
@@ -1326,7 +609,7 @@
           linhas: [
             ['R-001', 'João Silva', 'ABC-1234', 'Importadora Global Insumos', '05/08/2026', '20/08/2026', 'Entregue'],
             ['R-002', 'Marcos Souza', 'XYZ-5678', 'Rolamentos & Cia Indústria', '10/08/2026', '25/08/2026', 'Em rota'],
-            ['R-003', 'Ana Paula Rocha', 'JKL-9012', 'Metalúrgica Silva Ltda ', '15/08/2026', '22/08/2026', 'Em rota'],
+            ['R-003', 'Ana Paula Rocha', 'JKL-9012', 'Metalúrgica Silva Ltda', '15/08/2026', '22/08/2026', 'Em rota'],
             ['R-004', 'Carlos Lima', 'ABC-1234', 'Ferramentas & Moldes Brasil', '18/08/2026', '28/08/2026', 'Pendente'],
           ]
         },
@@ -1340,9 +623,6 @@
         }
       };
 
-      // ================================================================
-      // 2. ESTADO DO HISTÓRICO
-      // ================================================================
       const HISTORICO_KEY = 'stocklog_historico_v1';
       let historico = [];
 
@@ -1351,7 +631,6 @@
           const saved = localStorage.getItem(HISTORICO_KEY);
           historico = saved ? JSON.parse(saved) : [];
           if (historico.length === 0) {
-            // Dados iniciais de exemplo
             const agora = new Date();
             const dataStr = formatarDataHora(agora);
             historico = [
@@ -1361,9 +640,7 @@
             ];
             salvarHistorico();
           }
-        } catch (e) {
-          historico = [];
-        }
+        } catch (e) { historico = []; }
         renderizarHistorico();
       }
 
@@ -1385,14 +662,14 @@
       function adicionarHistorico(tipo, formato, registros) {
         const now = new Date();
         const dataStr = formatarDataHora(now);
-        const usuario = 'Admin'; // Poderia ser dinâmico
+        const usuario = 'Admin';
         const novo = {
           id: 'h' + Date.now().toString(36),
           data: dataStr,
-          usuario: usuario,
-          tipo: tipo,
-          formato: formato,
-          registros: registros
+          usuario,
+          tipo,
+          formato,
+          registros
         };
         historico.unshift(novo);
         if (historico.length > 50) historico.pop();
@@ -1410,9 +687,7 @@
           <div class="linha">
             <span class="hora"><i class="far fa-clock"></i> ${item.data}</span>
             <span class="usuario"><i class="fas fa-user"></i> ${item.usuario}</span>
-            <span class="descricao">
-              <strong>${item.tipo}</strong> gerado em <strong>${item.formato}</strong>
-            </span>
+            <span class="descricao"><strong>${item.tipo}</strong> gerado em <strong>${item.formato}</strong></span>
             <span class="registros">${item.registros} registros</span>
             <button class="btn-redownload" data-id="${item.id}" title="Re-baixar este arquivo">
               <i class="fas fa-download"></i> Baixar novamente
@@ -1420,7 +695,6 @@
           </div>
         `).join('');
 
-        // Eventos de re-download
         area.querySelectorAll('.btn-redownload').forEach(btn => {
           btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1428,7 +702,6 @@
             const item = historico.find(h => h.id === id);
             if (item) {
               showToast(`Re-baixando: ${item.tipo} (${item.formato})`, 'success');
-              // Simula re-download
               setTimeout(() => {
                 showToast(`Arquivo ${item.tipo}.${item.formato.toLowerCase()} baixado novamente!`, 'success');
               }, 800);
@@ -1437,28 +710,21 @@
         });
       }
 
-      // ================================================================
-      // 3. PRÉ-VISUALIZAÇÃO
-      // ================================================================
       function renderizarPreview(tipo) {
         const dados = DADOS_PREVIEW[tipo];
         if (!dados) return;
 
-        // Cabeçalho
         const thead = document.getElementById('previewThead');
         thead.innerHTML = `<tr>${dados.colunas.map(c => `<th>${c}</th>`).join('')}</tr>`;
 
-        // Corpo
         const tbody = document.getElementById('previewTbody');
         tbody.innerHTML = dados.linhas.map(linha => {
           const cells = linha.map((valor, idx) => {
-            // Aplica status tags nas colunas de Status
             if (idx === dados.colunas.length - 1) {
               let cls = 'info';
-              if (valor === 'Concluído' || valor === 'Entregue') cls = 'ok';
-              else if (valor === 'Pendente') cls = 'warn';
-              else if (valor === 'Crítico' || valor === 'Baixo') cls = 'bad';
-              else if (valor === 'Em andamento' || valor === 'Em rota') cls = 'info';
+              if (valor === 'Concluído' || valor === 'Entregue' || valor === 'Normal') cls = 'ok';
+              else if (valor === 'Pendente' || valor === 'Baixo') cls = 'warn';
+              else if (valor === 'Crítico') cls = 'bad';
               return `<td><span class="status-tag ${cls}">${valor}</span></td>`;
             }
             return `<td>${valor}</td>`;
@@ -1466,13 +732,9 @@
           return `<tr>${cells.join('')}</tr>`;
         }).join('');
 
-        // Atualiza contador
         document.getElementById('previewContador').textContent = `${dados.linhas.length} registros`;
       }
 
-      // ================================================================
-      // 4. TABS
-      // ================================================================
       function initTabs() {
         document.querySelectorAll('.tab').forEach(tab => {
           tab.addEventListener('click', function() {
@@ -1485,9 +747,6 @@
         });
       }
 
-      // ================================================================
-      // 5. EXPORTAÇÃO (PDF, Excel, CSV)
-      // ================================================================
       function getDadosParaExportar(tipo) {
         const dados = DADOS_PREVIEW[tipo];
         if (!dados) return null;
@@ -1498,12 +757,221 @@
         };
       }
 
+      /* ================================================================
+         EXPORTAÇÃO PDF
+         ================================================================ */
+      function exportarPDF(tipo) {
+        const data = getDadosParaExportar(tipo);
+        if (!data) return;
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'pt', 'a4');
+
+        doc.setFontSize(16);
+        doc.setTextColor(10, 31, 51);
+        doc.text(`Relatório de ${data.nome} - StockLog`, 40, 50);
+        doc.setFontSize(10);
+        doc.setTextColor(123, 146, 178);
+        doc.text(`Gerado em: ${formatarDataHora(new Date())}`, 40, 68);
+        doc.line(40, 78, 560, 78);
+
+        doc.autoTable({
+          head: [data.headers],
+          body: data.rows,
+          startY: 90,
+          margin: { left: 40, right: 40 },
+          styles: { fontSize: 10, cellPadding: 6, textColor: [10, 31, 51] },
+          headStyles: { fillColor: [0, 107, 179], textColor: [255, 255, 255], fontSize: 10, fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [245, 250, 255] },
+        });
+
+        const nomeArquivo = `Relatorio_${data.nome}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(nomeArquivo);
+
+        adicionarHistorico(data.nome, 'PDF', data.rows.length);
+        showToast(`PDF do relatório de ${data.nome} baixado!`, 'success');
+      }
+
+      /* ================================================================
+         EXPORTAÇÃO EXCEL — VERSÃO ESTILIZADA (xlsx-js-style)
+         Cabeçalho azul, texto branco, zebra, bordas e larguras.
+         ================================================================ */
+      function exportarExcel(tipo) {
+        const data = getDadosParaExportar(tipo);
+        if (!data) return;
+
+        // ===== 1. Monta a matriz de células =====
+        // Linha 0: Título | Linha 1: data | Linha 2: vazia | Linha 3: cabeçalho | Linhas 4+: dados
+        const aoa = [
+          [`Relatório de ${data.nome} — StockLog`],           // A1 (mesclada)
+          [`Gerado em: ${formatarDataHora(new Date())}`],     // A2 (mesclada)
+          [],                                                  // linha vazia
+          data.headers,                                        // cabeçalho
+          ...data.rows                                         // dados
+        ];
+
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+        const totalCols = data.headers.length;
+        const headerRowIndex = 3;
+        const firstDataRow = 4;
+        const lastDataRow = firstDataRow + data.rows.length - 1;
+
+        // ===== 2. Mescla o título e a data nas colunas =====
+        if (totalCols > 1) {
+          ws['!merges'] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: totalCols - 1 } },
+            { s: { r: 1, c: 0 }, e: { r: 1, c: totalCols - 1 } },
+          ];
+        }
+
+        // ===== 3. Larguras de coluna automáticas =====
+        const colWidths = data.headers.map((header, colIdx) => {
+          // Calcula o maior comprimento entre o cabeçalho e os valores da coluna
+          let maxLen = String(header).length;
+          data.rows.forEach(row => {
+            const v = row[colIdx];
+            const len = v != null ? String(v).length : 0;
+            if (len > maxLen) maxLen = len;
+          });
+          // Padding extra para ficar confortável
+          return { wch: Math.min(Math.max(maxLen + 4, 12), 42) };
+        });
+        ws['!cols'] = colWidths;
+
+        // ===== 4. Alturas de linha (título e cabeçalho maiores) =====
+        ws['!rows'] = [];
+        ws['!rows'][0] = { hpt: 26 };  // título
+        ws['!rows'][1] = { hpt: 16 };  // subtítulo
+        ws['!rows'][2] = { hpt: 8 };   // linha vazia
+        ws['!rows'][headerRowIndex] = { hpt: 22 }; // cabeçalho
+
+        // ===== 5. Função helper para gerar estilo de célula =====
+        const border = {
+          top:    { style: 'thin', color: { rgb: 'D3E0EE' } },
+          bottom: { style: 'thin', color: { rgb: 'D3E0EE' } },
+          left:   { style: 'thin', color: { rgb: 'D3E0EE' } },
+          right:  { style: 'thin', color: { rgb: 'D3E0EE' } },
+        };
+
+        // Título (mesclado) — azul escuro, branco, bold, centralizado
+        const titleCell = ws['A1'];
+        if (titleCell) {
+          titleCell.s = {
+            font: { bold: true, sz: 14, color: { rgb: 'FFFFFF' }, name: 'Calibri' },
+            fill: { fgColor: { rgb: '006BB3' } },
+            alignment: { horizontal: 'center', vertical: 'center' },
+            border,
+          };
+        }
+        // Subtítulo (mesclado) — cinza claro, itálico
+        const subtitleCell = ws['A2'];
+        if (subtitleCell) {
+          subtitleCell.s = {
+            font: { italic: true, sz: 10, color: { rgb: '3D5F7E' }, name: 'Calibri' },
+            fill: { fgColor: { rgb: 'F5FAFF' } },
+            alignment: { horizontal: 'center', vertical: 'center' },
+            border,
+          };
+        }
+
+        // Propaga o estilo para todas as células mescladas do título/subtítulo
+        // (o xlsx-js-style exige que cada célula mesclada tenha o mesmo estilo)
+        for (let c = 1; c < totalCols; c++) {
+          const refTop = XLSX.utils.encode_cell({ r: 0, c });
+          const refSub = XLSX.utils.encode_cell({ r: 1, c });
+          if (!ws[refTop]) ws[refTop] = { t: 's', v: '' };
+          if (!ws[refSub]) ws[refSub] = { t: 's', v: '' };
+          ws[refTop].s = titleCell.s;
+          ws[refSub].s = subtitleCell.s;
+        }
+
+        // Cabeçalho — fundo azul, texto branco, bold, centralizado
+        for (let c = 0; c < totalCols; c++) {
+          const ref = XLSX.utils.encode_cell({ r: headerRowIndex, c });
+          if (!ws[ref]) continue;
+          ws[ref].s = {
+            font: { bold: true, sz: 11, color: { rgb: 'FFFFFF' }, name: 'Calibri' },
+            fill: { fgColor: { rgb: '004D80' } },
+            alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+            border,
+          };
+        }
+
+        // Linhas de dados — zebra + bordas
+        for (let r = firstDataRow; r <= lastDataRow; r++) {
+          const isEven = (r - firstDataRow) % 2 === 0;
+          const fill = isEven ? 'FFFFFF' : 'F5FAFF';
+
+          for (let c = 0; c < totalCols; c++) {
+            const ref = XLSX.utils.encode_cell({ r, c });
+            if (!ws[ref]) {
+              ws[ref] = { t: 's', v: '' };
+            }
+            // Colunas numéricas alinhadas à direita
+            const valor = ws[ref].v;
+            const isNumeric = typeof valor === 'number' || (!isNaN(parseFloat(valor)) && isFinite(valor) && String(valor).trim() !== '');
+            ws[ref].s = {
+              font: { sz: 10, color: { rgb: '0A1F33' }, name: 'Calibri' },
+              fill: { fgColor: { rgb: fill } },
+              alignment: {
+                horizontal: isNumeric ? 'right' : 'left',
+                vertical: 'center',
+                wrapText: false,
+              },
+              border,
+            };
+          }
+        }
+
+        // ===== 6. Congela as primeiras linhas (título + cabeçalho) =====
+        ws['!freeze'] = { xSplit: 0, ySplit: headerRowIndex + 1 };
+
+        // ===== 7. Cria a pasta e salva =====
+        const wb = XLSX.utils.book_new();
+        // Nome da aba limitado a 31 caracteres (limite do Excel)
+        const sheetName = data.nome.substring(0, 31);
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+        const nomeArquivo = `Relatorio_${data.nome}_${new Date().toISOString().slice(0,10)}.xlsx`;
+        XLSX.writeFile(wb, nomeArquivo);
+
+        adicionarHistorico(data.nome, 'Excel', data.rows.length);
+        showToast(`Excel do relatório de ${data.nome} baixado!`, 'success');
+      }
+
+      /* ================================================================
+         EXPORTAÇÃO CSV
+         ================================================================ */
+      function exportarCSV(tipo) {
+        const data = getDadosParaExportar(tipo);
+        if (!data) return;
+
+        const headers = data.headers.join(';');
+        const rows = data.rows.map(row => row.join(';')).join('\n');
+        const csv = headers + '\n' + rows;
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Relatorio_${data.nome}_${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+        adicionarHistorico(data.nome, 'CSV', data.rows.length);
+        showToast(`CSV do relatório de ${data.nome} baixado!`, 'success');
+      }
+
+      /* ================================================================
+         CONSOLIDADO (PDF)
+         ================================================================ */
       function exportarConsolidadoPDF() {
         const tipos = ['pedidos', 'producao', 'estoque', 'logistica', 'desempenho'];
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('p', 'pt', 'a4');
 
-        // Capa / Cabeçalho Geral
         doc.setFontSize(22);
         doc.setTextColor(10, 31, 51);
         doc.text(`Relatório Consolidado Geral`, 40, 60);
@@ -1551,87 +1019,14 @@
         showToast(`Relatório Consolidado com ${totalRegistros} registros baixado!`, 'success');
       }
 
-      function exportarPDF(tipo) {
-
-        const data = getDadosParaExportar(tipo);
-        if (!data) return;
-        
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'pt', 'a4');
-        
-        // Título
-        doc.setFontSize(16);
-        doc.setTextColor(10, 31, 51);
-        doc.text(`Relatório de ${data.nome} - StockLog`, 40, 50);
-        doc.setFontSize(10);
-        doc.setTextColor(123, 146, 178);
-        doc.text(`Gerado em: ${formatarDataHora(new Date())}`, 40, 68);
-        doc.line(40, 78, 560, 78);
-        
-        // Tabela
-        doc.autoTable({
-          head: [data.headers],
-          body: data.rows,
-          startY: 90,
-          margin: { left: 40, right: 40 },
-          styles: { fontSize: 10, cellPadding: 6, textColor: [10, 31, 51] },
-          headStyles: { fillColor: [0, 107, 179], textColor: [255, 255, 255], fontSize: 10, fontStyle: 'bold' },
-          alternateRowStyles: { fillColor: [245, 250, 255] },
-        });
-        
-        const nomeArquivo = `Relatorio_${data.nome}_${new Date().toISOString().slice(0,10)}.pdf`;
-        doc.save(nomeArquivo);
-        
-        adicionarHistorico(data.nome, 'PDF', data.rows.length);
-        showToast(`PDF do relatório de ${data.nome} baixado!`, 'success');
-      }
-
-      function exportarExcel(tipo) {
-        const data = getDadosParaExportar(tipo);
-        if (!data) return;
-        
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet([data.headers, ...data.rows]);
-        XLSX.utils.book_append_sheet(wb, ws, 'Dados');
-        
-        const nomeArquivo = `Relatorio_${data.nome}_${new Date().toISOString().slice(0,10)}.xlsx`;
-        XLSX.writeFile(wb, nomeArquivo);
-        
-        adicionarHistorico(data.nome, 'Excel', data.rows.length);
-        showToast(`Excel do relatório de ${data.nome} baixado!`, 'success');
-      }
-
-      function exportarCSV(tipo) {
-        const data = getDadosParaExportar(tipo);
-        if (!data) return;
-        
-        // Cria conteúdo CSV
-        const headers = data.headers.join(';');
-        const rows = data.rows.map(row => row.join(';')).join('\n');
-        const csv = headers + '\n' + rows;
-        
-        // Download
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `Relatorio_${data.nome}_${new Date().toISOString().slice(0,10)}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-        
-        adicionarHistorico(data.nome, 'CSV', data.rows.length);
-        showToast(`CSV do relatório de ${data.nome} baixado!`, 'success');
-      }
-
-      // ================================================================
-      // 6. TOAST
-      // ================================================================
+      /* ================================================================
+         TOAST
+         ================================================================ */
       function showToast(mensagem, tipo = 'info') {
         const toast = document.getElementById('toast');
         const texto = document.getElementById('toastTexto');
         const icon = toast.querySelector('i');
-        
+
         texto.textContent = mensagem;
         toast.className = 'toast';
         if (tipo === 'success') {
@@ -1643,7 +1038,7 @@
         } else {
           icon.className = 'fas fa-info-circle';
         }
-        
+
         toast.classList.add('show');
         clearTimeout(toast._timeout);
         toast._timeout = setTimeout(() => {
@@ -1651,19 +1046,19 @@
         }, 3500);
       }
 
-      // ================================================================
-      // 7. GRÁFICOS (Chart.js)
-      // ================================================================
+      /* ================================================================
+         GRÁFICOS
+         ================================================================ */
       function initGraficos() {
-const C = {
-  teal:    "#1f8a7e",
-  sand:    "#c17d2e",
-  slate:   "#34517a",
-  neutral: "#2f6fb0",
-  rose:    "#c0454f",
-  primary: "#006bb3",
-  green:   "#2f9e5c",
-};
+        const C = {
+          teal:    "#1f8a7e",
+          sand:    "#c17d2e",
+          slate:   "#34517a",
+          neutral: "#2f6fb0",
+          rose:    "#c0454f",
+          primary: "#006bb3",
+          green:   "#2f9e5c",
+        };
         const LABELS_MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
         function mkLine(id, color, data) {
@@ -1688,17 +1083,7 @@ const C = {
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              plugins: { 
-                legend: { display: false }, 
-                tooltip: { 
-                  enabled: true,
-                  callbacks: {
-                    label: function(context) {
-                      return context.parsed.y;
-                    }
-                  }
-                } 
-              },
+              plugins: { legend: { display: false } },
               scales: {
                 x: { display: false },
                 y: { display: false, beginAtZero: true },
@@ -1725,17 +1110,7 @@ const C = {
               responsive: true,
               maintainAspectRatio: false,
               cutout: "65%",
-              plugins: { 
-                legend: { display: false }, 
-                tooltip: { 
-                  enabled: true,
-                  callbacks: {
-                    label: function(context) {
-                      return context.label + ': ' + context.parsed + ' itens';
-                    }
-                  }
-                } 
-              },
+              plugins: { legend: { display: false } },
             },
           });
         }
@@ -1757,17 +1132,7 @@ const C = {
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              plugins: { 
-                legend: { display: false }, 
-                tooltip: { 
-                  enabled: true,
-                  callbacks: {
-                    label: function(context) {
-                      return context.parsed.y + '%';
-                    }
-                  }
-                } 
-              },
+              plugins: { legend: { display: false } },
               scales: {
                 x: {
                   grid: { display: false },
@@ -1795,40 +1160,30 @@ const C = {
         mkBar("chartDesempenho");
       }
 
-      // ================================================================
-      // 8. INICIALIZAÇÃO
-      // ================================================================
+      /* ================================================================
+         INICIALIZAÇÃO
+         ================================================================ */
       document.addEventListener('DOMContentLoaded', function() {
-        // Tabs
         initTabs();
-        
-        // Histórico
         carregarHistorico();
-        
-        // Preview inicial (Pedidos)
+
         const previewSelect = document.getElementById('previewTipo');
         renderizarPreview(previewSelect.value);
-        
-        // Mudança no seletor de preview
+
         previewSelect.addEventListener('change', function() {
           renderizarPreview(this.value);
         });
-        
-        // Botões de exportação da pré-visualização
+
         document.getElementById('previewExportPdf').addEventListener('click', function() {
-          const tipo = document.getElementById('previewTipo').value;
-          exportarPDF(tipo);
+          exportarPDF(document.getElementById('previewTipo').value);
         });
         document.getElementById('previewExportExcel').addEventListener('click', function() {
-          const tipo = document.getElementById('previewTipo').value;
-          exportarExcel(tipo);
+          exportarExcel(document.getElementById('previewTipo').value);
         });
         document.getElementById('previewExportCsv').addEventListener('click', function() {
-          const tipo = document.getElementById('previewTipo').value;
-          exportarCSV(tipo);
+          exportarCSV(document.getElementById('previewTipo').value);
         });
-        
-        // Botões de exportação nos cards
+
         document.querySelectorAll('.btn-export[data-tipo]').forEach(btn => {
           btn.addEventListener('click', function() {
             const tipo = this.dataset.tipo;
@@ -1842,13 +1197,11 @@ const C = {
             else if (formato === 'csv') exportarCSV(tipo);
           });
         });
-        
-        // Gerar todos
+
         document.getElementById('gerarTodosBtn').addEventListener('click', function() {
           exportarConsolidadoPDF();
         });
-        
-        // Limpar histórico
+
         document.getElementById('limparHistoricoBtn').addEventListener('click', function() {
           if (confirm('Limpar todo o histórico de downloads?')) {
             historico = [];
@@ -1857,8 +1210,7 @@ const C = {
             showToast('Histórico limpo.', 'info');
           }
         });
-        
-        // Gráficos
+
         initGraficos();
       });
     </script>
