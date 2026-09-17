@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="components/css/modoescuro.css" />
     <link rel="stylesheet" href="components/css/responsive.css" />
 
+    <!-- jsPDF: usado para gerar a Ficha de Procedimento de Produção em PDF, direto no navegador -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
       :root {
         --bg-body: #f0f5fc;
@@ -617,6 +620,98 @@
         color: var(--red);
       }
 
+      /* ---------- Passo a passo (modal) ---------- */
+      .modal-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin: var(--sp-5) 0 var(--sp-3);
+      }
+      .modal-section-title i {
+        color: var(--primary);
+        font-size: 12px;
+      }
+
+      .steps-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp-3);
+      }
+
+      .step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: var(--sp-3);
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+
+      .step-number {
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        font-size: 11.5px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .step-text {
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: var(--text-main);
+        padding-top: 2px;
+      }
+
+      /* ---------- Ações do modal / botão de PDF ---------- */
+      .modal-actions {
+        margin-top: var(--sp-5);
+      }
+
+      .download-pdf-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--primary);
+        border: none;
+        border-radius: 10px;
+        padding: 13px 16px;
+        cursor: pointer;
+        transition:
+          filter 0.15s ease,
+          transform 0.1s ease;
+      }
+
+      .download-pdf-btn:hover {
+        filter: brightness(1.08);
+      }
+
+      .download-pdf-btn:active {
+        transform: translateY(1px);
+      }
+
+      .download-pdf-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .recipe-card,
         .recipe-image img,
@@ -663,6 +758,24 @@
           </div>
           <div class="ingredient-list" id="ingredientList">
             <!-- Ingredientes injetados via JS -->
+          </div>
+
+          <div class="modal-section-title">
+            <i class="fa-solid fa-list-ol"></i> Passo a passo de produção
+          </div>
+          <div class="steps-list" id="stepsList">
+            <!-- Passos injetados via JS -->
+          </div>
+
+          <div class="modal-actions">
+            <button
+              class="download-pdf-btn"
+              id="downloadPdfBtn"
+              onclick="generatePDF(currentModalRecipeId)"
+            >
+              <i class="fa-solid fa-file-arrow-down"></i>
+              Baixar Ficha de Procedimento (PDF)
+            </button>
           </div>
         </div>
       </div>

@@ -30,8 +30,32 @@ const CATEGORIES = {
   pneus:      { label: "Pneus e Borracha",     icon: "fa-solid fa-circle-notch" },
 };
 
+// Paleta de cores das categorias para uso no PDF (RGB 0-255), espelhando as
+// variáveis --cat-* do CSS (modo claro)
+const CATEGORY_COLORS_PDF = {
+  chapas:     { text: [69, 96, 125],   bg: [233, 238, 244] },
+  usinados:   { text: [109, 79, 163],  bg: [239, 233, 248] },
+  conexoes:   { text: [0, 107, 179],   bg: [225, 238, 251] },
+  fixacao:    { text: [196, 122, 31],  bg: [252, 243, 230] },
+  estrutural: { text: [71, 88, 107],   bg: [238, 241, 244] },
+  embalagem:  { text: [26, 123, 114],  bg: [230, 243, 241] },
+  pneus:      { text: [90, 74, 63],    bg: [239, 236, 231] },
+};
+
+const STATUS_COLORS_PDF = {
+  ready:   { text: [26, 123, 114],  bg: [230, 243, 241], label: "Pronto para produção" },
+  partial: { text: [196, 122, 31],  bg: [252, 243, 230], label: "Parcial" },
+  blocked: { text: [178, 67, 58],   bg: [250, 238, 237], label: "Bloqueado" },
+};
+
+const PRIMARY_PDF = [0, 107, 179];
+const TEXT_MAIN_PDF = [10, 31, 51];
+const TEXT_MUTED_PDF = [61, 95, 126];
+const BORDER_PDF = [226, 236, 246];
+
 // Definição de "Receitas" de Produção — cada uma com uma foto real representando o insumo/produto
 // qty agora em número + unidade, para conseguirmos comparar com o estoque
+// "steps" descreve o passo a passo de produção exibido no modal e no PDF
 const RECIPES = [
   {
     id: "chapa-01",
@@ -42,6 +66,14 @@ const RECIPES = [
     ingredients: [
       { codigo: "MP-1050", qty: 1,    unidade: "un", label: "Chapa de Aço Carbono 10mm" },
       { codigo: "CS-7040", qty: 0.3,  unidade: "kg", label: "Solda de Acabamento" },
+    ],
+    steps: [
+      "Verificar o programa de corte a laser e confirmar as dimensões conforme o desenho técnico.",
+      "Posicionar a chapa de aço carbono 10mm na mesa da máquina de corte a laser.",
+      "Executar o corte a laser seguindo o contorno programado.",
+      "Rebarbar as bordas cortadas para remover rebarbas e resíduos de corte.",
+      "Aplicar a solda de acabamento nos pontos indicados no desenho.",
+      "Inspecionar as dimensões finais com paquímetro e liberar para a próxima etapa.",
     ]
   },
   {
@@ -54,6 +86,14 @@ const RECIPES = [
       { codigo: "MP-1042", qty: 5, unidade: "kg", label: "Chapa Inox 304" },
       { codigo: "CP-3045", qty: 4, unidade: "un", label: "Parafusos de Fixação" },
       { codigo: "CP-3070", qty: 1, unidade: "un", label: "Anel de Vedação" },
+    ],
+    steps: [
+      "Selecionar a chapa de aço inox 304 e cortar o disco base conforme o diâmetro especificado.",
+      "Furar os 4 pontos de fixação na furadeira de bancada, seguindo o gabarito.",
+      "Usinar o rebaixo central para encaixe do tubo de ø50mm.",
+      "Instalar os parafusos de fixação nos furos usinados.",
+      "Posicionar o anel de vedação Viton na ranhura central.",
+      "Realizar o teste de estanqueidade e liberar a peça para expedição.",
     ]
   },
   {
@@ -65,6 +105,14 @@ const RECIPES = [
     ingredients: [
       { codigo: "MP-1120", qty: 2,   unidade: "kg", label: "Barra de Bronze TM23" },
       { codigo: "CS-7023", qty: 0.5, unidade: "L",  label: "Óleo de Usinagem" },
+    ],
+    steps: [
+      "Cortar a barra de bronze TM23 no comprimento necessário para o disco da engrenagem.",
+      "Fixar o material no torno CNC e usinar o diâmetro externo.",
+      "Aplicar óleo de usinagem durante todo o processo de corte, para resfriamento.",
+      "Fresar os 40 dentes conforme o módulo especificado no desenho.",
+      "Rebarbar e polir os dentes usinados.",
+      "Medir o passo e o diâmetro primitivo com equipamento de metrologia.",
     ]
   },
   {
@@ -76,6 +124,14 @@ const RECIPES = [
     ingredients: [
       { codigo: "CP-3011", qty: 100, unidade: "un", label: "Rolamento Blindado 6204-2RS" },
       { codigo: "MP-1120", qty: 1,   unidade: "kg", label: "Barra de Bronze TM23" },
+    ],
+    steps: [
+      "Usinar o corpo do mancal em barra de bronze TM23 conforme o desenho.",
+      "Furar o alojamento central com tolerância H7 para encaixe do rolamento.",
+      "Pressionar o rolamento blindado 6204-2RS no alojamento, usando prensa manual.",
+      "Verificar o giro livre do rolamento após a montagem.",
+      "Aplicar graxa nos pontos de lubrificação, quando aplicável.",
+      "Inspecionar a folga axial e liberar o conjunto.",
     ]
   },
   {
@@ -88,6 +144,13 @@ const RECIPES = [
       { codigo: "CP-3045", qty: 20, unidade: "un", label: "Parafuso Sextavado M8x30" },
       { codigo: "CP-3050", qty: 20, unidade: "un", label: "Porca Sextavada M8" },
       { codigo: "CP-3055", qty: 20, unidade: "un", label: "Arruela de Pressão M8" },
+    ],
+    steps: [
+      "Separar 20 unidades de cada item: parafuso M8x30, porca M8 e arruela de pressão M8.",
+      "Conferir a integridade da rosca de cada parafuso e porca.",
+      "Organizar os itens em kits individuais de fixação (1 parafuso + 1 porca + 1 arruela).",
+      "Embalar os kits em sacos plásticos identificados com etiqueta do lote.",
+      "Registrar a quantidade produzida no sistema de estoque.",
     ]
   },
   {
@@ -100,6 +163,14 @@ const RECIPES = [
       { codigo: "MP-1135", qty: 3,   unidade: "m",  label: "Perfil U Aço Galvanizado" },
       { codigo: "MP-1140", qty: 0.2, unidade: "L",  label: "Primer Anticorrosivo" },
       { codigo: "CP-3045", qty: 6,   unidade: "un", label: "Parafusos de Fixação" },
+    ],
+    steps: [
+      "Cortar o perfil U galvanizado nos 3 metros necessários, conforme o desenho.",
+      "Furar os pontos de fixação para os parafusos M8.",
+      "Aplicar o primer anticorrosivo nas áreas de corte e furação.",
+      "Aguardar a secagem do primer conforme especificação do fabricante.",
+      "Montar os parafusos de fixação nos furos preparados.",
+      "Inspecionar visualmente o acabamento e liberar para o estoque.",
     ]
   },
   {
@@ -111,6 +182,14 @@ const RECIPES = [
     ingredients: [
       { codigo: "EM-5020", qty: 1, unidade: "un", label: "Tambor Metálico Vazio" },
       { codigo: "EM-5030", qty: 2, unidade: "un", label: "Lacre de Segurança" },
+    ],
+    steps: [
+      "Inspecionar o tambor metálico vazio quanto a amassados ou corrosão.",
+      "Realizar o envase do insumo líquido conforme o volume especificado.",
+      "Posicionar a tampa do tambor e alinhar com o anel de vedação.",
+      "Aplicar os 2 lacres de segurança industrial na tampa.",
+      "Etiquetar o tambor com os dados do lote e a data de envase.",
+      "Armazenar em área designada, aguardando expedição.",
     ]
   },
   {
@@ -123,6 +202,14 @@ const RECIPES = [
       { codigo: "MP-1088", qty: 50, unidade: "kg", label: "Borracha ABS/Polímero" },
       { codigo: "MP-1042", qty: 10, unidade: "kg", label: "Reforço de Aço" },
       { codigo: "CS-7023", qty: 2,  unidade: "L",  label: "Lubrificante de Molde" },
+    ],
+    steps: [
+      "Pesar e preparar a mistura de borracha ABS/polímero conforme a formulação.",
+      "Aplicar o reforço de aço na carcaça do pneu durante a moldagem.",
+      "Lubrificar o molde com lubrificante próprio antes da prensagem.",
+      "Prensar e vulcanizar o pneu no molde aquecido, pelo tempo especificado.",
+      "Resfriar o pneu gradualmente após a vulcanização.",
+      "Inspecionar acabamento e balanceamento, e liberar para teste de qualidade.",
     ]
   },
   {
@@ -134,6 +221,13 @@ const RECIPES = [
     ingredients: [
       { codigo: "EM-5012", qty: 1,   unidade: "un",  label: "Caixa de Papelão" },
       { codigo: "MP-1102", qty: 100, unidade: "ml",  label: "Resina de Selagem" },
+    ],
+    steps: [
+      "Montar a caixa de papelão duplo conforme as dimensões do produto a proteger.",
+      "Aplicar a resina de selagem nas abas e junções da caixa.",
+      "Aguardar a cura da resina conforme o tempo indicado pelo fabricante.",
+      "Reforçar os cantos da caixa com fita adequada.",
+      "Inspecionar a resistência da embalagem antes da liberação.",
     ]
   }
 ];
@@ -265,9 +359,13 @@ function renderRecipes(filtro = "todas") {
   `;
 }
 
+// Guarda o id da receita atualmente aberta no modal (usado pelo botão de PDF)
+let currentModalRecipeId = null;
+
 function openRecipeModal(recipeId) {
   const recipe = RECIPES.find(r => r.id === recipeId);
   if (!recipe) return;
+  currentModalRecipeId = recipeId;
 
   document.getElementById('modalTitle').textContent = recipe.nome;
   document.getElementById('modalSubtitle').textContent = recipe.descricao;
@@ -313,11 +411,309 @@ function openRecipeModal(recipeId) {
     `;
   }).join('');
 
+  // Passo a passo de produção
+  const stepsEl = document.getElementById('stepsList');
+  if (stepsEl) {
+    const steps = recipe.steps || [];
+    stepsEl.innerHTML = steps.map((texto, i) => `
+      <div class="step-item">
+        <span class="step-number">${i + 1}</span>
+        <span class="step-text">${texto}</span>
+      </div>
+    `).join('');
+  }
+
   document.getElementById('recipeModal').classList.add('active');
 }
 
 function closeRecipeModal() {
   document.getElementById('recipeModal').classList.remove('active');
+  currentModalRecipeId = null;
+}
+
+/* ---------------------------------------------------------------
+   Geração de PDF — Ficha de Procedimento de Produção
+   Usa jsPDF (carregado via CDN em ajuda_producao.html)
+   --------------------------------------------------------------- */
+
+// Tenta carregar uma imagem externa e devolvê-la como dataURL, para
+// embutir no PDF. Se falhar (ex.: bloqueio de CORS), retorna null e o
+// PDF é gerado normalmente, sem a foto.
+async function loadImageAsDataURL(url) {
+  try {
+    const response = await fetch(url, { mode: "cors" });
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (err) {
+    return null;
+  }
+}
+
+async function generatePDF(recipeId) {
+  const btn = document.getElementById('downloadPdfBtn');
+  const recipe = RECIPES.find(r => r.id === recipeId);
+  if (!recipe || !window.jspdf) return;
+
+  const originalBtnHtml = btn ? btn.innerHTML : null;
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando PDF...';
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const marginX = 15;
+    const contentWidth = pageWidth - marginX * 2;
+    const bottomLimit = pageHeight - 18;
+
+    const catInfo = CATEGORIES[recipe.categoria];
+    const catColor = CATEGORY_COLORS_PDF[recipe.categoria] || CATEGORY_COLORS_PDF.chapas;
+    const summary = availabilitySummary(recipe);
+    const status = summary.pronto ? "ready" : (summary.bloqueado ? "blocked" : "partial");
+    const statusColor = STATUS_COLORS_PDF[status];
+
+    const now = new Date();
+    const dataEmissao = now.toLocaleDateString("pt-BR");
+    const horaEmissao = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    const codigoDoc = `PROC-${recipe.id.toUpperCase()}`;
+
+    let y = 0;
+
+    // Tenta buscar a foto do produto (não bloqueia o PDF se falhar)
+    const imgDataUrl = await loadImageAsDataURL(recipe.imagem);
+
+    function drawHeader() {
+      doc.setFillColor(...PRIMARY_PDF);
+      doc.rect(0, 0, pageWidth, 34, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("STOCKLOG", marginX, 15);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.text("Sistema Integrado de Gestão de Estoque, Produção e Logística", marginX, 21);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("FICHA DE PROCEDIMENTO DE PRODUÇÃO", pageWidth - marginX, 14, { align: "right" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.text(`Código do documento: ${codigoDoc}`, pageWidth - marginX, 20, { align: "right" });
+      doc.text(`Emitido em ${dataEmissao} às ${horaEmissao}`, pageWidth - marginX, 25, { align: "right" });
+
+      y = 44;
+    }
+
+    function drawFooter(pageNum, totalPages) {
+      doc.setDrawColor(...BORDER_PDF);
+      doc.setLineWidth(0.2);
+      doc.line(marginX, pageHeight - 14, pageWidth - marginX, pageHeight - 14);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...TEXT_MUTED_PDF);
+      doc.text("StockLog © " + now.getFullYear() + " — Documento gerado automaticamente pelo sistema", marginX, pageHeight - 9);
+      doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - marginX, pageHeight - 9, { align: "right" });
+    }
+
+    function checkPageBreak(neededHeight) {
+      if (y + neededHeight > bottomLimit) {
+        doc.addPage();
+        drawHeader();
+      }
+    }
+
+    function sectionTitle(text) {
+      checkPageBreak(14);
+      doc.setFillColor(...PRIMARY_PDF);
+      doc.rect(marginX, y, 3, 6, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(...TEXT_MAIN_PDF);
+      doc.text(text, marginX + 6, y + 5);
+      y += 12;
+    }
+
+    // ---------- Cabeçalho ----------
+    drawHeader();
+
+    // Foto do produto (se disponível) + bloco de título
+    const hasImage = !!imgDataUrl;
+    const imgW = 40, imgH = 30;
+    const titleX = hasImage ? marginX + imgW + 6 : marginX;
+    const titleWidth = hasImage ? contentWidth - imgW - 6 : contentWidth;
+
+    if (hasImage) {
+      try {
+        doc.setDrawColor(...BORDER_PDF);
+        doc.roundedRect(marginX, y, imgW, imgH, 2, 2, "S");
+        doc.addImage(imgDataUrl, "JPEG", marginX, y, imgW, imgH, undefined, "FAST");
+      } catch (e) {
+        // se a imagem não for compatível, segue sem ela
+      }
+    }
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(...TEXT_MAIN_PDF);
+    doc.text(recipe.nome, titleX, y + 6);
+
+    // Badge de categoria
+    doc.setFontSize(8.5);
+    const catLabel = catInfo ? catInfo.label : recipe.categoria;
+    const catLabelWidth = doc.getTextWidth(catLabel) + 6;
+    doc.setFillColor(...catColor.bg);
+    doc.roundedRect(titleX, y + 10, catLabelWidth, 6, 3, 3, "F");
+    doc.setTextColor(...catColor.text);
+    doc.setFont("helvetica", "bold");
+    doc.text(catLabel, titleX + 3, y + 14.2);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...TEXT_MUTED_PDF);
+    const descLines = doc.splitTextToSize(recipe.descricao, titleWidth);
+    doc.text(descLines, titleX, y + 22);
+
+    y += Math.max(imgH, 26) + 6;
+
+    // ---------- Resumo de disponibilidade ----------
+    checkPageBreak(16);
+    doc.setFillColor(...statusColor.bg);
+    doc.roundedRect(marginX, y, contentWidth, 12, 2, 2, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...statusColor.text);
+    const resumoTexto = `${summary.disponiveis}/${summary.total} insumos disponíveis  ·  ${statusColor.label}`;
+    doc.text(resumoTexto, marginX + 5, y + 7.8);
+    y += 18;
+
+    // ---------- Materiais necessários ----------
+    sectionTitle("MATERIAIS NECESSÁRIOS");
+
+    const colCodigo = marginX;
+    const colInsumo = marginX + 26;
+    const colQtd = marginX + 118;
+    const colStatus = marginX + contentWidth - 32;
+
+    checkPageBreak(9);
+    doc.setFillColor(...BORDER_PDF);
+    doc.rect(marginX, y, contentWidth, 8, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...TEXT_MAIN_PDF);
+    doc.text("CÓDIGO", colCodigo + 2, y + 5.3);
+    doc.text("INSUMO", colInsumo, y + 5.3);
+    doc.text("QTD.", colQtd, y + 5.3);
+    doc.text("STATUS", colStatus, y + 5.3);
+    y += 8;
+
+    recipe.ingredients.forEach((ing, idx) => {
+      const st = ingredientStatus(ing);
+      const rowHasWarning = !!st.motivo;
+      const rowHeight = rowHasWarning ? 12 : 8.5;
+
+      checkPageBreak(rowHeight);
+
+      if (idx % 2 === 1) {
+        doc.setFillColor(248, 251, 253);
+        doc.rect(marginX, y, contentWidth, rowHeight, "F");
+      }
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(...TEXT_MAIN_PDF);
+      doc.text(ing.codigo, colCodigo + 2, y + 5.5);
+
+      doc.setFont("helvetica", "bold");
+      doc.text(ing.label, colInsumo, y + 5.5);
+
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...TEXT_MUTED_PDF);
+      doc.text(`${ing.qty} ${ing.unidade}`, colQtd, y + 5.5);
+
+      const badgeColor = st.disponivel ? STATUS_COLORS_PDF.ready : STATUS_COLORS_PDF.blocked;
+      const badgeLabel = st.disponivel ? "Disponível" : "Em falta";
+      const badgeW = doc.getTextWidth(badgeLabel) + 5;
+      doc.setFillColor(...badgeColor.bg);
+      doc.roundedRect(colStatus - 1, y + 1.3, badgeW, 5.5, 2, 2, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...badgeColor.text);
+      doc.text(badgeLabel, colStatus + 1.3, y + 5.1);
+
+      if (rowHasWarning) {
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(7.5);
+        doc.setTextColor(...STATUS_COLORS_PDF.partial.text);
+        doc.text(st.motivo, colInsumo, y + 10);
+      }
+
+      doc.setDrawColor(...BORDER_PDF);
+      doc.setLineWidth(0.15);
+      doc.line(marginX, y + rowHeight, marginX + contentWidth, y + rowHeight);
+
+      y += rowHeight;
+    });
+
+    y += 8;
+
+    // ---------- Passo a passo ----------
+    sectionTitle("PASSO A PASSO DE PRODUÇÃO");
+
+    const steps = recipe.steps || [];
+    const stepTextWidth = contentWidth - 12;
+
+    steps.forEach((texto, i) => {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      const lines = doc.splitTextToSize(texto, stepTextWidth);
+      const stepHeight = Math.max(8, lines.length * 4.6 + 3);
+
+      checkPageBreak(stepHeight);
+
+      doc.setFillColor(...PRIMARY_PDF);
+      doc.circle(marginX + 3, y + 3, 3.2, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.setTextColor(255, 255, 255);
+      doc.text(String(i + 1), marginX + 3, y + 4.2, { align: "center" });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(...TEXT_MAIN_PDF);
+      doc.text(lines, marginX + 10, y + 4.2);
+
+      y += stepHeight;
+    });
+
+    // ---------- Rodapé em todas as páginas ----------
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      drawFooter(p, totalPages);
+    }
+
+    doc.save(`procedimento-${recipe.id}.pdf`);
+  } catch (err) {
+    console.error("Erro ao gerar PDF:", err);
+    alert("Não foi possível gerar o PDF. Tente novamente.");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalBtnHtml;
+    }
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
