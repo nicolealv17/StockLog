@@ -1,12 +1,12 @@
 /* =========================================================
-   StockLog — Calendário Inteligente (VERSÃO PCP)
+   StockLog — Calendário Inteligente (Sincronizado com Firebase)
    ========================================================= */
-const GOOGLE_CLIENT_ID = "SEU_CLIENT_ID_AQUI.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "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";
 const GOOGLE_SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 let googleTokenClient = null;
 let googleAccessToken = null;
 
-const CAL_STORAGE = "stocklog_cal_v3";
+const CAL_STORAGE_PATH = "events";
 const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const WEEKDAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const MAX_EVENTS_PER_DAY = 3;
@@ -14,34 +14,59 @@ const MAX_EVENTS_PER_DAY = 3;
 let calState = {
   events: [],
   view: "month",
-  cursor: new Date(2026, 7, 1),
+  cursor: new Date(),
   selectedDate: null,
   type: "reuniao",
   activeFilter: "all"
 };
 let calSelectedDate = null;
 
-function calLoad() {
+async function calLoad() {
   try {
-    const saved = localStorage.getItem(CAL_STORAGE);
-    calState.events = saved ? JSON.parse(saved) : calDefaultEvents();
-    if (!saved) calSave();
-  } catch (e) { calState.events = calDefaultEvents(); }
+    const db = firebase.database();
+    const snapshot = await db.ref(CAL_STORAGE_PATH).once('value');
+
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      calState.events = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+      }));
+    } else {
+      calState.events = calDefaultEvents();
+      const initialData = {};
+      calState.events.forEach(e => { initialData[e.id] = e; });
+      await db.ref(CAL_STORAGE_PATH).set(initialData);
+    }
+  } catch (e) {
+    console.error("Erro ao carregar calendário do Firebase:", e);
+    calState.events = calDefaultEvents();
+  }
 }
-function calSave() { localStorage.setItem(CAL_STORAGE, JSON.stringify(calState.events)); }
+
+async function calSave() {
+  try {
+    const db = firebase.database();
+    const data = {};
+    calState.events.forEach(e => { data[e.id] = e; });
+    await db.ref(CAL_STORAGE_PATH).set(data);
+  } catch (e) {
+    console.error("Erro ao salvar calendário no Firebase:", e);
+  }
+}
 
 function calDefaultEvents() {
   return [
     { id: "e1", title: "Reunião de alinhamento semanal", type: "reuniao", date: "2026-08-21", time: "09:00", duration: 60, setor: "Qualidade", desc: "Pauta: revisão de KPIs e alertas." },
     { id: "e2", title: "Treinamento POP-018 — Recepção de Insumos", type: "treinamento", date: "2026-08-24", time: "14:00", duration: 120, setor: "Estoque", desc: "Capacitação Almoxarifado." },
-    { id: "e3", title: "🔴 Data Limite OP-2026-001 (Flange Aço)", type: "prazo-op", date: "2026-08-25", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-001. 500 unidades." },
+    { id: "e3", title: " Data Limite OP-2026-001 (Flange Aço)", type: "prazo-op", date: "2026-08-25", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-001. 500 unidades." },
     { id: "e4", title: "Visita técnica fornecedor Inox do Brasil", type: "compromisso", date: "2026-08-27", time: "10:30", duration: 180, setor: "Compras", desc: "Levantar novos itens para cotação." },
     { id: "e5", title: "Auditoria interna — Qualidade", type: "urgente", date: "2026-08-28", time: "08:00", duration: 240, setor: "Qualidade", desc: "Atender auditores." },
     { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, setor: "Produção", desc: "Capacitar 4 operadores." },
-    { id: "e7", title: "🔴 Data Limite OP-2026-002 (Eixo Vazado)", type: "prazo-op", date: "2026-08-28", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-002. 120 unidades." },
-    { id: "e8", title: "🛠️ Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-08-26", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Troca de rolamentos e calibragem." },
-    { id: "e9", title: "🔴 Data Limite OP-2026-003 (Suporte Estrutural)", type: "prazo-op", date: "2026-08-29", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-003. 80 unidades." },
-    { id: "e10", title: "🛠️ Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-08-27", time: "08:00", duration: 360, setor: "Fresa CNC 05", desc: "Substituição de ferramentas e revisão elétrica." },
+    { id: "e7", title: " Data Limite OP-2026-002 (Eixo Vazado)", type: "prazo-op", date: "2026-08-28", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-002. 120 unidades." },
+    { id: "e8", title: " Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-08-26", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Troca de rolamentos e calibragem." },
+    { id: "e9", title: " Data Limite OP-2026-003 (Suporte Estrutural)", type: "prazo-op", date: "2026-08-29", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-003. 80 unidades." },
+    { id: "e10", title: " Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-08-27", time: "08:00", duration: 360, setor: "Fresa CNC 05", desc: "Substituição de ferramentas e revisão elétrica." },
   ];
 }
 
@@ -181,7 +206,7 @@ function calRenderUpcoming() {
   }
   list.innerHTML = items.map(e => {
     const [y, m, d] = e.date.split("-");
-    const icon = e.type === "prazo-op" ? '🔴 ' : e.type === "manutencao" ? '🛠️ ' : '';
+
     return `
       <div class="upcoming-item" onclick="calEdit('${e.id}')">
         <div class="upcoming-date">
@@ -189,7 +214,7 @@ function calRenderUpcoming() {
           <div class="month">${MONTHS_PT[parseInt(m)-1].slice(0,3)}</div>
         </div>
         <div class="upcoming-info">
-          <div class="upcoming-title">${icon} ${escapeHtml(e.title)}</div>
+          <div class="upcoming-title">${escapeHtml(e.title)}</div>
           <div class="upcoming-meta">
             <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
             <span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor || "Geral")}</span>
@@ -239,7 +264,7 @@ function calNavMonth(delta) { calState.cursor.setMonth(calState.cursor.getMonth(
 function calGoToday() { calState.cursor = new Date(); calRender(); }
 function calSetView(view, btn) {
   calState.view = view;
-  document.querySelectorAll(".cal-view-btn").forEach(b => b.classList.remove("active");
+  document.querySelectorAll(".cal-view-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   calRender();
 }
@@ -283,7 +308,7 @@ function calEdit(id) {
   openModal("calEvento");
 }
 
-function calSaveEvent() {
+async function calSaveEvent() {
   const id = document.getElementById("cal-evt-id").value;
   const title = document.getElementById("cal-evt-titulo").value.trim();
   const date = document.getElementById("cal-evt-data").value;
@@ -301,30 +326,35 @@ function calSaveEvent() {
 
   if (id) {
     const e = calState.events.find(x => x.id === id);
-    if (e) Object.assign(e, data);
+    if (e) {
+      Object.assign(e, data);
+      await firebase.database().ref(CAL_STORAGE_PATH + '/' + id).set(data);
+    }
     showToast("Compromisso atualizado.", "success");
   } else {
-    calState.events.push({ id: "e" + Date.now().toString(36), ...data });
+    const newId = "e" + Date.now().toString(36);
+    calState.events.push({ id: newId, ...data });
+    await firebase.database().ref(CAL_STORAGE_PATH + '/' + newId).set(data);
     showToast("Compromisso criado.", "success");
   }
-  calSave();
   closeModal("calEvento");
   calRender();
 }
 
-function calDeleteEvent() {
+async function calDeleteEvent() {
   const id = document.getElementById("cal-evt-id").value;
   if (!id) return;
   if (!confirm("Excluir este compromisso?")) return;
+
   calState.events = calState.events.filter(e => e.id !== id);
-  calSave();
+  await firebase.database().ref(CAL_STORAGE_PATH + '/' + id).remove();
   closeModal("calEvento");
   calRender();
   showToast("Compromisso excluído.", "warning");
 }
 
 function calImportGoogle() {
-  if (GOOGLE_CLIENT_ID.includes("SEU_CLIENT_ID_AQUI")) { showToast("Configure o GOOGLE_CLIENT_ID no código antes de sincronizar.", "warning"); return; }
+  if (GOOGLE_CLIENT_ID.includes("INSIRA_SEU_CLIENT_ID_AQUI")) { showToast("Configure o GOOGLE_CLIENT_ID no código antes de sincronizar.", "warning"); return; }
   if (typeof google === "undefined" || !google.accounts) { showToast("Biblioteca do Google ainda não carregou.", "error"); return; }
   if (!googleTokenClient) {
     googleTokenClient = google.accounts.oauth2.initTokenClient({
@@ -346,7 +376,7 @@ async function calFetchGoogleEvents() {
   showToast("Sincronizando com o Google Calendar...", "info");
   try {
     const timeMin = new Date(); timeMin.setMonth(timeMin.getMonth() - 1);
-    const timeMax = new Date(); timeMax.setMonth(timeMax.getMonth() + 3);
+    const timeMax = new Date(); timeMax.setMonth(timeMax + 3);
     const params = new URLSearchParams({ timeMin: timeMin.toISOString(), timeMax: timeMax.toISOString(), singleEvents: "true", orderBy: "startTime", maxResults: "250" });
     const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params.toString()}`, { headers: { Authorization: `Bearer ${googleAccessToken}` } });
     if (res.status === 401) { googleAccessToken = null; throw new Error("Sessão expirada."); }
@@ -367,7 +397,6 @@ async function calFetchGoogleEvents() {
 
     calState.events = calState.events.filter(e => e.source !== "google");
     calState.events.push(...imported);
-    calSave();
     calRender();
     showToast(`${imported.length} compromisso(s) importado(s) do Google Calendar.`, "success");
   } catch (err) { console.error(err); showToast("Não foi possível sincronizar.", "error"); }
@@ -396,5 +425,9 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") { closeModal("calEvento"); document.getElementById("cal-side-panel").classList.remove("open"); }
 });
 
-calLoad();
-calRender();
+async function init() {
+  await calLoad();
+  calRender();
+}
+
+init();
