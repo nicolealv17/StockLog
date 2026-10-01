@@ -1,12 +1,12 @@
 /* =========================================================
-   StockLog — Calendário Inteligente (VERSÃO PCP)
+   StockLog — Calendário Inteligente (Sincronizado com Firebase)
    ========================================================= */
 const GOOGLE_CLIENT_ID = "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";
 const GOOGLE_SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 let googleTokenClient = null;
 let googleAccessToken = null;
 
-const CAL_STORAGE = "stocklog_cal_v3";
+const CAL_STORAGE_PATH = "events";
 const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const WEEKDAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const MAX_EVENTS_PER_DAY = 3;
@@ -21,14 +21,39 @@ let calState = {
 };
 let calSelectedDate = null;
 
-function calLoad() {
+async function calLoad() {
   try {
-    const saved = localStorage.getItem(CAL_STORAGE);
-    calState.events = saved ? JSON.parse(saved) : calDefaultEvents();
-    if (!saved) calSave();
-  } catch (e) { calState.events = calDefaultEvents(); }
+    const db = firebase.database();
+    const snapshot = await db.ref(CAL_STORAGE_PATH).once('value');
+
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      calState.events = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+      }));
+    } else {
+      calState.events = calDefaultEvents();
+      const initialData = {};
+      calState.events.forEach(e => { initialData[e.id] = e; });
+      await db.ref(CAL_STORAGE_PATH).set(initialData);
+    }
+  } catch (e) {
+    console.error("Erro ao carregar calendário do Firebase:", e);
+    calState.events = calDefaultEvents();
+  }
 }
-function calSave() { localStorage.setItem(CAL_STORAGE, JSON.stringify(calState.events)); }
+
+async function calSave() {
+  try {
+    const db = firebase.database();
+    const data = {};
+    calState.events.forEach(e => { data[e.id] = e; });
+    await db.ref(CAL_STORAGE_PATH).set(data);
+  } catch (e) {
+    console.error("Erro ao salvar calendário no Firebase:", e);
+  }
+}
 
 function calDefaultEvents() {
   return [
@@ -181,7 +206,7 @@ function calRenderUpcoming() {
   }
   list.innerHTML = items.map(e => {
     const [y, m, d] = e.date.split("-");
-    
+
     return `
       <div class="upcoming-item" onclick="calEdit('${e.id}')">
         <div class="upcoming-date">
@@ -189,7 +214,7 @@ function calRenderUpcoming() {
           <div class="month">${MONTHS_PT[parseInt(m)-1].slice(0,3)}</div>
         </div>
         <div class="upcoming-info">
-          <div class="upcoming-title">${icon} ${escapeHtml(e.title)}</div>
+          <div class="upcoming-title">${escapeHtml(e.title)}</div>
           <div class="upcoming-meta">
             <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
             <span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor || "Geral")}</span>
@@ -283,7 +308,7 @@ function calEdit(id) {
   openModal("calEvento");
 }
 
-function calSaveEvent() {
+async function calSaveEvent() {
   const id = document.getElementById("cal-evt-id").value;
   const title = document.getElementById("cal-evt-titulo").value.trim();
   const date = document.getElementById("cal-evt-data").value;
@@ -301,30 +326,35 @@ function calSaveEvent() {
 
   if (id) {
     const e = calState.events.find(x => x.id === id);
-    if (e) Object.assign(e, data);
+    if (e) {
+      Object.assign(e, data);
+      await firebase.database().ref(CAL_STORAGE_PATH + '/' + id).set(data);
+    }
     showToast("Compromisso atualizado.", "success");
   } else {
-    calState.events.push({ id: "e" + Date.now().toString(36), ...data });
+    const newId = "e" + Date.now().toString(36);
+    calState.events.push({ id: newId, ...data });
+    await firebase.database().ref(CAL_STORAGE_PATH + '/' + newId).set(data);
     showToast("Compromisso criado.", "success");
   }
-  calSave();
   closeModal("calEvento");
   calRender();
 }
 
-function calDeleteEvent() {
+async function calDeleteEvent() {
   const id = document.getElementById("cal-evt-id").value;
   if (!id) return;
   if (!confirm("Excluir este compromisso?")) return;
+
   calState.events = calState.events.filter(e => e.id !== id);
-  calSave();
+  await firebase.database().ref(CAL_STORAGE_PATH + '/' + id).remove();
   closeModal("calEvento");
   calRender();
   showToast("Compromisso excluído.", "warning");
 }
 
 function calImportGoogle() {
-  if (GOOGLE_CLIENT_ID.includes("SEU_CLIENT_ID_AQUI")) { showToast("Configure o GOOGLE_CLIENT_ID no código antes de sincronizar.", "warning"); return; }
+  if (GOOGLE_CLIENT_ID.includes("INSIRA_SEU_CLIENT_ID_AQUI")) { showToast("Configure o GOOGLE_CLIENT_ID no código antes de sincronizar.", "warning"); return; }
   if (typeof google === "undefined" || !google.accounts) { showToast("Biblioteca do Google ainda não carregou.", "error"); return; }
   if (!googleTokenClient) {
     googleTokenClient = google.accounts.oauth2.initTokenClient({
@@ -346,7 +376,7 @@ async function calFetchGoogleEvents() {
   showToast("Sincronizando com o Google Calendar...", "info");
   try {
     const timeMin = new Date(); timeMin.setMonth(timeMin.getMonth() - 1);
-    const timeMax = new Date(); timeMax.setMonth(timeMax.getMonth() + 3);
+    const timeMax = new Date(); timeMax.setMonth(timeMax + 3);
     const params = new URLSearchParams({ timeMin: timeMin.toISOString(), timeMax: timeMax.toISOString(), singleEvents: "true", orderBy: "startTime", maxResults: "250" });
     const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params.toString()}`, { headers: { Authorization: `Bearer ${googleAccessToken}` } });
     if (res.status === 401) { googleAccessToken = null; throw new Error("Sessão expirada."); }
@@ -367,7 +397,6 @@ async function calFetchGoogleEvents() {
 
     calState.events = calState.events.filter(e => e.source !== "google");
     calState.events.push(...imported);
-    calSave();
     calRender();
     showToast(`${imported.length} compromisso(s) importado(s) do Google Calendar.`, "success");
   } catch (err) { console.error(err); showToast("Não foi possível sincronizar.", "error"); }
@@ -396,5 +425,9 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") { closeModal("calEvento"); document.getElementById("cal-side-panel").classList.remove("open"); }
 });
 
-calLoad();
-calRender();
+async function init() {
+  await calLoad();
+  calRender();
+}
+
+init();
