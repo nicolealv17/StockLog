@@ -1,7 +1,7 @@
 /* =========================================================
    StockLog — Calendário Inteligente (VERSÃO PCP)
    ========================================================= */
-const GOOGLE_CLIENT_ID = "SEU_CLIENT_ID_AQUI.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "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";
 const GOOGLE_SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 let googleTokenClient = null;
 let googleAccessToken = null;
