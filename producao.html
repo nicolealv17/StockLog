@@ -405,12 +405,34 @@
       <div id="footer-root"></div>
     </div>
 
+
+        <!-- 1) Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <!-- 2) Config inline -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+        authDomain: "stocklog-ff7aa.firebaseapp.com",
+        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+        projectId: "stocklog-ff7aa",
+        storageBucket: "stocklog-ff7aa.firebasestorage.app",
+        messagingSenderId: "787537499919",
+        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+      };
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      window.SL = { db: firebase.database(), auth: firebase.auth() };
+    </script>
+    
     <script src="components/js/header.js"></script>
     <script src="components/js/modoescuro.js"></script>
     <script src="components/js/sidebar.js"></script>
     <script src="components/js/chat.js"></script>
     <script src="components/js/config.js"></script>
     <script src="components/js/footer.js"></script>
+    
     <script src="JS/producao.js" defer></script>
   </body>
 </html>

@@ -1,78 +1,555 @@
-(function() {
+/* ================================================================
+   StockLog · JS/index.js
+   Dashboard dinâmico — autossuficiente (usa window.SL do HTML)
+   ================================================================ */
+
+(function () {
   'use strict';
 
-  // ---- FILTRO DA TABELA ----
-  const filterBtn = document.querySelector('.filter-btn');
+  // =====================================================================
+  // 0. Bootstrap — aguarda window.SL (inicializado inline no HTML)
+  // =====================================================================
+  function quandoPronto(cb) {
+    const tentar = (n = 0) => {
+      if (window.SL && window.SL.db && window.SL.auth) return cb(window.SL);
+      if (n > 50) {
+        console.error('[StockLog] window.SL não apareceu. Verifique se o bloco de config Firebase está no HTML.');
+        return;
+      }
+      setTimeout(() => tentar(n + 1), 100);
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => tentar());
+    } else {
+      tentar();
+    }
+  }
+
+  // =====================================================================
+  // 1. FILTRO DA TABELA  (mantido — sem alterações)
+  // =====================================================================
+  const filterBtn   = document.querySelector('.filter-btn');
   const searchInput = document.querySelector('.search-input');
   const statusFilter = document.querySelector('.filter-select');
 
   function applyFilters() {
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
     const statusTerm = statusFilter ? statusFilter.value.toLowerCase() : '';
-
     const rows = document.querySelectorAll('.table-wrapper tbody tr');
-    rows.forEach(function(row) {
-      const pedido = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
+
+    rows.forEach(function (row) {
+      const pedido  = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
       const cliente = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
       const statusEl = row.querySelector('.status-badge');
       const statusText = statusEl ? statusEl.textContent.toLowerCase() : '';
 
       let show = true;
-      if (searchTerm && !pedido.includes(searchTerm) && !cliente.includes(searchTerm)) {
-        show = false;
-      }
+      if (searchTerm && !pedido.includes(searchTerm) && !cliente.includes(searchTerm)) show = false;
       if (statusTerm) {
         const statusMap = {
           'concluido': 'concluído',
-          'pendente': 'pendente',
+          'pendente':  'pendente',
           'andamento': 'em andamento'
         };
         const mappedStatus = statusMap[statusTerm] || statusTerm;
-        if (!statusText.includes(mappedStatus)) {
-          show = false;
-        }
+        if (!statusText.includes(mappedStatus)) show = false;
       }
       row.style.display = show ? '' : 'none';
     });
   }
 
-  if (filterBtn) {
-    filterBtn.addEventListener('click', applyFilters);
+  if (filterBtn)    filterBtn.addEventListener('click', applyFilters);
+  if (searchInput)  searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') applyFilters(); });
+  if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+
+  // =====================================================================
+  // 2. ANIMAÇÃO DAS BARRAS  (mantido)
+  // =====================================================================
+  window.addEventListener('load', function () {
+    document.querySelectorAll('.chart-fill').forEach(function (bar) {
+      const width = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = width; }, 200);
+    });
+  });
+
+  // =====================================================================
+  // 3. CHAT TOGGLE  (mantido)
+  // =====================================================================
+  const chatToggle = document.getElementById('chatToggle');
+  if (chatToggle) {
+    chatToggle.addEventListener('click', function () {
+      document.dispatchEvent(new CustomEvent('toggleChat'));
+    });
   }
 
-  if (searchInput) {
-    searchInput.addEventListener('keyup', function(e) {
-      if (e.key === 'Enter') {
-        applyFilters();
+  // =====================================================================
+  // 4. STATE CENTRAL
+  // =====================================================================
+  const state = {
+    pedidos: {},
+    ordens:  {},
+    itens:   {},
+    setores: {},
+    eventos: {}
+  };
+
+  // =====================================================================
+  // 5. HELPERS
+  // =====================================================================
+  const fmtNumber = (n) => new Intl.NumberFormat('pt-BR').format(Number(n) || 0);
+
+  const fmtDate = (ms) => {
+    if (!ms) return '—';
+    // aceita timestamp numérico ou string ISO
+    if (typeof ms === 'string' && ms.includes('-')) {
+      const [y, m, d] = ms.split('-');
+      return `${d}/${m}/${y}`;
+    }
+    const d = new Date(Number(ms));
+    return isNaN(d) ? '—' : d.toLocaleDateString('pt-BR');
+  };
+
+  const esc = (str = '') =>
+    String(str).replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // =====================================================================
+  // 6. KPIs
+  // =====================================================================
+  function renderKPIs() {
+    const cards = document.querySelectorAll('.kpi-card');
+    if (cards.length < 4) return;
+
+    const pedidosArr = Object.values(state.pedidos);
+    const ordensArr  = Object.values(state.ordens);
+    const itensArr   = Object.values(state.itens);
+
+    const hoje = new Date().setHours(0, 0, 0, 0);
+
+    // ---- Card 1: Pedidos em aberto ----
+    const abertos = pedidosArr.filter(p => p.status !== 'concluido' && p.status !== 'cancelado').length;
+    const novosHoje = pedidosArr.filter(p => p.dataCriacao && p.dataCriacao >= hoje).length;
+    const emProducao = pedidosArr.filter(p => p.status === 'producao' || p.status === 'em_producao' || p.status === 'em_andamento').length;
+    cards[0].querySelector('.kpi-value').textContent = fmtNumber(abertos);
+    cards[0].querySelector('.kpi-sub').innerHTML = `
+      <span class="trend-up"><i class="fas fa-arrow-up"></i> ${novosHoje} novos hoje</span>
+      ${emProducao} em produção
+    `;
+
+    // ---- Card 2: Taxa de entrega ----
+    const finalizados = pedidosArr.filter(p => p.status === 'concluido' || p.status === 'cancelado');
+    const concluidos  = finalizados.filter(p => p.status === 'concluido');
+    const taxa = finalizados.length ? Math.round((concluidos.length / finalizados.length) * 100) : 0;
+    const vencidos = pedidosArr.filter(p =>
+      p.prazo &&
+      p.status !== 'concluido' && p.status !== 'cancelado' &&
+      new Date(p.prazo + 'T00:00:00') < new Date(hoje)
+    ).length;
+    cards[1].querySelector('.kpi-value').textContent = taxa + '%';
+    cards[1].querySelector('.kpi-sub').innerHTML = `
+      <span class="trend-up"><i class="fas fa-check"></i> No prazo</span>
+      ${vencidos ? `<span class="trend-down"><i class="fas fa-exclamation-triangle"></i> ${vencidos} vencidos</span>` : ''}
+    `;
+
+    // ---- Card 3: Itens em estoque ----
+    const totalItens = itensArr.reduce((a, i) => a + (Number(i.quantidade) || 0), 0);
+    const criticos   = itensArr.filter(i => Number(i.quantidade) <= Number(i.limiteMinimo)).length;
+    cards[2].querySelector('.kpi-value').textContent = fmtNumber(totalItens);
+    cards[2].querySelector('.kpi-sub').innerHTML = `
+      ${criticos ? `<span class="trend-warn"><i class="fas fa-exclamation-circle"></i> ${criticos} abaixo do limite</span>` : ''}
+      ${Object.keys(state.setores).length} setores
+    `;
+
+    // ---- Card 4: Ordens de produção ----
+    const ativas = ordensArr.filter(o => o.status !== 'concluido' && o.status !== 'cancelado').length;
+    const iniciadasHoje = ordensArr.filter(o => o.dataCriacao && o.dataCriacao >= hoje).length;
+    const totalUnid = ordensArr
+      .filter(o => o.status !== 'concluido' && o.status !== 'cancelado')
+      .reduce((a, o) => a + (Number(o.quantidade) || 0), 0);
+    cards[3].querySelector('.kpi-value').textContent = fmtNumber(ativas);
+    cards[3].querySelector('.kpi-sub').innerHTML = `
+      <span class="trend-up"><i class="fas fa-plus"></i> ${iniciadasHoje} iniciadas hoje</span>
+      ${fmtNumber(totalUnid)} unid.
+    `;
+  }
+
+  // =====================================================================
+  // 7. ALERTAS
+  // =====================================================================
+  function calcularAlertas() {
+    const alertas = [];
+
+    Object.entries(state.pedidos).forEach(([id, p]) => {
+      if (p.status === 'concluido' || p.status === 'cancelado') return;
+      if (!p.prazo) return;
+      const venc = new Date(p.prazo + 'T00:00:00');
+      const dias = Math.floor((Date.now() - venc) / 86400000);
+      if (dias > 0) {
+        alertas.push({
+          id,
+          titulo: `Pedido ${p.codigo || p.numero || id} – ${dias}d em atraso`,
+          prazo: `Venceu há ${dias} dia${dias > 1 ? 's' : ''}`,
+          setor: p.setor || '—',
+          severidade: dias >= 5 ? 'critical' : dias >= 2 ? 'high' : 'medium'
+        });
+      }
+    });
+
+    Object.entries(state.itens).forEach(([id, i]) => {
+      if (Number(i.quantidade) <= Number(i.limiteMinimo)) {
+        alertas.push({
+          id,
+          titulo: `Estoque crítico: ${i.nome || id}`,
+          prazo: `${i.quantidade}/${i.limiteMinimo} ${i.unidade || 'un'}`,
+          setor: i.setor || 'Almoxarifado',
+          severidade: Number(i.quantidade) === 0 ? 'critical' : 'high'
+        });
+      }
+    });
+
+    const peso = { critical: 4, high: 3, medium: 2, low: 1 };
+    return alertas.sort((a, b) => peso[b.severidade] - peso[a.severidade]).slice(0, 4);
+  }
+
+  function renderAlertas() {
+    const container = document.querySelector('.alert-list');
+    if (!container) return;
+    const arr = calcularAlertas();
+    const badge = container.closest('.card')?.querySelector('.badge-soft');
+    if (badge) badge.textContent = `${arr.length} alerta${arr.length !== 1 ? 's' : ''}`;
+
+    if (!arr.length) {
+      container.innerHTML = `<p style="color:var(--text-secondary);font-size:13px;padding:8px 0">Nenhum alerta ativo. Tudo em ordem ✅</p>`;
+      return;
+    }
+
+    const sevLabel = { critical: 'Crítico', high: 'Alto', medium: 'Médio', low: 'Baixo' };
+    container.innerHTML = arr.map((a, i) => {
+      const last = i === arr.length - 1;
+      return `
+        <div class="alert-item" ${last ? 'style="border-bottom:0;padding-bottom:0"' : ''}>
+          <div>
+            <div class="alert-title">${esc(a.titulo)}</div>
+            <div class="alert-meta">
+              <span><i class="fas fa-hourglass-end"></i> ${esc(a.prazo)}</span>
+              <span><i class="fas fa-building"></i> ${esc(a.setor)}</span>
+            </div>
+          </div>
+          <div class="alert-actions">
+            <span class="severity-tag ${a.severidade}">${sevLabel[a.severidade]}</span>
+            <button class="alert-action-btn"><i class="fas fa-search"></i> Revisar</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // =====================================================================
+  // 8. PRODUÇÃO POR SETOR
+  // =====================================================================
+  const CORES_SETOR = ['var(--green)', 'var(--primary)', 'var(--amber)', 'var(--purple)', 'var(--orange)', 'var(--red)'];
+
+  function renderProducaoSetores() {
+    const container = document.querySelector('.chart-container');
+    if (!container) return;
+
+    const mapa = {};
+    Object.values(state.setores).forEach(s => {
+      mapa[s.nome || s] = { nome: s.nome || s, total: 0, concluido: 0 };
+    });
+
+    Object.values(state.ordens).forEach(o => {
+      const setor = o.setor || 'Outros';
+      if (!mapa[setor]) mapa[setor] = { nome: setor, total: 0, concluido: 0 };
+      mapa[setor].total++;
+      if (o.status === 'concluido') mapa[setor].concluido++;
+    });
+
+    const arr = Object.values(mapa);
+    const badge = container.closest('.card')?.querySelector('.badge-soft');
+    if (badge) badge.textContent = `${arr.length} setores`;
+
+    if (!arr.length) {
+      container.innerHTML = `<p style="color:var(--text-secondary);font-size:13px;padding:8px 0">Sem dados de produção. Cadastre uma OP para começar.</p>`;
+      return;
+    }
+
+    container.innerHTML = arr.map((s, i) => {
+      const pct = s.total ? Math.round((s.concluido / s.total) * 100) : 0;
+      return `
+        <div class="chart-bar">
+          <span class="chart-label">${esc(s.nome)}</span>
+          <div class="chart-track">
+            <div class="chart-fill" style="width:${pct}%;background:${CORES_SETOR[i % CORES_SETOR.length]}"></div>
+          </div>
+          <span class="chart-value">${pct}%</span>
+        </div>`;
+    }).join('');
+
+    // Reanimar
+    container.querySelectorAll('.chart-fill').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = w; }, 200);
+    });
+
+    // Stats inferiores
+    const statsBlock = document.querySelector('.colaboradores-stats');
+    if (statsBlock) {
+      const nums = statsBlock.querySelectorAll('.stat-block .num');
+      const totalPedidos = Object.keys(state.pedidos).length;
+      const finalizados  = Object.values(state.pedidos).filter(p => p.status === 'concluido' || p.status === 'cancelado');
+      const concluidos   = finalizados.filter(p => p.status === 'concluido');
+      const taxa = finalizados.length ? Math.round((concluidos.length / finalizados.length) * 100) : 0;
+      if (nums[0]) nums[0].textContent = fmtNumber(totalPedidos);
+      if (nums[1]) nums[1].textContent = '0';
+      if (nums[2]) nums[2].textContent = taxa + '%';
+    }
+  }
+
+  // =====================================================================
+  // 9. PEDIDOS RECENTES (tabela)
+  // =====================================================================
+  const ST_PEDIDO = {
+    concluido:    { txt: 'Concluído',    cls: 'success' },
+    pendente:     { txt: 'Pendente',     cls: 'pending' },
+    em_andamento: { txt: 'Em andamento', cls: 'progress' },
+    em_producao:  { txt: 'Em Produção',  cls: 'progress' },
+    planejamento: { txt: 'Planejamento', cls: 'progress' },
+    aguardando:   { txt: 'Aguard. Mat.', cls: 'pending' },
+    producao:     { txt: 'Em Produção',  cls: 'progress' },
+    qa:           { txt: 'Controle QA',  cls: 'progress' },
+    atrasado:     { txt: 'Atrasado',     cls: 'pending' },
+    cancelado:    { txt: 'Cancelado',    cls: 'pending' }
+  };
+  const EV_PEDIDO = {
+    anexada:     { icon: 'fa-check-circle', color: 'var(--green)',   title: 'Evidência anexada' },
+    aguardando:  { icon: 'fa-clock',        color: 'var(--amber)',   title: 'Aguardando evidência' },
+    processando: { icon: 'fa-spinner',      color: 'var(--primary)', title: 'Em processamento' }
+  };
+
+  function localizarTbodyPorHeader(texto) {
+    let tbody = null;
+    document.querySelectorAll('table').forEach(t => {
+      if (t.querySelector('thead')?.textContent.includes(texto)) {
+        tbody = t.querySelector('tbody');
+      }
+    });
+    return tbody;
+  }
+
+  function renderPedidosRecentes() {
+    const tbody = localizarTbodyPorHeader('Nº Pedido');
+    if (!tbody) return;
+
+    const arr = Object.values(state.pedidos)
+      .sort((a, b) => (b.dataCriacao || 0) - (a.dataCriacao || 0))
+      .slice(0, 5);
+
+    const badge = tbody.closest('.card')?.querySelector('.badge-soft');
+    if (badge) badge.textContent = `${arr.length} registro${arr.length !== 1 ? 's' : ''}`;
+
+    if (!arr.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-secondary);padding:20px">
+        Nenhum pedido cadastrado ainda. <a href="pedidos.html" style="color:var(--primary);font-weight:600">Cadastrar primeiro</a>.
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = arr.map(p => {
+      const st = ST_PEDIDO[p.status] || { txt: p.status || '—', cls: '' };
+      const ev = EV_PEDIDO[p.evidencia] || EV_PEDIDO.processando;
+      return `
+        <tr>
+          <td><strong>${esc(p.codigo || p.numero || '')}</strong></td>
+          <td>${esc(p.cliente || p.responsavel || '—')}</td>
+          <td>${esc(p.produto || '')}</td>
+          <td>${esc(p.setor || '—')}</td>
+          <td>${fmtDate(p.dataCriacao || p.prazo)}</td>
+          <td><span class="status-badge ${st.cls}">${st.txt}</span></td>
+          <td><i class="fas ${ev.icon}" style="color:${ev.color}" title="${ev.title}"></i></td>
+          <td>
+            <div class="action-group">
+              <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+              <button class="action-btn" title="Editar"><i class="fas fa-pen"></i></button>
+              <button class="action-btn" title="Imprimir"><i class="fas fa-print"></i></button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+
+    applyFilters();
+  }
+
+  // =====================================================================
+  // 10. STATUS DOS PEDIDOS
+  // =====================================================================
+  function renderStatusPedidos() {
+    const cont = { planejamento: 0, aguardando: 0, producao: 0, qa: 0, concluido: 0, cancelado: 0 };
+
+    Object.values(state.pedidos).forEach(p => {
+      const s = p.status;
+      if (s === 'planejamento')      cont.planejamento++;
+      else if (s === 'aguardando')   cont.aguardando++;
+      else if (s === 'producao' || s === 'em_producao' || s === 'em_andamento') cont.producao++;
+      else if (s === 'qa')           cont.qa++;
+      else if (s === 'concluido')    cont.concluido++;
+      else if (s === 'cancelado')    cont.cancelado++;
+    });
+
+    const ordem = ['planejamento', 'aguardando', 'producao', 'qa', 'concluido', 'cancelado'];
+    document.querySelectorAll('.op-status-item .count-badge').forEach((b, i) => {
+      b.textContent = cont[ordem[i]] ?? 0;
+    });
+
+    const badge = document.querySelector('.op-status-list')?.closest('.card')?.querySelector('.badge-soft');
+    if (badge) {
+      const ativos = cont.planejamento + cont.aguardando + cont.producao + cont.qa;
+      badge.textContent = `${ativos} ativas`;
+    }
+  }
+
+  // =====================================================================
+  // 11. LOGBOT
+  // =====================================================================
+  function renderLogBot() {
+    const feed = document.querySelector('.event-feed');
+    if (!feed) return;
+
+    const arr = Object.values(state.eventos)
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+      .slice(0, 6);
+
+    if (!arr.length) {
+      feed.innerHTML = `<p style="color:var(--text-secondary);font-size:13px;padding:8px 0">Sem eventos recentes.</p>`;
+      return;
+    }
+
+    const iconMap = {
+      critico: { icon: 'fa-exclamation-circle', cls: 'critical' },
+      alerta:  { icon: 'fa-clock',              cls: '' },
+      info:    { icon: 'fa-plus-circle',        cls: '' }
+    };
+
+    feed.innerHTML = arr.map(e => {
+      const m = iconMap[e.tipo] || iconMap.info;
+      return `
+        <div class="event-item">
+          <i class="fas ${m.icon}"></i>
+          <span class="${m.cls}">${esc(e.texto || '')}</span>
+        </div>`;
+    }).join('');
+  }
+
+  // =====================================================================
+  // 12. ÚLTIMAS ORDENS DE PRODUÇÃO
+  // =====================================================================
+  const ST_OP = {
+    em_producao:  { txt: 'Em Produção',  bg: 'var(--green-bg)',  cor: 'var(--green)' },
+    producao:     { txt: 'Em Produção',  bg: 'var(--green-bg)',  cor: 'var(--green)' },
+    qa:           { txt: 'Controle QA',  bg: 'var(--purple-bg)', cor: 'var(--purple)' },
+    pendente:     { txt: 'Pendente',     bg: 'var(--amber-bg)',  cor: 'var(--amber)' },
+    planejamento: { txt: 'Planejamento', bg: 'var(--blue-bg)',   cor: 'var(--blue)' },
+    aguardando:   { txt: 'Aguard. Mat.', bg: 'var(--amber-bg)',  cor: 'var(--amber)' },
+    concluido:    { txt: 'Concluído',    bg: 'var(--blue-bg)',   cor: 'var(--blue)' },
+    cancelado:    { txt: 'Cancelado',    bg: 'var(--red-bg)',    cor: 'var(--red)' }
+  };
+
+  function renderUltimasOrdens() {
+    const tbody = localizarTbodyPorHeader('Cód. OP');
+    if (!tbody) return;
+
+    const arr = Object.values(state.ordens)
+      .sort((a, b) => (b.dataCriacao || 0) - (a.dataCriacao || 0))
+      .slice(0, 5);
+
+    const badge = tbody.closest('.card')?.querySelector('.badge-soft');
+    if (badge) badge.textContent = `${arr.length} emitida${arr.length !== 1 ? 's' : ''}`;
+
+    if (!arr.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-secondary);padding:20px">
+        Nenhuma OP emitida. <a href="pedidos.html" style="color:var(--primary);font-weight:600">Criar agora</a>.
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = arr.map(o => {
+      const st = ST_OP[o.status] || ST_OP.pendente;
+      return `
+        <tr>
+          <td><strong>${esc(o.codigo || '')}</strong></td>
+          <td>${esc(o.produto || '')}</td>
+          <td>${fmtNumber(o.quantidade)}</td>
+          <td>${esc(o.responsavel || o.operador || '—')}</td>
+          <td><span class="status-tag" style="background:${st.bg};color:${st.cor}">${st.txt}</span></td>
+          <td>${fmtDate(o.prazo || o.dataLimite)}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  // =====================================================================
+  // 13. RENDER CENTRALIZADO
+  // =====================================================================
+  function renderTudo() {
+    renderKPIs();
+    renderAlertas();
+    renderProducaoSetores();
+    renderPedidosRecentes();
+    renderStatusPedidos();
+    renderLogBot();
+    renderUltimasOrdens();
+  }
+
+  // =====================================================================
+  // 14. LISTENERS FIREBASE
+  // =====================================================================
+  function bindFirebase({ db }) {
+    db.ref('pedidos').on('value', s => { state.pedidos = s.val() || {}; renderTudo(); });
+    db.ref('ordensProducao').on('value', s => { state.ordens  = s.val() || {}; renderTudo(); });
+    db.ref('itens').on('value', s => { state.itens   = s.val() || {}; renderTudo(); });
+    db.ref('setores').on('value', s => { state.setores = s.val() || {}; renderTudo(); });
+    db.ref('logbot/eventos').orderByChild('timestamp').limitToLast(10).on('value', s => {
+      state.eventos = s.val() || {};
+      renderTudo();
+    });
+    console.log('[StockLog] Listeners Firebase ativos.');
+  }
+
+  // =====================================================================
+  // 15. AÇÕES DE LINHA (delegação)
+  // =====================================================================
+  function bindAcoes() {
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-acao]');
+      if (!btn) return;
+      const { acao, id } = btn.dataset;
+      if (acao === 'ver')      window.location.href = `detalhes-pedido.html?id=${encodeURIComponent(id)}`;
+      if (acao === 'editar')   window.location.href = `editar-pedido.html?id=${encodeURIComponent(id)}`;
+      if (acao === 'imprimir') window.print();
+    });
+  }
+
+  // =====================================================================
+  // 16. AUTH
+  // =====================================================================
+  function bindAuth({ auth }) {
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        console.warn('[StockLog] Nenhum usuário autenticado. Rules do Firebase podem bloquear a leitura.');
+      } else {
+        console.info('[StockLog] Usuário logado:', user.email);
       }
     });
   }
 
-  if (statusFilter) {
-    statusFilter.addEventListener('change', applyFilters);
-  }
-
-  // ---- ANIMAÇÃO DAS BARRAS ----
-  window.addEventListener('load', function() {
-    const fills = document.querySelectorAll('.chart-fill');
-    fills.forEach(function(bar) {
-      const width = bar.style.width;
-      bar.style.width = '0%';
-      setTimeout(function() {
-        bar.style.width = width;
-      }, 200);
-    });
+  // =====================================================================
+  // 17. BOOT
+  // =====================================================================
+  quandoPronto((SL) => {
+    bindAuth(SL);
+    bindAcoes();
+    bindFirebase(SL);
+    console.log(' [StockLog] Dashboard inicializado.');
   });
 
-  // ---- CHAT TOGGLE ----
-  const chatToggle = document.getElementById('chatToggle');
-  if (chatToggle) {
-    chatToggle.addEventListener('click', function() {
-      // Simula abertura do chat - integra com components/js/chat.js
-      const chatEvent = new CustomEvent('toggleChat');
-      document.dispatchEvent(chatEvent);
-    });
-  }
-
-  console.log('🚀 StockLog Dashboard carregado com sucesso!');
 })();

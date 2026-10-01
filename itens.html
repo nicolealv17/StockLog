@@ -94,12 +94,7 @@
         --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
+      * { margin: 0; padding: 0; box-sizing: border-box; }
       html { font-size: var(--fs-base); }
 
       body {
@@ -114,105 +109,14 @@
       }
 
       .main-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        min-width: 0;
+        flex: 1; display: flex; flex-direction: column;
+        min-height: 100vh; min-width: 0;
       }
 
       .dashboard-container {
-        max-width: 100%;
-        width: 100%;
-        margin: 0;
+        max-width: 100%; width: 100%; margin: 0;
         padding: var(--pad-content);
-        display: flex;
-        flex-direction: column;
-        gap: var(--gap-grid);
-      }
-
-      .top-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .header-title-group {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .header-title-group h1 {
-        font-size: var(--fs-h1);
-        font-weight: 700;
-      }
-
-      .header-title-group h1 span {
-        color: var(--primary);
-      }
-
-      .status-pill-live {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background-color: var(--green-bg);
-        color: var(--green);
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12.5px;
-        font-weight: 600;
-      }
-
-      .status-pill-live .dot {
-        width: 7px;
-        height: 7px;
-        background-color: var(--green);
-        border-radius: 50%;
-      }
-
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .icon-btn {
-        width: 38px;
-        height: 38px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        cursor: pointer;
-        position: relative;
-        transition: 0.15s;
-      }
-
-      .icon-btn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        background: var(--bg-soft);
-      }
-
-      .icon-btn .badge {
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        background-color: var(--red);
-        color: #fff;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 5px;
-        border-radius: 10px;
-        border: 1.5px solid var(--bg-card);
+        display: flex; flex-direction: column; gap: var(--gap-grid);
       }
 
       .card {
@@ -225,490 +129,236 @@
       }
 
       .card-header-title {
-        font-size: var(--fs-title);
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-        gap: 10px;
+        font-size: var(--fs-title); font-weight: 700;
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
       }
-
-      .card-header-title .title-text {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .card-header-title i {
-        color: var(--text-muted);
-        font-size: 1em;
-      }
+      .card-header-title .title-text { display: flex; align-items: center; gap: 10px; }
+      .card-header-title i { color: var(--text-muted); font-size: 1em; }
 
       .charts-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: var(--gap-grid);
+        display: grid; grid-template-columns: 2fr 1fr; gap: var(--gap-grid);
       }
 
-      .cat-progress-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .cat-progress-item {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
+      .cat-progress-list { display: flex; flex-direction: column; gap: 12px; }
+      .cat-progress-item { display: flex; flex-direction: column; gap: 6px; }
       .cat-progress-info {
-        display: flex;
-        justify-content: space-between;
-        font-size: 13px;
-        font-weight: 600;
+        display: flex; justify-content: space-between;
+        font-size: 13px; font-weight: 600;
       }
-
-      .cat-progress-info span {
-        color: var(--text-secondary);
-      }
-
-      .cat-progress-info strong {
-        color: var(--text-main);
-      }
+      .cat-progress-info span { color: var(--text-secondary); }
+      .cat-progress-info strong { color: var(--text-main); }
 
       .progress-bar-bg {
-        width: 100%;
-        height: 8px;
-        background: var(--bg-soft);
-        border-radius: 6px;
-        overflow: hidden;
+        width: 100%; height: 8px; background: var(--bg-soft);
+        border-radius: 6px; overflow: hidden;
       }
-
       .progress-bar-fill {
-        height: 100%;
-        border-radius: 6px;
-        transition: width 0.3s;
+        height: 100%; border-radius: 6px; transition: width 0.3s;
       }
 
-      .alert-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
+      .alert-list { display: flex; flex-direction: column; gap: 10px; }
 
       .alert-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 12px;
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        font-size: 13px;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 12px; background: var(--bg-soft);
+        border: 1px solid var(--border); border-radius: 8px; font-size: 13px;
       }
-
-      .alert-item-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
+      .alert-item-left { display: flex; align-items: center; gap: 10px; }
       .alert-icon {
-        width: 30px;
-        height: 30px;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        flex-shrink: 0;
+        width: 30px; height: 30px; border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 12px; flex-shrink: 0;
       }
-
       .alert-icon.critico { background: var(--red-bg); color: var(--red); }
-      .alert-icon.baixo { background: var(--amber-bg); color: var(--amber); }
-
-      .alert-info {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .alert-title {
-        font-weight: 700;
-        color: var(--text-main);
-      }
-
-      .alert-sub {
-        font-size: 11.5px;
-        color: var(--text-muted);
-      }
-
+      .alert-icon.baixo   { background: var(--amber-bg); color: var(--amber); }
+      .alert-info { display: flex; flex-direction: column; }
+      .alert-title { font-weight: 700; color: var(--text-main); }
+      .alert-sub   { font-size: 11.5px; color: var(--text-muted); }
       .alert-badge {
-        font-size: 11.5px;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 10px;
+        font-size: 11.5px; font-weight: 700;
+        padding: 3px 8px; border-radius: 10px;
       }
-
       .alert-badge.critico { background: var(--red-bg); color: var(--red); }
-      .alert-badge.baixo { background: var(--amber-bg); color: var(--amber); }
+      .alert-badge.baixo   { background: var(--amber-bg); color: var(--amber); }
 
       .table-controls {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
+        display: flex; align-items: center;
+        gap: 10px; flex-wrap: wrap;
       }
-
       .search-box {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        display: flex; align-items: center; gap: 8px;
         background: var(--bg-soft);
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 8px 12px;
-        min-width: 240px;
-        flex: 1;
+        border-radius: 8px; padding: 8px 12px;
+        min-width: 240px; flex: 1;
       }
-
-      .search-box i {
-        color: var(--text-muted);
-        font-size: 13px;
-      }
-
+      .search-box i { color: var(--text-muted); font-size: 13px; }
       .search-box input {
-        border: none;
-        background: transparent;
-        outline: none;
-        color: var(--text-main);
-        font-family: inherit;
-        font-size: 13.5px;
-        width: 100%;
+        border: none; background: transparent; outline: none;
+        color: var(--text-main); font-family: inherit;
+        font-size: 13.5px; width: 100%;
       }
-
-      .search-box input::placeholder {
-        color: var(--text-muted);
-      }
+      .search-box input::placeholder { color: var(--text-muted); }
 
       select.filter-select {
         border: 1px solid var(--border);
         background: var(--bg-soft);
         color: var(--text-secondary);
-        font-family: inherit;
-        font-size: 13px;
-        font-weight: 600;
-        padding: 8px 12px;
-        border-radius: 8px;
-        outline: none;
-        cursor: pointer;
+        font-family: inherit; font-size: 13px; font-weight: 600;
+        padding: 8px 12px; border-radius: 8px; outline: none; cursor: pointer;
       }
 
       .filter-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+        display: inline-flex; align-items: center; gap: 6px;
         border: 1px solid var(--border);
         background: var(--bg-soft);
         color: var(--text-secondary);
-        font-size: 12.5px;
-        font-weight: 600;
-        padding: 7px 14px;
-        border-radius: 20px;
-        cursor: pointer;
+        font-size: 12.5px; font-weight: 600;
+        padding: 7px 14px; border-radius: 20px; cursor: pointer;
         transition: 0.15s;
       }
+      .filter-chip:hover { border-color: var(--primary); color: var(--primary); }
+      .filter-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
-      .filter-chip:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-
-      .filter-chip.active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: #fff;
-      }
-
-      .table-wrapper {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
+      .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
       table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        font-size: var(--fs-table);
-        min-width: 750px;
+        width: 100%; border-collapse: separate;
+        border-spacing: 0; font-size: var(--fs-table); min-width: 750px;
       }
-
       th {
-        text-align: left;
-        padding: 10px 12px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-muted);
+        text-align: left; padding: 10px 12px;
+        font-size: 0.75rem; font-weight: 700;
+        text-transform: uppercase; color: var(--text-muted);
         border-bottom: 2px solid var(--border);
-        white-space: nowrap;
-        user-select: none;
+        white-space: nowrap; user-select: none;
       }
-
       td {
-        padding: 10px 12px;
-        vertical-align: middle;
+        padding: 10px 12px; vertical-align: middle;
         border-bottom: 1px solid var(--border);
       }
+      tbody tr:nth-child(even) td { background-color: var(--row-stripe); }
+      tbody tr:hover td { background-color: var(--primary-light); }
 
-      tbody tr:nth-child(even) td {
-        background-color: var(--row-stripe);
-      }
-
-      tbody tr:hover td {
-        background-color: var(--primary-light);
-      }
-
-      .item-code {
-        font-weight: 700;
-        color: var(--text-secondary);
-        font-size: 0.9em;
-      }
-
-      .item-name {
-        font-weight: 600;
-      }
-
-      .item-sub {
-        font-size: 0.82em;
-        color: var(--text-muted);
-        margin-top: 2px;
-      }
+      .item-code { font-weight: 700; color: var(--text-secondary); font-size: 0.9em; }
+      .item-name { font-weight: 600; }
+      .item-sub  { font-size: 0.82em; color: var(--text-muted); margin-top: 2px; }
 
       .cat-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.82em;
-        font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 12px;
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 0.82em; font-weight: 700;
+        padding: 3px 10px; border-radius: 12px;
       }
 
       .loc-cell {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--text-secondary);
-        font-weight: 600;
-        font-size: 0.9em;
+        display: flex; align-items: center; gap: 6px;
+        color: var(--text-secondary); font-weight: 600; font-size: 0.9em;
       }
+      .loc-cell i { color: var(--text-muted); font-size: 0.9em; }
 
-      .loc-cell i {
-        color: var(--text-muted);
-        font-size: 0.9em;
-      }
-
-      .qty-cell {
-        font-weight: 700;
-        font-size: 1rem;
-      }
-
-      .qty-min {
-        color: var(--text-muted);
-        font-weight: 600;
-        font-size: 0.82em;
-      }
+      .qty-cell { font-weight: 700; font-size: 1rem; }
+      .qty-min  { color: var(--text-muted); font-weight: 600; font-size: 0.82em; }
 
       .table-progress-cell {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        width: 130px;
+        display: flex; align-items: center; gap: 8px; width: 130px;
       }
-
       .progress-perc {
-        font-size: 0.82em;
-        font-weight: 700;
-        min-width: 32px;
-        color: var(--text-secondary);
+        font-size: 0.82em; font-weight: 700;
+        min-width: 32px; color: var(--text-secondary);
       }
 
       .flow-cell {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        font-size: 0.82em;
-        font-weight: 700;
+        display: flex; flex-direction: column; gap: 2px;
+        font-size: 0.82em; font-weight: 700;
       }
-
-      .flow-in { color: var(--green); }
+      .flow-in  { color: var(--green); }
       .flow-out { color: var(--red); }
 
       .status-pill {
-        font-size: 0.82em;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 12px;
+        font-size: 0.82em; font-weight: 700;
+        padding: 4px 10px; border-radius: 12px;
         white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
+        display: inline-flex; align-items: center; gap: 5px;
       }
+      .status-pill.ok      { background: var(--green-bg); color: var(--green); }
+      .status-pill.baixo   { background: var(--amber-bg); color: var(--amber); }
+      .status-pill.critico { background: var(--red-bg);   color: var(--red); }
 
-      .status-pill.ok { background: var(--green-bg); color: var(--green); }
-      .status-pill.baixo { background: var(--amber-bg); color: var(--amber); }
-      .status-pill.critico { background: var(--red-bg); color: var(--red); }
-
-      .qty-btns {
-        display: flex;
-        gap: 5px;
-      }
-
+      .qty-btns { display: flex; gap: 5px; }
       .qty-btn {
-        width: 28px;
-        height: 28px;
-        border-radius: 6px;
+        width: 28px; height: 28px; border-radius: 6px;
         border: 1px solid var(--border);
-        background: var(--bg-card);
-        color: var(--text-secondary);
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: 0.15s;
+        background: var(--bg-card); color: var(--text-secondary);
+        font-size: 12px; display: flex;
+        align-items: center; justify-content: center;
+        cursor: pointer; transition: 0.15s;
       }
-
-      .qty-btn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-      }
+      .qty-btn:hover { border-color: var(--primary); color: var(--primary); }
 
       .empty-state {
-        text-align: center;
-        padding: 36px 12px;
-        color: var(--text-muted);
-        font-size: 0.95rem;
+        text-align: center; padding: 36px 12px;
+        color: var(--text-muted); font-size: 0.95rem;
       }
-
       .empty-state i {
-        font-size: 26px;
-        margin-bottom: 8px;
-        display: block;
-        color: var(--border);
+        font-size: 26px; margin-bottom: 8px;
+        display: block; color: var(--border);
       }
 
       .results-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 14px;
-        font-size: 0.88em;
-        color: var(--text-muted);
-        flex-wrap: wrap;
-        gap: 10px;
+        display: flex; justify-content: space-between; align-items: center;
+        margin-top: 14px; font-size: 0.88em; color: var(--text-muted);
+        flex-wrap: wrap; gap: 10px;
       }
 
-      /* ===== ESTILOS DO MODAL DE ADICIONAR ITEM ===== */
+      /* MODAL */
       .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        opacity: 0;
-        visibility: hidden;
+        display: flex; align-items: center; justify-content: center;
+        z-index: 10000; opacity: 0; visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s ease;
       }
-
-      .modal-overlay.active {
-        opacity: 1;
-        visibility: visible;
-      }
+      .modal-overlay.active { opacity: 1; visibility: visible; }
 
       .modal {
         background: var(--bg-card);
-        border-radius: 12px;
-        width: 90%;
-        max-width: 600px;
-        max-height: 90vh;
-        overflow-y: auto;
+        border-radius: 12px; width: 90%; max-width: 600px;
+        max-height: 90vh; overflow-y: auto;
         padding: 24px;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
         transform: translateY(20px);
         transition: transform 0.3s ease;
       }
-
-      .modal-overlay.active .modal {
-        transform: translateY(0);
-      }
+      .modal-overlay.active .modal { transform: translateY(0); }
 
       .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 20px;
       }
-
       .modal-header h2 {
         font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        display: flex; align-items: center; gap: 8px;
       }
-
       .modal-close {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
+        width: 32px; height: 32px; border-radius: 8px;
         border: 1px solid var(--border);
-        background: transparent;
-        color: var(--text-muted);
-        cursor: pointer;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        background: transparent; color: var(--text-muted);
+        cursor: pointer; font-size: 16px;
+        display: flex; align-items: center; justify-content: center;
         transition: 0.15s;
       }
-
-      .modal-close:hover {
-        background: var(--bg-soft);
-        color: var(--text-main);
-      }
+      .modal-close:hover { background: var(--bg-soft); color: var(--text-main); }
 
       .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
       }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .form-group.full-width {
-        grid-column: span 2;
-      }
-
+      .form-group { display: flex; flex-direction: column; gap: 6px; }
+      .form-group.full-width { grid-column: span 2; }
       .form-group label {
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-size: 0.85rem; font-weight: 600;
         color: var(--text-secondary);
       }
-
       .form-group input,
       .form-group select {
         padding: 9px 12px;
@@ -716,168 +366,74 @@
         border-radius: 8px;
         background: var(--bg-soft);
         color: var(--text-main);
-        font-family: inherit;
-        font-size: 0.9rem;
-        outline: none;
-        transition: border-color 0.15s;
+        font-family: inherit; font-size: 0.9rem;
+        outline: none; transition: border-color 0.15s;
       }
-
       .form-group input:focus,
-      .form-group select:focus {
-        border-color: var(--primary);
-      }
-
-      .form-group input::placeholder {
-        color: var(--text-muted);
-      }
+      .form-group select:focus { border-color: var(--primary); }
+      .form-group input::placeholder { color: var(--text-muted); }
 
       .form-actions {
         margin-top: 24px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
+        display: flex; justify-content: flex-end; gap: 10px;
       }
 
       .btn {
-        padding: 9px 20px;
-        border-radius: 8px;
-        font-family: inherit;
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.15s;
+        padding: 9px 20px; border-radius: 8px;
+        font-family: inherit; font-size: 0.9rem; font-weight: 600;
+        cursor: pointer; transition: 0.15s;
         border: 1px solid transparent;
       }
-
       .btn-secondary {
         background: var(--bg-soft);
         border-color: var(--border);
         color: var(--text-secondary);
       }
-
-      .btn-secondary:hover {
-        background: var(--border);
-        color: var(--text-main);
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: #fff;
-      }
-
-      .btn-primary:hover {
-        filter: brightness(1.1);
-      }
+      .btn-secondary:hover { background: var(--border); color: var(--text-main); }
+      .btn-primary { background: var(--primary); color: #fff; }
+      .btn-primary:hover { filter: brightness(1.1); }
 
       .btn-add-item {
-        background: var(--primary);
-        color: #fff;
-        padding: 8px 18px;
-        border-radius: 8px;
+        background: var(--primary); color: #fff;
+        padding: 8px 18px; border-radius: 8px;
         border: 1px solid var(--primary);
-        font-family: inherit;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        font-family: inherit; font-size: 13px; font-weight: 600;
+        cursor: pointer; display: flex; align-items: center; gap: 6px;
         transition: 0.15s;
       }
-
-      .btn-add-item:hover {
-        filter: brightness(1.1);
-        transform: translateY(-1px);
-      }
+      .btn-add-item:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
       .toast-popup {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        background: var(--green-bar);
-        color: #ffffff;
-        padding: 14px 22px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 14px;
+        position: fixed; bottom: 24px; right: 24px;
+        background: var(--green-bar); color: #ffffff;
+        padding: 14px 22px; border-radius: 8px;
+        font-weight: 600; font-size: 14px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        opacity: 0;
-        visibility: hidden;
+        display: flex; align-items: center; gap: 10px;
+        opacity: 0; visibility: hidden;
         transform: translateY(20px);
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         z-index: 9999;
       }
+      .toast-popup.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
-      .toast-popup.show {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-
-      /* Responsividade Avançada */
-      @media (max-width: 1024px) {
-        .charts-grid {
-          grid-template-columns: 1fr;
-        }
-      }
+      @media (max-width: 1024px) { .charts-grid { grid-template-columns: 1fr; } }
 
       @media (max-width: 768px) {
-        .dashboard-container {
-          padding: 12px;
-        }
-
-        .table-controls {
-          flex-direction: column;
-          align-items: stretch;
-          width: 100%;
-        }
-
-        .search-box {
-          width: 100%;
-        }
-
-        select.filter-select {
-          width: 100%;
-        }
-
-        .modal {
-          padding: 16px;
-        }
-
-        .form-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .form-group.full-width {
-          grid-column: span 1;
-        }
-
-        .toast-popup {
-          left: 16px;
-          right: 16px;
-          bottom: 16px;
-          text-align: center;
-          justify-content: center;
-        }
+        .dashboard-container { padding: 12px; }
+        .table-controls { flex-direction: column; align-items: stretch; width: 100%; }
+        .search-box { width: 100%; }
+        select.filter-select { width: 100%; }
+        .modal { padding: 16px; }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-group.full-width { grid-column: span 1; }
+        .toast-popup { left: 16px; right: 16px; bottom: 16px; text-align: center; justify-content: center; }
       }
 
       @media (max-width: 480px) {
-        .card-header-title {
-          font-size: 14px;
-        }
-
-        .filter-chip {
-          padding: 6px 10px;
-          font-size: 11.5px;
-        }
-
-        .btn-add-item {
-          padding: 6px 12px;
-          font-size: 12px;
-        }
+        .card-header-title { font-size: 14px; }
+        .filter-chip { padding: 6px 10px; font-size: 11.5px; }
+        .btn-add-item { padding: 6px 12px; font-size: 12px; }
       }
     </style>
   </head>
@@ -893,15 +449,23 @@
             <div class="card-header-title">
               <span class="title-text"><i class="fas fa-chart-pie"></i> Capacidade por Categoria</span>
             </div>
-            <div class="cat-progress-list" id="catProgressList"></div>
+            <div class="cat-progress-list" id="catProgressList">
+              <p style="color:var(--text-muted);font-size:13px;padding:8px 0">
+                Nenhum item cadastrado ainda.
+              </p>
+            </div>
           </div>
 
           <div class="card">
             <div class="card-header-title">
               <span class="title-text"><i class="fas fa-triangle-exclamation" style="color:var(--amber);"></i> Alertas de Reposição</span>
-              <span id="alertCountBadge" style="font-size: 12px; color: var(--red); font-weight: 700;">4 pendentes</span>
+              <span id="alertCountBadge" style="font-size: 12px; color: var(--red); font-weight: 700;">Nenhum</span>
             </div>
-            <div class="alert-list" id="alertList"></div>
+            <div class="alert-list" id="alertList">
+              <p style="color:var(--text-muted);font-size:13px;padding:8px 0">
+                Nenhum alerta de reposição no momento.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -911,9 +475,9 @@
             <div class="table-controls">
               <div class="search-box">
                 <i class="fas fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por código ou nome..." oninput="renderAll()" />
+                <input type="text" id="searchInput" placeholder="Buscar por código ou nome..." />
               </div>
-              <select class="filter-select" id="categoryFilter" onchange="renderAll()">
+              <select class="filter-select" id="categoryFilter">
                 <option value="todas">Todas categorias</option>
                 <option value="Matéria-Prima">Matéria-Prima</option>
                 <option value="Componentes">Componentes</option>
@@ -921,18 +485,17 @@
                 <option value="Consumíveis">Consumíveis</option>
                 <option value="Ferramental">Ferramental</option>
               </select>
-              <!-- BOTÃO ADICIONAR ITEM -->
-              <button class="btn-add-item" onclick="openAddModal()">
+              <button class="btn-add-item" id="btnOpenAddModal">
                 <i class="fas fa-plus"></i> Adicionar Item
               </button>
             </div>
           </div>
 
           <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-            <button class="filter-chip active" data-status="todos" onclick="setStatusFilter('todos', this)">Todos</button>
-            <button class="filter-chip" data-status="ok" onclick="setStatusFilter('ok', this)"><i class="fas fa-circle" style="color:var(--green); font-size:7px;"></i> Normal</button>
-            <button class="filter-chip" data-status="baixo" onclick="setStatusFilter('baixo', this)"><i class="fas fa-circle" style="color:var(--amber); font-size:7px;"></i> Baixo</button>
-            <button class="filter-chip" data-status="critico" onclick="setStatusFilter('critico', this)"><i class="fas fa-circle" style="color:var(--red); font-size:7px;"></i> Crítico</button>
+            <button class="filter-chip active" data-status="todos">Todos</button>
+            <button class="filter-chip" data-status="ok"><i class="fas fa-circle" style="color:var(--green); font-size:7px;"></i> Normal</button>
+            <button class="filter-chip" data-status="baixo"><i class="fas fa-circle" style="color:var(--amber); font-size:7px;"></i> Baixo</button>
+            <button class="filter-chip" data-status="critico"><i class="fas fa-circle" style="color:var(--red); font-size:7px;"></i> Crítico</button>
           </div>
 
           <div class="table-wrapper">
@@ -950,13 +513,22 @@
                   <th>Ação rápida</th>
                 </tr>
               </thead>
-              <tbody id="tableBody"></tbody>
+              <tbody id="tableBody">
+                <tr>
+                  <td colspan="9">
+                    <div class="empty-state">
+                      <i class="fas fa-box-open"></i>
+                      Nenhum item cadastrado.
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
 
           <div class="results-footer">
-            <span id="resultsCount">Mostrando 12 de 12 itens</span>
-            <span>Última sincronização: <span id="lastSync">agora</span></span>
+            <span id="resultsCount">Nenhum item cadastrado.</span>
+            <span>Última sincronização: <span id="lastSync">—</span></span>
           </div>
         </section>
       </div>
@@ -969,11 +541,11 @@
       <div class="modal">
         <div class="modal-header">
           <h2><i class="fas fa-box-open" style="color: var(--primary);"></i> Adicionar Novo Item</h2>
-          <button class="modal-close" onclick="closeAddModal()">
+          <button class="modal-close" id="btnCloseAddModal" type="button">
             <i class="fas fa-xmark"></i>
           </button>
         </div>
-        <form id="addItemForm" onsubmit="handleAddItem(event)">
+        <form id="addItemForm">
           <div class="form-grid">
             <div class="form-group">
               <label for="newCodigo">Código *</label>
@@ -1024,8 +596,10 @@
             </div>
           </div>
           <div class="form-actions">
-            <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancelar</button>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Salvar Item</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelAdd">Cancelar</button>
+            <button type="submit" class="btn btn-primary" id="btnSaveItem">
+              <i class="fas fa-plus"></i> Salvar Item
+            </button>
           </div>
         </form>
       </div>
@@ -1033,15 +607,42 @@
 
     <div id="toastPopup" class="toast-popup">
       <i class="fas fa-circle-check" style="font-size: 18px;"></i>
-      <span>Dados atualizados com sucesso!</span>
+      <span id="toastMsg">Dados atualizados com sucesso!</span>
     </div>
 
+    <!-- ================================================================
+         SCRIPTS — ORDEM IMPORTA
+         ================================================================ -->
+
+    <!-- 1) Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <!-- 2) Config inline -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+        authDomain: "stocklog-ff7aa.firebaseapp.com",
+        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+        projectId: "stocklog-ff7aa",
+        storageBucket: "stocklog-ff7aa.firebasestorage.app",
+        messagingSenderId: "787537499919",
+        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+      };
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      window.SL = { db: firebase.database(), auth: firebase.auth() };
+    </script>
+
+    <!-- 3) Componentes -->
     <script src="components/js/header.js"></script>
     <script src="components/js/modoescuro.js"></script>
     <script src="components/js/sidebar.js"></script>
     <script src="components/js/chat.js"></script>
     <script src="components/js/config.js"></script>
     <script src="components/js/footer.js"></script>
+
+    <!-- 4) Script da página -->
     <script src="JS/itens.js"></script>
   </body>
 </html>

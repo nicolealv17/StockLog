@@ -1340,5 +1340,32 @@
     <script src="components/js/footer.js"></script>
     <script src="components/js/modoescuro.js"></script>
     <script src="JS/index.js" defer></script>
+
+
+      <!-- Firebase SDK Compat Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+      authDomain: "stocklog-ff7aa.firebaseapp.com",
+      databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+      projectId: "stocklog-ff7aa",
+      storageBucket: "stocklog-ff7aa.firebasestorage.app",
+      messagingSenderId: "787537499919",
+      appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+
+    </script>
+
+    <script src="JS/index.js" defer></script>
   </body>
 </html>
