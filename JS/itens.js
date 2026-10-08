@@ -157,36 +157,6 @@
     if (!alertListEl) return;
 
     const alerts = items.filter((i) => i.status === 'critico' || i.status === 'baixo');
-<<<<<<< HEAD
-  // Sincroniza quantidades dos produtos específicos via localStorage
-  const productsMap = {
-    "PROD-01": "produto1",
-    "PROD-02": "produto2",
-    "PROD-03": "produto3",
-    "PROD-04": "produto4"
-  };
-
-  let syncedItems = items.map(item => {
-    const productKey = productsMap[item.codigo];
-    if (productKey) {
-      const savedQty = localStorage.getItem('stocklog_product_qty_' + productKey);
-      if (savedQty !== null) {
-        return { ...item, atual: parseInt(savedQty) };
-      }
-    }
-    return item;
-  });
-
-  let filtered = syncedItems.filter(item => {
-    const matchesSearch = item.codigo.toLowerCase().includes(search) ||
-                         item.nome.toLowerCase().includes(search) ||
-                         item.sub.toLowerCase().includes(search);
-    const matchesCategory = category === 'todas' || item.categoria === category;
-    const matchesStatus = currentStatus === 'todos' || item.status === currentStatus;
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
-=======
->>>>>>> 6acb542e2f782a2d277b47f14954d855c8999a95
 
     if (alertCountBadge) {
       alertCountBadge.textContent = alerts.length
@@ -318,13 +288,6 @@
             <div class="qty-btns">
               <button class="qty-btn" data-action="qty" data-delta="-1" data-key="${item.firebaseKey}" title="Diminuir 1">-</button>
               <button class="qty-btn" data-action="qty" data-delta="1"  data-key="${item.firebaseKey}" title="Aumentar 1">+</button>
-<<<<<<< HEAD
-            <div class="qty-btns" style="align-items: center; gap: 5px;">
-              <input type="number" id="qty-input-${item.id}" value="1" min="1" style="width: 45px; padding: 4px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-size: 12px; text-align: center;">
-              <button class="qty-btn" onclick="updateQtyCustom(${item.id}, 'in')" title="Entrada" style="color: var(--green);"><i class="fas fa-plus"></i></button>
-              <button class="qty-btn" onclick="updateQtyCustom(${item.id}, 'out')" title="Saída" style="color: var(--red);"><i class="fas fa-minus"></i></button>
-=======
->>>>>>> 6acb542e2f782a2d277b47f14954d855c8999a95
             </div>
           </td>
         </tr>`;
