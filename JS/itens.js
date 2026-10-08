@@ -285,10 +285,12 @@
           </td>
           <td>${statusPill}</td>
           <td>
-            <div class="qty-btns">
-              <button class="qty-btn" data-action="qty" data-delta="-1" data-key="${item.firebaseKey}" title="Diminuir 1">-</button>
-              <button class="qty-btn" data-action="qty" data-delta="1"  data-key="${item.firebaseKey}" title="Aumentar 1">+</button>
+            <div class="qty-control" title="Informe quantas unidades deseja movimentar e use + ou −">
+              <button type="button" class="qty-btn" data-action="qty" data-delta="-1" data-key="${item.firebaseKey}" title="Retirar a quantidade informada">−</button>
+              <input type="number" class="qty-amount" data-qty-input="${item.firebaseKey}" min="1" step="1" value="1" aria-label="Quantidade para movimentar">
+              <button type="button" class="qty-btn" data-action="qty" data-delta="1" data-key="${item.firebaseKey}" title="Adicionar a quantidade informada">+</button>
             </div>
+            <span class="qty-hint">quantidade por clique</span>
           </td>
         </tr>`;
     }).join('');
@@ -307,13 +309,16 @@
   // =====================================================================
   // 7. Ações — aumentar / diminuir quantidade
   // =====================================================================
-  async function changeQty(key, delta) {
+  async function changeQty(key, direction, amount = 1) {
     const item = items.find((i) => i.firebaseKey === key);
     if (!item) return;
 
+    amount = Math.max(1, Math.floor(Number(amount) || 1));
+    const delta = direction * amount;
     const novaAtual = Math.max(0, item.atual + delta);
-    const novasEntradas = item.entradas + (delta > 0 ? 1 : 0);
-    const novasSaidas   = item.saidas   + (delta < 0 ? 1 : 0);
+    const movimentado = direction < 0 ? Math.min(amount, item.atual) : amount;
+    const novasEntradas = item.entradas + (direction > 0 ? amount : 0);
+    const novasSaidas   = item.saidas   + (direction < 0 ? movimentado : 0);
     const novoStatus = calcularStatus(novaAtual, item.minimo);
 
     try {
@@ -328,7 +333,7 @@
 
       await db.ref('logbot/eventos').push({
         tipo: 'info',
-        texto: `${delta > 0 ? 'Entrada' : 'Saída'} de 1 un em ${item.codigo} (${item.nome}) por ${auth.currentUser?.email || 'sistema'}`,
+        texto: `${direction > 0 ? 'Entrada' : 'Saída'} de ${movimentado} un em ${item.codigo} (${item.nome}) por ${auth.currentUser?.email || 'sistema'}`,
         ref: key,
         timestamp: Date.now()
       });
@@ -467,9 +472,18 @@
     $('#tableBody')?.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-action="qty"]');
       if (!btn) return;
-      const key   = btn.dataset.key;
-      const delta = parseInt(btn.dataset.delta, 10);
-      if (key && !isNaN(delta)) changeQty(key, delta);
+      const key = btn.dataset.key;
+      const direction = parseInt(btn.dataset.delta, 10);
+      const input = $('#tableBody').querySelector(`[data-qty-input="${CSS.escape(key)}"]`);
+      const amount = input ? Math.max(1, parseInt(input.value, 10) || 1) : 1;
+      if (key && (direction === 1 || direction === -1)) changeQty(key, direction, amount);
+    });
+
+    $('#tableBody')?.addEventListener('change', (e) => {
+      const input = e.target.closest('[data-qty-input]');
+      if (!input) return;
+      const value = Math.max(1, parseInt(input.value, 10) || 1);
+      input.value = value;
     });
   }
 
