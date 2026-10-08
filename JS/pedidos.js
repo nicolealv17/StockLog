@@ -93,11 +93,41 @@
   // 4. Geração de código — agora retorna apenas o próximo código
   //    disponível (sem se preocupar com chave de push)
   // =====================================================================
-  async function gerarCodigo() {
+  // Próximo número = MAIOR sequência existente no ano + 1
+  // (contar os pedidos quebra quando há exclusões ou códigos fora de ordem)
+  function proximaSequencia(chaves, ano) {
+    const re = new RegExp(`^OP-${ano}-(\\d+)$`);
+    let max = 0;
+    chaves.forEach((k) => {
+      const m = re.exec(k);
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    });
+    return max + 1;
+  }
+
+  const fmtCodigo = (ano, n) => `OP-${ano}-${String(n).padStart(3, '0')}`;
+
+  // Reserva o código de forma atômica: só grava se a chave estiver livre.
+  // Se outro usuário pegou o mesmo número ao mesmo tempo, tenta o próximo.
+  async function criarOrdem(data, user) {
     const ano = new Date().getFullYear();
     const snap = await db.ref('ordensProducao').once('value');
-    const total = snap.numChildren() + 1;
-    return `OP-${ano}-${String(total).padStart(3, '0')}`;
+    let n = proximaSequencia(Object.keys(snap.val() || {}), ano);
+
+    for (let tentativa = 0; tentativa < 10; tentativa++, n++) {
+      const codigo = fmtCodigo(ano, n);
+      const nova = {
+        codigo,
+        ...data,
+        dataCriacao: Date.now(),
+        criadoPor: user?.uid || 'anonimo'
+      };
+      const res = await db.ref(`ordensProducao/${codigo}`).transaction(
+        (atual) => (atual === null ? nova : undefined)   // undefined = aborta
+      );
+      if (res.committed) return codigo;
+    }
+    throw new Error('Não foi possível reservar um código de pedido livre.');
   }
 
   // =====================================================================
@@ -358,24 +388,7 @@
         showToast(`Pedido ${editingCodigo} atualizado.`);
       } else {
         // ---------- CREATE ----------
-        // 1) gera o próximo código sequencial
-        const codigo = await gerarCodigo();
-
-        // 2) verifica se já existe (por segurança)
-        const jaExiste = await db.ref(`ordensProducao/${codigo}`).once('value');
-        if (jaExiste.exists()) {
-          showToast(`O código ${codigo} já existe. Tente novamente.`, true);
-          return;
-        }
-
-        // 3) grava usando o PRÓPRIO código como chave
-        const nova = {
-          codigo,
-          ...data,
-          dataCriacao: Date.now(),
-          criadoPor:   user?.uid || 'anonimo'
-        };
-        await db.ref(`ordensProducao/${codigo}`).set(nova);
+        const codigo = await criarOrdem(data, user);
         await logEvento('info', `${codigo} criada por ${user?.email || 'sistema'}`, codigo);
         showToast(`Pedido ${codigo} criado com sucesso.`);
       }
