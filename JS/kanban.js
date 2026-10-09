@@ -153,7 +153,7 @@ function renderStats(board) {
   const stats = [
     { label: board === "production" ? "Total de OPs" : "Total de Tarefas", value: total, icon: "fa-table-columns", cls: "c-blue" },
     { label: "Em Andamento", value: doing, icon: "fa-circle-play", cls: "c-blue" },
-    { label: " uma vez a cada 24 horas", value: overdue, icon: "fa-triangle-exclamation", cls: "c-red" },
+    { label: "Atrasadas", value: overdue, icon: "fa-triangle-exclamation", cls: "c-red" },
     { label: "Concluídas", value: done, icon: "fa-circle-check", cls: "c-green" },
     { label: "Prioridade Alta", value: high, icon: "fa-fire", cls: "c-amber" }
   ];
@@ -471,7 +471,7 @@ document.addEventListener("keydown", (e) => {
     closeTaskModal();
     document.querySelectorAll(".card-menu").forEach((m) => m.classList.remove("open"));
   }
-  if (e.key === "n" && (e.ctrlKey || "metaKey")) {
+  if (e.key === "n" && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
     openTaskModal(state.currentView);
   }

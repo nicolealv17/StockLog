@@ -59,34 +59,41 @@ const deliveries = [
 
 let selectedId = 'SL-982347-BR';
 let currentFilter = 'todos';
-let map, mapPolyline, mapMarkers = [];
-let tileLayer;
+let map = null;
+let mapPolyline = null;
+let mapMarkers = [];
+let tileLayer = null;
 
 function initMap() {
+  if (map) return;
+
   map = L.map('map', { zoomControl: false }).setView([-23.5505, -46.6333], 9);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   
-  // Carrega sempre os tiles no modo claro
   updateMapTiles();
   renderList();
   selectDelivery(selectedId);
 
-  // Reflow após sidebar/header injetados pelos componentes
-  setTimeout(() => map.invalidateSize(), 200);
-  setTimeout(() => map.invalidateSize(), 600);
+  setTimeout(() => { if (map) map.invalidateSize(); }, 200);
+  setTimeout(() => { if (map) map.invalidateSize(); }, 600);
 }
 
 function updateMapTiles() {
   if (tileLayer) map.removeLayer(tileLayer);
   
-  // URL fixa do mapa claro (Voyager)
-  const tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-  tileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
+  // Utiliza OpenStreetMap padrão (Totalmente gratuito e sem necessidade de API Key)
+  const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  tileLayer = L.tileLayer(tileUrl, {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
 }
 
 function renderList() {
-  const search = document.getElementById('searchInput').value.toLowerCase();
+  const searchInput = document.getElementById('searchInput');
+  const search = searchInput ? searchInput.value.toLowerCase() : '';
   const container = document.getElementById('deliveryList');
+  if (!container) return;
 
   const filtered = deliveries.filter(d => {
     const matchFilter = currentFilter === 'todos' || d.status === currentFilter;
@@ -119,10 +126,15 @@ function selectDelivery(id) {
   const data = deliveries.find(d => d.id === id);
   if (!data) return;
 
-  document.getElementById('selectedCode').innerText = data.id;
-  document.getElementById('teleSpeed').innerText = data.speed;
-  document.getElementById('teleTemp').innerText = data.temp;
-  document.getElementById('teleFuel').innerText = data.fuel;
+  const selectedCode = document.getElementById('selectedCode');
+  const teleSpeed = document.getElementById('teleSpeed');
+  const teleTemp = document.getElementById('teleTemp');
+  const teleFuel = document.getElementById('teleFuel');
+
+  if (selectedCode) selectedCode.innerText = data.id;
+  if (teleSpeed) teleSpeed.innerText = data.speed;
+  if (teleTemp) teleTemp.innerText = data.temp;
+  if (teleFuel) teleFuel.innerText = data.fuel;
 
   const steps = document.querySelectorAll('#stepperContainer .step-item');
   steps.forEach((el, idx) => {
@@ -131,11 +143,12 @@ function selectDelivery(id) {
     else if (idx + 1 === data.step) el.classList.add('active');
   });
 
+  if (!map) return;
+
   mapMarkers.forEach(m => map.removeLayer(m));
   mapMarkers = [];
   if (mapPolyline) map.removeLayer(mapPolyline);
 
-  // Linha da rota fixa em azul visível para mapa claro
   mapPolyline = L.polyline(data.route, {
     color: '#006bb3',
     weight: 5,
@@ -149,7 +162,7 @@ function selectDelivery(id) {
     iconAnchor: [17, 17]
   });
 
-  const marker = L.marker(data.currentPos, { icon: truckIcon }).addTo(map).bindPopup(`<b>${data.driver}</b><br>${data.vehicle}`).openPopup();
+  const marker = L.marker(data.currentPos, { icon: truckIcon }).addTo(map).bindPopup(`<b>${data.driver}</b><br>${data.vehicle}`);
   mapMarkers.push(marker);
 
   map.fitBounds(mapPolyline.getBounds(), { padding: [40, 40] });
@@ -162,7 +175,12 @@ function filterStatus(status, btn) {
   renderList();
 }
 
-// Inicializa o mapa assim que o DOM estiver pronto
-window.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMap);
+} else {
   initMap();
+}
+
+window.addEventListener('resize', () => {
+  if (map) map.invalidateSize();
 });
