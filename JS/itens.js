@@ -2,6 +2,7 @@
    StockLog · JS/itens.js
    Página de Itens em Estoque — integrada ao Firebase
    Coleção: /itens
+   Chave do item = código digitado pelo usuário (sanitizado)
    ================================================================ */
 
 (function () {
@@ -51,6 +52,24 @@
     'Ferramental':   'var(--green-bar)'
   };
 
+  /**
+   * Converte um código digitado pelo usuário em uma chave SEGURA para o
+   * Firebase Realtime Database.
+   *
+   * Regras:
+   *  - trim()                        → remove espaços nas pontas
+   *  - toUpperCase()                 → "mt-8888" e "MT-8888" viram a mesma chave
+   *  - substitui . # $ [ ] / por _   → caracteres proibidos pelo Firebase
+   *  - espaços internos viram _      → "chapa de aço" → "CHAPA_DE_AÇO"
+   */
+  function sanitizeKey(codigo) {
+    return String(codigo || '')
+      .trim()
+      .toUpperCase()
+      .replace(/[.#$\[\]\/]/g, '_')
+      .replace(/\s+/g, '_');
+  }
+
   // Recalcula status com base em atual/minimo
   function calcularStatus(atual, minimo) {
     if (atual <= Math.round(minimo * 0.3)) return 'critico';
@@ -93,8 +112,8 @@
         const atual  = Number(it.atual) || 0;
         const minimo = Number(it.minimo) || 0;
         return {
-          firebaseKey: key,
-          codigo:    it.codigo    || '',
+          firebaseKey: key,                      // agora é o próprio código sanitizado
+          codigo:    it.codigo    || key || '',  // fallback: usa a key se não houver campo
           nome:      it.nome      || '',
           sub:       it.sub       || '—',
           categoria: it.categoria || 'Matéria-Prima',
@@ -256,6 +275,10 @@
       if (item.status === 'baixo')   statusPill = `<span class="status-pill baixo"><i class="fas fa-triangle-exclamation"></i> Baixo</span>`;
       if (item.status === 'critico') statusPill = `<span class="status-pill critico"><i class="fas fa-circle-exclamation"></i> Crítico</span>`;
 
+      // A chave (firebaseKey) agora é o próprio código sanitizado,
+      // então pode ter caracteres que precisam de escape no atributo HTML.
+      const keyEscaped = escapeHtml(item.firebaseKey);
+
       return `
         <tr>
           <td><span class="item-code">${escapeHtml(item.codigo)}</span></td>
@@ -286,9 +309,9 @@
           <td>${statusPill}</td>
           <td>
             <div class="qty-control" title="Informe quantas unidades deseja movimentar e use + ou −">
-              <button type="button" class="qty-btn" data-action="qty" data-delta="-1" data-key="${item.firebaseKey}" title="Retirar a quantidade informada">−</button>
-              <input type="number" class="qty-amount" data-qty-input="${item.firebaseKey}" min="1" step="1" value="1" aria-label="Quantidade para movimentar">
-              <button type="button" class="qty-btn" data-action="qty" data-delta="1" data-key="${item.firebaseKey}" title="Adicionar a quantidade informada">+</button>
+              <button type="button" class="qty-btn" data-action="qty" data-delta="-1" data-key="${keyEscaped}" title="Retirar a quantidade informada">−</button>
+              <input type="number" class="qty-amount" data-qty-input="${keyEscaped}" min="1" step="1" value="1" aria-label="Quantidade para movimentar">
+              <button type="button" class="qty-btn" data-action="qty" data-delta="1" data-key="${keyEscaped}" title="Adicionar a quantidade informada">+</button>
             </div>
             <span class="qty-hint">quantidade por clique</span>
           </td>
@@ -359,7 +382,7 @@
   }
 
   // =====================================================================
-  // 9. Submit — criar item no Firebase
+  // 9. Submit — criar item no Firebase (chave = código do usuário)
   // =====================================================================
   async function handleAddItem(e) {
     e.preventDefault();
@@ -383,8 +406,12 @@
       showToast('O estoque mínimo não pode ser maior que o máximo.', true);
       return;
     }
-    if (items.some((i) => i.codigo.toLowerCase() === codigo.toLowerCase())) {
-      showToast('Já existe um item com esse código.', true);
+
+    // Sanitiza o código para virar chave válida do Firebase
+    const chave = sanitizeKey(codigo);
+
+    if (!chave) {
+      showToast('Código inválido.', true);
       return;
     }
 
@@ -396,6 +423,14 @@
 
     try {
       const { db, auth } = window.SL;
+
+      // Verifica duplicata direto no Firebase, usando a chave sanitizada
+      const snap = await db.ref(`itens/${chave}`).once('value');
+      if (snap.exists()) {
+        showToast(`Já existe um item com o código "${codigo}".`, true);
+        return;
+      }
+
       const payload = {
         codigo,
         nome,
@@ -413,12 +448,13 @@
         criadoPor: auth.currentUser?.uid || 'anonimo'
       };
 
-      const ref = await db.ref('itens').push(payload);
+      // ✅ Chave = código sanitizado (ex: "MT-8888")
+      await db.ref(`itens/${chave}`).set(payload);
 
       await db.ref('logbot/eventos').push({
         tipo: 'info',
         texto: `Item ${codigo} (${nome}) cadastrado por ${auth.currentUser?.email || 'sistema'}`,
-        ref: ref.key,
+        ref: chave,
         timestamp: Date.now()
       });
 

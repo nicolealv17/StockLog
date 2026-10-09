@@ -1,25 +1,10 @@
-// Mock de itens em estoque (Simulando a base de dados de itens.js)
-const MOCK_STOCK = [
-  { codigo: "MP-1042", nome: "Chapa de Aço Inox 304", atual: 450, minimo: 200 },
-  { codigo: "MP-1050", nome: "Chapa de Aço Carbono 10mm", atual: 180, minimo: 150 },
-  { codigo: "MP-1088", nome: "Polímero ABS Virgem", atual: 80, minimo: 150 },
-  { codigo: "MP-1102", nome: "Resina Epóxi Industrial", atual: 5, minimo: 20 },
-  { codigo: "MP-1120", nome: "Barra de Bronze TM23", atual: 40, minimo: 25 },
-  { codigo: "MP-1135", nome: "Perfil U Aço Galvanizado", atual: 96, minimo: 60 },
-  { codigo: "MP-1140", nome: "Tinta Primer Anticorrosiva", atual: 18, minimo: 15 },
-  { codigo: "CP-3011", nome: "Rolamento Blindado 6204-2RS", atual: 15, minimo: 100 },
-  { codigo: "CP-3045", nome: "Parafuso Sextavado M8x30", atual: 620, minimo: 300 },
-  { codigo: "CP-3050", nome: "Porca Sextavada M8", atual: 540, minimo: 300 },
-  { codigo: "CP-3055", nome: "Arruela de Pressão M8", atual: 710, minimo: 300 },
-  { codigo: "CP-3070", nome: "Anel de Vedação Viton", atual: 60, minimo: 40 },
-  { codigo: "EM-5012", nome: "Caixa Papelão Duplo 40x30x30", atual: 310, minimo: 250 },
-  { codigo: "EM-5020", nome: "Tambor Metálico Vazio 200L", atual: 22, minimo: 15 },
-  { codigo: "EM-5030", nome: "Lacre de Segurança Industrial", atual: 8, minimo: 50 },
-  { codigo: "CS-7023", nome: "Óleo Lubrificante ISO VG 68", atual: 2, minimo: 5 },
-  { codigo: "CS-7040", nome: "Solda Eletrodo E6013", atual: 130, minimo: 80 },
-];
+/* ================================================================
+   StockLog · JS/ajuda_producao.js
+   Ajuda de Produção — disponibilidade de insumos em tempo real
+   Fonte de estoque: /itens (Firebase Realtime Database)
+   ================================================================ */
 
-// Categorias — label, ícone (FontAwesome) usado nos filtros
+// ---------- Categorias (labels/ícones) ----------
 const CATEGORIES = {
   chapas:     { label: "Corte e Chapas",       icon: "fa-solid fa-scissors" },
   usinados:   { label: "Usinados",             icon: "fa-solid fa-gear" },
@@ -30,8 +15,6 @@ const CATEGORIES = {
   pneus:      { label: "Pneus e Borracha",     icon: "fa-solid fa-circle-notch" },
 };
 
-// Paleta de cores das categorias para uso no PDF (RGB 0-255), espelhando as
-// variáveis --cat-* do CSS (modo claro)
 const CATEGORY_COLORS_PDF = {
   chapas:     { text: [69, 96, 125],   bg: [233, 238, 244] },
   usinados:   { text: [109, 79, 163],  bg: [239, 233, 248] },
@@ -48,14 +31,14 @@ const STATUS_COLORS_PDF = {
   blocked: { text: [178, 67, 58],   bg: [250, 238, 237], label: "Bloqueado" },
 };
 
-const PRIMARY_PDF = [0, 107, 179];
-const TEXT_MAIN_PDF = [10, 31, 51];
+const PRIMARY_PDF    = [0, 107, 179];
+const TEXT_MAIN_PDF  = [10, 31, 51];
 const TEXT_MUTED_PDF = [61, 95, 126];
-const BORDER_PDF = [226, 236, 246];
+const BORDER_PDF     = [226, 236, 246];
 
-// Definição de "Receitas" de Produção — cada uma com uma foto real representando o insumo/produto
-// qty agora em número + unidade, para conseguirmos comparar com o estoque
-// "steps" descreve o passo a passo de produção exibido no modal e no PDF
+// =====================================================================
+// RECEITAS — array original completo (imagens + ingredientes + passos)
+// =====================================================================
 const RECIPES = [
   {
     id: "chapa-01",
@@ -64,8 +47,8 @@ const RECIPES = [
     categoria: "chapas",
     imagem: "https://images.pexels.com/photos/8940223/pexels-photo-8940223.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "MP-1050", qty: 1,    unidade: "un", label: "Chapa de Aço Carbono 10mm" },
-      { codigo: "CS-7040", qty: 0.3,  unidade: "kg", label: "Solda de Acabamento" },
+      { codigo: "MP-1050", qty: 1,   unidade: "un", label: "Chapa de Aço Carbono 10mm" },
+      { codigo: "CS-7040", qty: 0.3, unidade: "kg", label: "Solda de Acabamento" },
     ],
     steps: [
       "Verificar o programa de corte a laser e confirmar as dimensões conforme o desenho técnico.",
@@ -219,8 +202,8 @@ const RECIPES = [
     categoria: "embalagem",
     imagem: "https://images.pexels.com/photos/6169028/pexels-photo-6169028.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "EM-5012", qty: 1,   unidade: "un",  label: "Caixa de Papelão" },
-      { codigo: "MP-1102", qty: 100, unidade: "ml",  label: "Resina de Selagem" },
+      { codigo: "EM-5012", qty: 1,   unidade: "un", label: "Caixa de Papelão" },
+      { codigo: "MP-1102", qty: 100, unidade: "ml", label: "Resina de Selagem" },
     ],
     steps: [
       "Montar a caixa de papelão duplo conforme as dimensões do produto a proteger.",
@@ -232,28 +215,102 @@ const RECIPES = [
   }
 ];
 
-/* ---------------------------------------------------------------
-   Regras de disponibilidade
-   - Se estoque atual <= 0               → indisponível (zerado)
-   - Se estoque atual < quantidade req.  → indisponível (insuficiente)
-   - Se estoque atual <= mínimo          → disponível, mas com aviso "abaixo do mínimo"
-   --------------------------------------------------------------- */
-function stockFor(codigo) {
-  return MOCK_STOCK.find(s => s.codigo === codigo);
+// =====================================================================
+// ESTOQUE — espelho do Firebase (/itens)
+// =====================================================================
+let STOCK = [];
+let stockPronto = false;
+
+/** Normaliza string para comparação (sem acento, minúsculo). */
+function normalizar(str) {
+  return String(str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
+/** Converte o snapshot do Firebase em array. */
+function snapshotParaArray(val) {
+  const out = [];
+  for (const key in val) {
+    const it = val[key] || {};
+    out.push({
+      firebaseKey: key,
+      codigo: it.codigo || key || '',
+      nome:   it.nome   || '',
+      atual:  Number(it.atual)  || 0,
+      minimo: Number(it.minimo) || 0,
+    });
+  }
+  return out;
+}
+
+/** Busca o item do estoque pelo código (case-insensitive, trim). */
+function stockFor(codigo) {
+  const alvo = String(codigo || '').trim().toLowerCase();
+  if (!alvo) return null;
+  return STOCK.find(s =>
+    String(s.codigo).trim().toLowerCase() === alvo ||
+    String(s.firebaseKey).trim().toLowerCase() === alvo
+  );
+}
+
+/** Fallback: busca por nome aproximado (todos os tokens precisam bater). */
+function stockForNome(label) {
+  const alvo = normalizar(label);
+  if (!alvo) return null;
+
+  const stopwords = new Set([
+    'de','da','do','das','dos','para','com','sem','e','ou','a','o','as','os',
+    'un','und','kg','l','m','ml','industrial','padrao','linha'
+  ]);
+  const tokens = alvo.split(' ').filter(t => t.length >= 3 && !stopwords.has(t));
+  if (!tokens.length) return null;
+
+  return STOCK.find(s => {
+    const nome = normalizar(s.nome);
+    return tokens.every(t => nome.includes(t));
+  }) || null;
+}
+
+/**
+ * Regras de disponibilidade:
+ *   - atual <= 0                → indisponível (zerado)
+ *   - atual < qty requisitada    → indisponível (insuficiente)
+ *   - atual <= mínimo            → disponível, mas com aviso
+ */
 function ingredientStatus(ing) {
-  const item = stockFor(ing.codigo);
-  if (!item) return { disponivel: false, motivo: "Item não cadastrado no estoque" };
-  if (item.atual <= 0) return { disponivel: false, motivo: "Estoque zerado" };
+  // 1) tenta por código
+  let item = stockFor(ing.codigo);
+  let via = 'codigo';
+
+  // 2) fallback por nome
+  if (!item) {
+    item = stockForNome(ing.label);
+    via = item ? 'nome' : null;
+  }
+
+  if (!item) {
+    return { disponivel: false, motivo: "Item não cadastrado no estoque", item: null, via: null };
+  }
+
+  const base = { item, via };
+
+  if (item.atual <= 0) {
+    return { ...base, disponivel: false, motivo: "Estoque zerado" };
+  }
   if (item.atual < ing.qty) {
     return {
+      ...base,
       disponivel: false,
-      motivo: `Estoque insuficiente — restam ${item.atual} ${ing.unidade}, precisa ${ing.qty}`
+      motivo: `Estoque insuficiente — disponível ${item.atual} ${ing.unidade}, precisa ${ing.qty}`
     };
   }
-  const baixo = item.atual <= item.minimo;
+  const baixo = item.minimo > 0 && item.atual <= item.minimo;
   return {
+    ...base,
     disponivel: true,
     baixoMinimo: baixo,
     motivo: baixo ? `Abaixo do mínimo (mín. ${item.minimo})` : null
@@ -278,11 +335,14 @@ function statusInfo({ total, disponiveis, faltando, pronto, bloqueado }) {
     return { cls: "ready", icon: "fa-solid fa-circle-check", text: "Pronto para produção" };
   }
   if (bloqueado) {
-    return { cls: "blocked", icon: "fa-solid fa-circle-xmark", text: `Bloqueado · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
+    return { cls: "blocked", icon: "fa-solid fa-circle-xmark",
+             text: `Bloqueado · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
   }
-  return { cls: "partial", icon: "fa-solid fa-triangle-exclamation", text: `Parcial · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
+  return { cls: "partial", icon: "fa-solid fa-triangle-exclamation",
+           text: `Parcial · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
 }
 
+// ---------- Render: resumo + cards ----------
 function renderSummary() {
   const el = document.getElementById('pageSummary');
   if (!el) return;
@@ -298,7 +358,7 @@ function renderRecipes(filtro = "todas") {
   if (!grid) return;
 
   const lista = filtro === "todas" ? RECIPES : RECIPES.filter(r => r.categoria === filtro);
-  const cat = key => CATEGORIES[key];
+  const cat = key => CATEGORIES[key] || { label: key };
 
   grid.innerHTML = lista.map(recipe => {
     const summary = availabilitySummary(recipe);
@@ -330,7 +390,7 @@ function renderRecipes(filtro = "todas") {
   `;
 }
 
-// Guarda o id da receita atualmente aberta no modal (usado pelo botão de PDF)
+// ---------- Modal ----------
 let currentModalRecipeId = null;
 
 function openRecipeModal(recipeId) {
@@ -344,13 +404,12 @@ function openRecipeModal(recipeId) {
   document.getElementById('modalImage').alt = recipe.nome;
 
   const summary = availabilitySummary(recipe);
-  const pct = Math.round((summary.disponiveis / summary.total) * 100);
+  const pct = summary.total ? Math.round((summary.disponiveis / summary.total) * 100) : 0;
   const fill = document.getElementById('modalProgressFill');
   fill.style.width = `${pct}%`;
   fill.style.background = summary.pronto ? 'var(--green)' : (summary.bloqueado ? 'var(--red)' : 'var(--amber)');
   document.getElementById('modalProgressLabel').textContent = `${summary.disponiveis}/${summary.total} disponíveis`;
 
-  // insumos indisponíveis aparecem primeiro, para chamar atenção do que falta
   const ordenados = [...recipe.ingredients].sort((a, b) => {
     const aOk = ingredientStatus(a).disponivel;
     const bOk = ingredientStatus(b).disponivel;
@@ -360,15 +419,19 @@ function openRecipeModal(recipeId) {
   const listEl = document.getElementById('ingredientList');
   listEl.innerHTML = ordenados.map(ing => {
     const st = ingredientStatus(ing);
-    const aviso = !st.disponivel
+    const aviso = st.motivo
       ? `<small class="low-stock-warning"><i class="fa-solid fa-triangle-exclamation"></i> ${st.motivo}</small>`
-      : (st.baixoMinimo ? `<small class="low-stock-warning"><i class="fa-solid fa-triangle-exclamation"></i> ${st.motivo}</small>` : '');
+      : '';
+
+    const matchInfo = (st.via === 'nome' && st.item)
+      ? `<small class="codigo-tag" style="margin-left:6px;opacity:.75;">(estoque: ${st.item.codigo})</small>`
+      : '';
 
     return `
       <div class="ingredient-item ${st.disponivel ? '' : 'unavailable'}">
         <div class="ingredient-name">
           <div>
-            <div>${ing.label} <small class="codigo-tag">${ing.codigo}</small></div>
+            <div>${ing.label} <small class="codigo-tag">${ing.codigo}</small>${matchInfo}</div>
             ${aviso}
           </div>
         </div>
@@ -382,7 +445,6 @@ function openRecipeModal(recipeId) {
     `;
   }).join('');
 
-  // Passo a passo de produção
   const stepsEl = document.getElementById('stepsList');
   if (stepsEl) {
     const steps = recipe.steps || [];
@@ -402,15 +464,9 @@ function closeRecipeModal() {
   currentModalRecipeId = null;
 }
 
-/* ---------------------------------------------------------------
-   Geração de PDF — Ficha de Procedimento de Produção
-   Usa jsPDF (carregado via CDN em ajuda_producao.html)
-   Layout industrial baseado em Procedimento Operacional Padrão (POP)
-   --------------------------------------------------------------- */
-
-// Tenta carregar uma imagem externa e devolvê-la como dataURL, para
-// embutir no PDF. Se falhar (ex.: bloqueio de CORS), retorna null e o
-// PDF é gerado normalmente, sem a foto.
+// =====================================================================
+// Geração de PDF
+// =====================================================================
 async function loadImageAsDataURL(url) {
   try {
     const response = await fetch(url, { mode: "cors" });
@@ -448,7 +504,6 @@ async function generatePDF(recipeId) {
     const bottomLimit = pageHeight - 22;
 
     const catInfo = CATEGORIES[recipe.categoria];
-    const catColor = CATEGORY_COLORS_PDF[recipe.categoria] || CATEGORY_COLORS_PDF.chapas;
     const summary = availabilitySummary(recipe);
     const status = summary.pronto ? "ready" : (summary.bloqueado ? "blocked" : "partial");
     const statusColor = STATUS_COLORS_PDF[status];
@@ -460,13 +515,9 @@ async function generatePDF(recipeId) {
     const revisao = "02";
 
     let y = 0;
-
-    // Tenta buscar a foto do produto (não bloqueia o PDF se falhar)
     const imgDataUrl = await loadImageAsDataURL(recipe.imagem);
 
-    // ---------- Funções auxiliares de desenho ----------
     function drawHeader() {
-      // Faixa superior azul industrial
       doc.setFillColor(...PRIMARY_PDF);
       doc.rect(0, 0, pageWidth, 28, "F");
 
@@ -492,12 +543,10 @@ async function generatePDF(recipeId) {
     }
 
     function drawFooter(pageNum, totalPages) {
-      // Linha superior do rodapé
       doc.setDrawColor(...BORDER_PDF);
       doc.setLineWidth(0.3);
       doc.line(marginX, pageHeight - 16, pageWidth - marginX, pageHeight - 16);
 
-      // Tabela de elaboração/aprovação
       doc.setFont("helvetica", "normal");
       doc.setFontSize(7);
       doc.setTextColor(...TEXT_MUTED_PDF);
@@ -531,7 +580,6 @@ async function generatePDF(recipeId) {
       y += 12;
     }
 
-    // Desenha uma caixa de tabela com cabeçalho e linhas
     function drawInfoTable(rows, startY, col1Width = 38) {
       const rowHeight = 7.5;
       const col2Width = contentWidth - col1Width;
@@ -539,7 +587,6 @@ async function generatePDF(recipeId) {
       rows.forEach((row, i) => {
         const rowY = startY + i * rowHeight;
 
-        // Coluna 1 (label)
         doc.setFillColor(...BORDER_PDF);
         doc.rect(marginX, rowY, col1Width, rowHeight, "F");
         doc.setDrawColor(...BORDER_PDF);
@@ -551,7 +598,6 @@ async function generatePDF(recipeId) {
         doc.setTextColor(...TEXT_MAIN_PDF);
         doc.text(row.label, marginX + 2.5, rowY + 5);
 
-        // Coluna 2 (valor)
         doc.setFillColor(255, 255, 255);
         doc.rect(marginX + col1Width, rowY, col2Width, rowHeight, "F");
         doc.rect(marginX + col1Width, rowY, col2Width, rowHeight, "S");
@@ -565,10 +611,8 @@ async function generatePDF(recipeId) {
       return startY + rows.length * rowHeight;
     }
 
-    // ---------- Cabeçalho ----------
     drawHeader();
 
-    // ---------- Tabela de Identificação (estilo POP) ----------
     const identificacaoRows = [
       { label: "Aplicação", value: recipe.nome },
       { label: "Descrição", value: recipe.descricao },
@@ -581,9 +625,7 @@ async function generatePDF(recipeId) {
     y = drawInfoTable(identificacaoRows, y);
     y += 6;
 
-    // ---------- Foto do produto (se disponível) ----------
-    const hasImage = !!imgDataUrl;
-    if (hasImage) {
+    if (imgDataUrl) {
       checkPageBreak(40);
       try {
         const imgW = 55, imgH = 38;
@@ -592,7 +634,6 @@ async function generatePDF(recipeId) {
         doc.roundedRect(marginX, y, imgW, imgH, 2, 2, "S");
         doc.addImage(imgDataUrl, "JPEG", marginX, y, imgW, imgH, undefined, "FAST");
 
-        // Legenda ao lado da imagem
         doc.setFont("helvetica", "bold");
         doc.setFontSize(9);
         doc.setTextColor(...TEXT_MAIN_PDF);
@@ -611,12 +652,9 @@ async function generatePDF(recipeId) {
         );
 
         y += imgH + 8;
-      } catch (e) {
-        // se a imagem não for compatível, segue sem ela
-      }
+      } catch (e) { /* segue sem imagem */ }
     }
 
-    // ---------- Materiais Necessários ----------
     sectionTitle("MATERIAIS E INSUMOS NECESSÁRIOS");
 
     const colCodigo = marginX;
@@ -686,7 +724,6 @@ async function generatePDF(recipeId) {
 
     y += 8;
 
-    // ---------- Passo a Passo de Produção ----------
     sectionTitle("PASSO A PASSO DE PRODUÇÃO");
 
     const steps = recipe.steps || [];
@@ -700,7 +737,6 @@ async function generatePDF(recipeId) {
 
       checkPageBreak(stepHeight);
 
-      // Número do passo em círculo azul
       doc.setFillColor(...PRIMARY_PDF);
       doc.circle(marginX + 3, y + 3, 3.2, "F");
       doc.setFont("helvetica", "bold");
@@ -713,7 +749,6 @@ async function generatePDF(recipeId) {
       doc.setTextColor(...TEXT_MAIN_PDF);
       doc.text(lines, marginX + 10, y + 4.2);
 
-      // Linha divisória pontilhada entre passos
       if (i < steps.length - 1) {
         doc.setDrawColor(...BORDER_PDF);
         doc.setLineWidth(0.1);
@@ -727,7 +762,6 @@ async function generatePDF(recipeId) {
 
     y += 10;
 
-    // ---------- Observações / Rodapé Técnico ----------
     checkPageBreak(20);
     doc.setFillColor(...BORDER_PDF);
     doc.roundedRect(marginX, y, contentWidth, 16, 2, 2, "F");
@@ -746,7 +780,6 @@ async function generatePDF(recipeId) {
       y + 11
     );
 
-    // ---------- Rodapé em todas as páginas ----------
     const totalPages = doc.internal.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {
       doc.setPage(p);
@@ -765,7 +798,46 @@ async function generatePDF(recipeId) {
   }
 }
 
+// =====================================================================
+// Firebase — leitura em tempo real de /itens
+// =====================================================================
+function bindFirebase() {
+  if (!window.SL || !window.SL.db) {
+    console.warn('[Ajuda Produção] Firebase não inicializado. Cards ficarão sem estoque.');
+    stockPronto = true;
+    renderSummary();
+    renderRecipes();
+    return;
+  }
+
+  window.SL.db.ref('itens').on('value', (snap) => {
+    STOCK = snapshotParaArray(snap.val() || {});
+    stockPronto = true;
+    renderSummary();
+    renderRecipes();
+
+    // Se o modal estiver aberto, atualiza com o novo estoque
+    if (currentModalRecipeId) {
+      openRecipeModal(currentModalRecipeId);
+    }
+  }, (err) => {
+    console.error('[Ajuda Produção] Erro ao ler /itens:', err);
+  });
+}
+
+// =====================================================================
+// Boot
+// =====================================================================
 document.addEventListener('DOMContentLoaded', () => {
+  // Render imediato (mesmo sem estoque) — imagens aparecem na hora
   renderSummary();
   renderRecipes();
+
+  // Conecta ao Firebase quando o SL estiver disponível
+  const tentar = (n = 0) => {
+    if (window.SL && window.SL.db) return bindFirebase();
+    if (n > 50) return console.error('[Ajuda Produção] window.SL não apareceu.');
+    setTimeout(() => tentar(n + 1), 100);
+  };
+  tentar();
 });
