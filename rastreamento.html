@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="components/css/responsive.css" />
 
     <style>
-
       :root {
         --bg-body: #edf3f8;
         --bg-card: #ffffff;
@@ -90,7 +89,6 @@
         transition: background-color 0.3s, color 0.3s;
       }
 
-      /* Layout principal: sidebar fixa à esquerda + coluna de conteúdo */
       .app-layout {
         display: flex;
         min-height: 100vh;
@@ -108,7 +106,6 @@
         min-width: 0;
       }
 
-      /* Container agora ocupa a largura toda do espaço disponível */
       .container {
         width: 100%;
         max-width: none;
@@ -120,7 +117,6 @@
         flex: 1;
       }
 
-      /* Filtros */
       .filter-bar {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -171,7 +167,6 @@
         font-size: 13.5px;
       }
 
-      /* Grid principal: lista mais larga e mapa bem maior */
       .main-grid {
         display: grid;
         grid-template-columns: minmax(360px, 420px) 1fr;
@@ -182,7 +177,6 @@
         .main-grid { grid-template-columns: 1fr; }
       }
 
-      /* Lista de entregas */
       .delivery-list {
         display: flex;
         flex-direction: column;
@@ -218,7 +212,6 @@
       .status-transito { background: var(--blue-bg); color: var(--blue); }
       .status-entregue { background: var(--green-bg); color: var(--green); }
 
-      /* Mapa bem mais alto */
       .map-view-container { display: flex; flex-direction: column; gap: 22px; }
       .map-card {
         background: var(--bg-card);
@@ -229,7 +222,7 @@
         position: relative;
         box-shadow: var(--shadow);
       }
-      #map { width: 100%; height: 100%; z-index: 1; }
+      #map { width: 100%; height: 100%; min-height: 100%; z-index: 1; }
 
       .details-grid {
         display: grid;
@@ -248,7 +241,6 @@
         box-shadow: var(--shadow);
       }
 
-      /* Stepper */
       .stepper {
         display: flex;
         justify-content: space-between;
@@ -322,20 +314,17 @@
         .map-card { height: 380px; }
       }
     </style>
-      <script src="JS/auth-guard.js"></script>
+    <script src="JS/auth-guard.js"></script>
   </head>
   <body>
 
     <div class="app-layout">
-
       <div id="sidebar-root"></div>
 
       <div class="main-column">
-
         <div id="header-root"></div>
 
         <div class="container">
-
           <section class="filter-bar">
             <div class="filter-chips">
               <div class="chip active" onclick="filterStatus('todos', this)">Todas Entregas</div>
@@ -351,7 +340,6 @@
           </section>
 
           <div class="main-grid">
-
             <div class="delivery-list" id="deliveryList"></div>
 
             <div class="map-view-container">
@@ -360,7 +348,6 @@
               </div>
 
               <div class="details-grid">
-
                 <div class="info-box">
                   <h4 style="font-size:14px; font-weight:700; margin-bottom:12px; display:flex; justify-content:space-between; color:var(--text-main);">
                     <span>Progresso da Entrega</span>
@@ -406,20 +393,17 @@
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
 
           </div>
-
         </div>
 
         <div id="footer-root"></div>
-
       </div>
-
     </div>
 
+    <!-- Scripts externos e de controle -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="JS/rastreamento.js"></script>
     <script src="components/js/header.js"></script>

@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StockLog · Minha Conta</title>
-    <link rel="icon" type="image/png" href="IMG/logo.png" />
-  
+  <link rel="icon" type="image/png" href="IMG/logo.png" />
+
   <!-- Fontes e Ícones -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,13 +13,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
   <!-- Componentes CSS -->
-    <link rel="stylesheet" href="components/css/sidebar.css" />
-    <link rel="stylesheet" href="components/css/header.css" />
-    <link rel="stylesheet" href="components/css/chat.css" />
-    <link rel="stylesheet" href="components/css/footer.css" />
-    <link rel="stylesheet" href="components/css/modoescuro.css" />
-    <link rel="stylesheet" href="components/css/responsive.css" />
-  
+  <link rel="stylesheet" href="components/css/sidebar.css" />
+  <link rel="stylesheet" href="components/css/header.css" />
+  <link rel="stylesheet" href="components/css/chat.css" />
+  <link rel="stylesheet" href="components/css/footer.css" />
+  <link rel="stylesheet" href="components/css/modoescuro.css" />
+  <link rel="stylesheet" href="components/css/responsive.css" />
+
   <style>
     /* ============================================================
        PALETA DE CORES ORNADA (Azul Profundo / Cinza Azulado)
@@ -34,14 +34,14 @@
       --primary-dark: #004d80;
       --primary-light: #e1eefb;
       --primary-gradient: linear-gradient(135deg, #0077be 0%, #005a8c 100%);
-      
+
       --text-main: #0a1f33;
       --text-secondary: #3d5f7e;
       --text-muted: #7b92b2;
-      
+
       --shadow-card: 0 4px 12px rgba(0, 40, 80, 0.04), 0 12px 32px rgba(0, 40, 80, 0.02);
       --shadow-hover: 0 8px 24px rgba(0, 40, 80, 0.08), 0 16px 48px rgba(0, 40, 80, 0.04);
-      
+
       --green: #1a7b72; --green-bg: #e0f2ea;
       --amber: #c47a1f; --amber-bg: #faecd6;
       --red: #b2433a; --red-bg: #fae2e0;
@@ -86,8 +86,7 @@
       overflow: hidden;
       box-shadow: 0 8px 24px rgba(0, 119, 190, 0.2);
     }
-    
-    /* Formas sutis apenas para dar textura, sem poluir */
+
     .welcome-banner::before {
       content: '';
       position: absolute;
@@ -98,10 +97,10 @@
       background: rgba(255, 255, 255, 0.06);
       border-radius: 50%;
     }
-    
+
     .welcome-banner h1 { font-size: 32px; font-weight: 700; margin-bottom: 12px; position: relative; z-index: 1; }
     .welcome-banner p { font-size: 16px; opacity: 0.95; position: relative; z-index: 1; }
-    
+
     .welcome-banner .last-access {
       display: inline-flex; align-items: center; gap: 8px;
       background: rgba(255, 255, 255, 0.2); padding: 8px 20px;
@@ -114,39 +113,38 @@
        ============================================================ */
     .profile-grid { display: grid; grid-template-columns: 380px 1fr; gap: 32px; }
 
-    /* Card do perfil */
     .profile-card {
       background: var(--bg-card); border-radius: 20px; overflow: hidden;
       border: 1px solid var(--border); box-shadow: var(--shadow-card);
       transition: 0.3s; position: sticky; top: 20px;
     }
-    
+
     .profile-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-    
+
     .profile-cover { height: 140px; background: var(--primary-gradient); position: relative; }
-    
+
     .profile-avatar-wrapper { display: flex; justify-content: center; margin-top: -60px; margin-bottom: 20px; position: relative; z-index: 2; }
-    
+
     .profile-avatar {
       position: relative; width: 120px; height: 120px; border-radius: 50%;
       background: var(--bg-card); display: flex; align-items: center; justify-content: center;
       font-size: 56px; color: var(--primary); border: 4px solid var(--bg-card);
       box-shadow: 0 4px 16px rgba(0, 119, 190, 0.3); transition: 0.3s; cursor: pointer; overflow: hidden;
     }
-    
+
     .profile-avatar:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(0, 119, 190, 0.4); }
     .profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    
+
     .avatar-upload-overlay {
       position: absolute; bottom: 0; left: 0; right: 0;
       background: rgba(0, 0, 0, 0.5); color: white; padding: 6px 0;
       font-size: 12px; text-align: center; opacity: 0; transition: 0.3s;
       backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    
+
     .profile-avatar:hover .avatar-upload-overlay { opacity: 1; }
     #avatarUploadInput { display: none; }
-    
+
     .profile-info { text-align: center; padding: 0 32px 32px; }
     .profile-name { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
     .profile-role { color: var(--primary); font-weight: 600; font-size: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -154,41 +152,37 @@
     .profile-status .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-    /* Cards de detalhes */
     .details-card { background: var(--bg-card); border-radius: 20px; padding: 32px; border: 1px solid var(--border); box-shadow: var(--shadow-card); margin-bottom: 32px; transition: 0.3s; }
     .details-card:hover { box-shadow: var(--shadow-hover); }
-    
+
     .card-title { font-size: 18px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: var(--text-main); }
     .card-title i { color: var(--primary); font-size: 20px; }
 
-    /* Informações Pessoais */
     .profile-details { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; }
-    
+
     .detail-item {
       display: flex; align-items: center; gap: 16px; padding: 16px;
       border-radius: 12px; background: var(--bg-soft); border: 1px solid var(--border); transition: 0.2s;
     }
     .detail-item:hover { border-color: var(--border-hover); background: var(--primary-light); transform: translateX(4px); }
-    
+
     .detail-icon {
       width: 44px; height: 44px; border-radius: 12px;
       background: var(--primary-light); color: var(--primary);
       display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
     }
-    
-    /* Cores dos ícones (Suaves) */
+
     .detail-icon.green { background: var(--green-bg); color: var(--green); }
     .detail-icon.amber { background: var(--amber-bg); color: var(--amber); }
     .detail-icon.purple { background: var(--purple-bg); color: var(--purple); }
     .detail-icon.pink { background: var(--pink-bg); color: var(--pink); }
-    
+
     .detail-content { flex: 1; min-width: 0; }
     .detail-content .label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     .detail-content .value { font-size: 15px; font-weight: 600; color: var(--text-main); word-break: break-word; }
 
-    /* Stats */
     .profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
-    
+
     .profile-stat {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
       padding: 28px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
@@ -196,12 +190,11 @@
     .profile-stat::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--primary-gradient); opacity: 0; transition: 0.3s; }
     .profile-stat:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
     .profile-stat:hover::before { opacity: 1; }
-    
+
     .profile-stat i { font-size: 32px; color: var(--primary); margin-bottom: 12px; }
     .profile-stat strong { display: block; font-size: 36px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
     .profile-stat span { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
 
-    /* Security box */
     .security-box {
       padding: 24px; background: var(--bg-soft); border: 1px solid var(--border);
       border-radius: 16px; margin-bottom: 32px; position: relative; overflow: hidden;
@@ -215,25 +208,23 @@
     .security-box strong i { color: var(--primary); font-size: 20px; }
     .security-box p { margin-top: 12px; color: var(--text-secondary); font-size: 14px; position: relative; z-index: 1; }
 
-    /* Ações */
     .profile-actions { display: flex; gap: 16px; flex-wrap: wrap; padding-top: 24px; border-top: 2px solid var(--border); }
-    
+
     .btn {
       display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px;
       border-radius: 12px; font-weight: 600; font-size: 14px; border: none; cursor: pointer;
       transition: 0.3s; font-family: inherit;
     }
-    
+
     .btn-primary { background: var(--primary-gradient); color: #fff; box-shadow: 0 4px 12px rgba(0, 119, 190, 0.3); }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 119, 190, 0.4); }
-    
+
     .btn-outline { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); }
     .btn-outline:hover { background: var(--bg-soft); border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
-    
+
     .btn-danger { background: transparent; border: 1px solid var(--red); color: var(--red); }
     .btn-danger:hover { background: var(--red); color: white; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(194, 59, 59, 0.3); }
 
-    /* Toggle Switch */
     .toggle-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .toggle-group:last-child { border-bottom: none; margin-bottom: 0; }
     .toggle-label { display: flex; align-items: center; gap: 12px; }
@@ -246,7 +237,6 @@
     .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
     .toggle-switch.active::after { left: 27px; }
 
-    /* Modal */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
     .modal-overlay.active { display: flex; }
     .modal { background: var(--bg-card); border-radius: 16px; padding: 32px; width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: slideUp 0.3s ease; max-height: 90vh; overflow-y: auto; }
@@ -259,9 +249,9 @@
     .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
     .form-group input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text-main); font-size: 14px; font-family: inherit; transition: 0.2s; }
     .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .form-group input:disabled { opacity: 0.6; cursor: not-allowed; }
     .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
 
-    /* Toast */
     .toast { position: fixed; bottom: 30px; right: 30px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); z-index: 2000; animation: slideIn 0.3s ease; max-width: 400px; }
     .toast.success { border-left: 4px solid var(--green); }
     .toast.error { border-left: 4px solid var(--red); }
@@ -273,14 +263,12 @@
     .toast-message { font-size: 13px; color: var(--text-secondary); }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* Responsividade */
     @media (max-width: 1200px) { .profile-grid { grid-template-columns: 320px 1fr; gap: 24px; } .content { padding: 32px; } }
     @media (max-width: 968px) { .profile-grid { grid-template-columns: 1fr; } .profile-card { position: static; } .content { padding: 24px; } .welcome-banner { padding: 36px 32px; } }
     @media (max-width: 768px) { .profile-details { grid-template-columns: 1fr; gap: 16px; } .profile-stats { grid-template-columns: 1fr; } .welcome-banner { padding: 28px 24px; } .welcome-banner h1 { font-size: 26px; } }
     @media (max-width: 480px) { .profile-avatar { width: 80px; height: 80px; font-size: 40px; } .profile-name { font-size: 22px; } .profile-actions { flex-direction: column; } .btn { justify-content: center; width: 100%; } .toast { left: 20px; right: 20px; bottom: 20px; } }
   </style>
-    <script src="JS/auth-guard.js"></script>
-  </head>
+</head>
 <body>
   <div id="sidebar-root"></div>
 
@@ -290,10 +278,10 @@
     <main class="content" role="main">
       <!-- Banner -->
       <div class="welcome-banner">
-        <h1>Bem-vindo! </h1>
+        <h1 id="bannerGreeting">Bem-vindo!</h1>
         <p>Gerencie seu perfil e preferências do StockLog</p>
-        <span class="last-access">
-          <i class="fas fa-clock"></i> Último acesso: hoje às 14:32
+        <span class="last-access" id="lastAccessInfo">
+          <i class="fas fa-clock"></i> <span>Carregando…</span>
         </span>
       </div>
 
@@ -310,8 +298,8 @@
             <input type="file" id="avatarUploadInput" accept="image/*" />
           </div>
           <div class="profile-info">
-            <div class="profile-name">Carlos Almeida</div>
-            <div class="profile-role"><i class="fas fa-briefcase"></i> Gerente de Produção</div>
+            <div class="profile-name" id="profileName">Carregando…</div>
+            <div class="profile-role" id="profileRole"><i class="fas fa-briefcase"></i> —</div>
             <div class="profile-status"><span class="dot"></span> Online</div>
           </div>
         </div>
@@ -335,19 +323,55 @@
           <div class="details-card">
             <div class="card-title"><i class="fas fa-id-card"></i> Informações Pessoais</div>
             <div class="profile-details">
-              <div class="detail-item"><div class="detail-icon"><i class="fas fa-envelope"></i></div><div class="detail-content"><div class="label">E-mail</div><div class="value" id="profile-email">carlos.almeida@stocklog.com</div></div></div>
-              <div class="detail-item"><div class="detail-icon green"><i class="fas fa-user-tag"></i></div><div class="detail-content"><div class="label">Cargo</div><div class="value" id="profile-role-text">Gerente de Produção</div></div></div>
-              <div class="detail-item"><div class="detail-icon amber"><i class="fas fa-building"></i></div><div class="detail-content"><div class="label">Setor</div><div class="value">Produção / Geral</div></div></div>
-              <div class="detail-item"><div class="detail-icon purple"><i class="fas fa-calendar-plus"></i></div><div class="detail-content"><div class="label">Cadastro</div><div class="value">02/01/2025</div></div></div>
-              <div class="detail-item"><div class="detail-icon pink"><i class="fas fa-id-badge"></i></div><div class="detail-content"><div class="label">Matrícula</div><div class="value">#ADM-0248</div></div></div>
-              <div class="detail-item"><div class="detail-icon" style="background: var(--bg-soft); color: var(--text-secondary);"><i class="fas fa-shield-alt"></i></div><div class="detail-content"><div class="label">Nível de acesso</div><div class="value">Administrador total</div></div></div>
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-envelope"></i></div>
+                <div class="detail-content">
+                  <div class="label">E-mail</div>
+                  <div class="value" id="profile-email">—</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon green"><i class="fas fa-user-tag"></i></div>
+                <div class="detail-content">
+                  <div class="label">Cargo</div>
+                  <div class="value" id="profile-role-text">—</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon amber"><i class="fas fa-building"></i></div>
+                <div class="detail-content">
+                  <div class="label">Setor</div>
+                  <div class="value" id="profile-setor">—</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon purple"><i class="fas fa-calendar-plus"></i></div>
+                <div class="detail-content">
+                  <div class="label">Cadastro</div>
+                  <div class="value" id="profile-cadastro">—</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon pink"><i class="fas fa-id-badge"></i></div>
+                <div class="detail-content">
+                  <div class="label">Matrícula</div>
+                  <div class="value" id="profile-matricula">—</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon" style="background: var(--bg-soft); color: var(--text-secondary);"><i class="fas fa-shield-alt"></i></div>
+                <div class="detail-content">
+                  <div class="label">Nível de acesso</div>
+                  <div class="value" id="profile-nivel">—</div>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- Segurança -->
           <div class="security-box">
             <strong><i class="fas fa-shield-alt"></i> Segurança da conta</strong>
-            <p>Último acesso: hoje às 14:32 · Autenticação ativa · Permissão de administrador</p>
+            <p id="securityInfo">Autenticação ativa · Sessão protegida pelo Firebase</p>
           </div>
 
           <!-- Ações -->
@@ -367,49 +391,130 @@
     <div id="footer-root"></div>
   </div>
 
-  <!-- Modais -->
+  <!-- Modal: Editar Perfil -->
   <div class="modal-overlay" id="editModal">
     <div class="modal">
-      <div class="modal-header"><h3 class="modal-title">Editar Perfil</h3><button class="modal-close" onclick="closeModal('editModal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Perfil</h3>
+        <button class="modal-close" onclick="closeModal('editModal')"><i class="fas fa-times"></i></button>
+      </div>
       <form id="editForm" onsubmit="saveProfile(event)">
-        <div class="form-group"><label>Nome completo</label><input type="text" id="editName" value="Carlos Almeida" required /></div>
-        <div class="form-group"><label>E-mail</label><input type="email" id="editEmail" value="carlos.almeida@stocklog.com" required /></div>
-        <div class="modal-actions"><button type="button" class="btn btn-outline" onclick="closeModal('editModal')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar alterações</button></div>
+        <div class="form-group">
+          <label>Nome completo</label>
+          <input type="text" id="editName" placeholder="Seu nome completo" required />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="editEmail" placeholder="seu@email.com" required />
+        </div>
+        <div class="form-group">
+          <label>Cargo / Área (não editável)</label>
+          <input type="text" id="editArea" disabled />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('editModal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar alterações</button>
+        </div>
       </form>
     </div>
   </div>
 
+  <!-- Modal: Alterar Senha -->
   <div class="modal-overlay" id="passwordModal">
     <div class="modal">
-      <div class="modal-header"><h3 class="modal-title">Alterar Senha</h3><button class="modal-close" onclick="closeModal('passwordModal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-header">
+        <h3 class="modal-title">Alterar Senha</h3>
+        <button class="modal-close" onclick="closeModal('passwordModal')"><i class="fas fa-times"></i></button>
+      </div>
       <form id="passwordForm" onsubmit="changePassword(event)">
-        <div class="form-group"><label>Senha atual</label><input type="password" id="currentPassword" required /></div>
-        <div class="form-group"><label>Nova senha</label><input type="password" id="newPassword" required minlength="6" /></div>
-        <div class="form-group"><label>Confirmar nova senha</label><input type="password" id="confirmPassword" required minlength="6" /></div>
-        <div class="modal-actions"><button type="button" class="btn btn-outline" onclick="closeModal('passwordModal')">Cancelar</button><button type="submit" class="btn btn-primary">Alterar senha</button></div>
+        <div class="form-group">
+          <label>Senha atual</label>
+          <input type="password" id="currentPassword" required />
+        </div>
+        <div class="form-group">
+          <label>Nova senha</label>
+          <input type="password" id="newPassword" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label>Confirmar nova senha</label>
+          <input type="password" id="confirmPassword" required minlength="6" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('passwordModal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Alterar senha</button>
+        </div>
       </form>
     </div>
   </div>
 
+  <!-- Modal: Preferências -->
   <div class="modal-overlay" id="preferencesModal">
     <div class="modal">
-      <div class="modal-header"><h3 class="modal-title">Preferências do Sistema</h3><button class="modal-close" onclick="closeModal('preferencesModal')"><i class="fas fa-times"></i></button></div>
-      <div class="toggle-group"><div class="toggle-label"><i class="fas fa-bell"></i><div class="toggle-text"><strong>Notificações</strong><small>Receber alertas do sistema</small></div></div><div class="toggle-switch active" onclick="toggleSwitch(this)"></div></div>
-      <div class="toggle-group"><div class="toggle-label"><i class="fas fa-envelope"></i><div class="toggle-text"><strong>E-mails</strong><small>Receber atualizações por e-mail</small></div></div><div class="toggle-switch active" onclick="toggleSwitch(this)"></div></div>
-      <div class="toggle-group"><div class="toggle-label"><i class="fas fa-moon"></i><div class="toggle-text"><strong>Modo escuro</strong><small>Ativar tema escuro automaticamente</small></div></div><div class="toggle-switch" onclick="toggleSwitch(this)"></div></div>
-      <div class="toggle-group"><div class="toggle-label"><i class="fas fa-chart-bar"></i><div class="toggle-text"><strong>Relatórios</strong><small>Receber relatórios semanais</small></div></div><div class="toggle-switch active" onclick="toggleSwitch(this)"></div></div>
-      <div class="toggle-group"><div class="toggle-label"><i class="fas fa-robot"></i><div class="toggle-text"><strong>LogBot IA</strong><small>Sugestões automáticas da IA</small></div></div><div class="toggle-switch active" onclick="toggleSwitch(this)"></div></div>
-      <div class="modal-actions"><button type="button" class="btn btn-outline" onclick="closeModal('preferencesModal')">Cancelar</button><button type="button" class="btn btn-primary" onclick="savePreferences()"><i class="fas fa-save"></i> Salvar preferências</button></div>
+      <div class="modal-header">
+        <h3 class="modal-title">Preferências do Sistema</h3>
+        <button class="modal-close" onclick="closeModal('preferencesModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle-label"><i class="fas fa-bell"></i><div class="toggle-text"><strong>Notificações</strong><small>Receber alertas do sistema</small></div></div>
+        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle-label"><i class="fas fa-envelope"></i><div class="toggle-text"><strong>E-mails</strong><small>Receber atualizações por e-mail</small></div></div>
+        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle-label"><i class="fas fa-moon"></i><div class="toggle-text"><strong>Modo escuro</strong><small>Ativar tema escuro automaticamente</small></div></div>
+        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle-label"><i class="fas fa-chart-bar"></i><div class="toggle-text"><strong>Relatórios</strong><small>Receber relatórios semanais</small></div></div>
+        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle-label"><i class="fas fa-robot"></i><div class="toggle-text"><strong>LogBot IA</strong><small>Sugestões automáticas da IA</small></div></div>
+        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal('preferencesModal')">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="savePreferences()"><i class="fas fa-save"></i> Salvar preferências</button>
+      </div>
     </div>
   </div>
 
-    <script src="components/js/header.js"></script>
-    <script src="components/js/modoescuro.js"></script>
-    <script src="components/js/sidebar.js"></script>
-    <script src="components/js/chat.js"></script>
-    <script src="components/js/config.js"></script>
-    <script src="components/js/footer.js"></script>
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    <script src="JS/perfil.js" defer></script>
+  <!-- Inicialização Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+      authDomain: "stocklog-ff7aa.firebaseapp.com",
+      databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+      projectId: "stocklog-ff7aa",
+      storageBucket: "stocklog-ff7aa.firebasestorage.app",
+      messagingSenderId: "787537499919",
+      appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const db = firebase.database();
+    const auth = firebase.auth();
+  </script>
+
+  <!-- Componentes JS -->
+  <script src="components/js/header.js"></script>
+  <script src="components/js/modoescuro.js"></script>
+  <script src="components/js/sidebar.js"></script>
+  <script src="components/js/chat.js"></script>
+  <script src="components/js/config.js"></script>
+  <script src="components/js/footer.js"></script>
+
+  <!-- Perfil (deve ser o último) -->
+  <script src="JS/perfil.js" defer></script>
 </body>
 </html>
