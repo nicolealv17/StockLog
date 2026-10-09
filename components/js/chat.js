@@ -195,18 +195,53 @@ document.addEventListener("DOMContentLoaded", () => {
   async function chamarOpenRouter(mensagemUsuario) {
     const apiKey = obterChaveAPI();
 
+    // Função para buscar dados reais do Firebase Realtime Database
+    async function buscarDadosReais() {
+      try {
+        // O Firebase já está inicializado globalmente nas páginas (cadastro.html, login.html, etc)
+        if (typeof firebase === "undefined" || !firebase.database) {
+          return { erro: "Firebase não inicializado no contexto atual." };
+        }
+        
+        const db = firebase.database();
+        
+        // Buscamos os nós principais do banco de dados
+        const [funcionariosSnap, estoqueSnap, pedidosSnap] = await Promise.all([
+          db.ref("funcionarios").once("value"),
+          db.ref("estoque").once("value"),
+          db.ref("pedidos").once("value")
+        ]);
+
+        return {
+          funcionarios: funcionariosSnap.val() || {},
+          estoque: estoqueSnap.val() || {},
+          pedidos: pedidosSnap.val() || {},
+          usuarioLogado: JSON.parse(localStorage.getItem('usuarioLogado') || '{}')
+        };
+      } catch (e) {
+        console.error("Erro ao buscar dados do Firebase:", e);
+        return { erro: "Erro ao conectar com o banco de dados Firebase." };
+      }
+    }
+
     if (!apiKey) {
       return gerarRespostaSimulada(mensagemUsuario);
     }
 
+    // Busca dados reais do banco antes de enviar para a IA
+    const dadosReais = await buscarDadosReais();
+
     const promptSistema =
-      "Você é o LogBot, assistente do sistema industrial StockLog.\n" +
-      "Responda dúvidas sobre o sistema, status em tempo real da fábrica, estoque, logística e metalurgia.\n\n" +
-      "DADOS EM TEMPO REAL DO SISTEMA:\n" + JSON.stringify(dadosSistema, null, 2) + "\n\n" +
-      "RESUMO DAS PÁGINAS DO SISTEMA:\n" + JSON.stringify(basePaginas, null, 2) + "\n\n" +
-      "Regras:\n" +
-      "1. Se a pergunta for fora de contexto de indústria, metalurgia, logística ou do sistema StockLog, recuse educadamente.\n" +
-      "2. Mantenha respostas diretas e bem formatadas usando negrito e tópicos quando necessário.";
+      "Você é o LogBot, a inteligência central do sistema StockLog. Você tem acesso ao Banco de Dados em tempo real.\n" +
+      "Sua missão é responder com precisão absoluta baseando-se nos dados reais fornecidos abaixo.\n\n" +
+      "DADOS REAIS DO BANCO DE DADOS (FIREBASE):\n" + JSON.stringify(dadosReais, null, 2) + "\n\n" +
+      "ESTRUTURA DE PÁGINAS DO SISTEMA:\n" + JSON.stringify(basePaginas, null, 2) + "\n\n" +
+      "DIRETRIZES DE RESPOSTA:\n" +
+      "1. Se os dados do banco estiverem vazios ou houver erro, informe que não encontrou registros no banco de dados.\n" +
+      "2. Use os nomes reais dos funcionários, quantidades exatas de estoque e status de pedidos do Firebase.\n" +
+      "3. Seja proativo: se notar falta de estoque ou atrasos nos pedidos nos dados reais, alerte o usuário.\n" +
+      "4. Personalize a resposta usando o nome do usuarioLogado se disponível.\n" +
+      "5. Mantenha a formatação profissional com negrito e tópicos.";
 
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
