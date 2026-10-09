@@ -3,7 +3,12 @@
  * -------------------------------------------------------------------------
  * - 100% Client-Side (Sem APIs pagas, sem necessidade de chaves ou servidor)
  * - Mapeamento completo de Módulos, Páginas, OPs, Máquinas, Estoque e Logística
+ * - Perguntas Frequentes Operacionais e Executivas Atualizadas (KPIs, OPs, Frota)
+ * - Dicionário de Significados e Conceitos Industriais (Logística, OP, OEE, QR Code, Estoque)
+ * - Guia passo a passo para Troca de Senha, Exportação em PDF/Excel e Falha de Máquinas
  * - Guia detalhado de OBJETIVO e COMO USAR cada uma das 14 páginas do sistema
+ * - Busca direta por nome de página/recurso exibindo "O que é" e "Como usar"
+ * - Consulta quantitativa completa: Totais de Itens, Veículos, Entregas, OPs, etc.
  * - Redirecionamento e orientação inteligente para a Agenda/Calendário
  * - Filtro automático para desconsiderar dados de teste (ex: AAAAA, FDDSF, sddfs)
  */
@@ -56,19 +61,19 @@
       nome: "Pedidos de Produção",
       chaves: ["pedidos de producao", "pedidos", "ordens de producao", "ops", "novo pedido"],
       objetivo: "Gerenciar a emissão, priorização, prazos de entrega e ciclo de vida de todos os pedidos e ordens de fabricação.",
-      comoUsar: "1. Verifique os indicadores superiores: Pedidos Ativos, Em Produção, Atrasados e Concluídos.\n2. Utilize o campo de busca por código ou insumo e filtre por status/prioridade.\n3. Clique no botão '+ Novo pedido' para cadastrar uma nova ordem.\n4. Na tabela, utilize as ações rápidas para visualizar detalhes (ícone de olho), editar ou excluir."
+      comoUsar: "1. Verifique os indicadores superiores: Pedidos Ativos (42), Em Produção (24), Atrasados e Concluídos.\n2. Utilize o campo de busca por código ou insumo e filtre por status/prioridade.\n3. Clique no botão '+ Novo pedido' para cadastrar uma nova ordem.\n4. Na tabela, utilize as ações rápidas para visualizar detalhes (ícone de olho), editar ou excluir."
     },
 
     controle: {
       nome: "Controle de Produção / Máquinas",
       chaves: ["controle de producao", "maquinas", "prensa", "torno", "laser", "ritmo", "progresso das ordens"],
-      objetivo: "Monitorar a operação das máquinas no chão de fábrica ao vivo, ritmos de fabricação, quantidade produzida vs meta e falhas elétricas/mecânicas.",
-      comoUsar: "1. Observe os cards de 'Máquinas em operação' para identificar o status (Operando, Parada, Manutenção) e o operador responsável.\n2. Verifique o painel de 'Problemas ativos' à direita para agir sobre gargalos ou falta de chapa.\n3. Acompanhe a tabela 'Progresso das ordens ativas' para ver o tempo decorrido e porcentagem de conclusão de cada lote."
+      objetivo: "Monitorar a operação das 7 máquinas no chão de fábrica ao vivo, ritmos de fabricação, quantidade produzida vs meta e falhas elétricas/mecânicas.",
+      comoUsar: "1. Observe os cards de 'Máquinas em operação' para identificar o status (4 Operando, 1 Parada, 1 Manutenção) e o operador responsável.\n2. Verifique o painel de 'Problemas ativos' à direita para agir sobre gargalos ou falta de chapa.\n3. Acompanhe a tabela 'Progresso das ordens ativas' para ver o tempo decorrido e porcentagem de conclusão de cada lote."
     },
 
     ajuda: {
       nome: "Ajuda de Produção (Fichas Técnicas)",
-      chaves: ["ajuda de producao", "fichas tecnicas", "passo a passo", "instrucoes", "fichas", "pop"],
+      chaves: ["ajuda de producao", "fichas tecnicas", "fichas", "passo a passo", "instrucoes", "pop"],
       objetivo: "Servir como biblioteca técnica interativa com imagens, insumos necessários e o passo a passo detalhado para fabricação de cada item.",
       comoUsar: "1. Navegue pelos cards ilustrados divididos por categoria (Corte e Chapas, Conexões, Usinados, Fixação, etc.).\n2. Verifique a etiqueta de status do produto ('Pronto para produção' ou 'Parcial - insumo em falta').\n3. Clique sobre qualquer produto para abrir o modal com a lista de componentes, roteiro de montagem e botão 'Baixar Ficha de Procedimento (PDF)'."
     },
@@ -90,7 +95,7 @@
     estoque: {
       nome: "Itens em Estoque / Almoxarifado",
       chaves: ["itens em estoque", "estoque", "almoxarifado", "insumos", "materia prima", "saldo", "capacidade"],
-      objetivo: "Controlar o saldo físico, movimentações diárias, capacidade de armazenamento por categoria e alertas de ponto de reordem.",
+      objetivo: "Controlar o saldo físico de 1.247 itens em estoque, movimentações diárias, capacidade de armazenamento por categoria e alertas de ponto de reordem.",
       comoUsar: "1. Consulte as barras de 'Capacidade por Categoria' (Matéria-Prima, Componentes, Embalagens, etc.).\n2. Verifique os 'Alertas de Reposição' no card superior direito para identificar produtos com saldo crítico.\n3. Na tabela 'Consulta de itens', utilize os filtros por nível (Normal, Baixo, Crítico) ou busque por código.\n4. Dê baixas ou entradas rápidas clicando nos botões '+' e '-' da coluna 'Ação Rápida'."
     },
 
@@ -104,7 +109,7 @@
     rastreamento: {
       nome: "Rastreamento GPS & Telemetria",
       chaves: ["rastreamento", "gps", "telemetria", "mapa", "velocidade", "temperatura", "tanque"],
-      objetivo: "Monitorar a localização exata da frota em rota no mapa interativo com dados de velocidade, temperatura do baú e combustível em tempo real.",
+      objetivo: "Monitorar a localização exata da frota de 4 veículos em rota no mapa interativo com dados de velocidade, temperatura do baú e combustível em tempo real.",
       comoUsar: "1. Filtre a lista por status (Em Preparação, Em Trânsito, Entregues) ou pesquise por motorista/código no campo de busca.\n2. Clique em qualquer entrega na lista à esquerda (ex: SL-982347-BR) para traçar a rota no mapa.\n3. Acompanhe a linha do tempo no card 'Progresso da Entrega' (Preparação -> Coletado -> Em Trânsito -> Entregue).\n4. Consulte os relógios do bloco 'Telemetria' para ver velocidade (km/h), temperatura (°C) e nível de bateria/tanque (%)."
     },
 
@@ -138,7 +143,7 @@
   };
 
   /* ==========================================================================
-     2. DICIONÁRIO CONCEITUAL TÉCNICO
+     2. DICIONÁRIO CONCEITUAL TÉCNICO (SIGNIFICADOS E CONCEITOS)
      ========================================================================== */
   const DicionarioConceitos = {
     objetivo_sistema: {
@@ -155,33 +160,33 @@
     },
     logistica: {
       termo: "Logística e Expedição",
-      definicao: "Gerenciamento do fluxo de transporte, separação de pedidos, embalagem, expedição e entrega de produtos.",
-      noStockLog: "No StockLog, o módulo de Logística monitora a esteira de expedição (Aguardando Separação, Em Separação, Embalagem, Em Expedição e Entregue), além de controlar a ocupação da frota e a telemetria GPS em tempo real."
+      definicao: "Área da administração encarregada de planejar, operar e controlar o fluxo eficiente de materiais, armazenamento, separação de pedidos, embalagem e transporte do ponto de origem até o destino final.",
+      noStockLog: "No StockLog, o módulo de Logística monitora a esteira de expedição (Aguardando Separação, Em Separação, Embalagem, Em Expedição e Entregue), além de controlar a ocupação da frota de 4 veículos e a telemetria GPS em tempo real."
     },
     oee: {
-      termo: "OEE (Overall Equipment Effectiveness)",
-      definicao: "Indicador global que mede a eficiência das máquinas multiplicando: Disponibilidade (%) × Performance (%) × Qualidade (%). A meta padrão da indústria é ≥ 85%.",
-      noStockLog: "No painel de Controle de Produção, o StockLog calcula a eficiência e o ritmo de produção por máquina, identificando problemas como falha elétrica, vibração fora do padrão e falta de insumo."
+      termo: "OEE (Overall Equipment Effectiveness / Eficiência Global do Equipamento)",
+      definicao: "Indicador padrão internacional de manufatura que mede o percentual de tempo em que uma máquina é verdadeiramente produtiva. É calculado multiplicando: Disponibilidade (%) × Performance (%) × Qualidade (%). A meta padrão de excelência industrial é ≥ 85%.",
+      noStockLog: "No painel de Controle de Produção do StockLog, o OEE mede o ritmo de produção ao vivo em cada uma das 7 máquinas, alertando imediatamente sobre paradas críticas (ex: falhas elétricas na Solda Robotizada) ou falta de matéria-prima."
     },
     estoque: {
       termo: "Gestão de Estoque e Curva ABC",
-      definicao: "Controle físico e financeiro do saldo de matérias-primas, componentes, embalagens, consumíveis e ferramentas.",
-      noStockLog: "O StockLog exibe a capacidade por categoria, alerta reposições críticas (ex: Martelo MT-8888) e permite dar entrada/saída rápida com leitor de QR Code."
+      definicao: "Conjunto de ações para gerenciar o saldo físico, armazenagem, giro de materiais e valoração financeira de insumos e matérias-primas, evitando tanto o desabastecimento (ruptura) quanto o capital parado.",
+      noStockLog: "O StockLog controla o saldo de 1.247 itens cadastrados, calcula o percentual de ocupação das prateleiras por categoria (Embalagens 100%, Ferramental 62%) e avisa quando itens chegam ao ponto de reposição."
     },
     op: {
       termo: "Ordem de Produção (OP)",
-      definicao: "Instrução de fabricação que define o produto, lote, setor responsável, prazo limite e roteiro de usinagem/corte/montagem.",
-      noStockLog: "As OPs são acompanhadas no Kanban industrial, Pedidos de Produção e no gráfico de 'Produção por Setor' (Corte 91%, Usinagem 86%, Caldeiraria 78%, Solda 72%, Pintura 65%, Montagem 58%)."
+      definicao: "Documento/instrução oficial que autoriza a fabricação de um determinado lote de produtos. Ela define o código do item, quantidade a ser produzida, lote, cliente, matérias-primas necessárias, setor responsável e prazo final de entrega.",
+      noStockLog: "No StockLog, as OPs (24 ativas no momento) transitam pelo Kanban Industrial, alimentam o gráfico de 'Produção por Setor' (Corte, Usinagem, Solda) e geram alertas automáticos de vencimento e priorização."
     },
     qr_code: {
       termo: "Leitor de QR Code & Código de Barras",
-      definicao: "Módulo de leitura óptica para identificação rápida de peças e insumos.",
-      noStockLog: "Permite escanear etiquetas coladas nas peças via câmera ou busca manual por códigos (ex: MP-1042, P-0248) para rastrear o histórico e saldo do lote."
+      definicao: "Tecnologia de leitura óptica bidimensional (Quick Response) usada para rastreamento ágil de peças, controle de movimentação de paletes e identificação instantânea de lote/insumos sem necessidade de digitação manual.",
+      noStockLog: "O módulo permite escanear etiquetas coladas nas peças diretamente pela câmera do celular/computador para consultar imediatamente a ficha técnica, saldo em estoque e histórico do lote."
     }
   };
 
   /* ==========================================================================
-     3. BANCO DE DADOS OFICIAL VALIDADO (EXTRAÍDO DAS TELAS REAIS)
+     3. BANCO DE DADOS OFICIAL VALIDADO
      ========================================================================== */
   const BancoDadosOficial = {
     dashboard: {
@@ -283,89 +288,247 @@
     const dom = InspectorDOM.obterEstadoAtual();
 
     // ------------------------------------------------------------------------
-    // REGRA 1: REDIRECIONAMENTO DE AGENDA / COMPROMISSOS
+    // REGRA 0-A: COMO TROCAR / ALTERAR A SENHA
+    // ------------------------------------------------------------------------
+    if (
+      p.includes("trocar a senha") || p.includes("trocar senha") || 
+      p.includes("mudar senha") || p.includes("alterar senha") || 
+      p.includes("nova senha") || p.includes("mudar a senha") ||
+      p.includes("esqueci a senha") || p.includes("redefinir senha")
+    ) {
+      return `🔐 <b>Como Alterar sua Senha no StockLog:</b><br><br>` +
+             `1. Acesse a página <b>Minha Conta / Perfil</b> no menu lateral.<br>` +
+             `2. No painel principal do seu perfil, localize e clique no botão <b>'Alterar Senha'</b>.<br>` +
+             `3. Digite sua <b>Senha Atual</b> para validação de segurança.<br>` +
+             `4. Digite a <b>Nova Senha</b> e confirme no campo seguinte.<br>` +
+             `5. Verifique o medidor de força da senha e clique no botão azul <b>'Salvar Alterações'</b>.<br><br>` +
+             `💡 <i><b>Esqueceu sua senha?</b> Se você não conseguir logar, entre em contato com o administrador do sistema no setor de Gestão para solicitar o reset temporário do seu acesso.</i>`;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 0-B: PERGUNTAS FREQUENTES OPERACIONAIS (FALHA DE MÁQUINA, EXPORTAÇÃO, RELATÓRIOS)
+    // ------------------------------------------------------------------------
+    if (p.includes("maquina quebrar") || p.includes("maquina parar") || p.includes("avisar falha") || p.includes("registrar defeito") || p.includes("maquinas paradas") || p.includes("ops e maquinas")) {
+      return `🚨 <b>Status de OPs e Paradas de Máquinas no Chão de Fábrica:</b><br><br>` +
+             `• <b>Solda Robotizada 03:</b> 🔴 PARADA (Falha elétrica detectada há 30 min)<br>` +
+             `• <b>Corte a Laser 05:</b> 🛠️ EM MANUTENÇÃO (Preventiva programada)<br>` +
+             `• <b>OPs Afetadas:</b> OP-2026-001 (Atraso por fila de usinagem) e #1042 (Manutenção corretiva).<br><br>` +
+             `🛠️ <b>Como registrar nova parada:</b> Acesse <b>Controle de Produção / Máquinas</b>, selecione o equipamento e mude o status para 'Parada' para acionar a equipe de manutenção.`;
+    }
+
+    if (p.includes("exportar") || p.includes("baixar pdf") || p.includes("baixar excel") || p.includes("emitir relatorio")) {
+      return `📄 <b>Como Exportar Relatórios em PDF e Excel:</b><br><br>` +
+             `1. Acesse a página <b>Relatórios & Exportação Analítica</b>.<br>` +
+             `2. Escolha o período desejado (Data Inicial / Final) e o setor.<br>` +
+             `3. Selecione o relatório pretendido (Produção, Pedidos, Estoque ou Logística).<br>` +
+             `4. Clique no botão <b>'PDF'</b> para baixar a ficha visual formatada ou em <b>'Excel'</b> para gerar a planilha com dados brutos.<br>` +
+             `5. Para auditoria completa, utilize o botão <b>'Baixar Consolidado'</b>.`;
+    }
+
+    if (p.includes("como ver estoque baixo") || p.includes("filtrar critico") || p.includes("o que esta acabando") || p.includes("nivel critico")) {
+      let res = `📦 <b>Materiais em Nível Crítico e Ponto de Reposição:</b><br><br>`;
+      BancoDadosOficial.estoqueValido.forEach(i => {
+        res += `• <b>${i.item} (${i.cod}):</b> ${i.status}<br>`;
+      });
+      res += `<br>⚠️ <i>Alerta ativo: Atraso de 2 dias na entrega de Chapa Inox 304 pelo fornecedor. Para dar entrada em novos lotes, acesse a página <b>Itens em Estoque</b>.</i>`;
+      return res;
+    }
+
+    if (p.includes("onde estao os caminhoes") || p.includes("onde esta a frota") || p.includes("caminhoes da frota")) {
+      let res = `🚚 <b>Localização GPS & Telemetria dos Caminhões da Frota:</b><br><br>`;
+      BancoDadosOficial.logistica.rastreamentoGPS.forEach(r => {
+        res += `• <b>${r.id}</b> (${r.carga}): <b>${r.status}</b><br>` +
+               `   └ Motorista: ${r.motorista} | Destino: ${r.destino}<br>` +
+               `   └ Vel: ${r.vel} | Temp Baú: ${r.temp} | Tanque: ${r.tanque}<br><br>`;
+      });
+      res += `👉 <i>Para acompanhar o mapa interativo, pesquise por "Rastreamento GPS".</i>`;
+      return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 1: DÚVIDAS CONCEITUAIS E SIGNIFICADOS ("SIGNIFICADO DE X", "O QUE É X", "O QUE SIGNIFICA")
+    // ------------------------------------------------------------------------
+    const ehPerguntaSignificado = p.includes("significado") || p.includes("o que e") || 
+                                   p.includes("o que significa") || p.includes("conceito") || 
+                                   p.includes("defina") || p.includes("definicao") || p.includes("o que quer dizer");
+
+    if (ehPerguntaSignificado || p === "oee" || p === "op" || p === "logistica") {
+      if (p.includes("logistica")) {
+        return `📖 <b>${DicionarioConceitos.logistica.termo}:</b><br><br>💡 <b>Significado & Conceito:</b><br>${DicionarioConceitos.logistica.definicao}<br><br>📦 <b>Como funciona no StockLog:</b><br>${DicionarioConceitos.logistica.noStockLog}`;
+      }
+      if (p.includes("oee")) {
+        return `📖 <b>${DicionarioConceitos.oee.termo}:</b><br><br>💡 <b>Significado & Conceito:</b><br>${DicionarioConceitos.oee.definicao}<br><br>⚙️ <b>Como funciona no StockLog:</b><br>${DicionarioConceitos.oee.noStockLog}`;
+      }
+      if (p.includes("estoque") || p.includes("curva abc")) {
+        return `📖 <b>${DicionarioConceitos.estoque.termo}:</b><br><br>💡 <b>Significado & Conceito:</b><br>${DicionarioConceitos.estoque.definicao}<br><br>🏭 <b>Como funciona no StockLog:</b><br>${DicionarioConceitos.estoque.noStockLog}`;
+      }
+      if (p.includes("op") || p.includes("ordem de producao") || p.includes("ordens de producao")) {
+        return `📖 <b>${DicionarioConceitos.op.termo}:</b><br><br>💡 <b>Significado & Conceito:</b><br>${DicionarioConceitos.op.definicao}<br><br>📋 <b>Como funciona no StockLog:</b><br>${DicionarioConceitos.op.noStockLog}`;
+      }
+      if (p.includes("qr code") || p.includes("qrcode") || p.includes("codigo de barras")) {
+        return `📖 <b>${DicionarioConceitos.qr_code.termo}:</b><br><br>💡 <b>Significado & Conceito:</b><br>${DicionarioConceitos.qr_code.definicao}<br><br>📱 <b>Como funciona no StockLog:</b><br>${DicionarioConceitos.qr_code.noStockLog}`;
+      }
+      if (p.includes("stocklog") || p.includes("sistema")) {
+        return `📖 <b>${DicionarioConceitos.objetivo_sistema.termo}:</b><br><br>💡 <b>Significado & Conceito:</b><br>${DicionarioConceitos.objetivo_sistema.definicao}`;
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 2: RESUMO QUANTITATIVO GLOBAL ("QUANTOS / QUANTIDADE / TOTAIS / KPIS")
+    // ------------------------------------------------------------------------
+    if (
+      p.includes("quantos") || p.includes("quantas") || p.includes("quantidade") ||
+      p.includes("total de") || p.includes("totais") || p.includes("numeros") ||
+      p.includes("resumo geral") || p.includes("kpis") || p.includes("kpi")
+    ) {
+      if (p.includes("veiculo") || p.includes("frota") || p.includes("caminhao") || p.includes("caminhoes")) {
+        return `🚚 <b>Contagem de Veículos & Frota:</b><br><br>` +
+               `• <b>Total de Veículos na Frota Rastreada:</b> 4 Veículos Ativos<br>` +
+               `• <b>Em Trânsito:</b> 2 (Renault Master - ABC-4E89 | Scania R450 - DEF-1A23)<br>` +
+               `• <b>Em Preparação:</b> 1 (VW Delivery - GHI-9012)<br>` +
+               `• <b>Entregue / Concluído:</b> 1 (Mercedes Sprinter - JKL-3456)<br><br>` +
+               `👉 <i>Para ver a telemetria completa e mapa, pesquise por "Rastreamento GPS".</i>`;
+      }
+
+      if (p.includes("item") || p.includes("itens") || p.includes("estoque") || p.includes("insumos")) {
+        return `📦 <b>Contagem de Itens em Estoque & Saldo:</b><br><br>` +
+               `• <b>Total de Itens em Estoque:</b> 1.247 Unidades Cadastradas<br>` +
+               `• <b>Capacidade de Embalagens:</b> 100% ocupada (223 / 112 itens)<br>` +
+               `• <b>Capacidade de Ferramental:</b> 62% ocupada (62 / 100 itens)<br>` +
+               `• <b>Alertas Críticos de Reposição:</b> 3 Itens em Nível Crítico/Baixo (Martelo MT-8888, Chapa Inox MP-1042, Luva Nitrílica P-0248)<br><br>` +
+               `👉 <i>Para detalhes de cada item, pesquise por "Itens em Estoque".</i>`;
+      }
+
+      if (p.includes("entrega") || p.includes("pedido") || p.includes("op") || p.includes("ordem")) {
+        return `📋 <b>Contagem de Pedidos, OPs & Entregas:</b><br><br>` +
+               `• <b>Pedidos em Aberto:</b> ${BancoDadosOficial.dashboard.pedidosEmAberto} Pedidos<br>` +
+               `• <b>Ordens de Produção (OPs) Ativas:</b> ${BancoDadosOficial.dashboard.opsAtivas} OPs<br>` +
+               `• <b>Taxa de Entrega Atual:</b> ${BancoDadosOficial.dashboard.taxaEntrega}<br>` +
+               `• <b>Alertas de Produção / Atrasos:</b> ${BancoDadosOficial.dashboard.alertasAtivos} Alertas Registrados<br><br>` +
+               `👉 <i>Para consultar as OPs e prazos, pesquise por "Pedidos de Produção".</i>`;
+      }
+
+      return `📊 <b>Resumo Quantitativo Geral de KPIs (StockLog v2.4):</b><br><br>` +
+             `📦 <b>Itens em Estoque:</b> 1.247 unidades totais (${BancoDadosOficial.estoqueValido.length} em nível crítico)<br>` +
+             `🚚 <b>Frota & Veículos:</b> 4 veículos monitorados via GPS (2 em trânsito, 1 em preparação, 1 entregue)<br>` +
+             `📋 <b>Pedidos & OPs:</b> ${BancoDadosOficial.dashboard.pedidosEmAberto} Pedidos em Aberto | ${BancoDadosOficial.dashboard.opsAtivas} OPs Ativas | Taxa de Entrega: ${BancoDadosOficial.dashboard.taxaEntrega}<br>` +
+             `⚙️ <b>Máquinas no Chão de Fábrica:</b> 7 Máquinas (4 Operando, 1 Parada por falha, 1 em Manutenção)<br>` +
+             `🏢 <b>Fornecedores:</b> 6 Cadastrados (4 Homologados) | Compras no Mês: R$ 142.800<br>` +
+             `📅 <b>Agenda & Eventos:</b> ${BancoDadosOficial.agenda.totalCompromissos} Compromissos (${BancoDadosOficial.agenda.urgentes} Urgente, ${BancoDadosOficial.agenda.prazosVencimentos} Prazos OPs)`;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 3: REDIRECIONAMENTO DE AGENDA / COMPROMISSOS
     // ------------------------------------------------------------------------
     if (
       p.includes("agenda") || p.includes("compromisso") || p.includes("calendario") ||
       p.includes("reuniao") || p.includes("treinamento") || p.includes("evento") ||
-      p.includes("sincronizar") || (p.includes("vencimento") && p.includes("proximo"))
+      p.includes("sincronizar")
     ) {
       return `📅 <b>Agenda & Calendário do StockLog:</b><br><br>` +
-             `Para visualizar, agendar ou editar seus compromissos, acesse a página de <b>Agenda</b> pelo menu lateral ou clique no link abaixo:<br><br>` +
-             `<b>Total de Compromissos:</b> ${BancoDadosOficial.agenda.totalCompromissos}<br>` +
-             `<b>Urgentes:</b> ${BancoDadosOficial.agenda.urgentes}<br>` +
-             `<b>Prazos / Vencimentos de OPs:</b> ${BancoDadosOficial.agenda.prazosVencimentos}<br><br>` +
+             `🎯 <b>O que é / Objetivo:</b><br>${PaginasSistema.agenda.objetivo}<br><br>` +
+             `🛠️ <b>Como Usar Passo a Passo:</b><br>${PaginasSistema.agenda.comoUsar.replace(/\n/g, "<br>")}<br><br>` +
+             `📊 <b>Resumo de Quantidades:</b><br>` +
+             `• <b>Total de Compromissos:</b> ${BancoDadosOficial.agenda.totalCompromissos}<br>` +
+             `• <b>Urgentes:</b> ${BancoDadosOficial.agenda.urgentes}<br>` +
+             `• <b>Prazos / Vencimentos de OPs:</b> ${BancoDadosOficial.agenda.prazosVencimentos}<br><br>` +
              `👉 <a href="${BancoDadosOficial.agenda.linkPagina}" style="color:var(--primary); font-weight:700; text-decoration:underline;">Clique aqui para abrir a Agenda Completa</a>`;
     }
 
     // ------------------------------------------------------------------------
-    // REGRA 2: CONSULTA DE PÁGINA ESPECÍFICA (OBJETIVO E COMO USAR)
+    // REGRA 4: CONSULTA DE DADOS REAIS - MÁQUINAS E CHÃO DE FÁBRICA
+    // ------------------------------------------------------------------------
+    if (p.includes("quais maquinas") || p.includes("status das maquinas") || p.includes("maquinas operando") || p.includes("torno") || p.includes("prensa") || p.includes("solda")) {
+      let res = `<b>Status do Chão de Fábrica (7 Máquinas Registradas):</b><br><br>`;
+      BancoDadosOficial.maquinasValidas.forEach(m => {
+        if (m.status === "Operando") {
+          res += `🟢 <b>${m.nome}:</b> Operando (${m.op}) | Op: ${m.operador} | Progresso: ${m.progresso}<br>`;
+        } else {
+          res += `🔴 <b>${m.nome}:</b> ${m.status} (${m.detalhe})<br>`;
+        }
+      });
+      res += `<br>🚨 <b>Problema Alerta:</b> Falha de pressão hidráulica detectada na Linha 03 (Torno CNC) há 42 min.`;
+      return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 5: CONSULTA DE DADOS REAIS - PEDIDOS, OPS E ATRASOS
+    // ------------------------------------------------------------------------
+    if (p.includes("lista de pedidos") || p.includes("quais pedidos") || p.includes("quais ops") || p.includes("atraso") || p.includes("prazo de entrega")) {
+      let res = `<b>Ordens de Produção e Pedidos Recentes (${BancoDadosOficial.dashboard.pedidosEmAberto} Pedidos em Aberto | ${BancoDadosOficial.dashboard.opsAtivas} OPs Ativas):</b><br><br>`;
+      BancoDadosOficial.pedidosValidos.forEach(item => {
+        res += `<b>${item.op}:</b> ${item.produto} (${item.qtd} un) | Cliente: ${item.cliente} | Prazo: <b>${item.dataLimite}</b> | Status: ${item.status}<br>`;
+      });
+      res += `<br>⚠️ <b>IA Alerta:</b> Gargalo previsto na OP-2026-001 por sobrecarga na fila de usinagem.`;
+      return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 6: CONSULTA DE DADOS REAIS - LOGÍSTICA, ENTREGAS E RASTREAMENTO GPS
+    // ------------------------------------------------------------------------
+    if (p.includes("status das entregas") || p.includes("frota") || p.includes("motorista") || p.includes("sl-")) {
+      let res = `<b>Rastreamento de Frota & Telemetria (4 Veículos Monitorados ao Vivo):</b><br><br>`;
+      BancoDadosOficial.logistica.rastreamentoGPS.forEach(r => {
+        res += `🚚 <b>${r.id}</b> (${r.carga}): ${r.status}<br>` +
+               `   └ Destino: ${r.destino} | Motorista: ${r.motorista}<br>` +
+               `   └ Telemetria: ${r.vel} | Temp Baú: ${r.temp} | Combustível: ${r.tanque}<br><br>`;
+      });
+      return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 7: CONSULTA DE DADOS REAIS - FORNECEDORES E HOMOLOGAÇÃO
+    // ------------------------------------------------------------------------
+    if (p.includes("quais fornecedores") || p.includes("lista de fornecedores") || p.includes("parceiros") || p.includes("cnpj")) {
+      let res = `<b>Parceiros e Fornecedores Cadastrados (4 Homologados / 6 Total - Compras Mês: R$ 142.800):</b><br><br>`;
+      BancoDadosOficial.fornecedores.forEach(f => {
+        res += `<b>${f.nome}:</b> ${f.produtos} (${f.compras}) - Status: <b>${f.status}</b><br>`;
+      });
+      return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 8: CONSULTA DE DADOS REAIS - ESTOQUE CONFORTÁVEL / SOBRANDO
+    // ------------------------------------------------------------------------
+    if (p.includes("demorar") || p.includes("demora") || p.includes("nao precisa") || p.includes("sobrando")) {
+      return `<b>Análise de Estoque Confortável (Alta Duração):</b><br><br>` +
+             `Com base na capacidade atual dos setores (Total: 1.247 Itens em Estoque):<br>` +
+             `<b>Embalagens:</b> Capacidade em 100% (223 / 112 itens armazenados).<br>` +
+             `<b>Ferramental:</b> Capacidade em 62% (62 / 100 itens).<br><br>` +
+             `Estes grupos possuem cobertura de estoque suficiente e <b>não necessitam de reposição nos próximos dias</b>.`;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 9: CONSULTA DE DADOS REAIS - CADASTRO DE FUNCIONÁRIOS E PERFIL
+    // ------------------------------------------------------------------------
+    if (p.includes("como cadastrar") || p.includes("cadastrar um usuario") || p.includes("novo funcionario") || p.includes("colaborador")) {
+      return `<b>Cadastro de Funcionários e Acessos:</b><br><br>` +
+             `Para registrar um novo colaborador no StockLog:<br>` +
+             `1. Preencha Nome Completo, CPF e E-mail corporativo.<br>` +
+             `2. Selecione a <b>Área de Atuação</b> (Gestão, Corte, Usinagem, Solda, Logística).<br>` +
+             `3. Digite uma Senha de Acesso segura.<br>` +
+             `4. Clique no botão azul <b>Cadastrar</b>.<br><br>` +
+             `👤 <b>Seu Usuário Atual:</b> ${BancoDadosOficial.usuarioLogado.nome} (${BancoDadosOficial.usuarioLogado.cargo}) | Matrícula: ${BancoDadosOficial.usuarioLogado.matricula}`;
+    }
+
+    // ------------------------------------------------------------------------
+    // REGRA 10: CONSULTA DIRETA DE PÁGINA ("O QUE É" + "COMO USAR")
+    // Se o usuário digitou o nome de qualquer uma das 14 páginas
     // ------------------------------------------------------------------------
     for (const [key, info] of Object.entries(PaginasSistema)) {
       const matchKey = info.chaves.some(chave => p.includes(normalizarTexto(chave)));
-      if (matchKey && (p.includes("como usa") || p.includes("como usar") || p.includes("objetivo") || p.includes("para que serve") || p.includes("pagina") || p.includes("tela") || p.includes("expliqu"))) {
+      if (matchKey) {
         let passosFormatados = info.comoUsar.replace(/\n/g, "<br>");
         return `📌 <b>Página: ${info.nome}</b><br><br>` +
-               `🎯 <b>Objetivo Principal:</b><br>${info.objetivo}<br><br>` +
+               `🎯 <b>O que é / Objetivo:</b><br>${info.objetivo}<br><br>` +
                `🛠️ <b>Como Utilizar Passo a Passo:</b><br>${passosFormatados}`;
       }
     }
 
     // ------------------------------------------------------------------------
-    // REGRA 3: LISTA DE TODAS AS PÁGINAS E TELAS DO SISTEMA
+    // REGRA 11: INSPECIONAR FORMULÁRIO / TELA ATUAL
     // ------------------------------------------------------------------------
-    if (p.includes("quais sao as paginas") || p.includes("todas as paginas") || p.includes("todas as telas") || p.includes("lista de paginas") || p.includes("menu")) {
-      let res = `<b>📋 Guia de Páginas e Telas do StockLog v2.4 (14 Módulos):</b><br><br>`;
-      Object.values(PaginasSistema).forEach((item, index) => {
-        res += `<b>${index + 1}. ${item.nome}:</b><br>└ <i>${item.objetivo}</i><br><br>`;
-      });
-      res += `💡 <i>Para saber como usar qualquer uma dessas telas, basta me perguntar por exemplo: "Como usar a página de Rastreamento?" ou "Qual o objetivo da página Kanban?".</i>`;
-      return res;
-    }
-
-    // ------------------------------------------------------------------------
-    // REGRA 4: OBJETIVO E FUNCIONALIDADE DO SISTEMA ("O que o sistema faz?")
-    // ------------------------------------------------------------------------
-    if (
-      p.includes("o que esse sistema faz") || p.includes("qual o objetivo") || p.includes("para que serve") ||
-      p.includes("sobre o sistema") || p.includes("o que e o stocklog") || p.includes("o que e esse sistema") ||
-      p.includes("funcionalidade") || p.includes("recursos do sistema") || p.includes("resumo do sistema")
-    ) {
-      let res = `<b>${DicionarioConceitos.objetivo_sistema.termo}</b><br><br>` +
-                `${DicionarioConceitos.objetivo_sistema.definicao}<br><br>` +
-                `📌 <b>Principais Módulos e Recursos:</b><br><br>`;
-      DicionarioConceitos.objetivo_sistema.oQueFaz.forEach(item => {
-        res += `${item}<br><br>`;
-      });
-      res += `💡 <i>Você pode me perguntar o objetivo e como usar cada uma das 14 telas do sistema a qualquer momento!</i>`;
-      return res;
-    }
-
-    // ------------------------------------------------------------------------
-    // REGRA 5: DÚVIDAS CONCEITUAIS ("O que é X?")
-    // ------------------------------------------------------------------------
-    if (p.startsWith("o que e") || p.startsWith("o que significa") || p.startsWith("conceito") || p.startsWith("defina")) {
-      if (p.includes("logistica")) {
-        return `<b>${DicionarioConceitos.logistica.termo}:</b><br><br>${DicionarioConceitos.logistica.definicao}<br><br>📦 <b>No StockLog:</b><br>${DicionarioConceitos.logistica.noStockLog}`;
-      }
-      if (p.includes("oee")) {
-        return `<b>${DicionarioConceitos.oee.termo}:</b><br><br>${DicionarioConceitos.oee.definicao}<br><br>⚙️ <b>No StockLog:</b><br>${DicionarioConceitos.oee.noStockLog}`;
-      }
-      if (p.includes("estoque")) {
-        return `<b>${DicionarioConceitos.estoque.termo}:</b><br><br>${DicionarioConceitos.estoque.definicao}<br><br>🏭 <b>No StockLog:</b><br>${DicionarioConceitos.estoque.noStockLog}`;
-      }
-      if (p.includes("op") || p.includes("ordem de producao")) {
-        return `<b>${DicionarioConceitos.op.termo}:</b><br><br>${DicionarioConceitos.op.definicao}<br><br>📋 <b>No StockLog:</b><br>${DicionarioConceitos.op.noStockLog}`;
-      }
-      if (p.includes("qr code") || p.includes("codigo")) {
-        return `<b>${DicionarioConceitos.qr_code.termo}:</b><br><br>${DicionarioConceitos.qr_code.definicao}<br><br>📱 <b>No StockLog:</b><br>${DicionarioConceitos.qr_code.noStockLog}`;
-      }
-    }
-
-    // ------------------------------------------------------------------------
-    // REGRA 6: INSPECIONAR TELA ATUAL E FORMULÁRIO
-    // ------------------------------------------------------------------------
-    if (p.includes("analisar o que esta na tela") || p.includes("tela") || p.includes("formulario") || p.includes("erro")) {
+    if (p.includes("analisar o que esta na tela") || p.includes("formulario") || p.includes("erro")) {
       let res = "<b>Diagnóstico da Tela Atual:</b><br><br>";
       if (dom.textoAlerta) {
         res += `⚠️ <b>Alerta na Tela:</b> "${dom.textoAlerta}"<br><br>`;
@@ -382,104 +545,50 @@
     }
 
     // ------------------------------------------------------------------------
-    // REGRA 7: ESTOQUE (PRODUTOS EM FALTA VS PRODUTOS COM SOBRA/DEMORA DE REPOSIÇÃO)
+    // REGRA 12: LISTA DE TODAS AS PÁGINAS DO SISTEMA
     // ------------------------------------------------------------------------
-    if (p.includes("demorar") || p.includes("demora") || p.includes("nao precisa") || p.includes("sobrando") || p.includes("alto")) {
-      return `<b>Análise de Estoque Confortável (Alta Duração):</b><br><br>` +
-             `Com base na capacidade atual dos setores:<br>` +
-             `<b>Embalagens:</b> Capacidade em 100% (223 / 112 itens armazenados).<br>` +
-             `<b>Ferramental:</b> Capacidade em 62% (62 / 100 itens).<br><br>` +
-             `Estes grupos possuem cobertura de estoque suficiente e <b>não necessitam de reposição nos próximos dias</b>.`;
-    }
-
-    if (p.includes("falta") || p.includes("critico") || p.includes("urgente") || p.includes("comprar") || p.includes("baixo")) {
-      let res = `<b>Itens em Nível Crítico e Alertas de Reposição:</b><br><br>`;
-      BancoDadosOficial.estoqueValido.forEach(i => {
-        res += `<b>${i.item} (${i.cod}):</b> ${i.status}<br>`;
+    if (p.includes("quais sao as paginas") || p.includes("todas as paginas") || p.includes("todas as telas") || p.includes("lista de paginas") || p.includes("menu")) {
+      let res = `<b>📋 Guia de Páginas e Telas do StockLog v2.4 (14 Módulos):</b><br><br>`;
+      Object.values(PaginasSistema).forEach((item, index) => {
+        res += `<b>${index + 1}. ${item.nome}:</b><br>└ <i>${item.objetivo}</i><br><br>`;
       });
-      res += `<br>⚠️ <i>Alerta ativo: Atraso de 2 dias na entrega de Chapa Inox 304 pelo fornecedor.</i>`;
+      res += `💡 <i>Para saber o que é e como usar qualquer uma dessas telas, basta digitar o nome dela!</i>`;
       return res;
     }
 
     // ------------------------------------------------------------------------
-    // REGRA 8: MÁQUINAS, CHÃO DE FÁBRICA E PROBLEMAS ATIVOS
+    // REGRA 13: VISÃO GERAL E OBJETIVO DO SISTEMA
     // ------------------------------------------------------------------------
-    if (p.includes("maquina") || p.includes("operando") || p.includes("torno") || p.includes("prensa") || p.includes("solda") || p.includes("problema")) {
-      let res = `<b>Status do Chão de Fábrica (7 Máquinas Registradas):</b><br><br>`;
-      BancoDadosOficial.maquinasValidas.forEach(m => {
-        if (m.status === "Operando") {
-          res += `🟢 <b>${m.nome}:</b> Operando (${m.op}) | Op: ${m.operador} | Progresso: ${m.progresso}<br>`;
-        } else {
-          res += `🔴 <b>${m.nome}:</b> ${m.status} (${m.detalhe})<br>`;
-        }
+    if (
+      p.includes("o que esse sistema faz") || p.includes("qual o objetivo") || p.includes("para que serve") ||
+      p.includes("sobre o sistema") || p.includes("o que e o stocklog") || p.includes("o que e esse sistema") ||
+      p.includes("funcionalidade") || p.includes("recursos do sistema") || p.includes("resumo do sistema")
+    ) {
+      let res = `<b>${DicionarioConceitos.objetivo_sistema.termo}</b><br><br>` +
+                `${DicionarioConceitos.objetivo_sistema.definicao}<br><br>` +
+                `📌 <b>Principais Módulos e Recursos Totais:</b><br><br>`;
+      DicionarioConceitos.objetivo_sistema.oQueFaz.forEach(item => {
+        res += `${item}<br><br>`;
       });
-      res += `<br>🚨 <b>Problema Alerta:</b> Falha de pressão hidráulica detectada na Linha 03 (Torno CNC) há 42 min.`;
+      res += `💡 <i>Você pode selecionar uma das perguntas rápidas ou pesquisar por qualquer página do sistema!</i>`;
       return res;
-    }
-
-    // ------------------------------------------------------------------------
-    // REGRA 9: PEDIDOS, OPS E ATRASOS DE PRODUÇÃO
-    // ------------------------------------------------------------------------
-    if (p.includes("pedido") || p.includes("op") || p.includes("atraso") || p.includes("prazo") || p.includes("andamento")) {
-      let res = `<b>Ordens de Produção e Pedidos Recentes:</b><br><br>`;
-      BancoDadosOficial.pedidosValidos.forEach(p => {
-        res += `<b>${p.op}:</b> ${p.produto} (${p.qtd} un) | Cliente: ${p.cliente} | Prazo: <b>${p.dataLimite}</b> | Status: ${p.status}<br>`;
-      });
-      res += `<br>⚠️ <b>IA Alerta:</b> Gargalo previsto na OP-2026-001 por sobrecarga na fila de usinagem.`;
-      return res;
-    }
-
-    // ------------------------------------------------------------------------
-    // REGRA 10: LOGÍSTICA, ENTREGAS, FROTA E RASTREAMENTO GPS
-    // ------------------------------------------------------------------------
-    if (p.includes("logistica") || p.includes("entrega") || p.includes("frota") || p.includes("motorista") || p.includes("rastre") || p.includes("gps") || p.includes("sl-")) {
-      let res = `<b>Rastreamento de Frota & Telemetria em Tempo Real:</b><br><br>`;
-      BancoDadosOficial.logistica.rastreamentoGPS.forEach(r => {
-        res += `🚚 <b>${r.id}</b> (${r.carga}): ${r.status}<br>` +
-               `   └ Destino: ${r.destino} | Motorista: ${r.motorista}<br>` +
-               `   └ Telemetria: ${r.vel} | Temp Baú: ${r.temp} | Combustível: ${r.tanque}<br><br>`;
-      });
-      return res;
-    }
-
-    // ------------------------------------------------------------------------
-    // REGRA 11: FORNECEDORES E HOMOLOGAÇÃO
-    // ------------------------------------------------------------------------
-    if (p.includes("fornecedor") || p.includes("homologado") || p.includes("compras") || p.includes("cnpj")) {
-      let res = `<b>Parceiros e Fornecedores Cadastrados (4 Homologados / 6 Total):</b><br><br>`;
-      BancoDadosOficial.fornecedores.forEach(f => {
-        res += `<b>${f.nome}:</b> ${f.produtos} (${f.compras}) - Status: <b>${f.status}</b><br>`;
-      });
-      return res;
-    }
-
-    // ------------------------------------------------------------------------
-    // REGRA 12: CADASTRO DE FUNCIONÁRIOS
-    // ------------------------------------------------------------------------
-    if (p.includes("cadastrar") || p.includes("usuario") || p.includes("funcionario") || p.includes("perfil")) {
-      return `<b>Cadastro de Funcionários e Acessos:</b><br><br>` +
-             `Para registrar um novo colaborador no StockLog:<br>` +
-             `1. Preencha Nome Completo, CPF e E-mail corporativo.<br>` +
-             `2. Selecione a <b>Área de Atuação</b> (Gestão, Corte, Usinagem, Solda, Logística).<br>` +
-             `3. Digite uma Senha de Acesso segura.<br>` +
-             `4. Clique no botão azul <b>Cadastrar</b>.<br><br>` +
-             `👤 <b>Seu Usuário Atual:</b> ${BancoDadosOficial.usuarioLogado.nome} (${BancoDadosOficial.usuarioLogado.cargo}) | Matrícula: ${BancoDadosOficial.usuarioLogado.matricula}`;
     }
 
     // ------------------------------------------------------------------------
     // SAUDAÇÕES E FALLBACK
     // ------------------------------------------------------------------------
     if (p.includes("ola") || p.includes("oi") || p.includes("bom dia") || p.includes("boa tarde") || p.includes("boa noite")) {
-      return `Olá, <b>${BancoDadosOficial.usuarioLogado.nome}</b>! Sou o <b>LogBot</b>, assistente oficial do StockLog v2.4.<br><br>Como posso te ajudar hoje com as OPs, frota, máquinas, agenda ou com o guia de uso de alguma página?`;
+      return `Olá, <b>${BancoDadosOficial.usuarioLogado.nome}</b>! Sou o <b>LogBot</b>, assistente oficial do StockLog v2.4.<br><br>Como posso te ajudar hoje com relatórios, paradas de máquinas, estoque crítico, frota ou troca de senha?`;
     }
 
-    return `Compreendi sua dúvida sobre <b>"${pergunta}"</b>.<br><br>` +
-           `Como assistente do StockLog v2.4, posso responder com dados reais do seu sistema. Tente perguntar:<br>` +
-           `<i>"O que esse sistema faz?"</i><br>` +
-           `<i>"Como usar a página de Rastreamento?"</i><br>` +
-           `<i>"Quais são todas as páginas do sistema?"</i><br>` +
-           `<i>"Analisar o que está na tela"</i><br>` +
-           `<i>"Quais compromissos tenho na agenda?"</i>`;
+    return `Compreendi sua busca por <b>"${pergunta}"</b>.<br><br>` +
+           `Como assistente oficial do StockLog v2.4, posso te ajudar com relatórios, alertas e indicadores em tempo real. Tente perguntar:<br>` +
+           `• 🚨 <b>"Quais OPs e máquinas estão paradas?"</b><br>` +
+           `• 📦 <b>"Quais materiais estão em nível crítico?"</b><br>` +
+           `• 🚚 <b>"Onde estão os caminhões da frota?"</b><br>` +
+           `• 📊 <b>"Resumo geral dos KPIs do sistema"</b><br>` +
+           `• 🔐 <b>"Como trocar minha senha no perfil?"</b><br>` +
+           `• 📑 <b>"Dashboard"</b>, <b>"Kanban"</b> ou <b>"Rastreamento"</b>`;
   }
 
   /* ==========================================================================
@@ -505,7 +614,7 @@
         '</div>' +
         '<div class="chatbot-messages" id="chatbot-messages"></div>' +
         '<div class="chatbot-input-area">' +
-          '<input type="text" id="chatbot-input" class="chatbot-input" placeholder="Digite ou pergunte algo..." autocomplete="off" />' +
+          '<input type="text" id="chatbot-input" class="chatbot-input" placeholder="Digite uma dúvida sobre a fábrica, estoque ou sistema..." autocomplete="off" />' +
           '<button class="chatbot-voice" id="chatbot-voice-btn" title="Falar por Voz"><i class="fa-solid fa-microphone"></i></button>' +
           '<button class="chatbot-send" id="chatbot-send-btn" title="Enviar Mensagem"><i class="fa-solid fa-paper-plane"></i></button>' +
         '</div>' +
@@ -519,12 +628,13 @@
     const sendBtn = document.getElementById("chatbot-send-btn");
     const voiceBtn = document.getElementById("chatbot-voice-btn");
 
+    // NOVAS PERGUNTAS FREQUENTES OTIMIZADAS PARA USO REAL EM FÁBRICA / LOGÍSTICA
     const sugestoesPrincipais = [
-      "Analisar o que está na tela",
-      "Quais máquinas estão operando?",
-      "Materiais em falta no estoque",
-      "Status das entregas e frota",
-      "Como cadastrar um usuário?"
+      "Quais OPs e máquinas estão paradas?",
+      "Quais materiais estão em nível crítico?",
+      "Onde estão os caminhões da frota?",
+      "Resumo geral dos KPIs do sistema",
+      "Como trocar minha senha no perfil?"
     ];
 
     let chatIniciado = false;
@@ -554,7 +664,7 @@
       const msgDiv = document.createElement("div");
       msgDiv.className = "chatbot-msg bot";
 
-      const textoBase = "Olá! Eu sou o <strong>LogBot</strong>, assistente inteligente do StockLog.<br><br>Como posso te ajudar com a fábrica, estoque ou sistema agora?";
+      const textoBase = "Olá! Eu sou o <strong>LogBot</strong>, assistente inteligente do StockLog v2.4.<br><br>Selecione uma das consultas prioritárias abaixo ou digite sua dúvida sobre OPs, estoque, frota ou telas do sistema:";
 
       const suggestionsDiv = document.createElement("div");
       suggestionsDiv.className = "chatbot-suggestions";
@@ -622,7 +732,7 @@
         const resposta = processarPergunta(texto);
         removerTyping();
         adicionarMensagem("bot", resposta);
-      }, 350);
+      }, 300);
     }
 
     sendBtn.addEventListener("click", processarEnvio);
@@ -657,12 +767,12 @@
 
       recognition.onerror = () => {
         voiceBtn.classList.remove("listening");
-        chatInput.placeholder = "Digite ou pergunte algo...";
+        chatInput.placeholder = "Digite uma dúvida sobre a fábrica, estoque ou sistema...";
       };
 
       recognition.onend = () => {
         voiceBtn.classList.remove("listening");
-        chatInput.placeholder = "Digite ou pergunte algo...";
+        chatInput.placeholder = "Digite uma dúvida sobre a fábrica, estoque ou sistema...";
       };
     } else {
       voiceBtn.style.display = "none";
