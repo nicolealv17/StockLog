@@ -3,6 +3,8 @@
    Página de Itens em Estoque — integrada ao Firebase
    Coleção: /itens
    Chave do item = código digitado pelo usuário (sanitizado)
+   + Exclusão de itens com modal de confirmação (injetado via JS)
+   + Recebe ação externa vinda da Ajuda de Produção (?stocklog=...)
    ================================================================ */
 
 (function () {
@@ -27,8 +29,9 @@
   // =====================================================================
   // 1. Estado local (espelho do Firebase)
   // =====================================================================
-  let items = [];          // array de objetos { firebaseKey, codigo, nome, ... }
+  let items = [];
   let currentStatus = 'todos';
+  let itemParaExcluir = null;
 
   // =====================================================================
   // 2. Helpers
@@ -52,16 +55,6 @@
     'Ferramental':   'var(--green-bar)'
   };
 
-  /**
-   * Converte um código digitado pelo usuário em uma chave SEGURA para o
-   * Firebase Realtime Database.
-   *
-   * Regras:
-   *  - trim()                        → remove espaços nas pontas
-   *  - toUpperCase()                 → "mt-8888" e "MT-8888" viram a mesma chave
-   *  - substitui . # $ [ ] / por _   → caracteres proibidos pelo Firebase
-   *  - espaços internos viram _      → "chapa de aço" → "CHAPA_DE_AÇO"
-   */
   function sanitizeKey(codigo) {
     return String(codigo || '')
       .trim()
@@ -70,14 +63,12 @@
       .replace(/\s+/g, '_');
   }
 
-  // Recalcula status com base em atual/minimo
   function calcularStatus(atual, minimo) {
     if (atual <= Math.round(minimo * 0.3)) return 'critico';
     if (atual <= minimo) return 'baixo';
     return 'ok';
   }
 
-  // Toast
   let toastTimer;
   function showToast(msg, danger = false) {
     const toast = $('#toastPopup');
@@ -94,10 +85,67 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
-  // Segurança
   function escapeHtml(str) {
     return String(str ?? '').replace(/[&<>"']/g, (c) =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // =====================================================================
+  // 2.1 Injeção de CSS + modal de exclusão
+  // =====================================================================
+  function injetarUIExclusao() {
+    if (!$('#deleteStyles')) {
+      const style = document.createElement('style');
+      style.id = 'deleteStyles';
+      style.textContent = `
+        .action-cell { display: flex; align-items: flex-start; gap: 8px; }
+        .btn-delete {
+          width: 36px; height: 36px; border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--bg-soft); color: var(--red);
+          cursor: pointer; font-size: 13px; transition: 0.15s;
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0;
+        }
+        .btn-delete:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
+        .modal.modal-confirm { max-width: 440px; text-align: center; }
+        .confirm-icon {
+          width: 56px; height: 56px; border-radius: 50%;
+          background: var(--red-bg); color: var(--red);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 22px; margin: 0 auto 14px;
+        }
+        .modal-confirm h2 { font-size: 1.15rem; margin-bottom: 8px; }
+        .modal-confirm p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5; }
+        .modal-confirm p strong { color: var(--text-main); }
+        .modal-confirm .form-actions { justify-content: center; }
+        .btn-danger { background: var(--red); color: #fff; }
+        .btn-danger:hover { filter: brightness(1.1); }
+        .btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }
+      `;
+      document.head.appendChild(style);
+    }
+
+    if (!$('#deleteItemModal')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'deleteItemModal';
+      overlay.className = 'modal-overlay';
+      overlay.innerHTML = `
+        <div class="modal modal-confirm" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+          <div class="confirm-icon"><i class="fas fa-trash-can"></i></div>
+          <h2 id="deleteTitle">Excluir item?</h2>
+          <p>Você está prestes a excluir <strong id="deleteItemName">—</strong>.
+             Essa ação é permanente e não pode ser desfeita.</p>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btnCancelDelete">Cancelar</button>
+            <button type="button" class="btn btn-danger" id="btnConfirmDelete">
+              <i class="fas fa-trash-can"></i> Excluir
+            </button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+    }
   }
 
   // =====================================================================
@@ -112,8 +160,8 @@
         const atual  = Number(it.atual) || 0;
         const minimo = Number(it.minimo) || 0;
         return {
-          firebaseKey: key,                      // agora é o próprio código sanitizado
-          codigo:    it.codigo    || key || '',  // fallback: usa a key se não houver campo
+          firebaseKey: key,
+          codigo:    it.codigo    || key || '',
           nome:      it.nome      || '',
           sub:       it.sub       || '—',
           categoria: it.categoria || 'Matéria-Prima',
@@ -220,7 +268,6 @@
     const tbody = $('#tableBody');
     if (!tbody) return;
 
-    // ---------- Nada cadastrado ----------
     if (!items.length) {
       tbody.innerHTML = `
         <tr><td colspan="9">
@@ -233,7 +280,6 @@
       return;
     }
 
-    // ---------- Filtros ----------
     const filtered = items.filter((item) => {
       const blob = `${item.codigo} ${item.nome} ${item.sub}`.toLowerCase();
       const matchesSearch   = !search || blob.includes(search);
@@ -242,7 +288,6 @@
       return matchesSearch && matchesCategory && matchesStatus;
     });
 
-    // ---------- Tem itens, mas filtro não bateu ----------
     if (!filtered.length) {
       tbody.innerHTML = `
         <tr><td colspan="9">
@@ -255,7 +300,6 @@
       return;
     }
 
-    // ---------- Linhas ----------
     tbody.innerHTML = filtered.map((item) => {
       const perc = item.maximo > 0
         ? Math.min(100, Math.round((item.atual / item.maximo) * 100))
@@ -275,8 +319,6 @@
       if (item.status === 'baixo')   statusPill = `<span class="status-pill baixo"><i class="fas fa-triangle-exclamation"></i> Baixo</span>`;
       if (item.status === 'critico') statusPill = `<span class="status-pill critico"><i class="fas fa-circle-exclamation"></i> Crítico</span>`;
 
-      // A chave (firebaseKey) agora é o próprio código sanitizado,
-      // então pode ter caracteres que precisam de escape no atributo HTML.
       const keyEscaped = escapeHtml(item.firebaseKey);
 
       return `
@@ -308,12 +350,19 @@
           </td>
           <td>${statusPill}</td>
           <td>
-            <div class="qty-control" title="Informe quantas unidades deseja movimentar e use + ou −">
-              <button type="button" class="qty-btn" data-action="qty" data-delta="-1" data-key="${keyEscaped}" title="Retirar a quantidade informada">−</button>
-              <input type="number" class="qty-amount" data-qty-input="${keyEscaped}" min="1" step="1" value="1" aria-label="Quantidade para movimentar">
-              <button type="button" class="qty-btn" data-action="qty" data-delta="1" data-key="${keyEscaped}" title="Adicionar a quantidade informada">+</button>
+            <div class="action-cell">
+              <div>
+                <div class="qty-control" title="Informe quantas unidades deseja movimentar e use + ou −">
+                  <button type="button" class="qty-btn" data-action="qty" data-delta="-1" data-key="${keyEscaped}" title="Retirar a quantidade informada">−</button>
+                  <input type="number" class="qty-amount" data-qty-input="${keyEscaped}" min="1" step="1" value="1" aria-label="Quantidade para movimentar">
+                  <button type="button" class="qty-btn" data-action="qty" data-delta="1" data-key="${keyEscaped}" title="Adicionar a quantidade informada">+</button>
+                </div>
+                <span class="qty-hint">quantidade por clique</span>
+              </div>
+              <button type="button" class="btn-delete" data-action="delete" data-key="${keyEscaped}" title="Excluir item" aria-label="Excluir item ${escapeHtml(item.codigo)}">
+                <i class="fas fa-trash-can"></i>
+              </button>
             </div>
-            <span class="qty-hint">quantidade por clique</span>
           </td>
         </tr>`;
     }).join('');
@@ -367,7 +416,57 @@
   }
 
   // =====================================================================
-  // 8. Modal — abrir / fechar
+  // 7.1 Ações — excluir item
+  // =====================================================================
+  function openDeleteModal(key) {
+    const item = items.find((i) => i.firebaseKey === key);
+    if (!item) return;
+    itemParaExcluir = key;
+    const nameEl = $('#deleteItemName');
+    if (nameEl) nameEl.textContent = `${item.nome} (${item.codigo})`;
+    $('#deleteItemModal')?.classList.add('active');
+    setTimeout(() => $('#btnCancelDelete')?.focus(), 100);
+  }
+
+  function closeDeleteModal() {
+    itemParaExcluir = null;
+    $('#deleteItemModal')?.classList.remove('active');
+  }
+
+  async function confirmDelete() {
+    const key = itemParaExcluir;
+    const item = items.find((i) => i.firebaseKey === key);
+    if (!key || !item) { closeDeleteModal(); return; }
+
+    const btn = $('#btnConfirmDelete');
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo…';
+
+    try {
+      const { db, auth } = window.SL;
+      await db.ref(`itens/${key}`).remove();
+
+      await db.ref('logbot/eventos').push({
+        tipo: 'aviso',
+        texto: `Item ${item.codigo} (${item.nome}) excluído por ${auth.currentUser?.email || 'sistema'}`,
+        ref: key,
+        timestamp: Date.now()
+      });
+
+      closeDeleteModal();
+      showToast(`Item "${item.nome}" excluído com sucesso!`);
+    } catch (err) {
+      console.error('[StockLog] Erro ao excluir item:', err);
+      showToast('Erro ao excluir. Verifique as permissões.', true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
+  }
+
+  // =====================================================================
+  // 8. Modal — abrir / fechar (adicionar)
   // =====================================================================
   function openAddModal() {
     const modal = $('#addItemModal');
@@ -407,9 +506,7 @@
       return;
     }
 
-    // Sanitiza o código para virar chave válida do Firebase
     const chave = sanitizeKey(codigo);
-
     if (!chave) {
       showToast('Código inválido.', true);
       return;
@@ -424,7 +521,6 @@
     try {
       const { db, auth } = window.SL;
 
-      // Verifica duplicata direto no Firebase, usando a chave sanitizada
       const snap = await db.ref(`itens/${chave}`).once('value');
       if (snap.exists()) {
         showToast(`Já existe um item com o código "${codigo}".`, true);
@@ -448,7 +544,6 @@
         criadoPor: auth.currentUser?.uid || 'anonimo'
       };
 
-      // ✅ Chave = código sanitizado (ex: "MT-8888")
       await db.ref(`itens/${chave}`).set(payload);
 
       await db.ref('logbot/eventos').push({
@@ -478,7 +573,49 @@
   }
 
   // =====================================================================
-  // 11. Eventos de UI
+  // 11.1 Ação externa vinda da Ajuda de Produção (?stocklog=...)
+  // =====================================================================
+  function processarAcaoExterna() {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('stocklog');
+    if (!raw) return;
+
+    let dados;
+    try { dados = JSON.parse(raw); } catch { return; }
+
+    // Limpa a URL pra não reexecutar ao recarregar
+    const url = new URL(window.location.href);
+    url.searchParams.delete('stocklog');
+    window.history.replaceState({}, '', url.toString());
+
+    if (dados.acao === 'novo') {
+      setTimeout(() => {
+        openAddModal();
+        const set = (id, val) => { const el = $(id); if (el && val != null) el.value = val; };
+        set('#newCodigo', dados.codigo || '');
+        set('#newNome',   dados.nome   || '');
+        set('#newCategoria', dados.categoria || '');
+        setTimeout(() => {
+          if (!dados.nome) $('#newNome')?.focus();
+          else if (!dados.categoria) $('#newCategoria')?.focus();
+          else $('#newLocal')?.focus();
+        }, 100);
+      }, 400);
+    }
+
+    if (dados.acao === 'buscar') {
+      setTimeout(() => {
+        const input = $('#searchInput');
+        if (input) {
+          input.value = dados.codigo || '';
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }, 400);
+    }
+  }
+
+  // =====================================================================
+  // 11.2 Eventos de UI
   // =====================================================================
   function bindUI() {
     $('#searchInput')?.addEventListener('input', renderTable);
@@ -499,13 +636,32 @@
     $('#addItemModal')?.addEventListener('click', (e) => {
       if (e.target.id === 'addItemModal') closeAddModal();
     });
+
+    // Modal de exclusão
+    $('#btnCancelDelete')?.addEventListener('click', closeDeleteModal);
+    $('#btnConfirmDelete')?.addEventListener('click', confirmDelete);
+    $('#deleteItemModal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'deleteItemModal') closeDeleteModal();
+    });
+
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeAddModal();
+      if (e.key === 'Escape') {
+        closeAddModal();
+        closeDeleteModal();
+      }
     });
 
     $('#addItemForm')?.addEventListener('submit', handleAddItem);
 
     $('#tableBody')?.addEventListener('click', (e) => {
+      // Excluir
+      const delBtn = e.target.closest('[data-action="delete"]');
+      if (delBtn) {
+        openDeleteModal(delBtn.dataset.key);
+        return;
+      }
+
+      // Aumentar / diminuir quantidade
       const btn = e.target.closest('[data-action="qty"]');
       if (!btn) return;
       const key = btn.dataset.key;
@@ -527,9 +683,11 @@
   // 12. Boot
   // =====================================================================
   quandoPronto(() => {
+    injetarUIExclusao();
     bindUI();
+    processarAcaoExterna();
     bindFirebase();
-    console.log('🚀 [StockLog] Página de Itens conectada ao Firebase.');
+    console.log(' [StockLog] Página de Itens conectada ao Firebase.');
   });
 
 })();

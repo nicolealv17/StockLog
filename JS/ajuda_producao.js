@@ -2,9 +2,14 @@
    StockLog · JS/ajuda_producao.js
    Ajuda de Produção — disponibilidade de insumos em tempo real
    Fonte de estoque: /itens (Firebase Realtime Database)
+
+   Sistema de DUAS CAMADAS de categorias:
+   - Produção: chapas, usinados, conexoes, fixacao, estrutural, embalagem, pneus
+   - Estoque:  Matéria-Prima, Componentes, Embalagens, Consumíveis, Ferramental
+   O mapeamento PROD_TO_STOCK_CATEGORY conecta as duas.
    ================================================================ */
 
-// ---------- Categorias (labels/ícones) ----------
+// ---------- Categorias de PRODUÇÃO (as que aparecem nos cards) ----------
 const CATEGORIES = {
   chapas:     { label: "Corte e Chapas",       icon: "fa-solid fa-scissors" },
   usinados:   { label: "Usinados",             icon: "fa-solid fa-gear" },
@@ -15,6 +20,18 @@ const CATEGORIES = {
   pneus:      { label: "Pneus e Borracha",     icon: "fa-solid fa-circle-notch" },
 };
 
+// ---------- Mapeamento: produção → estoque ----------
+const PROD_TO_STOCK_CATEGORY = {
+  chapas:     "Matéria-Prima",
+  usinados:   "Componentes",
+  conexoes:   "Componentes",
+  fixacao:    "Consumíveis",     // parafusos, solda, etc.
+  estrutural: "Componentes",
+  embalagem:  "Embalagens",
+  pneus:      "Matéria-Prima",
+};
+
+// ---------- Cores do PDF ----------
 const CATEGORY_COLORS_PDF = {
   chapas:     { text: [69, 96, 125],   bg: [233, 238, 244] },
   usinados:   { text: [109, 79, 163],  bg: [239, 233, 248] },
@@ -37,7 +54,8 @@ const TEXT_MUTED_PDF = [61, 95, 126];
 const BORDER_PDF     = [226, 236, 246];
 
 // =====================================================================
-// RECEITAS — array original completo (imagens + ingredientes + passos)
+// RECEITAS — cada receita tem categoria de produção,
+// e cada insumo também declara sua categoria de produção
 // =====================================================================
 const RECIPES = [
   {
@@ -47,8 +65,8 @@ const RECIPES = [
     categoria: "chapas",
     imagem: "https://images.pexels.com/photos/8940223/pexels-photo-8940223.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "MP-1050", qty: 1,   unidade: "un", label: "Chapa de Aço Carbono 10mm" },
-      { codigo: "CS-7040", qty: 0.3, unidade: "kg", label: "Solda de Acabamento" },
+      { codigo: "MP-1050", categoria: "chapas",   qty: 1,   unidade: "un", label: "Chapa de Aço Carbono 10mm" },
+      { codigo: "CS-7040", categoria: "fixacao",  qty: 0.3, unidade: "kg", label: "Solda de Acabamento" },
     ],
     steps: [
       "Verificar o programa de corte a laser e confirmar as dimensões conforme o desenho técnico.",
@@ -66,9 +84,9 @@ const RECIPES = [
     categoria: "conexoes",
     imagem: "https://m.media-amazon.com/images/I/51RFJvy25EL._AC_UF894,1000_QL80_.jpg",
     ingredients: [
-      { codigo: "MP-1042", qty: 5, unidade: "kg", label: "Chapa Inox 304" },
-      { codigo: "CP-3045", qty: 4, unidade: "un", label: "Parafusos de Fixação" },
-      { codigo: "CP-3070", qty: 1, unidade: "un", label: "Anel de Vedação" },
+      { codigo: "MP-1042", categoria: "chapas",   qty: 5, unidade: "kg", label: "Chapa Inox 304" },
+      { codigo: "CP-3045", categoria: "fixacao",  qty: 4, unidade: "un", label: "Parafusos de Fixação" },
+      { codigo: "CP-3070", categoria: "fixacao",  qty: 1, unidade: "un", label: "Anel de Vedação" },
     ],
     steps: [
       "Selecionar a chapa de aço inox 304 e cortar o disco base conforme o diâmetro especificado.",
@@ -86,8 +104,8 @@ const RECIPES = [
     categoria: "usinados",
     imagem: "https://www.policompcomponentes.com.br/content/images/1fecf3cc1c54531455341db57cd103a3.png",
     ingredients: [
-      { codigo: "MP-1120", qty: 2,   unidade: "kg", label: "Barra de Bronze TM23" },
-      { codigo: "CS-7023", qty: 0.5, unidade: "L",  label: "Óleo de Usinagem" },
+      { codigo: "MP-1120", categoria: "usinados", qty: 2,   unidade: "kg", label: "Barra de Bronze TM23" },
+      { codigo: "CS-7023", categoria: "fixacao",  qty: 0.5, unidade: "L",  label: "Óleo de Usinagem" },
     ],
     steps: [
       "Cortar a barra de bronze TM23 no comprimento necessário para o disco da engrenagem.",
@@ -105,8 +123,8 @@ const RECIPES = [
     categoria: "usinados",
     imagem: "https://kohlerpneus.com.br/images/rolamentos/mancais-snt.png",
     ingredients: [
-      { codigo: "CP-3011", qty: 100, unidade: "un", label: "Rolamento Blindado 6204-2RS" },
-      { codigo: "MP-1120", qty: 1,   unidade: "kg", label: "Barra de Bronze TM23" },
+      { codigo: "CP-3011", categoria: "usinados", qty: 100, unidade: "un", label: "Rolamento Blindado 6204-2RS" },
+      { codigo: "MP-1120", categoria: "usinados", qty: 1,   unidade: "kg", label: "Barra de Bronze TM23" },
     ],
     steps: [
       "Usinar o corpo do mancal em barra de bronze TM23 conforme o desenho.",
@@ -124,9 +142,9 @@ const RECIPES = [
     categoria: "fixacao",
     imagem: "https://http2.mlstatic.com/D_NQ_NP_862287-MLB90049153639_082025-O-kit-10-parafusos-meia-rosca--parcial-sextavado-inox-m840mm.webp",
     ingredients: [
-      { codigo: "CP-3045", qty: 20, unidade: "un", label: "Parafuso Sextavado M8x30" },
-      { codigo: "CP-3050", qty: 20, unidade: "un", label: "Porca Sextavada M8" },
-      { codigo: "CP-3055", qty: 20, unidade: "un", label: "Arruela de Pressão M8" },
+      { codigo: "CP-3045", categoria: "fixacao", qty: 20, unidade: "un", label: "Parafuso Sextavado M8x30" },
+      { codigo: "CP-3050", categoria: "fixacao", qty: 20, unidade: "un", label: "Porca Sextavada M8" },
+      { codigo: "CP-3055", categoria: "fixacao", qty: 20, unidade: "un", label: "Arruela de Pressão M8" },
     ],
     steps: [
       "Separar 20 unidades de cada item: parafuso M8x30, porca M8 e arruela de pressão M8.",
@@ -143,9 +161,9 @@ const RECIPES = [
     categoria: "estrutural",
     imagem: "https://www.paulisteel.com.br/blog/wp-content/uploads/2025/04/218909fb-d901-4894-a066-2fa8882af140.jpg",
     ingredients: [
-      { codigo: "MP-1135", qty: 3,   unidade: "m",  label: "Perfil U Aço Galvanizado" },
-      { codigo: "MP-1140", qty: 0.2, unidade: "L",  label: "Primer Anticorrosivo" },
-      { codigo: "CP-3045", qty: 6,   unidade: "un", label: "Parafusos de Fixação" },
+      { codigo: "MP-1135", categoria: "estrutural", qty: 3,   unidade: "m",  label: "Perfil U Aço Galvanizado" },
+      { codigo: "MP-1140", categoria: "fixacao",    qty: 0.2, unidade: "L",  label: "Primer Anticorrosivo" },
+      { codigo: "CP-3045", categoria: "fixacao",    qty: 6,   unidade: "un", label: "Parafusos de Fixação" },
     ],
     steps: [
       "Cortar o perfil U galvanizado nos 3 metros necessários, conforme o desenho.",
@@ -163,8 +181,8 @@ const RECIPES = [
     categoria: "embalagem",
     imagem: "https://images.pexels.com/photos/615670/pexels-photo-615670.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "EM-5020", qty: 1, unidade: "un", label: "Tambor Metálico Vazio" },
-      { codigo: "EM-5030", qty: 2, unidade: "un", label: "Lacre de Segurança" },
+      { codigo: "EM-5020", categoria: "embalagem", qty: 1, unidade: "un", label: "Tambor Metálico Vazio" },
+      { codigo: "EM-5030", categoria: "embalagem", qty: 2, unidade: "un", label: "Lacre de Segurança" },
     ],
     steps: [
       "Inspecionar o tambor metálico vazio quanto a amassados ou corrosão.",
@@ -182,9 +200,9 @@ const RECIPES = [
     categoria: "pneus",
     imagem: "https://www.acheipneus.com.br/media/catalog/product/p/n/pneu-155r12-sunset-over-cargo-b3-8886q-8pr-1.png",
     ingredients: [
-      { codigo: "MP-1088", qty: 50, unidade: "kg", label: "Borracha ABS/Polímero" },
-      { codigo: "MP-1042", qty: 10, unidade: "kg", label: "Reforço de Aço" },
-      { codigo: "CS-7023", qty: 2,  unidade: "L",  label: "Lubrificante de Molde" },
+      { codigo: "MP-1088", categoria: "pneus",   qty: 50, unidade: "kg", label: "Borracha ABS/Polímero" },
+      { codigo: "MP-1042", categoria: "pneus",   qty: 10, unidade: "kg", label: "Reforço de Aço" },
+      { codigo: "CS-7023", categoria: "fixacao", qty: 2,  unidade: "L",  label: "Lubrificante de Molde" },
     ],
     steps: [
       "Pesar e preparar a mistura de borracha ABS/polímero conforme a formulação.",
@@ -202,8 +220,8 @@ const RECIPES = [
     categoria: "embalagem",
     imagem: "https://images.pexels.com/photos/6169028/pexels-photo-6169028.jpeg?auto=compress&cs=tinysrgb&w=600",
     ingredients: [
-      { codigo: "EM-5012", qty: 1,   unidade: "un", label: "Caixa de Papelão" },
-      { codigo: "MP-1102", qty: 100, unidade: "ml", label: "Resina de Selagem" },
+      { codigo: "EM-5012", categoria: "embalagem", qty: 1,   unidade: "un", label: "Caixa de Papelão" },
+      { codigo: "MP-1102", categoria: "fixacao",   qty: 100, unidade: "ml", label: "Resina de Selagem" },
     ],
     steps: [
       "Montar a caixa de papelão duplo conforme as dimensões do produto a proteger.",
@@ -221,7 +239,6 @@ const RECIPES = [
 let STOCK = [];
 let stockPronto = false;
 
-/** Normaliza string para comparação (sem acento, minúsculo). */
 function normalizar(str) {
   return String(str || '')
     .normalize('NFD')
@@ -231,64 +248,117 @@ function normalizar(str) {
     .trim();
 }
 
-/** Converte o snapshot do Firebase em array. */
+function normalizarCodigo(str) {
+  return String(str || '')
+    .toUpperCase()
+    .replace(/[\s\-_]/g, '');
+}
+
 function snapshotParaArray(val) {
   const out = [];
   for (const key in val) {
     const it = val[key] || {};
     out.push({
       firebaseKey: key,
-      codigo: it.codigo || key || '',
-      nome:   it.nome   || '',
-      atual:  Number(it.atual)  || 0,
-      minimo: Number(it.minimo) || 0,
+      codigo:    it.codigo    || key || '',
+      nome:      it.nome      || '',
+      categoria: it.categoria || '',       // categoria de ESTOQUE
+      atual:     Number(it.atual)  || 0,
+      minimo:    Number(it.minimo) || 0,
+      local:     it.local     || '',
     });
   }
   return out;
 }
 
-/** Busca o item do estoque pelo código (case-insensitive, trim). */
-function stockFor(codigo) {
-  const alvo = String(codigo || '').trim().toLowerCase();
+/**
+ * Busca item por código (normalização agressiva).
+ * Ordena por "categoria bate": se o item tem a categoria de estoque
+ * esperada pra produção, ele ganha preferência.
+ */
+function stockFor(codigo, categoriaProducao) {
+  const alvo = normalizarCodigo(codigo);
   if (!alvo) return null;
-  return STOCK.find(s =>
-    String(s.codigo).trim().toLowerCase() === alvo ||
-    String(s.firebaseKey).trim().toLowerCase() === alvo
+
+  const esperada = categoriaProducao
+    ? PROD_TO_STOCK_CATEGORY[categoriaProducao]
+    : null;
+
+  const candidatos = STOCK.filter(s =>
+    normalizarCodigo(s.codigo) === alvo ||
+    normalizarCodigo(s.firebaseKey) === alvo
   );
+  if (!candidatos.length) return null;
+
+  // Preferência: categoria de estoque esperada
+  if (esperada) {
+    const preferido = candidatos.find(s => s.categoria === esperada);
+    if (preferido) return preferido;
+  }
+  return candidatos[0];
 }
 
-/** Fallback: busca por nome aproximado (todos os tokens precisam bater). */
-function stockForNome(label) {
+/**
+ * Busca por nome com preferência por categoria de estoque.
+ * Estratégia:
+ *   1) Tenta todos os tokens na categoria esperada
+ *   2) Se não achar, tenta todos os tokens em qualquer categoria
+ */
+function stockForNome(label, categoriaProducao) {
   const alvo = normalizar(label);
   if (!alvo) return null;
 
   const stopwords = new Set([
     'de','da','do','das','dos','para','com','sem','e','ou','a','o','as','os',
-    'un','und','kg','l','m','ml','industrial','padrao','linha'
+    'un','und','kg','l','m','ml','industrial','padrao','linha','tipo'
   ]);
   const tokens = alvo.split(' ').filter(t => t.length >= 3 && !stopwords.has(t));
   if (!tokens.length) return null;
 
-  return STOCK.find(s => {
-    const nome = normalizar(s.nome);
-    return tokens.every(t => nome.includes(t));
-  }) || null;
+  const esperada = categoriaProducao
+    ? PROD_TO_STOCK_CATEGORY[categoriaProducao]
+    : null;
+
+  function melhorCandidato(lista) {
+    let melhor = null, melhorScore = 0;
+    for (const s of lista) {
+      const nome = normalizar(s.nome);
+      if (!nome) continue;
+      let hits = 0;
+      for (const t of tokens) if (nome.includes(t)) hits++;
+      const score = hits / tokens.length;
+      if (hits >= 1 && score > melhorScore) {
+        melhor = s; melhorScore = score;
+      }
+    }
+    return { item: melhor, score: melhorScore };
+  }
+
+  // 1) Tenta na categoria esperada
+  if (esperada) {
+    const pref = melhorCandidato(STOCK.filter(s => s.categoria === esperada));
+    if (pref.item && pref.score >= 0.4) return pref.item;
+  }
+
+  // 2) Fallback geral
+  const geral = melhorCandidato(STOCK);
+  return (geral.item && geral.score >= 0.4) ? geral.item : null;
 }
 
 /**
- * Regras de disponibilidade:
- *   - atual <= 0                → indisponível (zerado)
- *   - atual < qty requisitada    → indisponível (insuficiente)
- *   - atual <= mínimo            → disponível, mas com aviso
+ * Regras:
+ *   - atual <= 0             → indisponível
+ *   - atual < qty            → insuficiente
+ *   - atual <= mínimo        → disponível com aviso
  */
 function ingredientStatus(ing) {
-  // 1) tenta por código
-  let item = stockFor(ing.codigo);
+  // 1) por código (com preferência de categoria)
+  let item = stockFor(ing.codigo, ing.categoria);
   let via = 'codigo';
 
-  // 2) fallback por nome
+  // 2) fallback por nome (com preferência de categoria)
   if (!item) {
-    item = stockForNome(ing.label);
+    item = stockForNome(ing.label, ing.categoria);
     via = item ? 'nome' : null;
   }
 
@@ -321,28 +391,18 @@ function availabilitySummary(recipe) {
   const total = recipe.ingredients.length;
   const disponiveis = recipe.ingredients.filter(ing => ingredientStatus(ing).disponivel).length;
   const faltando = total - disponiveis;
-  return {
-    total,
-    disponiveis,
-    faltando,
-    pronto: faltando === 0,
-    bloqueado: disponiveis === 0
-  };
+  return { total, disponiveis, faltando, pronto: faltando === 0, bloqueado: disponiveis === 0 };
 }
 
-function statusInfo({ total, disponiveis, faltando, pronto, bloqueado }) {
-  if (pronto) {
-    return { cls: "ready", icon: "fa-solid fa-circle-check", text: "Pronto para produção" };
-  }
-  if (bloqueado) {
-    return { cls: "blocked", icon: "fa-solid fa-circle-xmark",
-             text: `Bloqueado · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
-  }
+function statusInfo({ faltando, pronto, bloqueado }) {
+  if (pronto) return { cls: "ready", icon: "fa-solid fa-circle-check", text: "Pronto para produção" };
+  if (bloqueado) return { cls: "blocked", icon: "fa-solid fa-circle-xmark",
+    text: `Bloqueado · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
   return { cls: "partial", icon: "fa-solid fa-triangle-exclamation",
-           text: `Parcial · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
+    text: `Parcial · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
 }
 
-// ---------- Render: resumo + cards ----------
+// ---------- Render ----------
 function renderSummary() {
   const el = document.getElementById('pageSummary');
   if (!el) return;
@@ -417,33 +477,7 @@ function openRecipeModal(recipeId) {
   });
 
   const listEl = document.getElementById('ingredientList');
-  listEl.innerHTML = ordenados.map(ing => {
-    const st = ingredientStatus(ing);
-    const aviso = st.motivo
-      ? `<small class="low-stock-warning"><i class="fa-solid fa-triangle-exclamation"></i> ${st.motivo}</small>`
-      : '';
-
-    const matchInfo = (st.via === 'nome' && st.item)
-      ? `<small class="codigo-tag" style="margin-left:6px;opacity:.75;">(estoque: ${st.item.codigo})</small>`
-      : '';
-
-    return `
-      <div class="ingredient-item ${st.disponivel ? '' : 'unavailable'}">
-        <div class="ingredient-name">
-          <div>
-            <div>${ing.label} <small class="codigo-tag">${ing.codigo}</small>${matchInfo}</div>
-            ${aviso}
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <span class="ingredient-qty">${ing.qty} ${ing.unidade}</span>
-          <span class="availability-badge ${st.disponivel ? 'avail-yes' : 'avail-no'}">
-            ${st.disponivel ? 'Disponível' : 'Em falta'}
-          </span>
-        </div>
-      </div>
-    `;
-  }).join('');
+  listEl.innerHTML = ordenados.map(ing => renderIngredientItem(ing)).join('');
 
   const stepsEl = document.getElementById('stepsList');
   if (stepsEl) {
@@ -459,13 +493,150 @@ function openRecipeModal(recipeId) {
   document.getElementById('recipeModal').classList.add('active');
 }
 
+/**
+ * Renderiza um item de ingrediente no modal, com botões de ação:
+ *  - "Cadastrar no estoque" se não existe
+ *  - "Ver no estoque" se existe (mesmo que em falta)
+ */
+function renderIngredientItem(ing) {
+  const st = ingredientStatus(ing);
+  const catProd = CATEGORIES[ing.categoria]?.label || ing.categoria || '';
+  const catEstoque = PROD_TO_STOCK_CATEGORY[ing.categoria] || '';
+
+  const aviso = st.motivo
+    ? `<small class="low-stock-warning"><i class="fa-solid fa-triangle-exclamation"></i> ${st.motivo}</small>`
+    : '';
+
+  const matchInfo = (st.via === 'nome' && st.item)
+    ? `<small class="codigo-tag" style="margin-left:6px;opacity:.75;">(estoque: ${st.item.codigo})</small>`
+    : '';
+
+  // ---------- Botão de ação ----------
+  let botaoAcao = '';
+  if (!st.item) {
+    // Não cadastrado → botão de cadastrar
+    const payload = encodeURIComponent(JSON.stringify({
+      acao: 'novo',
+      codigo: ing.codigo,
+      nome: ing.label,
+      categoria: catEstoque,
+    }));
+    botaoAcao = `
+      <a class="ingredient-action-btn action-cadastrar"
+         href="itens.html?stocklog=${payload}"
+         title="Cadastrar este insumo no estoque">
+        <i class="fa-solid fa-plus"></i> Cadastrar no estoque
+      </a>`;
+  } else {
+    // Existe → botão de ver no estoque
+    const payload = encodeURIComponent(JSON.stringify({
+      acao: 'buscar',
+      codigo: st.item.codigo || st.item.firebaseKey,
+    }));
+    botaoAcao = `
+      <a class="ingredient-action-btn action-ver"
+         href="itens.html?stocklog=${payload}"
+         title="Ver este item na tela de estoque">
+        <i class="fa-solid fa-magnifying-glass"></i> Ver no estoque
+      </a>`;
+  }
+
+  return `
+    <div class="ingredient-item ${st.disponivel ? '' : 'unavailable'}">
+      <div class="ingredient-name">
+        <div>
+          <div>
+            ${ing.label}
+            <small class="codigo-tag">${ing.codigo}</small>
+            ${matchInfo}
+          </div>
+          <div class="ingredient-cats">
+            <span class="cat-prod-chip cat-prod-${ing.categoria}">${catProd}</span>
+            ${catEstoque ? `<span class="cat-arrow">→</span><span class="cat-estoque-chip">${catEstoque}</span>` : ''}
+          </div>
+          ${aviso}
+        </div>
+      </div>
+      <div class="ingredient-right">
+        <div class="ingredient-qty-line">
+          <span class="ingredient-qty">${ing.qty} ${ing.unidade}</span>
+          <span class="availability-badge ${st.disponivel ? 'avail-yes' : 'avail-no'}">
+            ${st.disponivel ? 'Disponível' : 'Em falta'}
+          </span>
+        </div>
+        ${botaoAcao}
+      </div>
+    </div>
+  `;
+}
+
 function closeRecipeModal() {
   document.getElementById('recipeModal').classList.remove('active');
   currentModalRecipeId = null;
 }
 
 // =====================================================================
-// Geração de PDF
+// CSS extra — botões e chips no modal
+// =====================================================================
+(function injetarEstilosModal() {
+  if (document.getElementById('prod-modal-extra')) return;
+  const s = document.createElement('style');
+  s.id = 'prod-modal-extra';
+  s.textContent = `
+    .ingredient-item { flex-wrap: wrap; }
+    .ingredient-right {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 6px;
+    }
+    .ingredient-qty-line { display: flex; align-items: center; gap: 10px; }
+
+    .ingredient-cats {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 4px; font-size: 10.5px;
+    }
+    .cat-prod-chip {
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--primary-light); color: var(--primary);
+      font-weight: 700; letter-spacing: .02em;
+    }
+    .cat-prod-chapas     { background: var(--cat-chapas-bg);     color: var(--cat-chapas); }
+    .cat-prod-usinados   { background: var(--cat-usinados-bg);   color: var(--cat-usinados); }
+    .cat-prod-conexoes   { background: var(--cat-conexoes-bg);   color: var(--cat-conexoes); }
+    .cat-prod-fixacao    { background: var(--cat-fixacao-bg);    color: var(--cat-fixacao); }
+    .cat-prod-estrutural { background: var(--cat-estrutural-bg); color: var(--cat-estrutural); }
+    .cat-prod-embalagem  { background: var(--cat-embalagem-bg);  color: var(--cat-embalagem); }
+    .cat-prod-pneus      { background: var(--cat-pneus-bg);      color: var(--cat-pneus); }
+    .cat-arrow { color: var(--text-muted); font-size: 11px; }
+    .cat-estoque-chip {
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--bg-soft); color: var(--text-secondary);
+      border: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .ingredient-action-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11.5px; font-weight: 700;
+      padding: 5px 10px; border-radius: 7px;
+      text-decoration: none; cursor: pointer;
+      transition: filter .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .ingredient-action-btn:hover { filter: brightness(1.08); }
+    .ingredient-action-btn:active { transform: translateY(1px); }
+    .ingredient-action-btn.action-cadastrar {
+      background: var(--primary); color: #fff; border: 1px solid var(--primary);
+    }
+    .ingredient-action-btn.action-ver {
+      background: var(--bg-soft); color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+  `;
+  document.head.appendChild(s);
+})();
+
+// =====================================================================
+// PDF — Ficha de Procedimento (mantido)
 // =====================================================================
 async function loadImageAsDataURL(url) {
   try {
@@ -478,9 +649,7 @@ async function loadImageAsDataURL(url) {
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
-  } catch (err) {
-    return null;
-  }
+  } catch { return null; }
 }
 
 async function generatePDF(recipeId) {
@@ -520,154 +689,101 @@ async function generatePDF(recipeId) {
     function drawHeader() {
       doc.setFillColor(...PRIMARY_PDF);
       doc.rect(0, 0, pageWidth, 28, "F");
-
       doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(16);
       doc.text("STOCKLOG", marginX, 12);
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(7.5);
       doc.text("Sistema Integrado de Gestão de Estoque, Produção e Logística", marginX, 18);
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(10);
       doc.text("PROCEDIMENTO OPERACIONAL PADRÃO", pageWidth - marginX, 11, { align: "right" });
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(7.5);
       doc.text(`Código: ${codigoDoc}`, pageWidth - marginX, 17, { align: "right" });
       doc.text(`Revisão: ${revisao}`, pageWidth - marginX, 21, { align: "right" });
-
       y = 36;
     }
 
     function drawFooter(pageNum, totalPages) {
-      doc.setDrawColor(...BORDER_PDF);
-      doc.setLineWidth(0.3);
+      doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.3);
       doc.line(marginX, pageHeight - 16, pageWidth - marginX, pageHeight - 16);
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(7);
-      doc.setTextColor(...TEXT_MUTED_PDF);
-
+      doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...TEXT_MUTED_PDF);
       const footerY = pageHeight - 13;
       const colWidth = contentWidth / 3;
-
       doc.text("Elaboração: José Correia", marginX, footerY);
       doc.text("Aprovação: José Correia", marginX + colWidth, footerY);
       doc.text(`Data: ${dataEmissao}`, marginX + colWidth * 2, footerY);
-
       doc.setFontSize(6.5);
       doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - marginX, footerY, { align: "right" });
     }
 
-    function checkPageBreak(neededHeight) {
-      if (y + neededHeight > bottomLimit) {
-        doc.addPage();
-        drawHeader();
-      }
+    function checkPageBreak(h) {
+      if (y + h > bottomLimit) { doc.addPage(); drawHeader(); }
     }
 
     function sectionTitle(text) {
       checkPageBreak(14);
-      doc.setFillColor(...PRIMARY_PDF);
-      doc.rect(marginX, y, 3, 6, "F");
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(...TEXT_MAIN_PDF);
-      doc.text(text, marginX + 6, y + 5);
-      y += 12;
+      doc.setFillColor(...PRIMARY_PDF); doc.rect(marginX, y, 3, 6, "F");
+      doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(...TEXT_MAIN_PDF);
+      doc.text(text, marginX + 6, y + 5); y += 12;
     }
 
     function drawInfoTable(rows, startY, col1Width = 38) {
       const rowHeight = 7.5;
       const col2Width = contentWidth - col1Width;
-
       rows.forEach((row, i) => {
         const rowY = startY + i * rowHeight;
-
-        doc.setFillColor(...BORDER_PDF);
-        doc.rect(marginX, rowY, col1Width, rowHeight, "F");
-        doc.setDrawColor(...BORDER_PDF);
-        doc.setLineWidth(0.2);
+        doc.setFillColor(...BORDER_PDF); doc.rect(marginX, rowY, col1Width, rowHeight, "F");
+        doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.2);
         doc.rect(marginX, rowY, col1Width, rowHeight, "S");
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(8);
-        doc.setTextColor(...TEXT_MAIN_PDF);
+        doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(...TEXT_MAIN_PDF);
         doc.text(row.label, marginX + 2.5, rowY + 5);
-
         doc.setFillColor(255, 255, 255);
         doc.rect(marginX + col1Width, rowY, col2Width, rowHeight, "F");
         doc.rect(marginX + col1Width, rowY, col2Width, rowHeight, "S");
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8);
-        doc.setTextColor(...TEXT_MUTED_PDF);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...TEXT_MUTED_PDF);
         doc.text(row.value, marginX + col1Width + 2.5, rowY + 5);
       });
-
       return startY + rows.length * rowHeight;
     }
 
     drawHeader();
 
-    const identificacaoRows = [
+    y = drawInfoTable([
       { label: "Aplicação", value: recipe.nome },
       { label: "Descrição", value: recipe.descricao },
       { label: "Categoria", value: catInfo ? catInfo.label : recipe.categoria },
       { label: "Código Interno", value: recipe.id.toUpperCase() },
       { label: "Data de Emissão", value: `${dataEmissao} às ${horaEmissao}` },
       { label: "Status", value: statusColor.label },
-    ];
-
-    y = drawInfoTable(identificacaoRows, y);
+    ], y);
     y += 6;
 
     if (imgDataUrl) {
       checkPageBreak(40);
       try {
         const imgW = 55, imgH = 38;
-        doc.setDrawColor(...BORDER_PDF);
-        doc.setLineWidth(0.3);
+        doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.3);
         doc.roundedRect(marginX, y, imgW, imgH, 2, 2, "S");
         doc.addImage(imgDataUrl, "JPEG", marginX, y, imgW, imgH, undefined, "FAST");
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(9);
-        doc.setTextColor(...TEXT_MAIN_PDF);
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(...TEXT_MAIN_PDF);
         doc.text("REGISTRO FOTOGRÁFICO DO PRODUTO", marginX + imgW + 6, y + 6);
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(7.5);
-        doc.setTextColor(...TEXT_MUTED_PDF);
-        doc.text(
-          doc.splitTextToSize(
-            "Imagem ilustrativa do item produzido, conforme especificação técnica.",
-            contentWidth - imgW - 10
-          ),
-          marginX + imgW + 6,
-          y + 12
-        );
-
+        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...TEXT_MUTED_PDF);
+        doc.text(doc.splitTextToSize(
+          "Imagem ilustrativa do item produzido, conforme especificação técnica.",
+          contentWidth - imgW - 10
+        ), marginX + imgW + 6, y + 12);
         y += imgH + 8;
-      } catch (e) { /* segue sem imagem */ }
+      } catch {}
     }
 
     sectionTitle("MATERIAIS E INSUMOS NECESSÁRIOS");
-
     const colCodigo = marginX;
     const colInsumo = marginX + 28;
     const colQtd = marginX + 120;
     const colStatus = marginX + contentWidth - 32;
 
     checkPageBreak(9);
-    doc.setFillColor(...PRIMARY_PDF);
-    doc.rect(marginX, y, contentWidth, 8, "F");
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(255, 255, 255);
+    doc.setFillColor(...PRIMARY_PDF); doc.rect(marginX, y, contentWidth, 8, "F");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(255, 255, 255);
     doc.text("CÓDIGO", colCodigo + 2, y + 5.3);
     doc.text("INSUMO", colInsumo, y + 5.3);
     doc.text("QTD.", colQtd, y + 5.3);
@@ -678,28 +794,17 @@ async function generatePDF(recipeId) {
       const st = ingredientStatus(ing);
       const rowHasWarning = !!st.motivo;
       const rowHeight = rowHasWarning ? 12 : 8.5;
-
       checkPageBreak(rowHeight);
-
       if (idx % 2 === 1) {
         doc.setFillColor(248, 251, 253);
         doc.rect(marginX, y, contentWidth, rowHeight, "F");
       }
-
-      doc.setDrawColor(...BORDER_PDF);
-      doc.setLineWidth(0.15);
+      doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.15);
       doc.rect(marginX, y, contentWidth, rowHeight, "S");
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.setTextColor(...TEXT_MAIN_PDF);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...TEXT_MAIN_PDF);
       doc.text(ing.codigo, colCodigo + 2, y + 5.5);
-
-      doc.setFont("helvetica", "bold");
-      doc.text(ing.label, colInsumo, y + 5.5);
-
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(...TEXT_MUTED_PDF);
+      doc.setFont("helvetica", "bold"); doc.text(ing.label, colInsumo, y + 5.5);
+      doc.setFont("helvetica", "normal"); doc.setTextColor(...TEXT_MUTED_PDF);
       doc.text(`${ing.qty} ${ing.unidade}`, colQtd, y + 5.5);
 
       const badgeColor = st.disponivel ? STATUS_COLORS_PDF.ready : STATUS_COLORS_PDF.blocked;
@@ -707,83 +812,56 @@ async function generatePDF(recipeId) {
       const badgeW = doc.getTextWidth(badgeLabel) + 5;
       doc.setFillColor(...badgeColor.bg);
       doc.roundedRect(colStatus - 1, y + 1.3, badgeW, 5.5, 2, 2, "F");
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(7);
-      doc.setTextColor(...badgeColor.text);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...badgeColor.text);
       doc.text(badgeLabel, colStatus + 1.3, y + 5.1);
 
       if (rowHasWarning) {
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(7);
+        doc.setFont("helvetica", "italic"); doc.setFontSize(7);
         doc.setTextColor(...STATUS_COLORS_PDF.partial.text);
         doc.text(st.motivo, colInsumo, y + 10);
       }
-
       y += rowHeight;
     });
-
     y += 8;
 
     sectionTitle("PASSO A PASSO DE PRODUÇÃO");
-
     const steps = recipe.steps || [];
     const stepTextWidth = contentWidth - 12;
-
     steps.forEach((texto, i) => {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9);
       const lines = doc.splitTextToSize(texto, stepTextWidth);
       const stepHeight = Math.max(8, lines.length * 4.6 + 3);
-
       checkPageBreak(stepHeight);
-
       doc.setFillColor(...PRIMARY_PDF);
       doc.circle(marginX + 3, y + 3, 3.2, "F");
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(8);
-      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(255, 255, 255);
       doc.text(String(i + 1), marginX + 3, y + 4.2, { align: "center" });
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(...TEXT_MAIN_PDF);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...TEXT_MAIN_PDF);
       doc.text(lines, marginX + 10, y + 4.2);
-
       if (i < steps.length - 1) {
-        doc.setDrawColor(...BORDER_PDF);
-        doc.setLineWidth(0.1);
+        doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.1);
         doc.setLineDashPattern([1, 1], 0);
         doc.line(marginX + 10, y + stepHeight - 1, marginX + contentWidth, y + stepHeight - 1);
         doc.setLineDashPattern([], 0);
       }
-
       y += stepHeight;
     });
-
     y += 10;
 
     checkPageBreak(20);
     doc.setFillColor(...BORDER_PDF);
     doc.roundedRect(marginX, y, contentWidth, 16, 2, 2, "F");
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.5);
-    doc.setTextColor(...TEXT_MAIN_PDF);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(7.5); doc.setTextColor(...TEXT_MAIN_PDF);
     doc.text("OBSERVAÇÕES:", marginX + 4, y + 6);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7);
-    doc.setTextColor(...TEXT_MUTED_PDF);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...TEXT_MUTED_PDF);
     doc.text(
       "Este documento é de uso interno e deve ser seguido rigorosamente. Em caso de dúvidas, contatar o supervisor de produção.",
-      marginX + 4,
-      y + 11
+      marginX + 4, y + 11
     );
 
     const totalPages = doc.internal.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {
-      doc.setPage(p);
-      drawFooter(p, totalPages);
+      doc.setPage(p); drawFooter(p, totalPages);
     }
 
     doc.save(`procedimento-${recipe.id}.pdf`);
@@ -791,10 +869,7 @@ async function generatePDF(recipeId) {
     console.error("Erro ao gerar PDF:", err);
     alert("Não foi possível gerar o PDF. Tente novamente.");
   } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = originalBtnHtml;
-    }
+    if (btn) { btn.disabled = false; btn.innerHTML = originalBtnHtml; }
   }
 }
 
@@ -803,7 +878,7 @@ async function generatePDF(recipeId) {
 // =====================================================================
 function bindFirebase() {
   if (!window.SL || !window.SL.db) {
-    console.warn('[Ajuda Produção] Firebase não inicializado. Cards ficarão sem estoque.');
+    console.warn('[Ajuda Produção] Firebase não inicializado.');
     stockPronto = true;
     renderSummary();
     renderRecipes();
@@ -815,11 +890,7 @@ function bindFirebase() {
     stockPronto = true;
     renderSummary();
     renderRecipes();
-
-    // Se o modal estiver aberto, atualiza com o novo estoque
-    if (currentModalRecipeId) {
-      openRecipeModal(currentModalRecipeId);
-    }
+    if (currentModalRecipeId) openRecipeModal(currentModalRecipeId);
   }, (err) => {
     console.error('[Ajuda Produção] Erro ao ler /itens:', err);
   });
@@ -829,11 +900,8 @@ function bindFirebase() {
 // Boot
 // =====================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Render imediato (mesmo sem estoque) — imagens aparecem na hora
   renderSummary();
   renderRecipes();
-
-  // Conecta ao Firebase quando o SL estiver disponível
   const tentar = (n = 0) => {
     if (window.SL && window.SL.db) return bindFirebase();
     if (n > 50) return console.error('[Ajuda Produção] window.SL não apareceu.');
