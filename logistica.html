@@ -555,18 +555,6 @@
       <div id="header-root"></div>
 
       <main class="content" role="main">
-<<<<<<< Updated upstream
-=======
-
-        <!-- Cabeçalho da página -->
-        <div class="page-head">
-          <div>
-            <h1></h1>
-            <p></p>
-          </div>
-
-
->>>>>>> Stashed changes
         <!-- Estatísticas / Indicadores -->
         <div class="log-stats" id="log-stats"></div>
 
@@ -898,7 +886,6 @@
         logSaveActivity();
       }
 
-<<<<<<< Updated upstream
       function logRender() {
         logRenderStats();
         logRenderToolbar();
@@ -906,22 +893,6 @@
         logRenderVehicles();
         logRenderActivity();
       }
-=======
-      /* ============ HEADER DATA ============ */
-  function logRenderHeader() {
-  // Função vazia, já que removemos o elemento
-  // Ou simplesmente não chame esta função em logRender()
-}
-      /* ============ RENDER PRINCIPAL ============ */
-function logRender() {
-  // logRenderHeader();  // <-- remova ou comente esta linha
-  logRenderStats();
-  logRenderToolbar();
-  logRenderKanban();
-  logRenderVehicles();
-  logRenderActivity();
-}
->>>>>>> Stashed changes
 
       function logRenderStats() {
         const counts = { aguardando: 0, separacao: 0, embalagem: 0, expedicao: 0, entregue: 0 };
