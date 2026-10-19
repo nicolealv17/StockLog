@@ -126,15 +126,15 @@
           color 0.2s;
       }
 
-.main-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-}
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+      }
       .dashboard-container {
         padding: 0 0 var(--sp-5) 0; /* sem padding em cima/laterais */
         display: flex;
@@ -190,12 +190,12 @@
       }
 
       /* ---------- Grid de receitas ---------- */
-.recipe-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: var(--sp-5);
-  padding: var(--sp-5);   /* respiro em todos os lados, já que os filtros saíram */
-}
+      .recipe-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: var(--sp-5);
+        padding: var(--sp-5); /* respiro em todos os lados, já que os filtros saíram */
+      }
 
       .empty-state {
         grid-column: 1 / -1;
@@ -332,6 +332,7 @@
         color: var(--text-muted);
         line-height: 1.45;
         display: -webkit-box;
+        line-clamp: 2;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
@@ -717,29 +718,28 @@
     </div>
 
     <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
-    authDomain: "stocklog-ff7aa.firebaseapp.com",
-    databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
-    projectId: "stocklog-ff7aa",
-    storageBucket: "stocklog-ff7aa.firebasestorage.app",
-    messagingSenderId: "787537499919",
-    appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
-  };
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  window.SL = { db: firebase.database(), auth: firebase.auth() };
-</script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAr4n6dwFxFKfMr46ftQ2ktDDKZXIFNtmk",
+        authDomain: "stocklog-ff7aa.firebaseapp.com",
+        databaseURL: "https://stocklog-ff7aa-default-rtdb.firebaseio.com",
+        projectId: "stocklog-ff7aa",
+        storageBucket: "stocklog-ff7aa.firebasestorage.app",
+        messagingSenderId: "787537499919",
+        appId: "1:787537499919:web:fb267c72c0bc3b002e107a"
+      };
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      window.SL = { db: firebase.database(), auth: firebase.auth() };
+    </script>
 
     <script src="components/js/header.js"></script>
     <script src="components/js/modoescuro.js"></script>
     <script src="components/js/sidebar.js"></script>
     <script src="components/js/chat.js"></script>
-    <script src="components/js/config.js"></script>
     <script src="components/js/footer.js"></script>
     <script src="components/js/vlibras.js"></script>
     <script src="JS/ajuda_producao.js"></script>
