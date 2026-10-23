@@ -26,7 +26,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-    <!-- ✅ xlsx-js-style: mesma API do SheetJS, mas com suporte a estilos (cores, fontes, bordas) -->
+    <!-- xlsx-js-style: mesma API do SheetJS, mas com suporte a estilos (cores, fontes, bordas) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -135,6 +135,7 @@
       .relatorio-card.teal    { border-left-color: var(--teal); }
       .relatorio-card.sand    { border-left-color: var(--sand); }
       .relatorio-card.rose    { border-left-color: var(--rose); }
+      .relatorio-card.green   { border-left-color: var(--green); }
       .relatorio-card.primary { border-left-color: var(--primary); }
 
       .relatorio-card .card-top { padding: 20px 22px 16px; display: flex; align-items: flex-start; gap: 14px; }
@@ -151,6 +152,7 @@
       .relatorio-card.teal .relatorio-icone    { background: var(--teal); }
       .relatorio-card.sand .relatorio-icone    { background: var(--sand); }
       .relatorio-card.rose .relatorio-icone    { background: var(--rose); }
+      .relatorio-card.green .relatorio-icone   { background: var(--green); }
       .relatorio-card.primary .relatorio-icone { background: var(--primary); }
 
       .relatorio-titulo { font-size: 15.5px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; line-height: 1.3; }
@@ -278,10 +280,103 @@
       .log-area .linha .btn-redownload:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
       .log-area .empty { text-align: center; color: var(--text-muted); padding: 24px; font-style: italic; }
 
-      @media (max-width: 1100px) { .filtros { grid-template-columns: repeat(2, 1fr); } }
+      /* ============================================================
+         CURVA ABC
+         ============================================================ */
+      .seg {
+        display: inline-flex; background: var(--bg-soft); border: 1px solid var(--border);
+        border-radius: 12px; padding: 4px; gap: 4px;
+      }
+      .seg-btn {
+        padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+        color: var(--text-secondary); display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+      }
+      .seg-btn:hover { background: var(--bg-card); color: var(--text-main); }
+      .seg-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(0, 107, 179, 0.3); }
+
+      .chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+      .chips .lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-right: 4px; }
+      .chip {
+        padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-soft);
+        font-size: 12px; font-weight: 600; color: var(--text-secondary); transition: 0.2s;
+      }
+      .chip:hover { border-color: var(--primary); color: var(--primary); }
+      .chip.active { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+      .abc-filtros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .abc-filtros + .abc-filtros { margin-top: 14px; }
+      .campo.com-icone { position: relative; }
+      .campo.com-icone i { position: absolute; left: 14px; bottom: 14px; color: var(--text-muted); font-size: 13px; pointer-events: none; }
+      .campo.com-icone input { padding-left: 38px; }
+      .btn-restaurar {
+        align-self: end; padding: 11px 14px; border-radius: 10px; border: 1px dashed var(--border);
+        color: var(--text-secondary); font-size: 13px; font-weight: 600; transition: 0.2s;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      }
+      .btn-restaurar:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+      .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .kpi { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+      .kpi .k-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+      .kpi .k-valor { font-size: 20px; font-weight: 700; color: var(--text-main); margin-top: 6px; line-height: 1.2; overflow-wrap: anywhere; }
+      .kpi .k-valor.pequeno { font-size: 15px; }
+      .kpi .k-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+      .classe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+      .classe-card {
+        border: 1px solid var(--border); border-left: 4px solid var(--border);
+        border-radius: 12px; padding: 16px 18px; background: var(--bg-card);
+      }
+      .classe-card.A { border-left-color: var(--primary); }
+      .classe-card.B { border-left-color: var(--sand); }
+      .classe-card.C { border-left-color: var(--slate); }
+      .classe-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+      .classe-head strong { font-size: 14px; }
+      .classe-head small { color: var(--text-muted); font-size: 12px; margin-left: auto; }
+      .classe-linha { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+      .classe-linha b { color: var(--text-main); font-weight: 600; }
+      .progress { height: 8px; border-radius: 6px; background: var(--border); overflow: hidden; margin-top: 12px; }
+      .progress span { display: block; height: 100%; border-radius: 6px; }
+      .progress span.A, .acum-bar span.A { background: var(--primary); }
+      .progress span.B, .acum-bar span.B { background: var(--sand); }
+      .progress span.C, .acum-bar span.C { background: #7b92b2; }
+      .classe-dica { font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.5; }
+
+      .classe-tag {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 28px; height: 24px; border-radius: 8px; font-size: 12px; font-weight: 700;
+      }
+      .classe-tag.A { background: var(--primary-light); color: var(--primary); }
+      .classe-tag.B { background: var(--sand-bg); color: var(--sand); }
+      .classe-tag.C { background: var(--slate-bg); color: var(--slate); }
+      body.dark .classe-tag.C { color: #a5bed6; }
+
+      .abc-chart-wrap { position: relative; height: 400px; }
+      .abc-insight {
+        margin-top: 14px; padding: 12px 16px; border-radius: 10px; background: var(--primary-light);
+        border-left: 4px solid var(--primary); font-size: 13px; color: var(--text-main); line-height: 1.55;
+      }
+      .abc-insight i { color: var(--primary); margin-right: 6px; }
+
+      .abc-table th.num, .abc-table td.num { text-align: right; padding-right: 16px; font-variant-numeric: tabular-nums; }
+      .abc-table td.rank { color: var(--text-muted); font-weight: 600; }
+      .abc-table td.nome { font-weight: 600; }
+      .abc-table tbody tr:hover td { background: var(--bg-soft); }
+      .abc-table tfoot td { font-weight: 700; border-top: 2px solid var(--border); background: var(--bg-soft); border-bottom: 0; }
+      .abc-table td.abc-empty { text-align: center; color: var(--text-muted); padding: 32px; font-style: italic; }
+      .acum-cell { display: flex; align-items: center; gap: 8px; min-width: 130px; }
+      .acum-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+      .acum-bar span { display: block; height: 100%; }
+      .acum-cell > span { font-size: 12.5px; min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; }
+      .abc-nota { font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.5; }
+
+      @media (max-width: 1100px) {
+        .filtros, .abc-filtros, .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        .classe-grid { grid-template-columns: 1fr; }
+      }
       @media (max-width: 768px) {
         .content { padding: 18px 16px; }
-        .filtros { grid-template-columns: 1fr; }
+        .filtros, .abc-filtros, .kpi-grid { grid-template-columns: 1fr; }
         .page-header { flex-direction: column; align-items: flex-start; }
         .preview-selector { flex-direction: column; align-items: stretch; }
         .preview-actions { margin-left: 0; justify-content: stretch; }
@@ -289,6 +384,9 @@
         .tabs { width: 100%; justify-content: stretch; }
         .tab { flex: 1; text-align: center; font-size: 12px; padding: 8px 10px; }
         .log-area .linha { flex-wrap: wrap; gap: 4px; }
+        .seg { width: 100%; }
+        .seg-btn { flex: 1; justify-content: center; }
+        .abc-chart-wrap { height: 320px; }
       }
     </style>
     <script src="JS/auth-guard.js"></script>
@@ -343,6 +441,9 @@
         <div class="tabs" role="tablist">
           <button class="tab active" data-tab="gerar" role="tab">
             <i class="fas fa-bolt"></i> Gerar relatórios
+          </button>
+          <button class="tab" data-tab="abc" role="tab">
+            <i class="fas fa-chart-bar"></i> Curva ABC
           </button>
           <button class="tab" data-tab="preview" role="tab">
             <i class="fas fa-table"></i> Pré-visualização
@@ -470,6 +571,31 @@
               </div>
             </div>
 
+            <!-- NOVO: Curva ABC -->
+            <div class="relatorio-card green">
+              <div class="card-top">
+                <div class="relatorio-icone"><i class="fas fa-chart-bar"></i></div>
+                <div>
+                  <div class="relatorio-titulo">Curva ABC</div>
+                  <div class="relatorio-descricao">Classificação de componentes e clientes por impacto, com gráfico de Pareto.</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="mini-stats">
+                  <div class="mini-stat destaque"><div class="valor" id="abcCardA">—</div><div class="rotulo">comp. classe A</div></div>
+                  <div class="mini-stat"><div class="valor" id="abcCardTotal">—</div><div class="rotulo">consumo ano</div></div>
+                  <div class="mini-stat"><div class="valor" id="abcCardCli">—</div><div class="rotulo">clientes A</div></div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="relatorio-acoes">
+                  <button class="btn-export" id="abrirAbcBtn" style="background: var(--green); color: #fff; border-color: var(--green);">
+                    <i class="fas fa-arrow-right" style="color: #fff;"></i> Abrir análise ABC
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div class="relatorio-card primary">
               <span class="relatorio-tag" style="background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.3);">Tudo em 1 PDF</span>
               <div class="card-top">
@@ -501,6 +627,110 @@
               <i class="fas fa-download"></i> Gerar todos em PDF
             </button>
           </div>
+        </div>
+
+        <!-- ABA: CURVA ABC -->
+        <div class="tab-content" id="tab-abc">
+          <!-- Controles -->
+          <section class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-chart-bar"></i> <span id="abcTitulo">Curva ABC de Componentes</span></h3>
+              <div class="seg" role="group" aria-label="Tipo de curva">
+                <button class="seg-btn active" data-modo="componentes"><i class="fas fa-cubes"></i> Componentes</button>
+                <button class="seg-btn" data-modo="clientes"><i class="fas fa-users"></i> Clientes</button>
+              </div>
+            </div>
+
+            <div class="chips">
+              <span class="lbl">Período rápido</span>
+              <button class="chip" data-preset="mes">Mês atual</button>
+              <button class="chip" data-preset="30">Últimos 30 dias</button>
+              <button class="chip" data-preset="90">Últimos 90 dias</button>
+              <button class="chip" data-preset="180">Últimos 6 meses</button>
+              <button class="chip active" data-preset="ano">Ano 2026</button>
+            </div>
+
+            <div class="abc-filtros">
+              <div class="campo">
+                <label for="abcIni">Data inicial</label>
+                <input type="date" id="abcIni" />
+              </div>
+              <div class="campo">
+                <label for="abcFim">Data final</label>
+                <input type="date" id="abcFim" />
+              </div>
+              <div class="campo">
+                <label for="abcCriterio" id="abcCriterioLabel">Critério de classificação</label>
+                <select id="abcCriterio"></select>
+              </div>
+              <div class="campo com-icone">
+                <label for="abcBusca">Pesquisar</label>
+                <i class="fas fa-search"></i>
+                <input type="search" id="abcBusca" placeholder="Código, descrição, categoria..." autocomplete="off" />
+              </div>
+            </div>
+            <div class="abc-filtros">
+              <div class="campo">
+                <label for="abcLimA">Limite classe A (% acumulado)</label>
+                <input type="number" id="abcLimA" min="1" max="98" step="1" value="80" />
+              </div>
+              <div class="campo">
+                <label for="abcLimB">Limite classe B (% acumulado)</label>
+                <input type="number" id="abcLimB" min="2" max="99" step="1" value="95" />
+              </div>
+              <div class="campo">
+                <label for="abcClasse">Exibir classe</label>
+                <select id="abcClasse">
+                  <option value="todas">Todas as classes</option>
+                  <option value="A">Somente A</option>
+                  <option value="B">Somente B</option>
+                  <option value="C">Somente C</option>
+                </select>
+              </div>
+              <button class="btn-restaurar" id="abcRestaurar"><i class="fas fa-undo"></i> Restaurar padrão</button>
+            </div>
+          </section>
+
+          <!-- Resumo -->
+          <section class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-tachometer-alt"></i> Resumo da análise</h3>
+              <span class="badge-soft" id="abcPeriodoBadge">—</span>
+            </div>
+            <div class="kpi-grid" id="abcKpis"></div>
+            <div class="classe-grid" id="abcClasses"></div>
+          </section>
+
+          <!-- Pareto -->
+          <section class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-chart-area"></i> Gráfico de Pareto</h3>
+              <span class="badge-soft" id="abcParetoBadge">—</span>
+            </div>
+            <div class="abc-chart-wrap"><canvas id="abcChart"></canvas></div>
+            <div class="abc-insight" id="abcInsight"></div>
+          </section>
+
+          <!-- Tabela -->
+          <section class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-list-ol"></i> Tabela classificatória</h3>
+              <div class="preview-actions">
+                <span class="badge-soft" id="abcContador" style="align-self:center;">—</span>
+                <button class="btn-export" id="abcExportPdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button class="btn-export" id="abcExportExcel"><i class="fas fa-file-excel"></i> Excel</button>
+                <button class="btn-export" id="abcExportCsv"><i class="fas fa-file-csv"></i> CSV</button>
+              </div>
+            </div>
+            <div class="preview-wrapper">
+              <table class="abc-table">
+                <thead id="abcThead"></thead>
+                <tbody id="abcTbody"></tbody>
+                <tfoot id="abcTfoot"></tfoot>
+              </table>
+            </div>
+            <p class="abc-nota" id="abcNota"></p>
+          </section>
         </div>
 
         <!-- ABA 2: PRÉ-VISUALIZAÇÃO -->
@@ -744,6 +974,8 @@
             this.classList.add('active');
             const target = document.getElementById('tab-' + this.dataset.tab);
             if (target) target.classList.add('active');
+            // O Pareto precisa ser desenhado com a aba visível para ter tamanho correto
+            if (this.dataset.tab === 'abc') recalcularABC();
           });
         });
       }
@@ -795,20 +1027,17 @@
 
       /* ================================================================
          EXPORTAÇÃO EXCEL — VERSÃO ESTILIZADA (xlsx-js-style)
-         Cabeçalho azul, texto branco, zebra, bordas e larguras.
          ================================================================ */
       function exportarExcel(tipo) {
         const data = getDadosParaExportar(tipo);
         if (!data) return;
 
-        // ===== 1. Monta a matriz de células =====
-        // Linha 0: Título | Linha 1: data | Linha 2: vazia | Linha 3: cabeçalho | Linhas 4+: dados
         const aoa = [
-          [`Relatório de ${data.nome} — StockLog`],           // A1 (mesclada)
-          [`Gerado em: ${formatarDataHora(new Date())}`],     // A2 (mesclada)
-          [],                                                  // linha vazia
-          data.headers,                                        // cabeçalho
-          ...data.rows                                         // dados
+          [`Relatório de ${data.nome} — StockLog`],
+          [`Gerado em: ${formatarDataHora(new Date())}`],
+          [],
+          data.headers,
+          ...data.rows
         ];
 
         const ws = XLSX.utils.aoa_to_sheet(aoa);
@@ -818,7 +1047,6 @@
         const firstDataRow = 4;
         const lastDataRow = firstDataRow + data.rows.length - 1;
 
-        // ===== 2. Mescla o título e a data nas colunas =====
         if (totalCols > 1) {
           ws['!merges'] = [
             { s: { r: 0, c: 0 }, e: { r: 0, c: totalCols - 1 } },
@@ -826,28 +1054,23 @@
           ];
         }
 
-        // ===== 3. Larguras de coluna automáticas =====
         const colWidths = data.headers.map((header, colIdx) => {
-          // Calcula o maior comprimento entre o cabeçalho e os valores da coluna
           let maxLen = String(header).length;
           data.rows.forEach(row => {
             const v = row[colIdx];
             const len = v != null ? String(v).length : 0;
             if (len > maxLen) maxLen = len;
           });
-          // Padding extra para ficar confortável
           return { wch: Math.min(Math.max(maxLen + 4, 12), 42) };
         });
         ws['!cols'] = colWidths;
 
-        // ===== 4. Alturas de linha (título e cabeçalho maiores) =====
         ws['!rows'] = [];
-        ws['!rows'][0] = { hpt: 26 };  // título
-        ws['!rows'][1] = { hpt: 16 };  // subtítulo
-        ws['!rows'][2] = { hpt: 8 };   // linha vazia
-        ws['!rows'][headerRowIndex] = { hpt: 22 }; // cabeçalho
+        ws['!rows'][0] = { hpt: 26 };
+        ws['!rows'][1] = { hpt: 16 };
+        ws['!rows'][2] = { hpt: 8 };
+        ws['!rows'][headerRowIndex] = { hpt: 22 };
 
-        // ===== 5. Função helper para gerar estilo de célula =====
         const border = {
           top:    { style: 'thin', color: { rgb: 'D3E0EE' } },
           bottom: { style: 'thin', color: { rgb: 'D3E0EE' } },
@@ -855,7 +1078,6 @@
           right:  { style: 'thin', color: { rgb: 'D3E0EE' } },
         };
 
-        // Título (mesclado) — azul escuro, branco, bold, centralizado
         const titleCell = ws['A1'];
         if (titleCell) {
           titleCell.s = {
@@ -865,7 +1087,6 @@
             border,
           };
         }
-        // Subtítulo (mesclado) — cinza claro, itálico
         const subtitleCell = ws['A2'];
         if (subtitleCell) {
           subtitleCell.s = {
@@ -876,8 +1097,6 @@
           };
         }
 
-        // Propaga o estilo para todas as células mescladas do título/subtítulo
-        // (o xlsx-js-style exige que cada célula mesclada tenha o mesmo estilo)
         for (let c = 1; c < totalCols; c++) {
           const refTop = XLSX.utils.encode_cell({ r: 0, c });
           const refSub = XLSX.utils.encode_cell({ r: 1, c });
@@ -887,7 +1106,6 @@
           ws[refSub].s = subtitleCell.s;
         }
 
-        // Cabeçalho — fundo azul, texto branco, bold, centralizado
         for (let c = 0; c < totalCols; c++) {
           const ref = XLSX.utils.encode_cell({ r: headerRowIndex, c });
           if (!ws[ref]) continue;
@@ -899,7 +1117,6 @@
           };
         }
 
-        // Linhas de dados — zebra + bordas
         for (let r = firstDataRow; r <= lastDataRow; r++) {
           const isEven = (r - firstDataRow) % 2 === 0;
           const fill = isEven ? 'FFFFFF' : 'F5FAFF';
@@ -909,7 +1126,6 @@
             if (!ws[ref]) {
               ws[ref] = { t: 's', v: '' };
             }
-            // Colunas numéricas alinhadas à direita
             const valor = ws[ref].v;
             const isNumeric = typeof valor === 'number' || (!isNaN(parseFloat(valor)) && isFinite(valor) && String(valor).trim() !== '');
             ws[ref].s = {
@@ -925,12 +1141,9 @@
           }
         }
 
-        // ===== 6. Congela as primeiras linhas (título + cabeçalho) =====
         ws['!freeze'] = { xSplit: 0, ySplit: headerRowIndex + 1 };
 
-        // ===== 7. Cria a pasta e salva =====
         const wb = XLSX.utils.book_new();
-        // Nome da aba limitado a 31 caracteres (limite do Excel)
         const sheetName = data.nome.substring(0, 31);
         XLSX.utils.book_append_sheet(wb, ws, sheetName);
 
@@ -1162,6 +1375,806 @@
       }
 
       /* ================================================================
+         CURVA ABC
+         ----------------------------------------------------------------
+         Método:
+           1. Agrega o consumo (componentes) ou os pedidos (clientes)
+              dentro do período escolhido.
+           2. Ordena do maior para o menor pelo critério selecionado.
+           3. Calcula % individual e % acumulado.
+           4. Classe por faixa do acumulado ANTERIOR ao item:
+                A: < limite A (padrão 80%)
+                B: < limite B (padrão 95%)
+                C: restante
+              (assim o item que cruza o limite fica na classe superior)
+         ================================================================ */
+
+        // ---- Dados de exemplo (determinísticos). Troque por chamadas à API/BD. ----
+      const REF_DATE = '2026-10-23';   // data de referência dos dados de exemplo
+      const ANO_INI  = '2026-01-01';
+
+      const COMPONENTES = [
+        { codigo: 'MAT-001', descricao: 'Chapa Aço 3mm',           categoria: 'Matéria-prima',   unidade: 'un',   custo: 185.00, qtdMes: 40 },
+        { codigo: 'MAT-002', descricao: 'Luva Nitrílica',          categoria: 'EPI',             unidade: 'cx',   custo: 42.00,  qtdMes: 18 },
+        { codigo: 'MAT-003', descricao: 'Parafuso M8',             categoria: 'Fixação',         unidade: 'un',   custo: 0.85,   qtdMes: 2400 },
+        { codigo: 'MAT-004', descricao: 'Flange 1020',             categoria: 'Semiacabado',     unidade: 'un',   custo: 68.90,  qtdMes: 90 },
+        { codigo: 'MAT-005', descricao: 'Eixo Vazado',             categoria: 'Semiacabado',     unidade: 'un',   custo: 142.50, qtdMes: 55 },
+        { codigo: 'MAT-006', descricao: 'Tinta Epóxi',             categoria: 'Insumo',          unidade: 'L',    custo: 54.30,  qtdMes: 35 },
+        { codigo: 'MAT-007', descricao: 'Rolamento 6205',          categoria: 'Mecânico',        unidade: 'un',   custo: 38.40,  qtdMes: 110 },
+        { codigo: 'MAT-008', descricao: 'Motor Elétrico 1/2cv',    categoria: 'Elétrico',        unidade: 'un',   custo: 612.00, qtdMes: 6 },
+        { codigo: 'MAT-009', descricao: 'Barra Redonda 1045',      categoria: 'Matéria-prima',   unidade: 'm',    custo: 96.00,  qtdMes: 45 },
+        { codigo: 'MAT-010', descricao: 'Eletrodo Solda E6013',    categoria: 'Insumo',          unidade: 'kg',   custo: 22.80,  qtdMes: 120 },
+        { codigo: 'MAT-011', descricao: 'Disco de Corte 7"',       categoria: 'Consumível',      unidade: 'un',   custo: 7.90,   qtdMes: 260 },
+        { codigo: 'MAT-012', descricao: 'Óleo Hidráulico 68',      categoria: 'Lubrificante',    unidade: 'L',    custo: 31.50,  qtdMes: 60 },
+        { codigo: 'MAT-013', descricao: 'Porca M8',                categoria: 'Fixação',         unidade: 'un',   custo: 0.40,   qtdMes: 2600 },
+        { codigo: 'MAT-014', descricao: 'Arruela Lisa M8',         categoria: 'Fixação',         unidade: 'un',   custo: 0.15,   qtdMes: 3000 },
+        { codigo: 'MAT-015', descricao: 'Correia em V B52',        categoria: 'Mecânico',        unidade: 'un',   custo: 29.90,  qtdMes: 25 },
+        { codigo: 'MAT-016', descricao: 'Vedação Viton 50mm',      categoria: 'Mecânico',        unidade: 'un',   custo: 12.70,  qtdMes: 140 },
+        { codigo: 'MAT-017', descricao: 'Cabo Flexível 2,5mm',     categoria: 'Elétrico',        unidade: 'm',    custo: 3.20,   qtdMes: 420 },
+        { codigo: 'MAT-018', descricao: 'Contator 25A',            categoria: 'Elétrico',        unidade: 'un',   custo: 87.00,  qtdMes: 12 },
+        { codigo: 'MAT-019', descricao: 'Fita Isolante',           categoria: 'Consumível',      unidade: 'un',   custo: 4.50,   qtdMes: 80 },
+        { codigo: 'MAT-020', descricao: 'Graxa Lítio EP2',         categoria: 'Lubrificante',    unidade: 'kg',   custo: 26.00,  qtdMes: 30 },
+        { codigo: 'MAT-021', descricao: 'Broca HSS 10mm',          categoria: 'Ferramental',     unidade: 'un',   custo: 18.60,  qtdMes: 40 },
+        { codigo: 'MAT-022', descricao: 'Pastilha de Torneamento', categoria: 'Ferramental',     unidade: 'un',   custo: 24.90,  qtdMes: 85 },
+        { codigo: 'MAT-023', descricao: 'Embalagem Papelão',       categoria: 'Embalagem',       unidade: 'un',   custo: 2.10,   qtdMes: 500 },
+        { codigo: 'MAT-024', descricao: 'Etiqueta Térmica',        categoria: 'Embalagem',       unidade: 'rolo', custo: 14.00,  qtdMes: 40 },
+      ];
+
+      const CLIENTES = [
+        { nome: 'Metalúrgica São João',        segmento: 'Metalurgia',    cidade: 'Campinas',          valorMes: 42000 },
+        { nome: 'Indústrias Aurora',           segmento: 'Máquinas',      cidade: 'Sorocaba',          valorMes: 31000 },
+        { nome: 'Usina Metalúrgica Silva',     segmento: 'Metalurgia',    cidade: 'Ribeirão Preto',    valorMes: 27500 },
+        { nome: 'Siderúrgica Planalto',        segmento: 'Siderurgia',    cidade: 'Belo Horizonte',    valorMes: 14200 },
+        { nome: 'Auto Peças Brasil',           segmento: 'Automotivo',    cidade: 'São Paulo',         valorMes: 18500 },
+        { nome: 'Construtora Horizonte',       segmento: 'Construção',    cidade: 'Campinas',          valorMes: 11800 },
+        { nome: 'Peças & Cia Ltda',            segmento: 'Distribuição',  cidade: 'Jundiaí',           valorMes: 9800 },
+        { nome: 'Agroindustrial Vale Verde',   segmento: 'Agro',          cidade: 'Piracicaba',        valorMes: 8600 },
+        { nome: 'Importadora Global Insumos',  segmento: 'Importação',    cidade: 'Santos',            valorMes: 7200 },
+        { nome: 'Rolamentos & Cia Indústria',  segmento: 'Mecânica',      cidade: 'Bragança Paulista', valorMes: 6400 },
+        { nome: 'Ferramentas & Moldes Brasil', segmento: 'Ferramentaria', cidade: 'Joinville',         valorMes: 5100 },
+        { nome: 'Hidráulica Central',          segmento: 'Hidráulica',    cidade: 'Atibaia',           valorMes: 4200 },
+        { nome: 'Transportes Rápido Sul',      segmento: 'Logística',     cidade: 'Curitiba',          valorMes: 3300 },
+        { nome: 'Estruturas Metálicas Norte',  segmento: 'Construção',    cidade: 'Goiânia',           valorMes: 2600 },
+        { nome: 'Têxtil Fios do Sul',          segmento: 'Têxtil',        cidade: 'Blumenau',          valorMes: 1900 },
+        { nome: 'Comercial Pires & Filhos',    segmento: 'Varejo',        cidade: 'Mairiporã',         valorMes: 1200 },
+      ];
+
+      function criarRng(seed) {
+        return function () {
+          seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      const pad2 = (n) => String(n).padStart(2, '0');
+      const isoData = (a, m, d) => `${a}-${pad2(m)}-${pad2(d)}`;
+
+      function gerarMovimentos() {
+        const rnd = criarRng(20261023);
+        const out = [];
+        COMPONENTES.forEach((c) => {
+          for (let m = 1; m <= 10; m++) {
+            const maxDia = m === 10 ? 23 : new Date(2026, m, 0).getDate();
+            const n = 2 + Math.floor(rnd() * 3);
+            for (let i = 0; i < n; i++) {
+              const dia = 1 + Math.floor(rnd() * maxDia);
+              const qtd = Math.max(1, Math.round((c.qtdMes * (0.7 + rnd() * 0.6)) / n));
+              out.push({ data: isoData(2026, m, dia), codigo: c.codigo, qtd });
+            }
+          }
+        });
+        return out;
+      }
+
+      function gerarPedidos() {
+        const rnd = criarRng(7311026);
+        const out = [];
+        CLIENTES.forEach((c) => {
+          for (let m = 1; m <= 10; m++) {
+            const maxDia = m === 10 ? 23 : new Date(2026, m, 0).getDate();
+            const n = 1 + Math.floor(rnd() * 3);
+            for (let i = 0; i < n; i++) {
+              const dia = 1 + Math.floor(rnd() * maxDia);
+              const valor = Math.round(((c.valorMes * (0.6 + rnd() * 0.8)) / n) * 100) / 100;
+              out.push({ data: isoData(2026, m, dia), cliente: c.nome, valor });
+            }
+          }
+        });
+        return out;
+      }
+
+      const MOVIMENTOS = gerarMovimentos();
+      const PEDIDOS = gerarPedidos();
+
+      // ---- Formatadores ----
+      const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace(/\u00a0/g, ' ');
+      const fmtInt = (v) => Math.round(v).toLocaleString('pt-BR');
+      const fmtPct = (v, d = 1) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }) + '%';
+      const isoParaBR = (iso) => (iso ? iso.split('-').reverse().join('/') : '-');
+      const norm = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      function fmtCompacto(v) {
+        if (v >= 1e6) return 'R$ ' + (v / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mi';
+        if (v >= 1e3) return 'R$ ' + (v / 1e3).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k';
+        return fmtBRL(v);
+      }
+
+      // ---- Estado ----
+      const ABC_PADRAO = { ini: ANO_INI, fim: REF_DATE, criterio: 'valor', limA: 80, limB: 95 };
+      const ABC = {
+        modo: 'componentes',
+        ...ABC_PADRAO,
+        classe: 'todas',
+        busca: '',
+        resultado: null,
+        visiveis: [],
+        chart: null,
+      };
+
+      // ---- Cálculo ----
+      function calcularABC(p) {
+        const mapa = new Map();
+
+        if (p.modo === 'componentes') {
+          const catalogo = new Map(COMPONENTES.map((c) => [c.codigo, c]));
+          MOVIMENTOS.forEach((mv) => {
+            if (mv.data < p.ini || mv.data > p.fim) return;
+            const c = catalogo.get(mv.codigo);
+            let r = mapa.get(c.codigo);
+            if (!r) {
+              r = { nome: c.descricao, codigo: c.codigo, categoria: c.categoria, unidade: c.unidade,
+                    custo: c.custo, qtd: 0, valor: 0, movs: 0, ultima: '' };
+              mapa.set(c.codigo, r);
+            }
+            r.qtd += mv.qtd;
+            r.valor += mv.qtd * c.custo;
+            r.movs += 1;
+            if (mv.data > r.ultima) r.ultima = mv.data;
+          });
+        } else {
+          const catalogo = new Map(CLIENTES.map((c) => [c.nome, c]));
+          PEDIDOS.forEach((pd) => {
+            if (pd.data < p.ini || pd.data > p.fim) return;
+            const c = catalogo.get(pd.cliente);
+            let r = mapa.get(c.nome);
+            if (!r) {
+              r = { nome: c.nome, segmento: c.segmento, cidade: c.cidade, pedidos: 0, valor: 0, ultima: '' };
+              mapa.set(c.nome, r);
+            }
+            r.pedidos += 1;
+            r.valor += pd.valor;
+            if (pd.data > r.ultima) r.ultima = pd.data;
+          });
+        }
+
+        const itens = [...mapa.values()];
+        itens.forEach((i) => {
+          if (p.modo === 'componentes') i.metrica = p.criterio === 'valor' ? i.valor : i.qtd;
+          else i.metrica = p.criterio === 'valor' ? i.valor : i.pedidos;
+        });
+        itens.sort((a, b) => b.metrica - a.metrica);
+
+        const total = itens.reduce((s, i) => s + i.metrica, 0);
+        let acum = 0;
+        itens.forEach((i, idx) => {
+          i.rank = idx + 1;
+          i.pct = total ? (i.metrica / total) * 100 : 0;
+          const antes = acum;
+          acum += i.pct;
+          i.acum = Math.min(acum, 100);
+          i.classe = antes < p.limA ? 'A' : antes < p.limB ? 'B' : 'C';
+        });
+
+        const resumo = { A: { n: 0, soma: 0 }, B: { n: 0, soma: 0 }, C: { n: 0, soma: 0 } };
+        itens.forEach((i) => { resumo[i.classe].n += 1; resumo[i.classe].soma += i.metrica; });
+        ['A', 'B', 'C'].forEach((k) => {
+          resumo[k].pctItens = itens.length ? (resumo[k].n / itens.length) * 100 : 0;
+          resumo[k].pctValor = total ? (resumo[k].soma / total) * 100 : 0;
+        });
+
+        return { itens, total, resumo };
+      }
+
+      const abcEhValor = () => ABC.criterio === 'valor';
+      const abcEhCli = () => ABC.modo === 'clientes';
+      function fmtMetrica(v) {
+        return abcEhValor() ? fmtBRL(v) : fmtInt(v);
+      }
+
+      // ---- Colunas (compartilhadas por tela, PDF, Excel e CSV) ----
+      function colunasABC() {
+        const classeCol = { k: 'classe', t: 'Classe', tipo: 'txt', v: (i) => i.classe, d: (i) => i.classe,
+                            h: (i) => `<span class="classe-tag ${i.classe}">${i.classe}</span>` };
+        const pctCol = { k: 'pct', t: '% individual', tipo: 'pct', num: true, v: (i) => i.pct / 100, d: (i) => fmtPct(i.pct, 2) };
+        const acumCol = {
+          k: 'acum', t: '% acumulado', tipo: 'pct', num: true, v: (i) => i.acum / 100, d: (i) => fmtPct(i.acum, 1),
+          h: (i) => `<div class="acum-cell"><div class="acum-bar"><span class="${i.classe}" style="width:${i.acum.toFixed(1)}%"></span></div><span>${fmtPct(i.acum, 1)}</span></div>`,
+        };
+        const rankCol = { k: 'rank', t: '#', tipo: 'int', v: (i) => i.rank, d: (i) => String(i.rank), cls: 'rank' };
+
+        if (!abcEhCli()) {
+          return [
+            rankCol,
+            { k: 'codigo', t: 'Código', tipo: 'txt', v: (i) => i.codigo, d: (i) => i.codigo },
+            { k: 'nome', t: 'Descrição', tipo: 'txt', v: (i) => i.nome, d: (i) => i.nome, cls: 'nome' },
+            { k: 'categoria', t: 'Categoria', tipo: 'txt', v: (i) => i.categoria, d: (i) => i.categoria },
+            { k: 'qtd', t: 'Qtd. movimentada', tipo: 'int', num: true, v: (i) => i.qtd, d: (i) => `${fmtInt(i.qtd)} ${i.unidade}` },
+            { k: 'custo', t: 'Custo unitário', tipo: 'brl', num: true, v: (i) => i.custo, d: (i) => fmtBRL(i.custo) },
+            { k: 'valor', t: 'Valor de consumo', tipo: 'brl', num: true, v: (i) => i.valor, d: (i) => fmtBRL(i.valor) },
+            pctCol, acumCol, classeCol,
+          ];
+        }
+        return [
+          rankCol,
+          { k: 'nome', t: 'Cliente', tipo: 'txt', v: (i) => i.nome, d: (i) => i.nome, cls: 'nome' },
+          { k: 'segmento', t: 'Segmento', tipo: 'txt', v: (i) => i.segmento, d: (i) => i.segmento },
+          { k: 'cidade', t: 'Cidade', tipo: 'txt', v: (i) => i.cidade, d: (i) => i.cidade },
+          { k: 'pedidos', t: 'Nº pedidos', tipo: 'int', num: true, v: (i) => i.pedidos, d: (i) => fmtInt(i.pedidos) },
+          { k: 'ticket', t: 'Ticket médio', tipo: 'brl', num: true, v: (i) => i.valor / i.pedidos, d: (i) => fmtBRL(i.valor / i.pedidos) },
+          { k: 'valor', t: 'Valor total', tipo: 'brl', num: true, v: (i) => i.valor, d: (i) => fmtBRL(i.valor) },
+          pctCol, acumCol,
+          { k: 'ultima', t: 'Última compra', tipo: 'txt', v: (i) => isoParaBR(i.ultima), d: (i) => isoParaBR(i.ultima) },
+          classeCol,
+        ];
+      }
+
+      // ---- Cores ----
+      const COR_CLASSE = { A: '#006bb3', B: '#c17d2e', C: '#7b92b2' };
+
+      // ---- Gráfico de Pareto ----
+      function paretoConfig(res, exportar) {
+        const dark = !exportar && document.body.classList.contains('dark');
+        const estilo = getComputedStyle(document.body);
+        const txt = exportar ? '#3d5f7e' : (estilo.getPropertyValue('--text-muted').trim() || '#7b92b2');
+        const txtForte = exportar ? '#0a1f33' : (estilo.getPropertyValue('--text-secondary').trim() || '#3d5f7e');
+        const grade = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,40,80,0.06)';
+        const itens = res.itens;
+        const cli = abcEhCli();
+        const valor = abcEhValor();
+
+        const labels = itens.map((i) => cli ? (i.nome.length > 16 ? i.nome.slice(0, 15) + '…' : i.nome) : i.codigo);
+        const barra = (cl) => ({
+          type: 'bar', label: `Classe ${cl}`, stack: 'v', yAxisID: 'y', order: 2,
+          data: itens.map((i) => (i.classe === cl ? i.metrica : null)),
+          backgroundColor: COR_CLASSE[cl], borderRadius: 4, borderSkipped: false,
+        });
+
+        const config = {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              barra('A'), barra('B'), barra('C'),
+              { type: 'line', label: '% acumulado', yAxisID: 'y1', order: 1, data: itens.map((i) => i.acum),
+                borderColor: '#c0454f', backgroundColor: '#c0454f', borderWidth: 2, tension: 0.2, pointRadius: 3, pointHoverRadius: 5 },
+              { type: 'line', label: `Limite A (${ABC.limA}%)`, yAxisID: 'y1', order: 0, data: itens.map(() => ABC.limA),
+                borderColor: '#2f9e5c', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 },
+              { type: 'line', label: `Limite B (${ABC.limB}%)`, yAxisID: 'y1', order: 0, data: itens.map(() => ABC.limB),
+                borderColor: '#c17d2e', borderDash: [2, 4], borderWidth: 1.5, pointRadius: 0 },
+            ],
+          },
+          options: {
+            responsive: !exportar,
+            maintainAspectRatio: false,
+            animation: exportar ? false : undefined,
+            devicePixelRatio: exportar ? 2 : undefined,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { position: 'bottom', labels: { color: txtForte, usePointStyle: true, boxWidth: 8, font: { size: 11 } } },
+              tooltip: {
+                filter: (it) => it.parsed.y !== null && !it.dataset.label.startsWith('Limite'),
+                callbacks: {
+                  title: (its) => {
+                    const i = itens[its[0].dataIndex];
+                    return cli ? `${i.rank}º · ${i.nome}` : `${i.rank}º · ${i.codigo} - ${i.nome}`;
+                  },
+                  label: (c) => c.dataset.type === 'line' || c.dataset.yAxisID === 'y1'
+                    ? ` ${c.dataset.label}: ${fmtPct(c.parsed.y, 1)}`
+                    : ` ${c.dataset.label}: ${fmtMetrica(c.parsed.y)}`,
+                  afterBody: (its) => {
+                    const i = itens[its[0].dataIndex];
+                    return `% individual: ${fmtPct(i.pct, 2)}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: { stacked: true, grid: { display: false }, ticks: { color: txt, font: { size: 10 }, maxRotation: 60, minRotation: cli ? 45 : 0 } },
+              y: {
+                stacked: true, beginAtZero: true, position: 'left',
+                grid: { color: grade },
+                title: { display: true, text: valor ? 'Valor (R$)' : (cli ? 'Pedidos' : 'Quantidade'), color: txt, font: { size: 11 } },
+                ticks: { color: txt, font: { size: 10 }, callback: (v) => (valor ? (v >= 1000 ? (v / 1000).toLocaleString('pt-BR') + 'k' : v) : v.toLocaleString('pt-BR')) },
+              },
+              y1: {
+                position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false },
+                title: { display: true, text: '% acumulado', color: txt, font: { size: 11 } },
+                ticks: { color: txt, font: { size: 10 }, callback: (v) => v + '%' },
+              },
+            },
+          },
+        };
+        if (exportar) {
+          config.plugins = [{ id: 'fundoBranco', beforeDraw(c) { const x = c.ctx; x.save(); x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height); x.restore(); } }];
+        }
+        return config;
+      }
+
+      function renderPareto() {
+        if (ABC.chart) { ABC.chart.destroy(); ABC.chart = null; }
+        const res = ABC.resultado;
+        if (!res || !res.itens.length) return;
+        const cv = document.getElementById('abcChart');
+        ABC.chart = new Chart(cv.getContext('2d'), paretoConfig(res, false));
+      }
+
+      // ---- Resumo (KPIs + cartões A/B/C + insight) ----
+      function renderResumoABC() {
+        const res = ABC.resultado;
+        const cli = abcEhCli();
+        const valor = abcEhValor();
+        const nomePl = cli ? 'clientes' : 'componentes';
+
+        document.getElementById('abcPeriodoBadge').textContent = `${isoParaBR(ABC.ini)} a ${isoParaBR(ABC.fim)}`;
+
+        if (!res.itens.length) {
+          document.getElementById('abcKpis').innerHTML = '<div class="kpi" style="grid-column:1/-1"><div class="k-label">Sem dados</div><div class="k-sub">Nenhum movimento encontrado no período selecionado.</div></div>';
+          document.getElementById('abcClasses').innerHTML = '';
+          document.getElementById('abcInsight').style.display = 'none';
+          document.getElementById('abcParetoBadge').textContent = '0 itens';
+          return;
+        }
+
+        const rotuloTotal = valor ? (cli ? 'Valor total em pedidos' : 'Valor total de consumo') : (cli ? 'Total de pedidos' : 'Quantidade movimentada');
+        const totalFmt = valor ? fmtBRL(res.total) : `${fmtInt(res.total)} ${cli ? 'pedidos' : 'un.'}`;
+        const lider = res.itens[0];
+        const A = res.resumo.A;
+
+        document.getElementById('abcKpis').innerHTML = `
+          <div class="kpi"><div class="k-label">${cli ? 'Clientes' : 'Componentes'} analisados</div><div class="k-valor">${res.itens.length}</div><div class="k-sub">com movimento no período</div></div>
+          <div class="kpi"><div class="k-label">${rotuloTotal}</div><div class="k-valor">${totalFmt}</div><div class="k-sub">base de 100% da curva</div></div>
+          <div class="kpi"><div class="k-label">Maior participação</div><div class="k-valor pequeno">${lider.nome}</div><div class="k-sub">${fmtPct(lider.pct, 1)} do total</div></div>
+          <div class="kpi"><div class="k-label">Concentração (classe A)</div><div class="k-valor">${fmtPct(A.pctItens, 0)} dos ${nomePl}</div><div class="k-sub">geram ${fmtPct(A.pctValor, 1)} do total</div></div>
+        `;
+
+        const dicas = cli
+          ? { A: 'Contas-chave: atendimento prioritário, contratos e acompanhamento próximo.',
+              B: 'Clientes com potencial: acompanhamento regular e ações de crescimento.',
+              C: 'Cauda longa: atendimento padronizado e custo de relacionamento reduzido.' }
+          : { A: 'Itens críticos: controle rigoroso, estoque de segurança, inventário frequente e negociação com fornecedores.',
+              B: 'Controle intermediário: revisão periódica de ponto de pedido e lotes econômicos.',
+              C: 'Itens de baixo impacto: controle simples, compras em lote e estoque mais folgado.' };
+        const faixa = { A: `0% a ${ABC.limA}%`, B: `${ABC.limA}% a ${ABC.limB}%`, C: `${ABC.limB}% a 100%` };
+
+        document.getElementById('abcClasses').innerHTML = ['A', 'B', 'C'].map((k) => {
+          const r = res.resumo[k];
+          return `
+            <div class="classe-card ${k}">
+              <div class="classe-head"><span class="classe-tag ${k}">${k}</span><strong>Classe ${k}</strong><small>acumulado ${faixa[k]}</small></div>
+              <div class="classe-linha"><span>${cli ? 'Clientes' : 'Itens'}</span><b>${r.n} (${fmtPct(r.pctItens, 1)})</b></div>
+              <div class="classe-linha"><span>${valor ? 'Valor' : 'Volume'}</span><b>${fmtMetrica(r.soma)}</b></div>
+              <div class="classe-linha"><span>Participação no total</span><b>${fmtPct(r.pctValor, 1)}</b></div>
+              <div class="progress"><span class="${k}" style="width:${r.pctValor.toFixed(1)}%"></span></div>
+              <div class="classe-dica">${dicas[k]}</div>
+            </div>`;
+        }).join('');
+
+        const ins = document.getElementById('abcInsight');
+        ins.style.display = '';
+        ins.innerHTML = `<i class="fas fa-lightbulb"></i><b>Leitura:</b> ${A.n} ${A.n === 1 ? (cli ? 'cliente' : 'item') : nomePl} (${fmtPct(A.pctItens, 0)} do total) concentram <b>${fmtPct(A.pctValor, 1)}</b> ${valor ? (cli ? 'do faturamento' : 'do valor consumido') : 'do volume'} no período. `
+          + `A classe C reúne ${res.resumo.C.n} ${nomePl} (${fmtPct(res.resumo.C.pctItens, 0)}) responsáveis por apenas ${fmtPct(res.resumo.C.pctValor, 1)}.`;
+
+        document.getElementById('abcParetoBadge').textContent = `${res.itens.length} ${nomePl}`;
+      }
+
+      // ---- Tabela ----
+      function renderTabelaABC() {
+        const res = ABC.resultado;
+        const cols = colunasABC();
+        const thead = document.getElementById('abcThead');
+        const tbody = document.getElementById('abcTbody');
+        const tfoot = document.getElementById('abcTfoot');
+
+        thead.innerHTML = `<tr>${cols.map((c) => `<th class="${c.num ? 'num' : ''}">${c.t}</th>`).join('')}</tr>`;
+
+        let lista = res ? res.itens : [];
+        if (ABC.classe !== 'todas') lista = lista.filter((i) => i.classe === ABC.classe);
+        const q = norm(ABC.busca.trim());
+        if (q) {
+          lista = lista.filter((i) => norm([i.nome, i.codigo, i.categoria, i.segmento, i.cidade].filter(Boolean).join(' ')).includes(q));
+        }
+        ABC.visiveis = lista;
+
+        const totalItens = res ? res.itens.length : 0;
+        document.getElementById('abcContador').textContent = `${lista.length} de ${totalItens} itens`;
+
+        if (!lista.length) {
+          tbody.innerHTML = `<tr><td class="abc-empty" colspan="${cols.length}">Nenhum item encontrado para os filtros atuais.</td></tr>`;
+          tfoot.innerHTML = '';
+        } else {
+          tbody.innerHTML = lista.map((i) =>
+            `<tr>${cols.map((c) => `<td class="${[c.num ? 'num' : '', c.cls || ''].join(' ').trim()}">${c.h ? c.h(i) : c.d(i)}</td>`).join('')}</tr>`
+          ).join('');
+
+          const somaValor = lista.reduce((s, i) => s + i.valor, 0);
+          const somaPct = lista.reduce((s, i) => s + i.pct, 0);
+          const iValor = cols.findIndex((c) => c.k === 'valor');
+          const iPct = cols.findIndex((c) => c.k === 'pct');
+          const resto = cols.length - (iPct + 1);
+          tfoot.innerHTML = `<tr>
+            <td colspan="${iValor}">Total exibido (${lista.length} ${lista.length === 1 ? 'item' : 'itens'})</td>
+            <td class="num">${fmtBRL(somaValor)}</td>
+            <td class="num">${fmtPct(somaPct, 2)}</td>
+            <td colspan="${resto}"></td>
+          </tr>`;
+        }
+
+        document.getElementById('abcNota').textContent =
+          `Classe definida pelo acumulado anterior a cada item: A até ${ABC.limA}%, B até ${ABC.limB}%, C acima. `
+          + 'A pesquisa e o filtro de classe afetam apenas a tabela; a classificação é sempre calculada sobre o total do período.';
+      }
+
+      function atualizarTextosModo() {
+        const cli = abcEhCli();
+        document.getElementById('abcTitulo').textContent = cli ? 'Curva ABC de Clientes' : 'Curva ABC de Componentes';
+        document.getElementById('abcBusca').placeholder = cli ? 'Cliente, segmento, cidade...' : 'Código, descrição, categoria...';
+        const sel = document.getElementById('abcCriterio');
+        const opcoes = cli
+          ? [['valor', 'Valor total dos pedidos (R$)'], ['quantidade', 'Quantidade de pedidos']]
+          : [['valor', 'Valor de consumo (qtd × custo)'], ['quantidade', 'Quantidade movimentada']];
+        sel.innerHTML = opcoes.map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
+        sel.value = ABC.criterio;
+        document.querySelectorAll('.seg-btn').forEach((b) => b.classList.toggle('active', b.dataset.modo === ABC.modo));
+      }
+
+      function marcarPresetAtivo() {
+        const alvo = presetParaDatas;
+        document.querySelectorAll('.chip[data-preset]').forEach((ch) => {
+          const [i, f] = alvo(ch.dataset.preset);
+          ch.classList.toggle('active', i === ABC.ini && f === ABC.fim);
+        });
+      }
+
+      function presetParaDatas(preset) {
+        const [a, m, d] = REF_DATE.split('-').map(Number);
+        const ref = new Date(a, m - 1, d);
+        const fmt = (dt) => isoData(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
+        if (preset === 'ano') return [ANO_INI, REF_DATE];
+        if (preset === 'mes') return [isoData(a, m, 1), REF_DATE];
+        const ini = new Date(ref);
+        ini.setDate(ini.getDate() - (preset === '180' ? 180 : Number(preset)));
+        return [fmt(ini), REF_DATE];
+      }
+
+      function recalcularABC() {
+        ABC.resultado = calcularABC({ modo: ABC.modo, ini: ABC.ini, fim: ABC.fim, criterio: ABC.criterio, limA: ABC.limA, limB: ABC.limB });
+        marcarPresetAtivo();
+        renderResumoABC();
+        renderPareto();
+        renderTabelaABC();
+      }
+
+      function resumoCardABC() {
+        const base = { ini: ANO_INI, fim: REF_DATE, criterio: 'valor', limA: 80, limB: 95 };
+        const comp = calcularABC({ ...base, modo: 'componentes' });
+        const cli = calcularABC({ ...base, modo: 'clientes' });
+        document.getElementById('abcCardA').textContent = comp.resumo.A.n;
+        document.getElementById('abcCardTotal').textContent = fmtCompacto(comp.total);
+        document.getElementById('abcCardCli').textContent = cli.resumo.A.n;
+      }
+
+      // ---- Exportações da Curva ABC ----
+      function descricaoParams() {
+        const crit = abcEhCli()
+          ? (abcEhValor() ? 'valor total dos pedidos' : 'quantidade de pedidos')
+          : (abcEhValor() ? 'valor de consumo' : 'quantidade movimentada');
+        return `Período: ${isoParaBR(ABC.ini)} a ${isoParaBR(ABC.fim)} | Critério: ${crit} | Limites: A até ${ABC.limA}%, B até ${ABC.limB}%`;
+      }
+      const nomeCurva = () => (abcEhCli() ? 'Clientes' : 'Componentes');
+      const nomeArqABC = (ext) => `Curva_ABC_${nomeCurva()}_${new Date().toISOString().slice(0, 10)}.${ext}`;
+
+      function abcPodeExportar() {
+        if (!ABC.resultado || !ABC.visiveis.length) {
+          showToast('Não há dados para exportar com os filtros atuais.', 'error');
+          return false;
+        }
+        return true;
+      }
+
+      function linhasResumoClasse() {
+        const r = ABC.resultado.resumo;
+        const faixa = { A: `0% a ${ABC.limA}%`, B: `${ABC.limA}% a ${ABC.limB}%`, C: `${ABC.limB}% a 100%` };
+        return ['A', 'B', 'C'].map((k) => ({ classe: k, n: r[k].n, pctItens: r[k].pctItens, soma: r[k].soma, pctValor: r[k].pctValor, faixa: faixa[k] }));
+      }
+
+      function exportarABCPDF() {
+        if (!abcPodeExportar()) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'pt', 'a4');
+        const cols = colunasABC();
+        const res = ABC.resultado;
+
+        doc.setFontSize(18); doc.setTextColor(10, 31, 51);
+        doc.text(`Curva ABC de ${nomeCurva()} - StockLog`, 40, 46);
+        doc.setFontSize(9); doc.setTextColor(123, 146, 178);
+        doc.text(descricaoParams(), 40, 62);
+        doc.text(`Gerado em: ${formatarDataHora(new Date())}`, 40, 75);
+
+        doc.autoTable({
+          head: [['Classe', abcEhCli() ? 'Clientes' : 'Itens', '% dos itens', abcEhValor() ? 'Valor' : 'Volume', '% do total', 'Faixa acumulada']],
+          body: linhasResumoClasse().map((r) => [r.classe, r.n, fmtPct(r.pctItens, 1), fmtMetrica(r.soma), fmtPct(r.pctValor, 1), r.faixa]),
+          startY: 88, margin: { left: 40, right: 40 },
+          styles: { fontSize: 9, cellPadding: 4, textColor: [10, 31, 51] },
+          headStyles: { fillColor: [0, 107, 179], textColor: [255, 255, 255], fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [245, 250, 255] },
+        });
+
+        // Gráfico de Pareto em canvas fora da tela, com cores claras e fundo branco
+        try {
+          const cv = document.createElement('canvas');
+          cv.width = 1100; cv.height = 420;
+          const ch = new Chart(cv.getContext('2d'), paretoConfig(res, true));
+          const img = ch.toBase64Image('image/png', 1);
+          ch.destroy();
+          const w = 700, h = (w * 420) / 1100;
+          const y = doc.lastAutoTable.finalY + 12;
+          doc.addImage(img, 'PNG', (doc.internal.pageSize.getWidth() - w) / 2, y, w, h);
+        } catch (e) { /* segue sem o gráfico */ }
+
+        doc.addPage();
+        const iValor = cols.findIndex((c) => c.k === 'valor');
+        const iPct = cols.findIndex((c) => c.k === 'pct');
+        const somaValor = ABC.visiveis.reduce((s, i) => s + i.valor, 0);
+        const somaPct = ABC.visiveis.reduce((s, i) => s + i.pct, 0);
+        const foot = cols.map(() => '');
+        foot[0] = 'Total exibido';
+        foot[iValor] = fmtBRL(somaValor);
+        foot[iPct] = fmtPct(somaPct, 2);
+        const numIdx = cols.map((c, i) => (c.num ? i : -1)).filter((i) => i >= 0);
+        const colStyles = {};
+        numIdx.forEach((i) => { colStyles[i] = { halign: 'right' }; });
+        const iClasse = cols.length - 1;
+        colStyles[iClasse] = { halign: 'center', fontStyle: 'bold' };
+        const corPdf = { A: [225, 238, 251], B: [245, 226, 194], C: [217, 226, 239] };
+
+        doc.autoTable({
+          head: [cols.map((c) => c.t)],
+          body: ABC.visiveis.map((i) => cols.map((c) => c.d(i))),
+          foot: [foot],
+          startY: 40, margin: { left: 40, right: 40, top: 40, bottom: 40 },
+          styles: { fontSize: 8, cellPadding: 4, textColor: [10, 31, 51] },
+          headStyles: { fillColor: [0, 107, 179], textColor: [255, 255, 255], fontStyle: 'bold' },
+          footStyles: { fillColor: [225, 238, 251], textColor: [10, 31, 51], fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [245, 250, 255] },
+          columnStyles: colStyles,
+          didParseCell: (d) => {
+            if (d.section === 'head' && numIdx.includes(d.column.index)) d.cell.styles.halign = 'right';
+            if (d.section === 'body' && d.column.index === iClasse) {
+              d.cell.styles.fillColor = corPdf[d.cell.raw] || d.cell.styles.fillColor;
+            }
+          },
+          didDrawPage: () => {
+            doc.setFontSize(8); doc.setTextColor(123, 146, 178);
+            doc.text(`StockLog · Curva ABC de ${nomeCurva()} · pág. ${doc.internal.getNumberOfPages()}`, 40, doc.internal.pageSize.getHeight() - 18);
+          },
+        });
+
+        doc.save(nomeArqABC('pdf'));
+        adicionarHistorico(`Curva ABC - ${nomeCurva()}`, 'PDF', ABC.visiveis.length);
+        showToast(`PDF da Curva ABC de ${nomeCurva()} baixado!`, 'success');
+      }
+
+      function exportarABCExcel() {
+        if (!abcPodeExportar()) return;
+        const cols = colunasABC();
+        const linhas = ABC.visiveis;
+        const nCols = cols.length;
+        const iValor = cols.findIndex((c) => c.k === 'valor');
+        const iPct = cols.findIndex((c) => c.k === 'pct');
+        const iClasse = nCols - 1;
+
+        const totalRow = cols.map(() => '');
+        totalRow[0] = 'Total exibido';
+        totalRow[iValor] = linhas.reduce((s, i) => s + i.valor, 0);
+        totalRow[iPct] = linhas.reduce((s, i) => s + i.pct, 0) / 100;
+
+        const aoa = [
+          [`Curva ABC de ${nomeCurva()} — StockLog`],
+          [descricaoParams()],
+          [`Gerado em: ${formatarDataHora(new Date())}`],
+          [],
+          cols.map((c) => c.t),
+          ...linhas.map((i) => cols.map((c) => c.v(i))),
+          totalRow,
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        const headerRow = 4, firstData = 5, lastData = firstData + linhas.length - 1, totalIdx = lastData + 1;
+
+        ws['!merges'] = [0, 1, 2].map((r) => ({ s: { r, c: 0 }, e: { r, c: nCols - 1 } }));
+        ws['!cols'] = cols.map((c, idx) => {
+          let max = String(c.t).length;
+          linhas.forEach((i) => { const l = String(c.d(i)).length; if (l > max) max = l; });
+          return { wch: Math.min(Math.max(max + 4, idx === 0 ? 6 : 12), 40) };
+        });
+        ws['!rows'] = [{ hpt: 26 }, { hpt: 16 }, { hpt: 16 }, { hpt: 8 }, { hpt: 24 }];
+
+        const b = { style: 'thin', color: { rgb: 'D3E0EE' } };
+        const border = { top: b, bottom: b, left: b, right: b };
+        const estiloBanda = (fonte, fill) => ({ font: fonte, fill: { fgColor: { rgb: fill } }, alignment: { horizontal: 'center', vertical: 'center' }, border });
+        const estT = estiloBanda({ bold: true, sz: 14, color: { rgb: 'FFFFFF' }, name: 'Calibri' }, '006BB3');
+        const estS = estiloBanda({ italic: true, sz: 10, color: { rgb: '3D5F7E' }, name: 'Calibri' }, 'F5FAFF');
+        for (let c = 0; c < nCols; c++) {
+          [[0, estT], [1, estS], [2, estS]].forEach(([r, est]) => {
+            const ref = XLSX.utils.encode_cell({ r, c });
+            if (!ws[ref]) ws[ref] = { t: 's', v: '' };
+            ws[ref].s = est;
+          });
+          const rh = XLSX.utils.encode_cell({ r: headerRow, c });
+          ws[rh].s = {
+            font: { bold: true, sz: 11, color: { rgb: 'FFFFFF' }, name: 'Calibri' },
+            fill: { fgColor: { rgb: '004D80' } },
+            alignment: { horizontal: 'center', vertical: 'center', wrapText: true }, border,
+          };
+        }
+
+        const fmtNum = { int: '#,##0', brl: '"R$" #,##0.00', pct: '0.00%' };
+        const corClasse = { A: ['E1EEFB', '006BB3'], B: ['F5E2C2', 'C17D2E'], C: ['D9E2EF', '34517A'] };
+        for (let r = firstData; r <= totalIdx; r++) {
+          const ehTotal = r === totalIdx;
+          const zebra = (r - firstData) % 2 === 0 ? 'FFFFFF' : 'F5FAFF';
+          for (let c = 0; c < nCols; c++) {
+            const ref = XLSX.utils.encode_cell({ r, c });
+            if (!ws[ref]) ws[ref] = { t: 's', v: '' };
+            const col = cols[c];
+            let fill = ehTotal ? 'E1EEFB' : zebra;
+            let font = { sz: 10, bold: ehTotal, color: { rgb: '0A1F33' }, name: 'Calibri' };
+            let horizontal = col.num ? 'right' : 'left';
+            if (!ehTotal && c === iClasse) {
+              const [bg, fg] = corClasse[linhas[r - firstData].classe];
+              fill = bg; font = { sz: 10, bold: true, color: { rgb: fg }, name: 'Calibri' }; horizontal = 'center';
+            }
+            if (typeof ws[ref].v === 'number' && fmtNum[col.tipo]) ws[ref].z = fmtNum[col.tipo];
+            ws[ref].s = { font, fill: { fgColor: { rgb: fill } }, alignment: { horizontal, vertical: 'center' }, border };
+          }
+        }
+        ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: headerRow, c: 0 }, e: { r: lastData, c: nCols - 1 } }) };
+
+        // Aba de resumo por classe
+        const resumo = linhasResumoClasse();
+        const aoa2 = [
+          ['Classe', abcEhCli() ? 'Clientes' : 'Itens', '% dos itens', abcEhValor() ? 'Valor' : 'Volume', '% do total', 'Faixa acumulada'],
+          ...resumo.map((r) => [r.classe, r.n, r.pctItens / 100, r.soma, r.pctValor / 100, r.faixa]),
+        ];
+        const ws2 = XLSX.utils.aoa_to_sheet(aoa2);
+        ws2['!cols'] = [{ wch: 10 }, { wch: 12 }, { wch: 14 }, { wch: 18 }, { wch: 14 }, { wch: 20 }];
+        for (let r = 0; r < aoa2.length; r++) {
+          for (let c = 0; c < 6; c++) {
+            const ref = XLSX.utils.encode_cell({ r, c });
+            if (r === 0) {
+              ws2[ref].s = { font: { bold: true, sz: 11, color: { rgb: 'FFFFFF' }, name: 'Calibri' }, fill: { fgColor: { rgb: '004D80' } }, alignment: { horizontal: 'center', vertical: 'center' }, border };
+            } else {
+              if (c === 2 || c === 4) ws2[ref].z = '0.0%';
+              if (c === 3 && abcEhValor()) ws2[ref].z = '"R$" #,##0.00';
+              ws2[ref].s = { font: { sz: 10, name: 'Calibri', color: { rgb: '0A1F33' } }, fill: { fgColor: { rgb: r % 2 ? 'FFFFFF' : 'F5FAFF' } }, alignment: { horizontal: c === 0 || c === 5 ? 'center' : 'right', vertical: 'center' }, border };
+            }
+          }
+        }
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, `Curva ABC ${nomeCurva()}`.substring(0, 31));
+        XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por classe');
+        XLSX.writeFile(wb, nomeArqABC('xlsx'));
+
+        adicionarHistorico(`Curva ABC - ${nomeCurva()}`, 'Excel', linhas.length);
+        showToast(`Excel da Curva ABC de ${nomeCurva()} baixado!`, 'success');
+      }
+
+      function exportarABCCSV() {
+        if (!abcPodeExportar()) return;
+        const cols = colunasABC();
+        const esc = (s) => { s = String(s); return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+        const val = (c, i) => {
+          const v = c.v(i);
+          if (c.tipo === 'brl') return v.toFixed(2).replace('.', ',');
+          if (c.tipo === 'pct') return (v * 100).toFixed(2).replace('.', ',');
+          return esc(v);
+        };
+        const csv = [cols.map((c) => esc(c.t)).join(';'), ...ABC.visiveis.map((i) => cols.map((c) => val(c, i)).join(';'))].join('\n');
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = nomeArqABC('csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+        adicionarHistorico(`Curva ABC - ${nomeCurva()}`, 'CSV', ABC.visiveis.length);
+        showToast(`CSV da Curva ABC de ${nomeCurva()} baixado!`, 'success');
+      }
+
+      // ---- Eventos da Curva ABC ----
+      function initABC() {
+        const el = (id) => document.getElementById(id);
+        el('abcIni').value = ABC.ini;
+        el('abcFim').value = ABC.fim;
+        atualizarTextosModo();
+
+        document.querySelectorAll('.seg-btn').forEach((btn) => {
+          btn.addEventListener('click', function () {
+            if (ABC.modo === this.dataset.modo) return;
+            ABC.modo = this.dataset.modo;
+            ABC.criterio = 'valor';
+            ABC.busca = '';
+            el('abcBusca').value = '';
+            atualizarTextosModo();
+            recalcularABC();
+          });
+        });
+
+        document.querySelectorAll('.chip[data-preset]').forEach((ch) => {
+          ch.addEventListener('click', function () {
+            const [i, f] = presetParaDatas(this.dataset.preset);
+            ABC.ini = i; ABC.fim = f;
+            el('abcIni').value = i; el('abcFim').value = f;
+            recalcularABC();
+          });
+        });
+
+        const aplicarDatas = () => {
+          const i = el('abcIni').value, f = el('abcFim').value;
+          if (!i || !f) return;
+          if (i > f) { showToast('A data inicial não pode ser maior que a final.', 'error'); return; }
+          ABC.ini = i; ABC.fim = f;
+          recalcularABC();
+        };
+        el('abcIni').addEventListener('change', aplicarDatas);
+        el('abcFim').addEventListener('change', aplicarDatas);
+
+        el('abcCriterio').addEventListener('change', function () { ABC.criterio = this.value; recalcularABC(); });
+
+        const aplicarLimites = () => {
+          const a = Number(el('abcLimA').value), b = Number(el('abcLimB').value);
+          if (!(a >= 1 && b <= 99.99 && a < b)) {
+            showToast('Os limites devem respeitar: 1 ≤ A < B < 100.', 'error');
+            return;
+          }
+          ABC.limA = a; ABC.limB = b;
+          recalcularABC();
+        };
+        el('abcLimA').addEventListener('change', aplicarLimites);
+        el('abcLimB').addEventListener('change', aplicarLimites);
+
+        el('abcBusca').addEventListener('input', function () { ABC.busca = this.value; renderTabelaABC(); });
+        el('abcClasse').addEventListener('change', function () { ABC.classe = this.value; renderTabelaABC(); });
+
+        el('abcRestaurar').addEventListener('click', function () {
+          Object.assign(ABC, ABC_PADRAO, { classe: 'todas', busca: '' });
+          el('abcIni').value = ABC.ini; el('abcFim').value = ABC.fim;
+          el('abcLimA').value = ABC.limA; el('abcLimB').value = ABC.limB;
+          el('abcBusca').value = ''; el('abcClasse').value = 'todas';
+          atualizarTextosModo();
+          recalcularABC();
+          showToast('Filtros da Curva ABC restaurados.', 'info');
+        });
+
+        el('abcExportPdf').addEventListener('click', exportarABCPDF);
+        el('abcExportExcel').addEventListener('click', exportarABCExcel);
+        el('abcExportCsv').addEventListener('click', exportarABCCSV);
+
+        el('abrirAbcBtn').addEventListener('click', function () {
+          document.querySelector('.tab[data-tab="abc"]').click();
+        });
+
+        // Redesenha o Pareto ao alternar modo escuro
+        new MutationObserver(() => {
+          if (el('tab-abc').classList.contains('active')) renderPareto();
+        }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+        resumoCardABC();
+      }
+
+      /* ================================================================
          INICIALIZAÇÃO
          ================================================================ */
       document.addEventListener('DOMContentLoaded', function() {
@@ -1213,6 +2226,7 @@
         });
 
         initGraficos();
+        initABC();
       });
     </script>
   </body>

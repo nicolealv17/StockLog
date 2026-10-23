@@ -7,6 +7,11 @@
    - Produção: chapas, usinados, conexoes, fixacao, estrutural, embalagem, pneus
    - Estoque:  Matéria-Prima, Componentes, Embalagens, Consumíveis, Ferramental
    O mapeamento PROD_TO_STOCK_CATEGORY conecta as duas.
+
+   NOVO (qualidade + mídia por passo):
+   - Cada passo agora é { texto, imagem, video } — use P("texto", "url-da-imagem", "url-do-video")
+   - Cada receita tem `qualidade`: áreas de defeito, refugo (não conformidade),
+     retrabalho (o que retorna ao processo) e destino do refugo (reciclagem)
    ================================================================ */
 
 // ---------- Categorias de PRODUÇÃO (as que aparecem nos cards) ----------
@@ -52,10 +57,22 @@ const PRIMARY_PDF    = [0, 107, 179];
 const TEXT_MAIN_PDF  = [10, 31, 51];
 const TEXT_MUTED_PDF = [61, 95, 126];
 const BORDER_PDF     = [226, 236, 246];
+const RED_PDF        = [178, 67, 58];
+const RED_BG_PDF     = [250, 238, 237];
+const GREEN_PDF      = [26, 123, 114];
+
+// Destino padrão do refugo (pode ser sobrescrito por receita em qualidade.destinoRefugo)
+const DESTINO_REFUGO_PADRAO = "Segregar em coletor identificado e encaminhar para reciclagem.";
+
+/** Cria um passo de produção: texto + imagem (opcional) + link de vídeo (opcional). */
+function P(texto, imagem = "", video = "") {
+  return { texto, imagem, video };
+}
 
 // =====================================================================
 // RECEITAS — cada receita tem categoria de produção,
-// e cada insumo também declara sua categoria de produção
+// e cada insumo também declara sua categoria de produção.
+// Em cada passo, preencha imagem e video quando tiver (ficam vazios por padrão).
 // =====================================================================
 const RECIPES = [
   {
@@ -69,13 +86,20 @@ const RECIPES = [
       { codigo: "CS-7040", categoria: "fixacao",  qty: 0.3, unidade: "kg", label: "Solda de Acabamento" },
     ],
     steps: [
-      "Verificar o programa de corte a laser e confirmar as dimensões conforme o desenho técnico.",
-      "Posicionar a chapa de aço carbono 10mm na mesa da máquina de corte a laser.",
-      "Executar o corte a laser seguindo o contorno programado.",
-      "Rebarbar as bordas cortadas para remover rebarbas e resíduos de corte.",
-      "Aplicar a solda de acabamento nos pontos indicados no desenho.",
-      "Inspecionar as dimensões finais com paquímetro e liberar para a próxima etapa.",
-    ]
+      P("Verificar o programa de corte a laser e confirmar as dimensões conforme o desenho técnico."),
+      P("Posicionar a chapa de aço carbono 10mm na mesa da máquina de corte a laser."),
+      P("Executar o corte a laser seguindo o contorno programado."),
+      P("Rebarbar as bordas cortadas para remover rebarbas e resíduos de corte."),
+      P("Aplicar a solda de acabamento nos pontos indicados no desenho."),
+      P("Inspecionar as dimensões finais com paquímetro e liberar para a próxima etapa."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Corte a laser", refugo: "Peça fora da tolerância dimensional ou com corte incompleto/queimado.", retrabalho: "Peça com rebarba ou sobrematerial retorna para rebarbação/acerto de borda." },
+        { area: "Solda de acabamento", refugo: "Chapa empenada ou trincada pela solda.", retrabalho: "Solda com porosidade ou falha retorna para retoque." },
+      ],
+      destinoRefugo: "Sucata de aço carbono segregada e enviada para reciclagem de metais.",
+    },
   },
   {
     id: "flange-01",
@@ -89,13 +113,20 @@ const RECIPES = [
       { codigo: "CP-3070", categoria: "fixacao",  qty: 1, unidade: "un", label: "Anel de Vedação" },
     ],
     steps: [
-      "Selecionar a chapa de aço inox 304 e cortar o disco base conforme o diâmetro especificado.",
-      "Furar os 4 pontos de fixação na furadeira de bancada, seguindo o gabarito.",
-      "Usinar o rebaixo central para encaixe do tubo de ø50mm.",
-      "Instalar os parafusos de fixação nos furos usinados.",
-      "Posicionar o anel de vedação Viton na ranhura central.",
-      "Realizar o teste de estanqueidade e liberar a peça para expedição.",
-    ]
+      P("Selecionar a chapa de aço inox 304 e cortar o disco base conforme o diâmetro especificado."),
+      P("Furar os 4 pontos de fixação na furadeira de bancada, seguindo o gabarito."),
+      P("Usinar o rebaixo central para encaixe do tubo de ø50mm."),
+      P("Instalar os parafusos de fixação nos furos usinados."),
+      P("Posicionar o anel de vedação Viton na ranhura central."),
+      P("Realizar o teste de estanqueidade e liberar a peça para expedição."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Furação", refugo: "Furos fora de posição ou com diâmetro acima da tolerância.", retrabalho: "Furos com rebarba retornam para acabamento." },
+        { area: "Rebaixo central / vedação", refugo: "Rebaixo usinado além da medida (não há como recuperar).", retrabalho: "Falha no teste de estanqueidade por vedação mal assentada: retorna para remontagem do anel." },
+      ],
+      destinoRefugo: "Sucata de inox separada de outros metais e enviada para reciclagem.",
+    },
   },
   {
     id: "engrenagem-01",
@@ -108,13 +139,20 @@ const RECIPES = [
       { codigo: "CS-7023", categoria: "fixacao",  qty: 0.5, unidade: "L",  label: "Óleo de Usinagem" },
     ],
     steps: [
-      "Cortar a barra de bronze TM23 no comprimento necessário para o disco da engrenagem.",
-      "Fixar o material no torno CNC e usinar o diâmetro externo.",
-      "Aplicar óleo de usinagem durante todo o processo de corte, para resfriamento.",
-      "Fresar os 40 dentes conforme o módulo especificado no desenho.",
-      "Rebarbar e polir os dentes usinados.",
-      "Medir o passo e o diâmetro primitivo com equipamento de metrologia.",
-    ]
+      P("Cortar a barra de bronze TM23 no comprimento necessário para o disco da engrenagem."),
+      P("Fixar o material no torno CNC e usinar o diâmetro externo."),
+      P("Aplicar óleo de usinagem durante todo o processo de corte, para resfriamento."),
+      P("Fresar os 40 dentes conforme o módulo especificado no desenho."),
+      P("Rebarbar e polir os dentes usinados."),
+      P("Medir o passo e o diâmetro primitivo com equipamento de metrologia."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Fresagem dos dentes", refugo: "Dentes com perfil/passo errado ou dente faltando.", retrabalho: "Dentes com rebarba ou acabamento ruim retornam para polimento." },
+        { area: "Torneamento", refugo: "Diâmetro externo menor que o mínimo da tolerância.", retrabalho: "Diâmetro acima da medida retorna ao torno para novo passe." },
+      ],
+      destinoRefugo: "Cavaco e peças de bronze segregados e enviados para reciclagem de metais não ferrosos.",
+    },
   },
   {
     id: "rolamento-01",
@@ -127,13 +165,20 @@ const RECIPES = [
       { codigo: "MP-1120", categoria: "usinados", qty: 1,   unidade: "kg", label: "Barra de Bronze TM23" },
     ],
     steps: [
-      "Usinar o corpo do mancal em barra de bronze TM23 conforme o desenho.",
-      "Furar o alojamento central com tolerância H7 para encaixe do rolamento.",
-      "Pressionar o rolamento blindado 6204-2RS no alojamento, usando prensa manual.",
-      "Verificar o giro livre do rolamento após a montagem.",
-      "Aplicar graxa nos pontos de lubrificação, quando aplicável.",
-      "Inspecionar a folga axial e liberar o conjunto.",
-    ]
+      P("Usinar o corpo do mancal em barra de bronze TM23 conforme o desenho."),
+      P("Furar o alojamento central com tolerância H7 para encaixe do rolamento."),
+      P("Pressionar o rolamento blindado 6204-2RS no alojamento, usando prensa manual."),
+      P("Verificar o giro livre do rolamento após a montagem."),
+      P("Aplicar graxa nos pontos de lubrificação, quando aplicável."),
+      P("Inspecionar a folga axial e liberar o conjunto."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Alojamento do rolamento", refugo: "Alojamento fora da tolerância H7 (folga ou aperto excessivo).", retrabalho: "Peça com acabamento irregular retorna para nova usinagem." },
+        { area: "Montagem do rolamento", refugo: "Rolamento danificado na prensagem (pista marcada).", retrabalho: "Giro travado ou folga axial fora do limite: retorna para desmontagem e remontagem." },
+      ],
+      destinoRefugo: "Bronze e aço dos rolamentos separados por tipo de material e enviados para reciclagem.",
+    },
   },
   {
     id: "parafusaria-01",
@@ -147,12 +192,19 @@ const RECIPES = [
       { codigo: "CP-3055", categoria: "fixacao", qty: 20, unidade: "un", label: "Arruela de Pressão M8" },
     ],
     steps: [
-      "Separar 20 unidades de cada item: parafuso M8x30, porca M8 e arruela de pressão M8.",
-      "Conferir a integridade da rosca de cada parafuso e porca.",
-      "Organizar os itens em kits individuais de fixação (1 parafuso + 1 porca + 1 arruela).",
-      "Embalar os kits em sacos plásticos identificados com etiqueta do lote.",
-      "Registrar a quantidade produzida no sistema de estoque.",
-    ]
+      P("Separar 20 unidades de cada item: parafuso M8x30, porca M8 e arruela de pressão M8."),
+      P("Conferir a integridade da rosca de cada parafuso e porca."),
+      P("Organizar os itens em kits individuais de fixação (1 parafuso + 1 porca + 1 arruela)."),
+      P("Embalar os kits em sacos plásticos identificados com etiqueta do lote."),
+      P("Registrar a quantidade produzida no sistema de estoque."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Conferência de rosca", refugo: "Parafuso ou porca com rosca danificada, oxidada ou deformada.", retrabalho: "Kit incompleto ou com item trocado retorna para a montagem do kit." },
+        { area: "Embalagem / etiqueta", refugo: "Saco rasgado com perda de itens que não podem ser recontados.", retrabalho: "Etiqueta de lote errada ou ilegível retorna para reetiquetagem." },
+      ],
+      destinoRefugo: "Parafusos e porcas descartados segregados como sucata metálica e enviados para reciclagem.",
+    },
   },
   {
     id: "perfil-01",
@@ -166,13 +218,20 @@ const RECIPES = [
       { codigo: "CP-3045", categoria: "fixacao",    qty: 6,   unidade: "un", label: "Parafusos de Fixação" },
     ],
     steps: [
-      "Cortar o perfil U galvanizado nos 3 metros necessários, conforme o desenho.",
-      "Furar os pontos de fixação para os parafusos M8.",
-      "Aplicar o primer anticorrosivo nas áreas de corte e furação.",
-      "Aguardar a secagem do primer conforme especificação do fabricante.",
-      "Montar os parafusos de fixação nos furos preparados.",
-      "Inspecionar visualmente o acabamento e liberar para o estoque.",
-    ]
+      P("Cortar o perfil U galvanizado nos 3 metros necessários, conforme o desenho."),
+      P("Furar os pontos de fixação para os parafusos M8."),
+      P("Aplicar o primer anticorrosivo nas áreas de corte e furação."),
+      P("Aguardar a secagem do primer conforme especificação do fabricante."),
+      P("Montar os parafusos de fixação nos furos preparados."),
+      P("Inspecionar visualmente o acabamento e liberar para o estoque."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Corte do perfil", refugo: "Perfil cortado curto (abaixo dos 3 m) ou com perfil amassado/torcido.", retrabalho: "Corte desalinhado com sobra retorna para esquadrejamento." },
+        { area: "Pintura / primer", refugo: "Perfil com corrosão avançada de origem.", retrabalho: "Escorrimento ou falha de cobertura do primer retorna para lixamento e nova aplicação." },
+      ],
+      destinoRefugo: "Sucata de aço galvanizado enviada para reciclagem de metais; sobras de primer seguem descarte de resíduo químico.",
+    },
   },
   {
     id: "tambor-01",
@@ -185,13 +244,20 @@ const RECIPES = [
       { codigo: "EM-5030", categoria: "embalagem", qty: 2, unidade: "un", label: "Lacre de Segurança" },
     ],
     steps: [
-      "Inspecionar o tambor metálico vazio quanto a amassados ou corrosão.",
-      "Realizar o envase do insumo líquido conforme o volume especificado.",
-      "Posicionar a tampa do tambor e alinhar com o anel de vedação.",
-      "Aplicar os 2 lacres de segurança industrial na tampa.",
-      "Etiquetar o tambor com os dados do lote e a data de envase.",
-      "Armazenar em área designada, aguardando expedição.",
-    ]
+      P("Inspecionar o tambor metálico vazio quanto a amassados ou corrosão."),
+      P("Realizar o envase do insumo líquido conforme o volume especificado."),
+      P("Posicionar a tampa do tambor e alinhar com o anel de vedação."),
+      P("Aplicar os 2 lacres de segurança industrial na tampa."),
+      P("Etiquetar o tambor com os dados do lote e a data de envase."),
+      P("Armazenar em área designada, aguardando expedição."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Inspeção do tambor", refugo: "Tambor amassado, perfurado ou com corrosão que compromete a estanqueidade.", retrabalho: "Tambor sujo por fora retorna para limpeza antes do envase." },
+        { area: "Envase e lacre", refugo: "Produto contaminado durante o envase.", retrabalho: "Volume fora do especificado ou lacre mal aplicado retorna para ajuste/relacre." },
+      ],
+      destinoRefugo: "Tambor metálico inutilizado enviado para reciclagem de metais; resíduo líquido segue descarte ambiental adequado.",
+    },
   },
   {
     id: "pneu-01",
@@ -205,13 +271,20 @@ const RECIPES = [
       { codigo: "CS-7023", categoria: "fixacao", qty: 2,  unidade: "L",  label: "Lubrificante de Molde" },
     ],
     steps: [
-      "Pesar e preparar a mistura de borracha ABS/polímero conforme a formulação.",
-      "Aplicar o reforço de aço na carcaça do pneu durante a moldagem.",
-      "Lubrificar o molde com lubrificante próprio antes da prensagem.",
-      "Prensar e vulcanizar o pneu no molde aquecido, pelo tempo especificado.",
-      "Resfriar o pneu gradualmente após a vulcanização.",
-      "Inspecionar acabamento e balanceamento, e liberar para teste de qualidade.",
-    ]
+      P("Pesar e preparar a mistura de borracha ABS/polímero conforme a formulação."),
+      P("Aplicar o reforço de aço na carcaça do pneu durante a moldagem."),
+      P("Lubrificar o molde com lubrificante próprio antes da prensagem."),
+      P("Prensar e vulcanizar o pneu no molde aquecido, pelo tempo especificado."),
+      P("Resfriar o pneu gradualmente após a vulcanização."),
+      P("Inspecionar acabamento e balanceamento, e liberar para teste de qualidade."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Vulcanização", refugo: "Pneu com bolhas, vulcanização incompleta ou reforço de aço exposto.", retrabalho: "Pneu com rebarba de borracha retorna para acabamento." },
+        { area: "Balanceamento", refugo: "Pneu com deformação estrutural que não corrige.", retrabalho: "Desbalanceamento leve retorna para ajuste e novo teste." },
+      ],
+      destinoRefugo: "Borracha e aço separados e enviados para reciclagem (trituração de borracha / recuperação do aço).",
+    },
   },
   {
     id: "caixa-01",
@@ -224,12 +297,19 @@ const RECIPES = [
       { codigo: "MP-1102", categoria: "fixacao",   qty: 100, unidade: "ml", label: "Resina de Selagem" },
     ],
     steps: [
-      "Montar a caixa de papelão duplo conforme as dimensões do produto a proteger.",
-      "Aplicar a resina de selagem nas abas e junções da caixa.",
-      "Aguardar a cura da resina conforme o tempo indicado pelo fabricante.",
-      "Reforçar os cantos da caixa com fita adequada.",
-      "Inspecionar a resistência da embalagem antes da liberação.",
-    ]
+      P("Montar a caixa de papelão duplo conforme as dimensões do produto a proteger."),
+      P("Aplicar a resina de selagem nas abas e junções da caixa."),
+      P("Aguardar a cura da resina conforme o tempo indicado pelo fabricante."),
+      P("Reforçar os cantos da caixa com fita adequada."),
+      P("Inspecionar a resistência da embalagem antes da liberação."),
+    ],
+    qualidade: {
+      defeitos: [
+        { area: "Montagem da caixa", refugo: "Caixa molhada, rasgada ou com papelão amassado sem recuperação.", retrabalho: "Caixa mal montada ou com aba desalinhada retorna para remontagem." },
+        { area: "Selagem", refugo: "Resina contaminada ou vencida aplicada na caixa.", retrabalho: "Selagem incompleta ou fora do tempo de cura retorna para reaplicação." },
+      ],
+      destinoRefugo: "Papelão enviado para reciclagem de papel; resina seguindo descarte de resíduo químico.",
+    },
   }
 ];
 
@@ -402,6 +482,25 @@ function statusInfo({ faltando, pronto, bloqueado }) {
     text: `Parcial · ${faltando} insumo${faltando > 1 ? 's' : ''} em falta` };
 }
 
+// ---------- Helpers de passos / vídeo ----------
+/** Aceita passo como string (formato antigo) ou objeto { texto, imagem, video }. */
+function normalizarPasso(s) {
+  if (typeof s === 'string') return { texto: s, imagem: '', video: '' };
+  return { texto: s?.texto || '', imagem: s?.imagem || '', video: s?.video || '' };
+}
+
+/** Só aceita links http(s) — evita javascript: etc. */
+function urlSegura(url) {
+  const u = String(url || '').trim();
+  return /^https?:\/\//i.test(u) ? u : '';
+}
+
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // ---------- Render ----------
 function renderSummary() {
   const el = document.getElementById('pageSummary');
@@ -453,6 +552,80 @@ function renderRecipes(filtro = "todas") {
 // ---------- Modal ----------
 let currentModalRecipeId = null;
 
+/** Garante que o bloco "Controle de Qualidade" exista no modal (criado via JS, sem mexer no HTML). */
+function garantirBlocoQualidade() {
+  let box = document.getElementById('qualityBox');
+  if (box) return box;
+  const actions = document.querySelector('#recipeModal .modal-actions');
+  if (!actions) return null;
+  box = document.createElement('div');
+  box.id = 'qualityBox';
+  actions.parentNode.insertBefore(box, actions);
+  return box;
+}
+
+function renderPasso(passoRaw, i) {
+  const p = normalizarPasso(passoRaw);
+  const img = urlSegura(p.imagem);
+  const video = urlSegura(p.video);
+
+  const midia = img
+    ? `<img class="step-photo" src="${escapeHtml(img)}" alt="Passo ${i + 1}" loading="lazy"
+            onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'step-photo step-photo-empty',innerHTML:'<i class=&quot;fa-regular fa-image&quot;></i> Imagem indisponível'}))" />`
+    : `<div class="step-photo step-photo-empty"><i class="fa-regular fa-image"></i> Sem imagem para este passo</div>`;
+
+  const botaoVideo = video
+    ? `<a class="step-video-btn" href="${escapeHtml(video)}" target="_blank" rel="noopener noreferrer">
+         <i class="fa-solid fa-circle-play"></i> Ver vídeo de como fazer
+       </a>`
+    : '';
+
+  return `
+    <div class="step-item step-item-media">
+      <div class="step-head">
+        <span class="step-number">${i + 1}</span>
+        <span class="step-text">${escapeHtml(p.texto)}</span>
+      </div>
+      ${midia}
+      ${botaoVideo}
+    </div>
+  `;
+}
+
+function renderQualidade(recipe) {
+  const box = garantirBlocoQualidade();
+  if (!box) return;
+  const q = recipe.qualidade;
+  if (!q || !(q.defeitos || []).length) { box.innerHTML = ''; return; }
+
+  const destino = q.destinoRefugo || DESTINO_REFUGO_PADRAO;
+
+  const cards = q.defeitos.map(d => `
+    <div class="defect-card">
+      <div class="defect-area"><i class="fa-solid fa-location-crosshairs"></i> Área de defeito: <strong>${escapeHtml(d.area)}</strong></div>
+      <div class="defect-row defect-refugo">
+        <span class="defect-label"><i class="fa-solid fa-ban"></i> Refugo (não conformidade)</span>
+        <span class="defect-text">${escapeHtml(d.refugo)}</span>
+      </div>
+      <div class="defect-row defect-retrabalho">
+        <span class="defect-label"><i class="fa-solid fa-rotate-left"></i> Retrabalho (retorna ao processo)</span>
+        <span class="defect-text">${escapeHtml(d.retrabalho)}</span>
+      </div>
+    </div>
+  `).join('');
+
+  box.innerHTML = `
+    <div class="modal-section-title">
+      <i class="fa-solid fa-clipboard-check"></i> Controle de qualidade
+    </div>
+    <div class="defect-list">${cards}</div>
+    <div class="defect-destino">
+      <i class="fa-solid fa-recycle"></i>
+      <div><strong>Destino do refugo:</strong> ${escapeHtml(destino)}</div>
+    </div>
+  `;
+}
+
 function openRecipeModal(recipeId) {
   const recipe = RECIPES.find(r => r.id === recipeId);
   if (!recipe) return;
@@ -481,14 +654,10 @@ function openRecipeModal(recipeId) {
 
   const stepsEl = document.getElementById('stepsList');
   if (stepsEl) {
-    const steps = recipe.steps || [];
-    stepsEl.innerHTML = steps.map((texto, i) => `
-      <div class="step-item">
-        <span class="step-number">${i + 1}</span>
-        <span class="step-text">${texto}</span>
-      </div>
-    `).join('');
+    stepsEl.innerHTML = (recipe.steps || []).map((s, i) => renderPasso(s, i)).join('');
   }
+
+  renderQualidade(recipe);
 
   document.getElementById('recipeModal').classList.add('active');
 }
@@ -576,7 +745,7 @@ function closeRecipeModal() {
 }
 
 // =====================================================================
-// CSS extra — botões e chips no modal
+// CSS extra — botões, chips, passos com mídia e controle de qualidade
 // =====================================================================
 (function injetarEstilosModal() {
   if (document.getElementById('prod-modal-extra')) return;
@@ -631,12 +800,63 @@ function closeRecipeModal() {
       background: var(--bg-soft); color: var(--primary);
       border: 1px solid var(--primary);
     }
+
+    /* ----- Passos com imagem e vídeo ----- */
+    .step-item.step-item-media { flex-direction: column; align-items: stretch; gap: 10px; }
+    .step-head { display: flex; align-items: flex-start; gap: 10px; }
+    .step-photo {
+      width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block;
+      border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card);
+    }
+    .step-photo-empty {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      color: var(--text-muted); font-size: 12px; font-weight: 600;
+      border-style: dashed;
+    }
+    .step-video-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      align-self: flex-start;
+      font-size: 12px; font-weight: 700; text-decoration: none;
+      color: var(--primary); background: var(--primary-light);
+      border: 1px solid var(--primary); border-radius: 8px;
+      padding: 7px 12px; transition: filter .15s;
+    }
+    .step-video-btn:hover { filter: brightness(1.06); }
+
+    /* ----- Controle de qualidade ----- */
+    .defect-list { display: flex; flex-direction: column; gap: var(--sp-3); }
+    .defect-card {
+      background: var(--bg-soft); border: 1px solid var(--border);
+      border-radius: 10px; padding: var(--sp-3);
+      display: flex; flex-direction: column; gap: var(--sp-2);
+    }
+    .defect-area { font-size: 13px; color: var(--text-main); }
+    .defect-area i { color: var(--primary); margin-right: 4px; }
+    .defect-row {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: var(--sp-2) var(--sp-3); border-radius: 8px; font-size: 12.5px;
+    }
+    .defect-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+    .defect-text { line-height: 1.45; color: var(--text-main); }
+    .defect-refugo { background: var(--red-bg); }
+    .defect-refugo .defect-label { color: var(--red); }
+    .defect-retrabalho { background: var(--amber-bg); }
+    .defect-retrabalho .defect-label { color: var(--amber); }
+    .defect-destino {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-top: var(--sp-3); padding: var(--sp-3);
+      background: var(--green-bg); color: var(--green);
+      border-radius: 10px; font-size: 13px; line-height: 1.45;
+    }
+    .defect-destino i { font-size: 16px; margin-top: 2px; }
+    .defect-destino div { color: var(--text-main); }
+    .defect-destino strong { color: var(--green); }
   `;
   document.head.appendChild(s);
 })();
 
 // =====================================================================
-// PDF — Ficha de Procedimento (mantido)
+// PDF — Ficha de Procedimento (agora com imagem/vídeo por passo e qualidade)
 // =====================================================================
 async function loadImageAsDataURL(url) {
   try {
@@ -650,6 +870,13 @@ async function loadImageAsDataURL(url) {
       reader.readAsDataURL(blob);
     });
   } catch { return null; }
+}
+
+/** Descobre o formato de uma data URL para o jsPDF (JPEG/PNG). */
+function formatoImagemPDF(dataUrl) {
+  const m = /^data:image\/(\w+)/i.exec(dataUrl || '');
+  const f = (m ? m[1] : 'jpeg').toUpperCase();
+  return f === 'JPG' ? 'JPEG' : f;
 }
 
 async function generatePDF(recipeId) {
@@ -681,10 +908,16 @@ async function generatePDF(recipeId) {
     const dataEmissao = now.toLocaleDateString("pt-BR");
     const horaEmissao = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     const codigoDoc = `POP-${recipe.id.toUpperCase()}`;
-    const revisao = "02";
+    const revisao = "03";
 
     let y = 0;
     const imgDataUrl = await loadImageAsDataURL(recipe.imagem);
+
+    // Passos normalizados + imagens carregadas em paralelo
+    const passos = (recipe.steps || []).map(normalizarPasso);
+    const imagensPassos = await Promise.all(
+      passos.map(p => (urlSegura(p.imagem) ? loadImageAsDataURL(p.imagem) : Promise.resolve(null)))
+    );
 
     function drawHeader() {
       doc.setFillColor(...PRIMARY_PDF);
@@ -763,7 +996,7 @@ async function generatePDF(recipeId) {
         const imgW = 55, imgH = 38;
         doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.3);
         doc.roundedRect(marginX, y, imgW, imgH, 2, 2, "S");
-        doc.addImage(imgDataUrl, "JPEG", marginX, y, imgW, imgH, undefined, "FAST");
+        doc.addImage(imgDataUrl, formatoImagemPDF(imgDataUrl), marginX, y, imgW, imgH, undefined, "FAST");
         doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(...TEXT_MAIN_PDF);
         doc.text("REGISTRO FOTOGRÁFICO DO PRODUTO", marginX + imgW + 6, y + 6);
         doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...TEXT_MUTED_PDF);
@@ -824,21 +1057,47 @@ async function generatePDF(recipeId) {
     });
     y += 8;
 
+    // ---------- Passo a passo (com imagem e link de vídeo) ----------
     sectionTitle("PASSO A PASSO DE PRODUÇÃO");
-    const steps = recipe.steps || [];
     const stepTextWidth = contentWidth - 12;
-    steps.forEach((texto, i) => {
+    const stepImgW = 60, stepImgH = 34;
+
+    passos.forEach((passo, i) => {
       doc.setFont("helvetica", "normal"); doc.setFontSize(9);
-      const lines = doc.splitTextToSize(texto, stepTextWidth);
-      const stepHeight = Math.max(8, lines.length * 4.6 + 3);
+      const lines = doc.splitTextToSize(passo.texto, stepTextWidth);
+      const imgStep = imagensPassos[i];
+      const video = urlSegura(passo.video);
+
+      let stepHeight = Math.max(8, lines.length * 4.6 + 3);
+      if (imgStep) stepHeight += stepImgH + 3;
+      if (video) stepHeight += 5;
       checkPageBreak(stepHeight);
+
       doc.setFillColor(...PRIMARY_PDF);
       doc.circle(marginX + 3, y + 3, 3.2, "F");
       doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(255, 255, 255);
       doc.text(String(i + 1), marginX + 3, y + 4.2, { align: "center" });
       doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...TEXT_MAIN_PDF);
       doc.text(lines, marginX + 10, y + 4.2);
-      if (i < steps.length - 1) {
+
+      let cursor = y + Math.max(8, lines.length * 4.6 + 3);
+
+      if (imgStep) {
+        try {
+          doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.3);
+          doc.roundedRect(marginX + 10, cursor, stepImgW, stepImgH, 1.5, 1.5, "S");
+          doc.addImage(imgStep, formatoImagemPDF(imgStep), marginX + 10, cursor, stepImgW, stepImgH, undefined, "FAST");
+        } catch {}
+        cursor += stepImgH + 3;
+      }
+
+      if (video) {
+        doc.setFont("helvetica", "bold"); doc.setFontSize(7.5); doc.setTextColor(...PRIMARY_PDF);
+        doc.textWithLink("Vídeo de como fazer: " + video, marginX + 10, cursor + 2.5, { url: video });
+        cursor += 5;
+      }
+
+      if (i < passos.length - 1) {
         doc.setDrawColor(...BORDER_PDF); doc.setLineWidth(0.1);
         doc.setLineDashPattern([1, 1], 0);
         doc.line(marginX + 10, y + stepHeight - 1, marginX + contentWidth, y + stepHeight - 1);
@@ -846,7 +1105,54 @@ async function generatePDF(recipeId) {
       }
       y += stepHeight;
     });
-    y += 10;
+    y += 8;
+
+    // ---------- Controle de qualidade ----------
+    const q = recipe.qualidade;
+    if (q && (q.defeitos || []).length) {
+      sectionTitle("CONTROLE DE QUALIDADE");
+      const textW = contentWidth - 8;
+
+      q.defeitos.forEach(d => {
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8);
+        const refLines = doc.splitTextToSize(d.refugo, textW);
+        const retLines = doc.splitTextToSize(d.retrabalho, textW);
+        const blockH = 8 + (refLines.length * 3.8 + 6) + (retLines.length * 3.8 + 6) + 2;
+        checkPageBreak(blockH);
+
+        doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.setTextColor(...TEXT_MAIN_PDF);
+        doc.text(`Área de defeito: ${d.area}`, marginX, y + 4);
+        y += 8;
+
+        // Refugo
+        const refH = refLines.length * 3.8 + 6;
+        doc.setFillColor(...RED_BG_PDF); doc.roundedRect(marginX, y, contentWidth, refH, 1.5, 1.5, "F");
+        doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...RED_PDF);
+        doc.text("REFUGO (NÃO CONFORMIDADE)", marginX + 4, y + 4);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...TEXT_MAIN_PDF);
+        doc.text(refLines, marginX + 4, y + 8);
+        y += refH + 2;
+
+        // Retrabalho
+        const retH = retLines.length * 3.8 + 6;
+        doc.setFillColor(...STATUS_COLORS_PDF.partial.bg); doc.roundedRect(marginX, y, contentWidth, retH, 1.5, 1.5, "F");
+        doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...STATUS_COLORS_PDF.partial.text);
+        doc.text("RETRABALHO (RETORNA AO PROCESSO)", marginX + 4, y + 4);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...TEXT_MAIN_PDF);
+        doc.text(retLines, marginX + 4, y + 8);
+        y += retH + 5;
+      });
+
+      const destinoLines = doc.splitTextToSize(q.destinoRefugo || DESTINO_REFUGO_PADRAO, textW);
+      const destH = destinoLines.length * 3.8 + 8;
+      checkPageBreak(destH + 4);
+      doc.setFillColor(...STATUS_COLORS_PDF.ready.bg); doc.roundedRect(marginX, y, contentWidth, destH, 1.5, 1.5, "F");
+      doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...GREEN_PDF);
+      doc.text("DESTINO DO REFUGO", marginX + 4, y + 4.5);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...TEXT_MAIN_PDF);
+      doc.text(destinoLines, marginX + 4, y + 9);
+      y += destH + 10;
+    }
 
     checkPageBreak(20);
     doc.setFillColor(...BORDER_PDF);
@@ -900,6 +1206,7 @@ function bindFirebase() {
 // Boot
 // =====================================================================
 document.addEventListener('DOMContentLoaded', () => {
+  garantirBlocoQualidade();
   renderSummary();
   renderRecipes();
   const tentar = (n = 0) => {

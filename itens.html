@@ -136,6 +136,32 @@
       .card-header-title .title-text { display: flex; align-items: center; gap: 10px; }
       .card-header-title i { color: var(--text-muted); font-size: 1em; }
 
+      /* NOVO — Card de valor total */
+      .valor-total-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .valor-total-card .label {
+        font-size: 12px; font-weight: 700; letter-spacing: 0.4px;
+        text-transform: uppercase; color: var(--text-muted);
+      }
+      .valor-total-card .value {
+        font-size: 26px; font-weight: 800; color: var(--primary);
+        line-height: 1.1;
+      }
+      .valor-total-card .sub {
+        font-size: 12.5px; color: var(--text-secondary); font-weight: 600;
+      }
+      .valor-total-card .icon-box {
+        width: 52px; height: 52px; border-radius: 12px;
+        background: var(--primary-light); color: var(--primary);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px; flex-shrink: 0;
+      }
+
       .charts-grid {
         display: grid; grid-template-columns: 2fr 1fr; gap: var(--gap-grid);
       }
@@ -224,7 +250,7 @@
       .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
       table {
         width: 100%; border-collapse: separate;
-        border-spacing: 0; font-size: var(--fs-table); min-width: 750px;
+        border-spacing: 0; font-size: var(--fs-table); min-width: 900px;
       }
       th {
         text-align: left; padding: 10px 12px;
@@ -258,6 +284,16 @@
 
       .qty-cell { font-weight: 700; font-size: 1rem; }
       .qty-min  { color: var(--text-muted); font-weight: 600; font-size: 0.82em; }
+
+      /* NOVO — Valor */
+      .valor-cell { display: flex; flex-direction: column; gap: 2px; white-space: nowrap; }
+      .valor-unit { font-weight: 700; font-size: 0.92em; color: var(--text-main); }
+      .valor-unit small { font-weight: 500; color: var(--text-muted); font-size: 0.85em; margin-left: 1px; }
+      .valor-total { font-size: 0.8em; color: var(--text-secondary); font-weight: 600; }
+      .cat-valor {
+        display: block; font-size: 0.78em;
+        color: var(--text-muted); font-weight: 600; margin-top: 2px;
+      }
 
       .table-progress-cell {
         display: flex; align-items: center; gap: 8px; width: 130px;
@@ -461,6 +497,17 @@
       <div id="header-root"></div>
 
       <div class="dashboard-container">
+
+        <!-- NOVO — Card de valor total em estoque -->
+        <section class="card valor-total-card">
+          <div>
+            <div class="label">Valor total em estoque</div>
+            <div class="value" id="valorTotalEstoque">R$ 0,00</div>
+            <div class="sub" id="valorItensCount">0 itens · 0 peças em estoque</div>
+          </div>
+          <div class="icon-box"><i class="fas fa-sack-dollar"></i></div>
+        </section>
+
         <section class="charts-grid">
           <div class="card">
             <div class="card-header-title">
@@ -524,6 +571,8 @@
                   <th>Categoria</th>
                   <th>Localização</th>
                   <th>Qtd. Atual</th>
+                  <!-- NOVO -->
+                  <th>Valor</th>
                   <th>Nível</th>
                   <th>Entradas/Saídas (hoje)</th>
                   <th>Status</th>
@@ -532,7 +581,7 @@
               </thead>
               <tbody id="tableBody">
                 <tr>
-                  <td colspan="9">
+                  <td colspan="10">
                     <div class="empty-state">
                       <i class="fas fa-box-open"></i>
                       Nenhum item cadastrado.
@@ -602,6 +651,11 @@
             <div class="form-group">
               <label for="newMaximo">Estoque Máximo *</label>
               <input type="number" id="newMaximo" min="0" step="1" placeholder="0" required />
+            </div>
+            <!-- NOVO — Valor unitário -->
+            <div class="form-group">
+              <label for="newValorUnitario">Valor Unitário (R$) *</label>
+              <input type="number" id="newValorUnitario" min="0" step="0.01" placeholder="0,00" required />
             </div>
             <div class="form-group">
               <label for="newEntradas">Entradas (hoje)</label>
