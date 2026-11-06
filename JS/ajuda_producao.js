@@ -12,6 +12,11 @@
    - Cada passo agora é { texto, imagem, video } — use P("texto", "url-da-imagem", "url-do-video")
    - Cada receita tem `qualidade`: áreas de defeito, refugo (não conformidade),
      retrabalho (o que retorna ao processo) e destino do refugo (reciclagem)
+
+   NOVO (imagens automáticas):
+   - Passos sem imagem buscam uma foto no Wikimedia Commons usando as
+     palavras-chave de PASSOS_BUSCA (1 por passo, na ordem dos steps).
+   - Para trocar uma imagem errada: P("texto", "https://sua-url.jpg")
    ================================================================ */
 
 // ---------- Categorias de PRODUÇÃO (as que aparecem nos cards) ----------
@@ -312,6 +317,141 @@ const RECIPES = [
     },
   }
 ];
+
+// =====================================================================
+// IMAGENS DOS PASSOS — busca automática no Wikimedia Commons
+// - Se o passo já tem imagem em P("texto", "url"), ela é mantida.
+// - Senão, busca pela palavra-chave abaixo (1 por passo, na ordem dos steps).
+// - O resultado fica em cache no localStorage (não repete a busca).
+// Para trocar uma imagem errada: P("texto", "https://sua-url.jpg")
+// =====================================================================
+const PASSOS_BUSCA = {
+  "chapa-01": [
+    "CNC laser cutting program screen",
+    "steel plate sheet metal",
+    "laser cutting machine steel sheet",
+    "deburring metal edge",
+    "welding steel plate",
+    "caliper measuring metal part",
+  ],
+  "flange-01": [
+    "stainless steel sheet",
+    "bench drill press drilling metal",
+    "lathe machining metal facing",
+    "flange bolts fasteners",
+    "o-ring seal",
+    "flange pressure test",
+  ],
+  "engrenagem-01": [
+    "bronze bar stock",
+    "CNC lathe turning metal",
+    "cutting oil machining coolant",
+    "gear hobbing milling machine",
+    "gear polishing",
+    "gear measurement metrology",
+  ],
+  "rolamento-01": [
+    "bronze bearing housing machining",
+    "boring bore machining metal",
+    "arbor press bearing",
+    "ball bearing",
+    "bearing grease lubrication",
+    "dial indicator measurement",
+  ],
+  "parafusaria-01": [
+    "hex bolts nuts washers",
+    "bolt thread inspection",
+    "bolt nut washer set",
+    "plastic bag hardware packaging",
+    "warehouse inventory barcode",
+  ],
+  "perfil-01": [
+    "galvanized steel U channel",
+    "drilling steel profile",
+    "anticorrosive primer paint steel",
+    "paint drying steel",
+    "bolt steel bracket",
+    "steel quality inspection",
+  ],
+  "tambor-01": [
+    "steel drum 200 liter",
+    "drum filling liquid",
+    "steel drum lid closure ring",
+    "drum security seal",
+    "drum label",
+    "drum storage warehouse",
+  ],
+  "pneu-01": [
+    "rubber mixing mill",
+    "tire steel belt",
+    "tire mold",
+    "tire vulcanization press",
+    "tire cooling",
+    "tire inspection",
+  ],
+  "caixa-01": [
+    "corrugated cardboard box assembly",
+    "glue applying cardboard box",
+    "adhesive curing box",
+    "box corner tape",
+    "cardboard box strength test",
+  ],
+};
+
+const COMMONS_CACHE_PREFIX = "sl-commons-img:";
+
+/** Busca uma imagem (JPEG/PNG) no Wikimedia Commons e devolve a URL da miniatura (800px). */
+async function buscarImagemCommons(termo) {
+  const chave = COMMONS_CACHE_PREFIX + termo;
+  try {
+    const salvo = localStorage.getItem(chave);
+    if (salvo) return salvo;
+  } catch {}
+
+  const url =
+    "https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*" +
+    "&generator=search&gsrnamespace=6&gsrlimit=8" +
+    "&gsrsearch=" + encodeURIComponent(termo + " filetype:bitmap") +
+    "&prop=imageinfo&iiprop=url|mime&iiurlwidth=800";
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) return "";
+    const data = await resp.json();
+    const paginas = Object.values(data?.query?.pages || {})
+      .sort((a, b) => (a.index || 0) - (b.index || 0));
+    for (const pg of paginas) {
+      const info = pg.imageinfo && pg.imageinfo[0];
+      if (info && /^image\/(jpeg|png)$/.test(info.mime) && info.thumburl) {
+        try { localStorage.setItem(chave, info.thumburl); } catch {}
+        return info.thumburl;
+      }
+    }
+  } catch (e) {
+    console.warn("[Ajuda Produção] Falha ao buscar imagem:", termo, e);
+  }
+  return "";
+}
+
+/** Preenche passo.imagem dos passos que ainda não têm imagem. Retorna true se alterou algo. */
+async function hidratarImagensPassos(recipe) {
+  // normaliza os passos uma única vez (mantém os mesmos objetos entre chamadas)
+  if (!recipe._stepsNorm) {
+    recipe.steps = (recipe.steps || []).map(normalizarPasso);
+    recipe._stepsNorm = true;
+  }
+
+  const termos = PASSOS_BUSCA[recipe.id] || [];
+  let mudou = false;
+
+  await Promise.all(recipe.steps.map(async (passo, i) => {
+    if (passo.imagem || !termos[i]) return;
+    const img = await buscarImagemCommons(termos[i]);
+    if (img) { passo.imagem = img; mudou = true; }
+  }));
+
+  return mudou;
+}
 
 // =====================================================================
 // ESTOQUE — espelho do Firebase (/itens)
@@ -659,6 +799,13 @@ function openRecipeModal(recipeId) {
 
   renderQualidade(recipe);
 
+  // Busca as imagens dos passos (Wikimedia Commons) e redesenha a lista quando chegarem
+  hidratarImagensPassos(recipe).then(mudou => {
+    if (mudou && currentModalRecipeId === recipeId && stepsEl) {
+      stepsEl.innerHTML = (recipe.steps || []).map((s, i) => renderPasso(s, i)).join('');
+    }
+  });
+
   document.getElementById('recipeModal').classList.add('active');
 }
 
@@ -856,7 +1003,7 @@ function closeRecipeModal() {
 })();
 
 // =====================================================================
-// PDF — Ficha de Procedimento (agora com imagem/vídeo por passo e qualidade)
+// PDF — Ficha de Procedimento (com imagem/vídeo por passo e qualidade)
 // =====================================================================
 async function loadImageAsDataURL(url) {
   try {
@@ -912,6 +1059,9 @@ async function generatePDF(recipeId) {
 
     let y = 0;
     const imgDataUrl = await loadImageAsDataURL(recipe.imagem);
+
+    // Garante que as imagens dos passos já foram buscadas (Wikimedia Commons)
+    await hidratarImagensPassos(recipe);
 
     // Passos normalizados + imagens carregadas em paralelo
     const passos = (recipe.steps || []).map(normalizarPasso);
