@@ -1,23 +1,20 @@
 /* ==========================================================================
  * StockLog v2.4 · Assistente Virtual Hiperinteligente (LogBot)
  * -------------------------------------------------------------------------
- * - Modo Híbrido (Local + OpenRouter IA)
- * - Sem chave: funciona 100% offline nas outras máquinas
- * - Com chave OpenRouter: responde qualquer dúvida do sistema e do chão
- *   de fábrica e bloqueia assuntos fora desse escopo
- * ========================================================================== */
+ * - 100% Client-Side (Sem APIs pagas, sem necessidade de chaves ou servidor)
+ * - Mapeamento completo de Módulos, Páginas, OPs, Máquinas, Estoque e Logística
+ * - Perguntas Frequentes Operacionais e Executivas Atualizadas (KPIs, OPs, Frota)
+ * - Dicionário de Significados e Conceitos Industriais (Logística, OP, OEE, QR Code, Estoque)
+ * - Guia passo a passo para Troca de Senha, Exportação em PDF/Excel e Falha de Máquinas
+ * - Guia detalhado de OBJETIVO e COMO USAR cada uma das 14 páginas do sistema
+ * - Busca direta por nome de página/recurso exibindo "O que é" e "Como usar"
+ * - Consulta quantitativa completa: Totais de Itens, Veículos, Entregas, OPs, etc.
+ * - Redirecionamento e orientação inteligente para a Agenda/Calendário
+ * - Filtro automático para desconsiderar dados de teste (ex: AAAAA, FDDSF, sddfs)
+ */
 
 (function () {
   "use strict";
-
-  /* ==========================================================================
-     0. ESPAÇO PARA SUA CHAVE API DO OPENROUTER
-     --------------------------------------------------------------------------
-     Cole sua chave entre as aspas abaixo (ex: "sk-or-v1-xxxxxxxx...").
-     IMPORTANTE: Apague a chave (deixe "") antes de subir o arquivo para o Git!
-     ========================================================================== */
-  const OPENROUTER_API_KEY = "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"; // <-- COLE SUA CHAVE DO OPENROUTER AQUI
-  const OPENROUTER_MODEL = "openrouter/free";
 
   // Normalizador de texto (ignora maiúsculas, acentos e pontuação)
   function normalizarTexto(texto) {
@@ -127,7 +124,7 @@
       nome: "Relatórios & Exportação Analítica",
       chaves: ["relatorios", "exportacao", "exportar pdf", "exportar excel", "consolidado", "dre"],
       objetivo: "Consolidar dados operacionais e financeiros em relatórios gerenciais prontos para impressão ou exportação em PDF e Excel.",
-      comoUsar: "1. Escolha o período desejado (Data inicial / final) e filtre por setor no cabeçalho.\n2. Selecione o relatório específico que deseja emitir (Produção, Pedidos, Estoque ou Logística).\n3. Clique no botão 'PDF' ou 'Excel' no card correspondente para baixar o arquivo.\n4. Para um documento completo de auditoria, utilize o botão 'Baixar consolidado'."
+      comoUsar: "1. Escolha o período desejado (Data inicial / final) e filtre por setor no cabeçalho.\n2. Selecione o relatório específico que deseja emitir (Produção, Pedidos, Estoque, Logística ou Desempenho).\n3. Clique no botão 'PDF' ou 'Excel' no card correspondente para baixar o arquivo.\n4. Para um documento completo de auditoria, utilize o botão 'Baixar consolidado'."
     },
 
     cadastro: {
@@ -266,7 +263,7 @@
   const InspectorDOM = {
     obterEstadoAtual() {
       const inputs = Array.from(document.querySelectorAll("input, select, textarea"))
-        .filter(i => i.id !== "chatbot-input" && ehDadoValido(i.value))
+        .filter(i => ehDadoValido(i.value))
         .map(i => {
           const label = document.querySelector(`label[for="${i.id}"]`) || i.closest(".form-group")?.querySelector("label");
           const nomeCampo = label ? label.innerText.replace("*", "").trim() : (i.name || i.id || "campo");
@@ -279,155 +276,23 @@
       const alerta = document.querySelector(".mensagem-alerta");
       const textoAlerta = (alerta && window.getComputedStyle(alerta).display !== "none") ? alerta.innerText.trim() : null;
 
-      return {
-        paginaAtual: document.title || window.location.pathname,
-        inputs,
-        textoAlerta
-      };
+      return { inputs, textoAlerta };
     }
   };
 
   /* ==========================================================================
-     5. CONEXÃO COM OPENROUTER (ATIVA APENAS QUANDO HÁ CHAVE CONFIGURADA)
+     5. MOTOR PROCESSADOR DE INTENÇÃO E RESPOSTAS HIPERINTELIGENTE
      ========================================================================== */
-  const OpenRouterIA = {
-    STORAGE_KEY: "STOCKLOG_OPENROUTER_KEY",
-    ENDPOINT: "https://openrouter.ai/api/v1/chat/completions",
-    MODELOS_GRATUITOS: [
-      OPENROUTER_MODEL,
-      "meta-llama/llama-3.3-70b-instruct:free",
-      "google/gemma-3-27b-it:free",
-      "qwen/qwen3-32b:free"
-    ],
-    historico: [],
-
-    obterChave() {
-      const chaveCodigo = (typeof OPENROUTER_API_KEY === "string" ? OPENROUTER_API_KEY : "").trim();
-      if (chaveCodigo) return chaveCodigo;
-      try {
-        return (localStorage.getItem(this.STORAGE_KEY) || "").trim();
-      } catch (e) {
-        return "";
-      }
-    },
-
-    estaAtivo() {
-      return this.obterChave().length > 0;
-    },
-
-    salvarChaveLocal(chave) {
-      try {
-        localStorage.setItem(this.STORAGE_KEY, chave.trim());
-      } catch (e) {
-        console.warn("[LogBot] Não foi possível salvar no localStorage:", e);
-      }
-    },
-
-    removerChaveLocal() {
-      try {
-        localStorage.removeItem(this.STORAGE_KEY);
-      } catch (e) {
-        // ignora
-      }
-      this.historico = [];
-    },
-
-    montarPromptSistema() {
-      const domAtual = InspectorDOM.obterEstadoAtual();
-      const baseConhecimento = JSON.stringify({
-        sistema: "StockLog v2.4 (ERP/MES Industrial e Logístico)",
-        paginasDoSistema: PaginasSistema,
-        conceitosTecnicos: DicionarioConceitos,
-        dadosOperacionais: BancoDadosOficial,
-        telaAtualDoUsuario: domAtual
-      });
-
-      return `Você é o LogBot, assistente virtual oficial e exclusivo do sistema StockLog v2.4 e das operações do chão de fábrica.
-
-REGRAS OBRIGATÓRIAS DE ESCOPO:
-1. Responda APENAS perguntas sobre:
-   - O sistema StockLog v2.4 (todas as 14 páginas/módulos, passo a passo de uso, relatórios, troca de senha, agenda, cadastro, diagnóstico da tela/formulário atual).
-   - Operações de chão de fábrica, manufatura, Ordens de Produção (OPs), máquinas, paradas/manutenção, OEE, controle de qualidade (QA), estoque, almoxarifado, matéria-prima, fornecedores, logística, expedição, frota e rastreamento GPS/telemetria.
-   - Conceitos, cálculos e boas práticas industriais/logísticas (ex: cálculo de OEE, Curva ABC, Kanban, FIFO, manutenção preventiva/corretiva, segurança operacional).
-2. Se o usuário perguntar QUALQUER assunto que NÃO tenha relação com o StockLog ou com o chão de fábrica/logística/estoque (ex: receitas, futebol, política, piadas, filmes, código genérico fora do sistema, assuntos pessoais), RECUSE educadamente em 1 ou 2 frases curtas e peça para perguntar algo sobre o sistema ou a fábrica.
-3. Baseie-se fielmente nos dados oficiais fornecidos abaixo sem inventar números falsos da fábrica.
-4. Responda sempre em português do Brasil, de forma clara e objetiva. Formate usando tags HTML simples (<b> e <br>) para quebrar linhas e destacar títulos. Não use blocos \`\`\`.
-
-DADOS OFICIAIS DO STOCKLOG v2.4 E ESTADO ATUAL DA TELA:
-${baseConhecimento}`;
-    },
-
-    async perguntar(mensagemUsuario) {
-      const apiKey = this.obterChave();
-      if (!apiKey) return null;
-
-      const systemPrompt = this.montarPromptSistema();
-      const mensagensRecentes = this.historico.slice(-6);
-      const modelosUnicos = Array.from(new Set(this.MODELOS_GRATUITOS.filter(Boolean)));
-
-      let ultimoErro = null;
-
-      for (const modelo of modelosUnicos) {
-        try {
-          const response = await fetch(this.ENDPOINT, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${apiKey}`,
-              "HTTP-Referer": window.location.origin || "http://localhost",
-              "X-Title": "StockLog v2.4"
-            },
-            body: JSON.stringify({
-              model: modelo,
-              temperature: 0.2,
-              max_tokens: 900,
-              messages: [
-                { role: "system", content: systemPrompt },
-                ...mensagensRecentes,
-                { role: "user", content: mensagemUsuario }
-              ]
-            })
-          });
-
-          if (!response.ok) {
-            const detalhe = await response.text().catch(() => "");
-            ultimoErro = new Error(`HTTP ${response.status}: ${detalhe}`);
-            // Se a chave for inválida (401), não adianta tentar outros modelos
-            if (response.status === 401) break;
-            continue;
-          }
-
-          const data = await response.json();
-          const resposta = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-
-          if (!resposta) {
-            ultimoErro = new Error("Resposta vazia do OpenRouter");
-            continue;
-          }
-
-          this.historico.push({ role: "user", content: mensagemUsuario });
-          this.historico.push({ role: "assistant", content: resposta.trim() });
-          return resposta.trim();
-        } catch (err) {
-          ultimoErro = err;
-        }
-      }
-
-      throw ultimoErro || new Error("Falha ao conectar ao OpenRouter");
-    }
-  };
-
-  /* ==========================================================================
-     6. MOTOR PROCESSADOR LOCAL (OUTRAS MÁQUINAS E FALLBACK AUTOMÁTICO)
-     ========================================================================== */
-  function processarPerguntaLocal(pergunta) {
+  function processarPergunta(pergunta) {
     const p = normalizarTexto(pergunta);
     const dom = InspectorDOM.obterEstadoAtual();
 
+    // ------------------------------------------------------------------------
     // REGRA 0-A: COMO TROCAR / ALTERAR A SENHA
+    // ------------------------------------------------------------------------
     if (
-      p.includes("trocar a senha") || p.includes("trocar senha") ||
-      p.includes("mudar senha") || p.includes("alterar senha") ||
+      p.includes("trocar a senha") || p.includes("trocar senha") || 
+      p.includes("mudar senha") || p.includes("alterar senha") || 
       p.includes("nova senha") || p.includes("mudar a senha") ||
       p.includes("esqueci a senha") || p.includes("redefinir senha")
     ) {
@@ -440,7 +305,9 @@ ${baseConhecimento}`;
              `💡 <i><b>Esqueceu sua senha?</b> Se você não conseguir logar, entre em contato com o administrador do sistema no setor de Gestão para solicitar o reset temporário do seu acesso.</i>`;
     }
 
-    // REGRA 0-B: PERGUNTAS FREQUENTES OPERACIONAIS
+    // ------------------------------------------------------------------------
+    // REGRA 0-B: PERGUNTAS FREQUENTES OPERACIONAIS (FALHA DE MÁQUINA, EXPORTAÇÃO, RELATÓRIOS)
+    // ------------------------------------------------------------------------
     if (p.includes("maquina quebrar") || p.includes("maquina parar") || p.includes("avisar falha") || p.includes("registrar defeito") || p.includes("maquinas paradas") || p.includes("ops e maquinas")) {
       return `🚨 <b>Status de OPs e Paradas de Máquinas no Chão de Fábrica:</b><br><br>` +
              `• <b>Solda Robotizada 03:</b> 🔴 PARADA (Falha elétrica detectada há 30 min)<br>` +
@@ -471,16 +338,18 @@ ${baseConhecimento}`;
       let res = `🚚 <b>Localização GPS & Telemetria dos Caminhões da Frota:</b><br><br>`;
       BancoDadosOficial.logistica.rastreamentoGPS.forEach(r => {
         res += `• <b>${r.id}</b> (${r.carga}): <b>${r.status}</b><br>` +
-               `  └ Motorista: ${r.motorista} | Destino: ${r.destino}<br>` +
-               `  └ Vel: ${r.vel} | Temp Baú: ${r.temp} | Tanque: ${r.tanque}<br><br>`;
+               `   └ Motorista: ${r.motorista} | Destino: ${r.destino}<br>` +
+               `   └ Vel: ${r.vel} | Temp Baú: ${r.temp} | Tanque: ${r.tanque}<br><br>`;
       });
       res += `👉 <i>Para acompanhar o mapa interativo, pesquise por "Rastreamento GPS".</i>`;
       return res;
     }
 
-    // REGRA 1: DÚVIDAS CONCEITUAIS E SIGNIFICADOS
-    const ehPerguntaSignificado = p.includes("significado") || p.includes("o que e") ||
-                                   p.includes("o que significa") || p.includes("conceito") ||
+    // ------------------------------------------------------------------------
+    // REGRA 1: DÚVIDAS CONCEITUAIS E SIGNIFICADOS ("SIGNIFICADO DE X", "O QUE É X", "O QUE SIGNIFICA")
+    // ------------------------------------------------------------------------
+    const ehPerguntaSignificado = p.includes("significado") || p.includes("o que e") || 
+                                   p.includes("o que significa") || p.includes("conceito") || 
                                    p.includes("defina") || p.includes("definicao") || p.includes("o que quer dizer");
 
     if (ehPerguntaSignificado || p === "oee" || p === "op" || p === "logistica") {
@@ -504,7 +373,9 @@ ${baseConhecimento}`;
       }
     }
 
-    // REGRA 2: RESUMO QUANTITATIVO GLOBAL
+    // ------------------------------------------------------------------------
+    // REGRA 2: RESUMO QUANTITATIVO GLOBAL ("QUANTOS / QUANTIDADE / TOTAIS / KPIS")
+    // ------------------------------------------------------------------------
     if (
       p.includes("quantos") || p.includes("quantas") || p.includes("quantidade") ||
       p.includes("total de") || p.includes("totais") || p.includes("numeros") ||
@@ -546,7 +417,9 @@ ${baseConhecimento}`;
              `📅 <b>Agenda & Eventos:</b> ${BancoDadosOficial.agenda.totalCompromissos} Compromissos (${BancoDadosOficial.agenda.urgentes} Urgente, ${BancoDadosOficial.agenda.prazosVencimentos} Prazos OPs)`;
     }
 
+    // ------------------------------------------------------------------------
     // REGRA 3: REDIRECIONAMENTO DE AGENDA / COMPROMISSOS
+    // ------------------------------------------------------------------------
     if (
       p.includes("agenda") || p.includes("compromisso") || p.includes("calendario") ||
       p.includes("reuniao") || p.includes("treinamento") || p.includes("evento") ||
@@ -562,7 +435,9 @@ ${baseConhecimento}`;
              `👉 <a href="${BancoDadosOficial.agenda.linkPagina}" style="color:var(--primary); font-weight:700; text-decoration:underline;">Clique aqui para abrir a Agenda Completa</a>`;
     }
 
-    // REGRA 4: MÁQUINAS E CHÃO DE FÁBRICA
+    // ------------------------------------------------------------------------
+    // REGRA 4: CONSULTA DE DADOS REAIS - MÁQUINAS E CHÃO DE FÁBRICA
+    // ------------------------------------------------------------------------
     if (p.includes("quais maquinas") || p.includes("status das maquinas") || p.includes("maquinas operando") || p.includes("torno") || p.includes("prensa") || p.includes("solda")) {
       let res = `<b>Status do Chão de Fábrica (7 Máquinas Registradas):</b><br><br>`;
       BancoDadosOficial.maquinasValidas.forEach(m => {
@@ -576,7 +451,9 @@ ${baseConhecimento}`;
       return res;
     }
 
-    // REGRA 5: PEDIDOS, OPS E ATRASOS
+    // ------------------------------------------------------------------------
+    // REGRA 5: CONSULTA DE DADOS REAIS - PEDIDOS, OPS E ATRASOS
+    // ------------------------------------------------------------------------
     if (p.includes("lista de pedidos") || p.includes("quais pedidos") || p.includes("quais ops") || p.includes("atraso") || p.includes("prazo de entrega")) {
       let res = `<b>Ordens de Produção e Pedidos Recentes (${BancoDadosOficial.dashboard.pedidosEmAberto} Pedidos em Aberto | ${BancoDadosOficial.dashboard.opsAtivas} OPs Ativas):</b><br><br>`;
       BancoDadosOficial.pedidosValidos.forEach(item => {
@@ -586,18 +463,22 @@ ${baseConhecimento}`;
       return res;
     }
 
-    // REGRA 6: LOGÍSTICA, ENTREGAS E RASTREAMENTO GPS
+    // ------------------------------------------------------------------------
+    // REGRA 6: CONSULTA DE DADOS REAIS - LOGÍSTICA, ENTREGAS E RASTREAMENTO GPS
+    // ------------------------------------------------------------------------
     if (p.includes("status das entregas") || p.includes("frota") || p.includes("motorista") || p.includes("sl-")) {
       let res = `<b>Rastreamento de Frota & Telemetria (4 Veículos Monitorados ao Vivo):</b><br><br>`;
       BancoDadosOficial.logistica.rastreamentoGPS.forEach(r => {
         res += `🚚 <b>${r.id}</b> (${r.carga}): ${r.status}<br>` +
-               `  └ Destino: ${r.destino} | Motorista: ${r.motorista}<br>` +
-               `  └ Telemetria: ${r.vel} | Temp Baú: ${r.temp} | Combustível: ${r.tanque}<br><br>`;
+               `   └ Destino: ${r.destino} | Motorista: ${r.motorista}<br>` +
+               `   └ Telemetria: ${r.vel} | Temp Baú: ${r.temp} | Combustível: ${r.tanque}<br><br>`;
       });
       return res;
     }
 
-    // REGRA 7: FORNECEDORES E HOMOLOGAÇÃO
+    // ------------------------------------------------------------------------
+    // REGRA 7: CONSULTA DE DADOS REAIS - FORNECEDORES E HOMOLOGAÇÃO
+    // ------------------------------------------------------------------------
     if (p.includes("quais fornecedores") || p.includes("lista de fornecedores") || p.includes("parceiros") || p.includes("cnpj")) {
       let res = `<b>Parceiros e Fornecedores Cadastrados (4 Homologados / 6 Total - Compras Mês: R$ 142.800):</b><br><br>`;
       BancoDadosOficial.fornecedores.forEach(f => {
@@ -606,7 +487,9 @@ ${baseConhecimento}`;
       return res;
     }
 
-    // REGRA 8: ESTOQUE CONFORTÁVEL / SOBRANDO
+    // ------------------------------------------------------------------------
+    // REGRA 8: CONSULTA DE DADOS REAIS - ESTOQUE CONFORTÁVEL / SOBRANDO
+    // ------------------------------------------------------------------------
     if (p.includes("demorar") || p.includes("demora") || p.includes("nao precisa") || p.includes("sobrando")) {
       return `<b>Análise de Estoque Confortável (Alta Duração):</b><br><br>` +
              `Com base na capacidade atual dos setores (Total: 1.247 Itens em Estoque):<br>` +
@@ -615,7 +498,9 @@ ${baseConhecimento}`;
              `Estes grupos possuem cobertura de estoque suficiente e <b>não necessitam de reposição nos próximos dias</b>.`;
     }
 
-    // REGRA 9: CADASTRO DE FUNCIONÁRIOS E PERFIL
+    // ------------------------------------------------------------------------
+    // REGRA 9: CONSULTA DE DADOS REAIS - CADASTRO DE FUNCIONÁRIOS E PERFIL
+    // ------------------------------------------------------------------------
     if (p.includes("como cadastrar") || p.includes("cadastrar um usuario") || p.includes("novo funcionario") || p.includes("colaborador")) {
       return `<b>Cadastro de Funcionários e Acessos:</b><br><br>` +
              `Para registrar um novo colaborador no StockLog:<br>` +
@@ -626,8 +511,11 @@ ${baseConhecimento}`;
              `👤 <b>Seu Usuário Atual:</b> ${BancoDadosOficial.usuarioLogado.nome} (${BancoDadosOficial.usuarioLogado.cargo}) | Matrícula: ${BancoDadosOficial.usuarioLogado.matricula}`;
     }
 
-    // REGRA 10: CONSULTA DIRETA DE PÁGINA
-    for (const [, info] of Object.entries(PaginasSistema)) {
+    // ------------------------------------------------------------------------
+    // REGRA 10: CONSULTA DIRETA DE PÁGINA ("O QUE É" + "COMO USAR")
+    // Se o usuário digitou o nome de qualquer uma das 14 páginas
+    // ------------------------------------------------------------------------
+    for (const [key, info] of Object.entries(PaginasSistema)) {
       const matchKey = info.chaves.some(chave => p.includes(normalizarTexto(chave)));
       if (matchKey) {
         let passosFormatados = info.comoUsar.replace(/\n/g, "<br>");
@@ -637,7 +525,9 @@ ${baseConhecimento}`;
       }
     }
 
+    // ------------------------------------------------------------------------
     // REGRA 11: INSPECIONAR FORMULÁRIO / TELA ATUAL
+    // ------------------------------------------------------------------------
     if (p.includes("analisar o que esta na tela") || p.includes("formulario") || p.includes("erro")) {
       let res = "<b>Diagnóstico da Tela Atual:</b><br><br>";
       if (dom.textoAlerta) {
@@ -654,7 +544,9 @@ ${baseConhecimento}`;
       return res;
     }
 
+    // ------------------------------------------------------------------------
     // REGRA 12: LISTA DE TODAS AS PÁGINAS DO SISTEMA
+    // ------------------------------------------------------------------------
     if (p.includes("quais sao as paginas") || p.includes("todas as paginas") || p.includes("todas as telas") || p.includes("lista de paginas") || p.includes("menu")) {
       let res = `<b>📋 Guia de Páginas e Telas do StockLog v2.4 (14 Módulos):</b><br><br>`;
       Object.values(PaginasSistema).forEach((item, index) => {
@@ -664,7 +556,9 @@ ${baseConhecimento}`;
       return res;
     }
 
+    // ------------------------------------------------------------------------
     // REGRA 13: VISÃO GERAL E OBJETIVO DO SISTEMA
+    // ------------------------------------------------------------------------
     if (
       p.includes("o que esse sistema faz") || p.includes("qual o objetivo") || p.includes("para que serve") ||
       p.includes("sobre o sistema") || p.includes("o que e o stocklog") || p.includes("o que e esse sistema") ||
@@ -680,7 +574,9 @@ ${baseConhecimento}`;
       return res;
     }
 
+    // ------------------------------------------------------------------------
     // SAUDAÇÕES E FALLBACK
+    // ------------------------------------------------------------------------
     if (p.includes("ola") || p.includes("oi") || p.includes("bom dia") || p.includes("boa tarde") || p.includes("boa noite")) {
       return `Olá, <b>${BancoDadosOficial.usuarioLogado.nome}</b>! Sou o <b>LogBot</b>, assistente oficial do StockLog v2.4.<br><br>Como posso te ajudar hoje com relatórios, paradas de máquinas, estoque crítico, frota ou troca de senha?`;
     }
@@ -696,7 +592,7 @@ ${baseConhecimento}`;
   }
 
   /* ==========================================================================
-     7. RENDERIZAÇÃO DA INTERFACE DO CHATBOT E EVENTOS
+     6. RENDERIZAÇÃO DA INTERFACE DO CHATBOT E EVENTOS
      ========================================================================== */
   function inicializarChatbot() {
     let root = document.getElementById("chatbot-root");
@@ -706,10 +602,6 @@ ${baseConhecimento}`;
       document.body.appendChild(root);
     }
 
-    const subtituloInicial = OpenRouterIA.estaAtivo()
-      ? "Assistente StockLog v2.4 • IA Ativa"
-      : "Assistente StockLog v2.4";
-
     root.innerHTML =
       '<button class="chatbot-toggle" id="chatbot-toggle-btn" aria-label="Abrir Chat LogBot">' +
         '<i class="fa-solid fa-comments"></i>' +
@@ -717,7 +609,7 @@ ${baseConhecimento}`;
       '<div class="chatbot-window" id="chatbot-window">' +
         '<div class="chatbot-header">' +
           '<div class="chatbot-avatar"><i class="fa-solid fa-robot"></i></div>' +
-          '<div class="chatbot-info"><h4>LogBot</h4><p id="chatbot-subtitle">' + subtituloInicial + '</p></div>' +
+          '<div class="chatbot-info"><h4>LogBot</h4><p>Assistente StockLog v2.4</p></div>' +
           '<button class="chatbot-close" id="chatbot-close-btn" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>' +
         '</div>' +
         '<div class="chatbot-messages" id="chatbot-messages"></div>' +
@@ -735,8 +627,8 @@ ${baseConhecimento}`;
     const chatInput = document.getElementById("chatbot-input");
     const sendBtn = document.getElementById("chatbot-send-btn");
     const voiceBtn = document.getElementById("chatbot-voice-btn");
-    const subtitleEl = document.getElementById("chatbot-subtitle");
 
+    // NOVAS PERGUNTAS FREQUENTES OTIMIZADAS PARA USO REAL EM FÁBRICA / LOGÍSTICA
     const sugestoesPrincipais = [
       "Quais OPs e máquinas estão paradas?",
       "Quais materiais estão em nível crítico?",
@@ -746,14 +638,6 @@ ${baseConhecimento}`;
     ];
 
     let chatIniciado = false;
-
-    function atualizarStatusHeader() {
-      if (subtitleEl) {
-        subtitleEl.innerText = OpenRouterIA.estaAtivo()
-          ? "Assistente StockLog v2.4 • IA Ativa"
-          : "Assistente StockLog v2.4";
-      }
-    }
 
     function abrirChat() {
       chatWindow.classList.add("open");
@@ -835,55 +719,17 @@ ${baseConhecimento}`;
       if (typing) typing.remove();
     }
 
-    async function processarEnvio() {
+    function processarEnvio() {
       const texto = chatInput.value.trim();
       if (!texto) return;
 
+      adicionarMensagem("user", texto);
       chatInput.value = "";
 
-      // Atalho opcional: salvar chave direto pelo navegador sem mexer no arquivo
-      if (texto.startsWith("/api ")) {
-        const novaChave = texto.slice(5).trim();
-        if (novaChave) {
-          OpenRouterIA.salvarChaveLocal(novaChave);
-          atualizarStatusHeader();
-          adicionarMensagem("bot", "✅ <b>Chave OpenRouter salva neste navegador!</b><br>O modo IA já está ativo apenas nesta máquina.");
-        }
-        return;
-      }
-
-      if (texto === "/api-off") {
-        OpenRouterIA.removerChaveLocal();
-        atualizarStatusHeader();
-        adicionarMensagem("bot", "🔒 <b>Chave removida do navegador.</b> O LogBot voltou para o modo local.");
-        return;
-      }
-
-      adicionarMensagem("user", texto);
       mostrarTyping();
 
-      if (OpenRouterIA.estaAtivo()) {
-        try {
-          const respostaIA = await OpenRouterIA.perguntar(texto);
-          removerTyping();
-          adicionarMensagem("bot", respostaIA);
-          return;
-        } catch (erro) {
-          console.error("[LogBot] Erro no OpenRouter:", erro);
-          const respostaFallback = processarPerguntaLocal(texto);
-          removerTyping();
-          adicionarMensagem(
-            "bot",
-            respostaFallback +
-            `<br><br><small style="opacity:0.75;">⚠️ <i>Nota: Falha ao consultar o OpenRouter (${erro.message}). Verifique se a chave sk-or-v1-... está correta.</i></small>`
-          );
-          return;
-        }
-      }
-
-      // Comportamento padrão nas outras máquinas (sem chave configurada)
       setTimeout(() => {
-        const resposta = processarPerguntaLocal(texto);
+        const resposta = processarPergunta(texto);
         removerTyping();
         adicionarMensagem("bot", resposta);
       }, 300);
