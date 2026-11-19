@@ -222,23 +222,44 @@
   // =====================================================================
   // 4. Render — Valor total em estoque (card de resumo)
   // =====================================================================
-  function renderValorTotal() {
-    const valorEl = $("#valorTotalEstoque");
-    const countEl = $("#valorItensCount");
-    if (!valorEl) return;
+ // =====================================================================
+// 4. Render — Cards de resumo (valor, itens, alertas, críticos)
+// =====================================================================
+function renderValorTotal() {
+  const valorEl   = $("#valorTotalEstoque");
+  const countEl   = $("#valorItensCount");
+  const totItens  = $("#totalItens");
+  const totPecas  = $("#totalPecas");
+  const totAlerta = $("#totalAlertas");
+  const totAlertaSub = $("#totalAlertasSub");
+  const totCrit   = $("#totalCriticos");
+  const totCritSub = $("#totalCriticosSub");
 
-    const total = items.reduce(
-      (a, i) => a + i.atual * i.valorUnitario,
-      0,
-    );
-    valorEl.textContent = formatBRL(total);
+  const total = items.reduce((a, i) => a + i.atual * i.valorUnitario, 0);
+  const totalPecasNum = items.reduce((a, i) => a + i.atual, 0);
+  const alertas = items.filter(i => i.status === "baixo" || i.status === "critico");
+  const criticos = items.filter(i => i.status === "critico");
 
-    if (countEl) {
-      const totalPecas = items.reduce((a, i) => a + i.atual, 0);
-      countEl.textContent = `${items.length} itens · ${totalPecas.toLocaleString("pt-BR")} peças em estoque`;
-    }
-  }
+  if (valorEl) valorEl.textContent = formatBRL(total);
+  if (countEl)
+    countEl.textContent = `${items.length} itens · ${totalPecasNum.toLocaleString("pt-BR")} peças`;
 
+  if (totItens) totItens.textContent = items.length.toLocaleString("pt-BR");
+  if (totPecas)
+    totPecas.textContent = `${totalPecasNum.toLocaleString("pt-BR")} peças em estoque`;
+
+  if (totAlerta) totAlerta.textContent = alertas.length.toLocaleString("pt-BR");
+  if (totAlertaSub)
+    totAlertaSub.textContent = alertas.length
+      ? `${alertas.length} com reposição pendente`
+      : "Nenhum item em alerta";
+
+  if (totCrit) totCrit.textContent = criticos.length.toLocaleString("pt-BR");
+  if (totCritSub)
+    totCritSub.textContent = criticos.length
+      ? "Reposição urgente"
+      : "Nenhum item crítico";
+}
   // =====================================================================
   // 5. Render — Capacidade por categoria
   // =====================================================================
