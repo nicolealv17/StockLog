@@ -211,7 +211,7 @@ const RECIPES = [
       destinoRefugo: "Parafusos e porcas descartados segregados como sucata metálica e enviados para reciclagem.",
     },
   },
-  {
+ {
     id: "perfil-01",
     nome: "Suporte Estrutural Perfil U",
     descricao: "Estrutura galvanizada para fixação de equipamentos",
@@ -223,12 +223,12 @@ const RECIPES = [
       { codigo: "CP-3045", categoria: "fixacao",    qty: 6,   unidade: "un", label: "Parafusos de Fixação" },
     ],
     steps: [
-      P("Cortar o perfil U galvanizado nos 3 metros necessários, conforme o desenho."),
-      P("Furar os pontos de fixação para os parafusos M8."),
-      P("Aplicar o primer anticorrosivo nas áreas de corte e furação."),
-      P("Aguardar a secagem do primer conforme especificação do fabricante."),
-      P("Montar os parafusos de fixação nos furos preparados."),
-      P("Inspecionar visualmente o acabamento e liberar para o estoque."),
+      P("Cortar o perfil U galvanizado nos 3 metros necessários, conforme o desenho.", "IMG/Suporte Estrutural Perfil U1.jpg"),
+      P("Furar os pontos de fixação para os parafusos M8.", "IMG/Suporte Estrutural Perfil U2.jpg"),
+      P("Aplicar o primer anticorrosivo nas áreas de corte e furação.", "IMG/Suporte Estrutural Perfil U3.jpg"),
+      P("Aguardar a secagem do primer conforme especificação do fabricante.", "IMG/Suporte Estrutural Perfil U4.jpg"),
+      P("Montar os parafusos de fixação nos furos preparados.", "IMG/Suporte Estrutural Perfil U5.jpg"),
+      P("Inspecionar visualmente o acabamento e liberar para o estoque.", "IMG/Suporte Estrutural Perfil U6.jpg"),
     ],
     qualidade: {
       defeitos: [
@@ -249,12 +249,12 @@ const RECIPES = [
       { codigo: "EM-5030", categoria: "embalagem", qty: 2, unidade: "un", label: "Lacre de Segurança" },
     ],
     steps: [
-      P("Inspecionar o tambor metálico vazio quanto a amassados ou corrosão."),
-      P("Realizar o envase do insumo líquido conforme o volume especificado."),
-      P("Posicionar a tampa do tambor e alinhar com o anel de vedação."),
-      P("Aplicar os 2 lacres de segurança industrial na tampa."),
-      P("Etiquetar o tambor com os dados do lote e a data de envase."),
-      P("Armazenar em área designada, aguardando expedição."),
+      P("Inspecionar o tambor metálico vazio quanto a amassados ou corrosão.", "IMG/Tambor Metálico 200L Lacrado1.jpg"),
+      P("Realizar o envase do insumo líquido conforme o volume especificado.", "IMG/Tambor Metálico 200L Lacrado2.jpg"),
+      P("Posicionar a tampa do tambor e alinhar com o anel de vedação.", "IMG/Tambor Metálico 200L Lacrado3.jpg"),
+      P("Aplicar os 2 lacres de segurança industrial na tampa.", "IMG/Tambor Metálico 200L Lacrado4.jpg"),
+      P("Etiquetar o tambor com os dados do lote e a data de envase.", "IMG/Tambor Metálico 200L Lacrado5.jpg"),
+      P("Armazenar em área designada, aguardando expedição.", "IMG/Tambor Metálico 200L Lacrado6.jpg"),
     ],
     qualidade: {
       defeitos: [
@@ -276,12 +276,12 @@ const RECIPES = [
       { codigo: "CS-7023", categoria: "fixacao", qty: 2,  unidade: "L",  label: "Lubrificante de Molde" },
     ],
     steps: [
-      P("Pesar e preparar a mistura de borracha ABS/polímero conforme a formulação."),
-      P("Aplicar o reforço de aço na carcaça do pneu durante a moldagem."),
-      P("Lubrificar o molde com lubrificante próprio antes da prensagem."),
-      P("Prensar e vulcanizar o pneu no molde aquecido, pelo tempo especificado."),
-      P("Resfriar o pneu gradualmente após a vulcanização."),
-      P("Inspecionar acabamento e balanceamento, e liberar para teste de qualidade."),
+      P("Pesar e preparar a mistura de borracha ABS/polímero conforme a formulação.", "IMG/Pneu de Carga HeavyDuty1.jpg"),
+      P("Aplicar o reforço de aço na carcaça do pneu durante a moldagem.", "IMG/Pneu de Carga HeavyDuty2.jpg"),
+      P("Lubrificar o molde com lubrificante próprio antes da prensagem.", "IMG/Pneu de Carga HeavyDuty3.jpg"),
+      P("Prensar e vulcanizar o pneu no molde aquecido, pelo tempo especificado.", "IMG/Pneu de Carga HeavyDuty4.jpg"),
+      P("Resfriar o pneu gradualmente após a vulcanização.", "IMG/Pneu de Carga HeavyDuty5.jpg"),
+      P("Inspecionar acabamento e balanceamento, e liberar para teste de qualidade.", "IMG/Pneu de Carga HeavyDuty6.jpg"),
     ],
     qualidade: {
       defeitos: [
@@ -302,11 +302,11 @@ const RECIPES = [
       { codigo: "MP-1102", categoria: "fixacao",   qty: 100, unidade: "ml", label: "Resina de Selagem" },
     ],
     steps: [
-      P("Montar a caixa de papelão duplo conforme as dimensões do produto a proteger."),
-      P("Aplicar a resina de selagem nas abas e junções da caixa."),
-      P("Aguardar a cura da resina conforme o tempo indicado pelo fabricante."),
-      P("Reforçar os cantos da caixa com fita adequada."),
-      P("Inspecionar a resistência da embalagem antes da liberação."),
+      P("Montar a caixa de papelão duplo conforme as dimensões do produto a proteger.", "IMG/Kit de Embalagem Premium1.jpg"),
+      P("Aplicar a resina de selagem nas abas e junções da caixa.", "IMG/Kit de Embalagem Premium2.jpg"),
+      P("Aguardar a cura da resina conforme o tempo indicado pelo fabricante.", "IMG/Kit de Embalagem Premium3.jpg"),
+      P("Reforçar os cantos da caixa com fita adequada.", "IMG/Kit de Embalagem Premium4.jpg"),
+      P("Inspecionar a resistência da embalagem antes da liberação.", "IMG/Kit de Embalagem Premium5.jpg"),
     ],
     qualidade: {
       defeitos: [
@@ -629,10 +629,13 @@ function normalizarPasso(s) {
   return { texto: s?.texto || '', imagem: s?.imagem || '', video: s?.video || '' };
 }
 
-/** Só aceita links http(s) — evita javascript: etc. */
+
 function urlSegura(url) {
   const u = String(url || '').trim();
-  return /^https?:\/\//i.test(u) ? u : '';
+  if (/^(https?:\/\/|(\.\.\/|\.\/)?IMG\/)/i.test(u)) {
+    return encodeURI(u); // codifica espaços nos nomes dos arquivos (ex: %20)
+  }
+  return '';
 }
 
 function escapeHtml(str) {
