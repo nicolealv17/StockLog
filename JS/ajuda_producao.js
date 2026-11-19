@@ -91,12 +91,12 @@ const RECIPES = [
       { codigo: "CS-7040", categoria: "fixacao",  qty: 0.3, unidade: "kg", label: "Solda de Acabamento" },
     ],
     steps: [
-      P("Verificar o programa de corte a laser e confirmar as dimensões conforme o desenho técnico."),
-      P("Posicionar a chapa de aço carbono 10mm na mesa da máquina de corte a laser."),
-      P("Executar o corte a laser seguindo o contorno programado."),
-      P("Rebarbar as bordas cortadas para remover rebarbas e resíduos de corte."),
-      P("Aplicar a solda de acabamento nos pontos indicados no desenho."),
-      P("Inspecionar as dimensões finais com paquímetro e liberar para a próxima etapa."),
+      P("Verificar o programa de corte a laser e confirmar as dimensões conforme o desenho técnico.","IMG/passo1-1.jpeg"),
+      P("Posicionar a chapa de aço carbono 10mm na mesa da máquina de corte a laser.","IMG/passo2-1.jpeg"),
+      P("Executar o corte a laser seguindo o contorno programado.","IMG/passo3-1.jpeg"),
+      P("Rebarbar as bordas cortadas para remover rebarbas e resíduos de corte.","IMG/passo4-1.jpeg"),
+      P("Aplicar a solda de acabamento nos pontos indicados no desenho.","IMG/passo5-1.jpeg"),
+      P("Inspecionar as dimensões finais com paquímetro e liberar para a próxima etapa.","IMG/passo6-1.jpeg"),
     ],
     qualidade: {
       defeitos: [
@@ -118,12 +118,12 @@ const RECIPES = [
       { codigo: "CP-3070", categoria: "fixacao",  qty: 1, unidade: "un", label: "Anel de Vedação" },
     ],
     steps: [
-      P("Selecionar a chapa de aço inox 304 e cortar o disco base conforme o diâmetro especificado."),
-      P("Furar os 4 pontos de fixação na furadeira de bancada, seguindo o gabarito."),
-      P("Usinar o rebaixo central para encaixe do tubo de ø50mm."),
-      P("Instalar os parafusos de fixação nos furos usinados."),
-      P("Posicionar o anel de vedação Viton na ranhura central."),
-      P("Realizar o teste de estanqueidade e liberar a peça para expedição."),
+      P("Selecionar a chapa de aço inox 304 e cortar o disco base conforme o diâmetro especificado.","IMG/passo1-2.jpeg"),
+      P("Furar os 4 pontos de fixação na furadeira de bancada, seguindo o gabarito.","IMG/passo2-2.jpeg"),
+      P("Usinar o rebaixo central para encaixe do tubo de ø50mm.","IMG/passo3-2.jpeg"),
+      P("Instalar os parafusos de fixação nos furos usinados.","IMG/passo4-2.jpeg"),
+      P("Posicionar o anel de vedação Viton na ranhura central.","IMG/passo5-2.jpeg"),
+      P("Realizar o teste de estanqueidade e liberar a peça para expedição.","IMG/passo6-2.jpeg"),
     ],
     qualidade: {
       defeitos: [
@@ -144,12 +144,12 @@ const RECIPES = [
       { codigo: "CS-7023", categoria: "fixacao",  qty: 0.5, unidade: "L",  label: "Óleo de Usinagem" },
     ],
     steps: [
-      P("Cortar a barra de bronze TM23 no comprimento necessário para o disco da engrenagem."),
-      P("Fixar o material no torno CNC e usinar o diâmetro externo."),
-      P("Aplicar óleo de usinagem durante todo o processo de corte, para resfriamento."),
-      P("Fresar os 40 dentes conforme o módulo especificado no desenho."),
-      P("Rebarbar e polir os dentes usinados."),
-      P("Medir o passo e o diâmetro primitivo com equipamento de metrologia."),
+      P("Cortar a barra de bronze TM23 no comprimento necessário para o disco da engrenagem.","IMG/passo1-3.jpeg"),
+      P("Fixar o material no torno CNC e usinar o diâmetro externo.","IMG/passo2-3.jpeg"),
+      P("Aplicar óleo de usinagem durante todo o processo de corte, para resfriamento.","IMG/passo3-3.jpeg"),
+      P("Fresar os 40 dentes conforme o módulo especificado no desenho.","IMG/passo4-3.jpeg"),
+      P("Rebarbar e polir os dentes usinados.","IMG/passo5-3.jpeg"),
+      P("Medir o passo e o diâmetro primitivo com equipamento de metrologia.","IMG/passo6-3.jpeg"),
     ],
     qualidade: {
       defeitos: [
@@ -170,12 +170,12 @@ const RECIPES = [
       { codigo: "MP-1120", categoria: "usinados", qty: 1,   unidade: "kg", label: "Barra de Bronze TM23" },
     ],
     steps: [
-      P("Usinar o corpo do mancal em barra de bronze TM23 conforme o desenho."),
-      P("Furar o alojamento central com tolerância H7 para encaixe do rolamento."),
-      P("Pressionar o rolamento blindado 6204-2RS no alojamento, usando prensa manual."),
-      P("Verificar o giro livre do rolamento após a montagem."),
-      P("Aplicar graxa nos pontos de lubrificação, quando aplicável."),
-      P("Inspecionar a folga axial e liberar o conjunto."),
+      P("Usinar o corpo do mancal em barra de bronze TM23 conforme o desenho.","IMG/passo1-4.jpeg"),
+      P("Furar o alojamento central com tolerância H7 para encaixe do rolamento.","IMG/passo2-4.jpeg"),
+      P("Pressionar o rolamento blindado 6204-2RS no alojamento, usando prensa manual.","IMG/passo3-4.jpeg"),
+      P("Verificar o giro livre do rolamento após a montagem.","IMG/passo4-4.jpeg"),
+      P("Aplicar graxa nos pontos de lubrificação, quando aplicável.","IMG/passo5-4.jpeg"),
+      P("Inspecionar a folga axial e liberar o conjunto.","IMG/passo6-4.jpeg"),
     ],
     qualidade: {
       defeitos: [
@@ -197,11 +197,11 @@ const RECIPES = [
       { codigo: "CP-3055", categoria: "fixacao", qty: 20, unidade: "un", label: "Arruela de Pressão M8" },
     ],
     steps: [
-      P("Separar 20 unidades de cada item: parafuso M8x30, porca M8 e arruela de pressão M8."),
-      P("Conferir a integridade da rosca de cada parafuso e porca."),
-      P("Organizar os itens em kits individuais de fixação (1 parafuso + 1 porca + 1 arruela)."),
-      P("Embalar os kits em sacos plásticos identificados com etiqueta do lote."),
-      P("Registrar a quantidade produzida no sistema de estoque."),
+      P("Separar 20 unidades de cada item: parafuso M8x30, porca M8 e arruela de pressão M8.","IMG/passo1-5.jpeg"),
+      P("Conferir a integridade da rosca de cada parafuso e porca.","IMG/passo2-5.jpeg"),
+      P("Organizar os itens em kits individuais de fixação (1 parafuso + 1 porca + 1 arruela).","IMG/passo3-5.jpeg"),
+      P("Embalar os kits em sacos plásticos identificados com etiqueta do lote.","IMG/passo3-5.jpeg"),
+      P("Registrar a quantidade produzida no sistema de estoque.","IMG/passo5-5.jpeg"),
     ],
     qualidade: {
       defeitos: [
