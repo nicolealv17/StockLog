@@ -90,11 +90,108 @@
   }
 
   // =====================================================================
+  // 3.1 Helpers de responsável (P1 — nome completo + avatar)
+  // =====================================================================
+  // Cache em memória: userId -> { nome, cargo, avatarUrl }
+  const responsaveisCache = new Map();
+
+  // Deriva iniciais a partir do nome completo
+  function iniciaisDe(nome) {
+    if (!nome) return '?';
+    const partes = nome.trim().split(/\s+/).filter(Boolean);
+    if (partes.length === 0) return '?';
+    if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+  }
+
+  // Cor determinística a partir do nome (para o fundo do avatar)
+  function corDoNome(nome) {
+    const paleta = [
+      '#006bb3', '#1a9b72', '#c47a1f', '#b93a3a',
+      '#6f4c9e', '#2d7a9b', '#a13e73', '#8a6d3b'
+    ];
+    let h = 0;
+    for (let i = 0; i < (nome || '').length; i++) h = (h * 31 + nome.charCodeAt(i)) >>> 0;
+    return paleta[h % paleta.length];
+  }
+
+  // Carrega cadastro de usuários uma vez (coleção /usuarios)
+  // Formato esperado: /usuarios/<uid> = { nome, cargo, email, avatarUrl, ativo }
+  let usuariosCarregados = false;
+  async function carregarUsuarios() {
+    if (usuariosCarregados) return;
+    usuariosCarregados = true;
+    try {
+      const snap = await db.ref('usuarios').once('value');
+      const val = snap.val() || {};
+      Object.entries(val).forEach(([uid, u]) => {
+        if (!u) return;
+        responsaveisCache.set(uid, {
+          nome: u.nome || u.name || uid,
+          cargo: u.cargo || u.role || '',
+          avatarUrl: u.avatarUrl || u.foto || null,
+          email: u.email || ''
+        });
+      });
+    } catch (e) {
+      console.warn('[StockLog] Não foi possível carregar /usuarios:', e);
+    }
+  }
+
+  // Resolve um responsável a partir de um identificador (uid, email ou nome)
+  function resolverResponsavel(o) {
+    // 1) tentou por uid
+    if (o.responsavelUid && responsaveisCache.has(o.responsavelUid)) {
+      return { uid: o.responsavelUid, ...responsaveisCache.get(o.responsavelUid) };
+    }
+    // 2) tenta por email
+    if (o.responsavelEmail) {
+      for (const [uid, u] of responsaveisCache.entries()) {
+        if ((u.email || '').toLowerCase() === o.responsavelEmail.toLowerCase()) {
+          return { uid, ...u };
+        }
+      }
+    }
+    // 3) tenta pelo nome exato
+    if (o.responsavel) {
+      for (const [uid, u] of responsaveisCache.entries()) {
+        if ((u.nome || '').toLowerCase() === o.responsavel.toLowerCase()) {
+          return { uid, ...u };
+        }
+      }
+    }
+    // 4) fallback: usa o que tem
+    return {
+      uid: o.responsavelUid || null,
+      nome: o.responsavel || '—',
+      cargo: '',
+      avatarUrl: null,
+      email: o.responsavelEmail || ''
+    };
+  }
+
+  // HTML do avatar + nome
+  function responsavelHTML(o) {
+    const r = resolverResponsavel(o);
+    const iniciais = iniciaisDe(r.nome);
+    const cor = corDoNome(r.nome);
+    const avatar = r.avatarUrl
+      ? `<img src="${escapeHtml(r.avatarUrl)}" alt="${escapeHtml(r.nome)}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+      : `<span style="width:28px;height:28px;border-radius:50%;background:${cor};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${iniciais}</span>`;
+    return `
+      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+        ${avatar}
+        <div style="min-width:0">
+          <div style="font-weight:600;font-size:0.92em;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(r.nome)}</div>
+          ${r.cargo ? `<div style="font-size:0.78em;color:var(--text-muted)">${escapeHtml(r.cargo)}</div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  // =====================================================================
   // 4. Geração de código — agora retorna apenas o próximo código
   //    disponível (sem se preocupar com chave de push)
   // =====================================================================
-  // Próximo número = MAIOR sequência existente no ano + 1
-  // (contar os pedidos quebra quando há exclusões ou códigos fora de ordem)
   function proximaSequencia(chaves, ano) {
     const re = new RegExp(`^OP-${ano}-(\\d+)$`);
     let max = 0;
@@ -107,8 +204,6 @@
 
   const fmtCodigo = (ano, n) => `OP-${ano}-${String(n).padStart(3, '0')}`;
 
-  // Reserva o código de forma atômica: só grava se a chave estiver livre.
-  // Se outro usuário pegou o mesmo número ao mesmo tempo, tenta o próximo.
   async function criarOrdem(data, user) {
     const ano = new Date().getFullYear();
     const snap = await db.ref('ordensProducao').once('value');
@@ -123,7 +218,7 @@
         criadoPor: user?.uid || 'anonimo'
       };
       const res = await db.ref(`ordensProducao/${codigo}`).transaction(
-        (atual) => (atual === null ? nova : undefined)   // undefined = aborta
+        (atual) => (atual === null ? nova : undefined)
       );
       if (res.committed) return codigo;
     }
@@ -144,18 +239,93 @@
   }
 
   // =====================================================================
+  // 5.1 P0 — Seed automático de datas coerentes
+  //     Se o pedido veio de um seed antigo (datas no passado), ajusta o
+  //     prazo para "hoje + N dias" com base no status, para não gerar
+  //     atrasos falsos (17 de 19 = 89%).
+  // =====================================================================
+  const SEED_MARKER = 'seedRevisadoEm';
+  const PRAZO_DIAS_POR_STATUS = {
+    planejamento: 20,
+    aguardando:   12,
+    producao:     7,
+    qa:           3,
+    concluido:    0,   // não importa (concluído não conta como atraso)
+    cancelado:    0
+  };
+
+  function hojeISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function addDiasISO(dias) {
+    const d = new Date();
+    d.setDate(d.getDate() + dias);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  // Detecta se um pedido é "seed antigo": criado há mais de 1 dia E prazo vencido.
+  // Nesse caso, reescreve o prazo para um valor coerente com o status.
+  async function revisarSeedAntigo(o) {
+    if (o[SEED_MARKER]) return false; // já revisado
+    if (!o.prazo) return false;
+
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const prazo = new Date(o.prazo + 'T00:00:00');
+    const prazoVencido = prazo < hoje;
+    if (!prazoVencido) return false;
+
+    // Se está concluído/cancelado, apenas marca como revisado (não conta como atraso mesmo assim)
+    if (o.status === 'concluido' || o.status === 'cancelado') {
+      await db.ref(`ordensProducao/${o.firebaseKey}/${SEED_MARKER}`).set(Date.now());
+      return false;
+    }
+
+    const dias = PRAZO_DIAS_POR_STATUS[o.status] ?? 10;
+    const novoPrazo = addDiasISO(dias);
+    await db.ref(`ordensProducao/${o.firebaseKey}`).update({
+      prazo: novoPrazo,
+      [SEED_MARKER]: Date.now()
+    });
+    return true;
+  }
+
+  async function revisarSeedsAntigos(lista) {
+    let ajustados = 0;
+    for (const o of lista) {
+      try {
+        const mudou = await revisarSeedAntigo(o);
+        if (mudou) ajustados++;
+      } catch (e) {
+        console.warn('[StockLog] Falha ao revisar seed', o.firebaseKey, e);
+      }
+    }
+    if (ajustados > 0) {
+      console.log(`[StockLog] ${ajustados} pedido(s) de seed antigo tiveram o prazo reajustado para datas coerentes.`);
+      showToast(`${ajustados} prazo(s) antigo(s) reajustado(s) automaticamente.`);
+    }
+  }
+
+  // =====================================================================
   // 6. Listeners Firebase
   // =====================================================================
   function bindFirebase() {
-    db.ref('ordensProducao').on('value', (snap) => {
+    db.ref('ordensProducao').on('value', async (snap) => {
       const val = snap.val() || {};
       orders = Object.entries(val).map(([key, o]) => ({
-        // A chave AGORA É o próprio código (OP-2026-XXX)
         firebaseKey: key,
-        codigo:      o.codigo || key,   // fallback: se o campo codigo não existir, usa a chave
+        codigo:      o.codigo || key,
         ...o
       }));
       orders.sort((a, b) => (b.dataCriacao || 0) - (a.dataCriacao || 0));
+
+      // Garante que o cadastro de usuários já está carregado antes do render
+      await carregarUsuarios();
+
+      // Corrige prazos herdados de seeds antigos (P0)
+      await revisarSeedsAntigos(orders);
+
       renderAll();
     });
   }
@@ -205,7 +375,7 @@
         <td><span class="priority-tag" style="background:${pr.bg};color:${pr.color}">
           <span class="dot" style="background:${pr.color}"></span>${pr.label}
         </span></td>
-        <td>${escapeHtml(o.responsavel || '—')}</td>
+        <td>${responsavelHTML(o)}</td>
         <td>${fmtDate(o.prazo)}${isLate(o) ? ' <i class="fas fa-triangle-exclamation" style="color:var(--red)" title="Prazo vencido"></i>' : ''}</td>
         <td><span class="status-tag" style="background:${st.bg};color:${st.color}">
           <span class="dot" style="background:${st.color}"></span>${st.label}
@@ -369,11 +539,25 @@
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Salvando…';
 
+    // P1 — tenta casar o nome digitado com um usuário do cadastro
+    const nomeDigitado = $('fResponsavel').value.trim();
+    let responsavelUid = null;
+    let responsavelEmail = null;
+    for (const [uid, u] of responsaveisCache.entries()) {
+      if ((u.nome || '').toLowerCase() === nomeDigitado.toLowerCase()) {
+        responsavelUid = uid;
+        responsavelEmail = u.email || null;
+        break;
+      }
+    }
+
     const data = {
       produto:     $('fProduto').value.trim(),
       quantidade:  Number($('fQuantidade').value),
       prioridade:  $('fPrioridade').value,
-      responsavel: $('fResponsavel').value.trim(),
+      responsavel: nomeDigitado,
+      responsavelUid:   responsavelUid || null,
+      responsavelEmail: responsavelEmail || null,
       prazo:       $('fPrazo').value,
       status:      $('fStatus').value,
       obs:         $('fObs').value.trim()
@@ -381,13 +565,10 @@
 
     try {
       if (editingKey) {
-        // ---------- UPDATE ----------
-        // editingKey já É o código (OP-2026-XXX)
         await db.ref(`ordensProducao/${editingKey}`).update(data);
         await logEvento('info', `${editingCodigo} atualizado por ${user?.email || 'sistema'}`, editingKey);
         showToast(`Pedido ${editingCodigo} atualizado.`);
       } else {
-        // ---------- CREATE ----------
         const codigo = await criarOrdem(data, user);
         await logEvento('info', `${codigo} criada por ${user?.email || 'sistema'}`, codigo);
         showToast(`Pedido ${codigo} criado com sucesso.`);

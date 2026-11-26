@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockLog · Pedidos de Compra</title>
+    <link rel="icon" type="image/png" href="IMG/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="components/css/sidebar.css" />
+    <link rel="stylesheet" href="components/css/header.css" />
+    <link rel="stylesheet" href="components/css/chat.css" />
+    <link rel="stylesheet" href="components/css/footer.css" />
+    <link rel="stylesheet" href="components/css/modoescuro.css" />
+    <link rel="stylesheet" href="components/css/responsive.css" />
+
+    <style>
+      :root {
+        --bg-body: #edf3f8; --bg-card: #ffffff; --bg-soft: #f4f8fc; --border: #d4e2f0;
+        --text-main: #0c1e2e; --text-secondary: #3b5a75; --text-muted: #718da8;
+        --primary: #006bb3; --primary-light: #e3f0fb;
+        --green: #15803d; --green-bg: #dcfce7;
+        --amber: #b45309; --amber-bg: #fef3c7;
+        --red: #b91c1c; --red-bg: #fee2e2;
+        --blue: #0369a1; --blue-bg: #e0f2fe;
+        --purple: #6b21a8; --purple-bg: #f3e8ff;
+        --teal: #0f766e; --teal-bg: #ccfbf1;
+        --row-stripe: #f5f9fd;
+        --shadow: 0 4px 12px rgba(12, 30, 46, 0.06);
+        --pad: clamp(16px, 1.2vw, 22px);
+      }
+      body.dark {
+        --bg-body: #0a131d; --bg-card: #111f2e; --bg-soft: #16283b; --border: #1e364f;
+        --text-main: #e2edf8; --text-secondary: #9cb5cd; --text-muted: #6482a0;
+        --primary: #38bdf8; --primary-light: #17324d;
+        --green: #4ade80; --green-bg: #143823;
+        --amber: #fbbf24; --amber-bg: #3d2d11;
+        --red: #f87171; --red-bg: #3e1919;
+        --blue: #38bdf8; --blue-bg: #123147;
+        --purple: #c084fc; --purple-bg: #331d48;
+        --teal: #2dd4bf; --teal-bg: #0e3733;
+        --row-stripe: #152638;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: "Inter", sans-serif; background-color: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; font-size: 15px; line-height: 1.5; }
+      #sidebar-root { position: sticky; top: 0; height: 100vh; align-self: flex-start; z-index: 100; }
+      .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+      .container { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+      .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .kpi { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow); }
+      .kpi-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+      .kpi-icon.blue { background: var(--blue-bg); color: var(--blue); }
+      .kpi-icon.amber { background: var(--amber-bg); color: var(--amber); }
+      .kpi-icon.green { background: var(--green-bg); color: var(--green); }
+      .kpi-icon.purple { background: var(--purple-bg); color: var(--purple); }
+      .kpi-value { font-size: 22px; font-weight: 800; line-height: 1.1; }
+      .kpi-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+
+      .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: var(--pad); box-shadow: var(--shadow); }
+      .card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+      .card-header h2 { font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+      .btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); transition: 0.15s; text-decoration: none; }
+      .btn:hover { border-color: var(--primary); color: var(--primary); background: var(--bg-soft); }
+      .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .btn-primary:hover { opacity: 0.92; }
+      .btn-success { background: var(--green); color: #fff; border-color: var(--green); }
+      .btn-success:hover { opacity: 0.92; }
+      .btn-warning { background: var(--amber); color: #fff; border-color: var(--amber); }
+      .btn-warning:hover { opacity: 0.92; }
+      .btn-danger { background: var(--red); color: #fff; border-color: var(--red); }
+      .btn-danger:hover { opacity: 0.92; }
+
+      .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+      .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text-secondary); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+      .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+      .table-wrapper { width: 100%; overflow-x: auto; }
+      table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; min-width: 950px; }
+      th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+      td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+      tbody tr:nth-child(even) td { background: var(--row-stripe); }
+      tbody tr:hover td { background: var(--primary-light); }
+
+      .item-code { font-weight: 700; color: var(--text-secondary); font-size: 0.9em; }
+      .item-name { font-weight: 600; }
+      .qty { font-weight: 700; }
+      .badge { font-size: 0.78em; font-weight: 700; padding: 3px 9px; border-radius: 10px; display: inline-flex; align-items: center; gap: 4px; }
+      .badge.pendente { background: var(--amber-bg); color: var(--amber); }
+      .badge.em_transito { background: var(--blue-bg); color: var(--blue); }
+      .badge.recebido { background: var(--green-bg); color: var(--green); }
+      .badge.cancelado { background: var(--bg-soft); color: var(--text-muted); border: 1px solid var(--border); }
+
+      .flow { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; }
+      .flow-step { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 4px; background: var(--bg-soft); border: 1px solid var(--border); }
+      .flow-step.done { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+      .flow-step.current { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); font-weight: 700; }
+
+      .actions { display: flex; gap: 6px; }
+      .icon-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+      .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+      .modal-overlay { position: fixed; inset: 0; background: rgba(12,30,46,0.5); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 10000; opacity: 0; visibility: hidden; transition: 0.25s; }
+      .modal-overlay.active { opacity: 1; visibility: visible; }
+      .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; width: 90%; max-width: 620px; max-height: 90vh; overflow-y: auto; padding: 24px; }
+      .modal h2 { font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+      .modal h2 button { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; }
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .form-group { display: flex; flex-direction: column; gap: 5px; }
+      .form-group.full { grid-column: span 2; }
+      .form-group label { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
+      .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-soft); color: var(--text-main); font-family: inherit; font-size: 13px; outline: none; }
+      .form-group textarea { resize: vertical; min-height: 60px; }
+      .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+      .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+      .toast { position: fixed; bottom: 20px; right: 20px; background: var(--green); color: #fff; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 13.5px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; opacity: 0; visibility: hidden; transform: translateY(10px); transition: 0.25s; z-index: 9999; }
+      .toast.show { opacity: 1; visibility: visible; transform: translateY(0); }
+      .toast.danger { background: var(--red); }
+
+      @media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 600px) { .kpis { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: span 1; } }
+    </style>
+    <script src="JS/auth-guard.js"></script>
+  </head>
+  <body>
+    <div id="sidebar-root"></div>
+    <div class="main-wrapper">
+      <div id="header-root"></div>
+      <div class="container">
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="kpi-icon amber"><i class="fas fa-clock"></i></div>
+            <div>
+              <div class="kpi-value" id="kpiPendentes">0</div>
+              <div class="kpi-label">Pendentes</div>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon blue"><i class="fas fa-truck-fast"></i></div>
+            <div>
+              <div class="kpi-value" id="kpiTransito">0</div>
+              <div class="kpi-label">Em trânsito</div>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon green"><i class="fas fa-check"></i></div>
+            <div>
+              <div class="kpi-value" id="kpiRecebidos">0</div>
+              <div class="kpi-label">Recebidos</div>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-icon purple"><i class="fas fa-dollar-sign"></i></div>
+            <div>
+              <div class="kpi-value" id="kpiValor">R$ 0</div>
+              <div class="kpi-label">Valor em aberto</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-cart-plus" style="color:var(--primary)"></i> Pedidos de Compra</h2>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <a href="fornecedores.html" class="btn"><i class="fas fa-arrow-left"></i> Fornecedores</a>
+              <button class="btn btn-primary" onclick="openNovoPedido()"><i class="fas fa-plus"></i> Novo pedido</button>
+            </div>
+          </div>
+
+          <div class="filters">
+            <button class="chip active" data-status="todos" onclick="setFiltro('todos',this)">Todos</button>
+            <button class="chip" data-status="pendente" onclick="setFiltro('pendente',this)"><i class="fas fa-circle" style="font-size:7px;color:var(--amber)"></i> Pendentes</button>
+            <button class="chip" data-status="em_transito" onclick="setFiltro('em_transito',this)"><i class="fas fa-circle" style="font-size:7px;color:var(--blue)"></i> Em trânsito</button>
+            <button class="chip" data-status="recebido" onclick="setFiltro('recebido',this)"><i class="fas fa-circle" style="font-size:7px;color:var(--green)"></i> Recebidos</button>
+            <button class="chip" data-status="cancelado" onclick="setFiltro('cancelado',this)"><i class="fas fa-circle" style="font-size:7px;color:var(--text-muted)"></i> Cancelados</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Item</th>
+                  <th>Qtd</th>
+                  <th>Fornecedor</th>
+                  <th>Fluxo</th>
+                  <th>Previsão</th>
+                  <th>Valor</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="footer-root"></div>
+    </div>
+
+    <!-- Modal novo pedido -->
+    <div class="modal-overlay" id="novoModal">
+      <div class="modal">
+        <h2><i class="fas fa-cart-plus"></i> Novo pedido de compra <button onclick="closeNovo()"><i class="fas fa-xmark"></i></button></h2>
+        <form onsubmit="salvarPedido(event)">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Item *</label>
+              <input type="text" id="novoItem" placeholder="Ex: Chapa Aço Inox 304" required />
+            </div>
+            <div class="form-group">
+              <label>Código do item</label>
+              <input type="text" id="novoCodigo" placeholder="Ex: MP-1050" />
+            </div>
+            <div class="form-group">
+              <label>Quantidade *</label>
+              <input type="number" id="novoQtd" min="1" required />
+            </div>
+            <div class="form-group full">
+              <label>Fornecedor *</label>
+              <select id="novoFornecedor" required></select>
+            </div>
+            <div class="form-group">
+              <label>Valor unitário (R$)</label>
+              <input type="number" id="novoValorUnit" min="0" step="0.01" placeholder="0,00" />
+            </div>
+            <div class="form-group">
+              <label>Previsão de entrega</label>
+              <input type="date" id="novoPrevisao" />
+            </div>
+            <div class="form-group full">
+              <label>Observação</label>
+              <textarea id="novoObs" placeholder="Urgência, referência, condições..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn" onclick="closeNovo()">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Criar pedido</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"><i class="fas fa-circle-check"></i><span id="toastMsg"></span></div>
+
+    <script>
+      // =====================================================================
+      // Seed de pedidos — "os 3 em trânsito" vêm daqui (P0)
+      // =====================================================================
+      const SEED_PEDIDOS = [
+        { id: "PC-2026-001", item: "Chapa Aço Inox 304", codigo: "MP-1042", qtd: 50, unidade: "kg",
+          fornecedor: "Metalúrgica Silva Ltda", valorUnit: 120, valorTotal: 6000,
+          previsao: "2026-12-02", status: "em_transito", criadoEm: Date.now() - 86400000*3,
+          obs: "Reposição crítica — mínimo atingido." },
+        { id: "PC-2026-002", item: "Rolamento 6204-2RS", codigo: "CP-3011", qtd: 100, unidade: "un",
+          fornecedor: "Rolamentos & Cia Indústria", valorUnit: 18, valorTotal: 1800,
+          previsao: "2026-12-05", status: "em_transito", criadoEm: Date.now() - 86400000*2,
+          obs: "Lote para a OP-2026-002." },
+        { id: "PC-2026-003", item: "Resina Epóxi Industrial", codigo: "CS-7100", qtd: 20, unidade: "L",
+          fornecedor: "Química Industrial Nordeste", valorUnit: 85, valorTotal: 1700,
+          previsao: "2026-12-08", status: "em_transito", criadoEm: Date.now() - 86400000*1,
+          obs: "Aguardando liberação alfandegária." }
+      ];
+
+      let pedidos = [];
+      let currentFiltro = "todos";
+
+      function loadPedidos() {
+        try {
+          const saved = localStorage.getItem("stocklog_pedidos_compra_v1");
+          pedidos = saved ? JSON.parse(saved) : SEED_PEDIDOS.slice();
+        } catch { pedidos = SEED_PEDIDOS.slice(); }
+      }
+      function savePedidos() {
+        try { localStorage.setItem("stocklog_pedidos_compra_v1", JSON.stringify(pedidos)); } catch {}
+      }
+      function fmtBRL(v) {
+        return Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+      }
+      function fmtData(iso) {
+        if (!iso) return "—";
+        const [y,m,d] = iso.split("-");
+        return `${d}/${m}/${y}`;
+      }
+
+      function showToast(msg, danger = false) {
+        const t = document.getElementById("toast");
+        document.getElementById("toastMsg").innerText = msg;
+        t.classList.toggle("danger", danger);
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 3000);
+      }
+
+      function setFiltro(f, el) {
+        currentFiltro = f;
+        document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+        el.classList.add("active");
+        render();
+      }
+
+      function render() {
+        const tbody = document.getElementById("tbody");
+        const filtered = pedidos.filter(p => currentFiltro === "todos" || p.status === currentFiltro);
+
+        tbody.innerHTML = filtered.map(p => {
+          const statusLabels = { pendente: "Pendente", em_transito: "Em trânsito", recebido: "Recebido", cancelado: "Cancelado" };
+          const flowSteps = [
+            { k: "solicitado", label: "Solicitado", done: true },
+            { k: "aprovado", label: "Aprovado", done: p.status !== "pendente" && p.status !== "cancelado" },
+            { k: "em_transito", label: "Em trânsito", done: p.status === "em_transito" || p.status === "recebido" },
+            { k: "recebido", label: "Recebido", done: p.status === "recebido" }
+          ];
+          const currentStep = p.status === "pendente" ? "aprovado"
+                            : p.status === "em_transito" ? "em_transito"
+                            : p.status === "recebido" ? "recebido" : null;
+          return `
+            <tr>
+              <td><span class="item-code">${p.id}</span></td>
+              <td>
+                <div class="item-name">${p.item}</div>
+                <div style="font-size:11px;color:var(--text-muted)">${p.codigo || ""}</div>
+              </td>
+              <td><span class="qty">${p.qtd}</span> ${p.unidade}</td>
+              <td>${p.fornecedor}</td>
+              <td>
+                <div class="flow">
+                  ${flowSteps.map(s => `<span class="flow-step ${s.done ? "done" : ""} ${s.k === currentStep ? "current" : ""}">${s.done ? '<i class="fas fa-check"></i>' : ""} ${s.label}</span>`).join("")}
+                </div>
+              </td>
+              <td>${fmtData(p.previsao)}</td>
+              <td><strong>${fmtBRL(p.valorTotal)}</strong></td>
+              <td>
+                <div class="actions">
+                  ${p.status === "pendente" ? `<button class="icon-btn" title="Marcar como enviado" onclick="mudarStatus('${p.id}','em_transito')"><i class="fas fa-truck-fast"></i></button>` : ""}
+                  ${p.status === "em_transito" ? `<button class="icon-btn" title="Confirmar recebimento e dar entrada no estoque" onclick="mudarStatus('${p.id}','recebido')"><i class="fas fa-check"></i></button>` : ""}
+                  ${p.status !== "recebido" && p.status !== "cancelado" ? `<button class="icon-btn" title="Cancelar" onclick="mudarStatus('${p.id}','cancelado')"><i class="fas fa-xmark"></i></button>` : ""}
+                </div>
+              </td>
+            </tr>`;
+        }).join("") || `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted)">Nenhum pedido encontrado.</td></tr>`;
+
+        const pendentes = pedidos.filter(p => p.status === "pendente").length;
+        const transito = pedidos.filter(p => p.status === "em_transito").length;
+        const recebidos = pedidos.filter(p => p.status === "recebido").length;
+        const valorAberto = pedidos.filter(p => p.status === "pendente" || p.status === "em_transito").reduce((a,p)=>a+p.valorTotal,0);
+
+        document.getElementById("kpiPendentes").innerText = pendentes;
+        document.getElementById("kpiTransito").innerText = transito;
+        document.getElementById("kpiRecebidos").innerText = recebidos;
+        document.getElementById("kpiValor").innerText = fmtBRL(valorAberto);
+      }
+
+      // P0: fluxo "recebido → entrada no estoque"
+      function mudarStatus(id, novoStatus) {
+        const p = pedidos.find(x => x.id === id);
+        if (!p) return;
+
+        if (novoStatus === "recebido") {
+          if (!confirm(`Confirmar recebimento de ${p.item} (${p.qtd} ${p.unidade})?\n\nIsso dará entrada automática no estoque.`)) return;
+          darEntradaEstoque(p);
+        }
+
+        if (novoStatus === "cancelado" && !confirm("Cancelar este pedido?")) return;
+
+        p.status = novoStatus;
+        savePedidos();
+        render();
+        showToast(`Pedido ${p.id} → ${novoStatus.replace("_"," ")}`);
+      }
+
+      // P0: integra com /itens do Firebase (com fallback localStorage)
+      async function darEntradaEstoque(p) {
+        if (window.SL && window.SL.db) {
+          try {
+            const key = (p.codigo || p.item).toUpperCase().replace(/[.#$\[\]\/]/g, "_").replace(/\s+/g,"_");
+            const snap = await window.SL.db.ref(`itens/${key}`).once("value");
+            const atual = snap.val() || {};
+            await window.SL.db.ref(`itens/${key}`).update({
+              codigo: p.codigo || key,
+              nome: atual.nome || p.item,
+              atual: (Number(atual.atual) || 0) + p.qtd,
+              entradas: (Number(atual.entradas) || 0) + p.qtd,
+              atualizadoEm: Date.now()
+            });
+            await window.SL.db.ref("logbot/eventos").push({
+              tipo: "info",
+              texto: `Entrada de ${p.qtd} ${p.unidade} de ${p.item} via pedido ${p.id}`,
+              timestamp: Date.now()
+            });
+            showToast(`Entrada no estoque: +${p.qtd} ${p.unidade} de ${p.item}`);
+            return;
+          } catch (e) {
+            console.warn("[StockLog] Falha ao dar entrada no Firebase:", e);
+          }
+        }
+        // fallback local
+        const savedItens = localStorage.getItem("stocklog_itens_v1");
+        const itens = savedItens ? JSON.parse(savedItens) : [];
+        const idx = itens.findIndex(i => (i.codigo || "").toUpperCase() === (p.codigo || "").toUpperCase());
+        if (idx >= 0) itens[idx].atual = (itens[idx].atual || 0) + p.qtd;
+        localStorage.setItem("stocklog_itens_v1", JSON.stringify(itens));
+        showToast(`Entrada local: +${p.qtd} ${p.unidade} de ${p.item}`);
+      }
+
+      function openNovoPedido() {
+        const sel = document.getElementById("novoFornecedor");
+        let fornecedores = [];
+        try {
+          const saved = localStorage.getItem("stocklog_fornecedores_v2");
+          fornecedores = saved ? JSON.parse(saved) : [];
+        } catch {}
+        sel.innerHTML = '<option value="">Selecione...</option>' +
+          fornecedores.filter(f => f.relation !== "cliente").map(f => `<option value="${f.name}">${f.name}</option>`).join("");
+        document.getElementById("novoModal").classList.add("active");
+      }
+      function closeNovo() {
+        document.getElementById("novoModal").classList.remove("active");
+        document.querySelector("#novoModal form").reset();
+      }
+
+      function salvarPedido(e) {
+        e.preventDefault();
+        const item = document.getElementById("novoItem").value.trim();
+        const codigo = document.getElementById("novoCodigo").value.trim();
+        const qtd = parseInt(document.getElementById("novoQtd").value) || 0;
+        const fornecedor = document.getElementById("novoFornecedor").value;
+        const valorUnit = parseFloat(document.getElementById("novoValorUnit").value) || 0;
+        const previsao = document.getElementById("novoPrevisao").value;
+        const obs = document.getElementById("novoObs").value.trim();
+
+        if (!item || !qtd || !fornecedor) { showToast("Preencha item, quantidade e fornecedor.", true); return; }
+
+        const maxNum = pedidos.map(p => parseInt((p.id.match(/\d+$/)||[0])[0],10)).reduce((a,b)=>Math.max(a,b),0);
+        const novoId = "PC-2026-" + String(maxNum + 1).padStart(3,"0");
+
+        pedidos.unshift({
+          id: novoId, item, codigo, qtd, unidade: "un", fornecedor, valorUnit,
+          valorTotal: qtd * valorUnit, previsao, status: "pendente", criadoEm: Date.now(), obs
+        });
+        savePedidos();
+        closeNovo();
+        render();
+        showToast(`Pedido ${novoId} criado.`);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadPedidos();
+        render();
+      });
+    </script>
+    <script src="components/js/header.js"></script>
+    <script src="components/js/sidebar.js"></script>
+    <script src="components/js/chat.js"></script>
+    <script src="components/js/config.js"></script>
+    <script src="components/js/footer.js"></script>
+    <script src="components/js/modoescuro.js"></script>
+    <script src="components/js/vlibras.js"></script>
+  </body>
+</html>

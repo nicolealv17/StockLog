@@ -170,6 +170,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: 0.15s;
+        text-decoration: none;
       }
 
       .btn-action:hover {
@@ -186,6 +187,32 @@
 
       .btn-action.btn-primary:hover {
         opacity: 0.9;
+      }
+
+      /* ===== NOVO: botão de Pedidos de Compra em destaque ===== */
+      .btn-action.btn-cart {
+        background-color: var(--amber-bar);
+        color: #ffffff;
+        border-color: var(--amber-bar);
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+      }
+
+      .btn-action.btn-cart:hover {
+        background-color: var(--amber);
+        border-color: var(--amber);
+        color: #ffffff;
+        opacity: 1;
+      }
+
+      .btn-action.btn-cart .badge-count {
+        background: #ffffff;
+        color: var(--amber-bar);
+        border-radius: 10px;
+        padding: 1px 8px;
+        font-size: 11px;
+        font-weight: 800;
+        margin-left: 4px;
       }
 
       .stats-grid {
@@ -681,6 +708,14 @@
                 <option value="Embalagens">Embalagens</option>
                 <option value="Ferramentas">Ferramental</option>
               </select>
+
+              <!-- NOVO: botão para a tela de Pedidos de Compra -->
+              <a href="pedidos-compra.html" class="btn-action btn-cart" title="Abrir tela de Pedidos de Compra">
+                <i class="fas fa-cart-plus"></i>
+                Pedidos de Compra
+                <span class="badge-count" id="btnCartCount">3</span>
+              </a>
+
               <button class="btn-action btn-primary" onclick="openModal()">
                 <i class="fas fa-plus"></i> Novo Fornecedor
               </button>
@@ -887,6 +922,21 @@
       let currentStatusFilter = "todos";
       let editingSupplierId = null;
 
+      // NOVO: atualiza o contador do botão "Pedidos de Compra" com base no localStorage
+      function atualizarContadorPedidos() {
+        let count = 3;
+        try {
+          const saved = localStorage.getItem("stocklog_pedidos_compra_v1");
+          if (saved) {
+            const list = JSON.parse(saved);
+            const emTransito = list.filter(p => p.status === "em_transito" || p.status === "pendente").length;
+            count = emTransito;
+          }
+        } catch (e) {}
+        const el = document.getElementById("btnCartCount");
+        if (el) el.textContent = count;
+      }
+
       function setStatusFilter(status, element) {
         currentStatusFilter = status;
         document.querySelectorAll(".filter-chip").forEach((chip) => chip.classList.remove("active"));
@@ -926,7 +976,7 @@
         };
 
         document.getElementById("detailsTitle").innerHTML = `<i class="fas fa-building"></i> ${supplier.name}`;
-        
+
         document.getElementById("detailsContent").innerHTML = `
           <div style="display: flex; flex-direction: column; gap: 16px;">
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; background: var(--bg-soft); padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
@@ -995,7 +1045,7 @@
 
         editingSupplierId = id;
         document.getElementById("modalTitle").innerHTML = '<i class="fas fa-pen"></i> Editar Fornecedor';
-        
+
         document.getElementById("formName").value = item.name;
         document.getElementById("formCnpj").value = item.cnpj;
         document.getElementById("formCategory").value = item.category;
@@ -1132,8 +1182,9 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         renderTable();
+        atualizarContadorPedidos();
       });
-    </script> 
+    </script>
     <script src="components/js/header.js"></script>
     <script src="components/js/sidebar.js"></script>
     <script src="components/js/chat.js"></script>

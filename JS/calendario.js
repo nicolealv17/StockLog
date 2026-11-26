@@ -1,7 +1,7 @@
 /* =========================================================
    StockLog — Calendário Inteligente (Sincronizado com Firebase)
    ========================================================= */
-const GOOGLE_CLIENT_ID = "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";
+const GOOGLE_CLIENT_ID = "790451884709-t6k3un9lejeh2jt08agv27dppunfvnbq.apps.googleusercontent.com";
 const GOOGLE_SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 let googleTokenClient = null;
 let googleAccessToken = null;
@@ -10,6 +10,26 @@ const CAL_STORAGE_PATH = "events";
 const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const WEEKDAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const MAX_EVENTS_PER_DAY = 3;
+const OVERLOAD_THRESHOLD = 4;
+
+const TYPE_ICONS = {
+  "reuniao": "fa-solid fa-handshake",
+  "treinamento": "fa-solid fa-graduation-cap",
+  "prazo-op": "fa-solid fa-flag-checkered",
+  "manutencao": "fa-solid fa-wrench",
+  "compromisso": "fa-solid fa-calendar-check",
+  "urgente": "fa-solid fa-triangle-exclamation",
+  "google": "fa-brands fa-google"
+};
+const TYPE_LABELS = {
+  "reuniao": "Reunião",
+  "treinamento": "Treinamento",
+  "prazo-op": "Prazo OP",
+  "manutencao": "Manutenção",
+  "compromisso": "Compromisso",
+  "urgente": "Urgente",
+  "google": "Google"
+};
 
 let calState = {
   events: [],
@@ -57,16 +77,62 @@ async function calSave() {
 
 function calDefaultEvents() {
   return [
-    { id: "e1", title: "Reunião de alinhamento semanal", type: "reuniao", date: "2026-08-21", time: "09:00", duration: 60, setor: "Qualidade", desc: "Pauta: revisão de KPIs e alertas." },
-    { id: "e2", title: "Treinamento POP-018 — Recepção de Insumos", type: "treinamento", date: "2026-08-24", time: "14:00", duration: 120, setor: "Estoque", desc: "Capacitação Almoxarifado." },
-    { id: "e3", title: " Data Limite OP-2026-001 (Flange Aço)", type: "prazo-op", date: "2026-08-25", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-001. 500 unidades." },
-    { id: "e4", title: "Visita técnica fornecedor Inox do Brasil", type: "compromisso", date: "2026-08-27", time: "10:30", duration: 180, setor: "Compras", desc: "Levantar novos itens para cotação." },
-    { id: "e5", title: "Auditoria interna — Qualidade", type: "urgente", date: "2026-08-28", time: "08:00", duration: 240, setor: "Qualidade", desc: "Atender auditores." },
-    { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, setor: "Produção", desc: "Capacitar 4 operadores." },
-    { id: "e7", title: " Data Limite OP-2026-002 (Eixo Vazado)", type: "prazo-op", date: "2026-08-28", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-002. 120 unidades." },
-    { id: "e8", title: " Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-08-26", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Troca de rolamentos e calibragem." },
-    { id: "e9", title: " Data Limite OP-2026-003 (Suporte Estrutural)", type: "prazo-op", date: "2026-08-29", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-003. 80 unidades." },
-    { id: "e10", title: " Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-08-27", time: "08:00", duration: 360, setor: "Fresa CNC 05", desc: "Substituição de ferramentas e revisão elétrica." },
+    /* ================= AGOSTO 2026 ================= */
+    { id: "e1", title: "Reunião de alinhamento semanal", type: "reuniao", date: "2026-08-21", time: "09:00", duration: 60, setor: "Qualidade", desc: "Pauta: revisão de KPIs e alertas.", refOp: null },
+    { id: "e2", title: "Treinamento POP-018 — Recepção de Insumos", type: "treinamento", date: "2026-08-24", time: "14:00", duration: 120, setor: "Estoque", desc: "Capacitação Almoxarifado.", refOp: null },
+    { id: "e3", title: "Data Limite OP-2026-001 (Flange Aço)", type: "prazo-op", date: "2026-08-25", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-001. 500 unidades.", refOp: "OP-2026-001" },
+    { id: "e4", title: "Visita técnica fornecedor Inox do Brasil", type: "compromisso", date: "2026-08-27", time: "10:30", duration: 180, setor: "Compras", desc: "Levantar novos itens para cotação.", refOp: null },
+    { id: "e5", title: "Auditoria interna — Qualidade", type: "urgente", date: "2026-08-28", time: "08:00", duration: 240, setor: "Qualidade", desc: "Atender auditores.", refOp: null },
+    { id: "e6", title: "Treinamento WMS — Equipe Produção", type: "treinamento", date: "2026-08-30", time: "09:00", duration: 180, setor: "Produção", desc: "Capacitar 4 operadores.", refOp: null },
+    { id: "e7", title: "Data Limite OP-2026-002 (Eixo Vazado)", type: "prazo-op", date: "2026-08-28", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-002. 120 unidades.", refOp: "OP-2026-002" },
+    { id: "e8", title: "Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-08-26", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Troca de rolamentos e calibragem.", refOp: null },
+    { id: "e9", title: "Data Limite OP-2026-003 (Suporte Estrutural)", type: "prazo-op", date: "2026-08-29", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-003. 80 unidades.", refOp: "OP-2026-003" },
+    { id: "e10", title: "Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-08-27", time: "08:00", duration: 360, setor: "Fresa CNC 05", desc: "Substituição de ferramentas e revisão elétrica.", refOp: null },
+
+    /* ================= SETEMBRO 2026 ================= */
+    { id: "s1", title: "Reunião de planejamento mensal — PCP", type: "reuniao", date: "2026-09-01", time: "09:00", duration: 90, setor: "Produção", desc: "Definir metas de produção e programação do mês.", refOp: null },
+    { id: "s2", title: "Data Limite OP-2026-004 (Engrenagem Helicoidal)", type: "prazo-op", date: "2026-09-04", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-004. 300 unidades.", refOp: "OP-2026-004" },
+    { id: "s3", title: "Manutenção Preventiva — Caldeira 01", type: "manutencao", date: "2026-09-08", time: "07:00", duration: 480, setor: "Caldeira 01", desc: "Inspeção de válvulas e limpeza de queimadores.", refOp: null },
+    { id: "s4", title: "Treinamento NR-12 — Segurança em Máquinas", type: "treinamento", date: "2026-09-10", time: "08:00", duration: 240, setor: "Produção", desc: "Capacitação obrigatória para operadores de CNC.", refOp: null },
+    { id: "s5", title: "Reunião com fornecedor — Aço Inox 304", type: "reuniao", date: "2026-09-15", time: "14:00", duration: 60, setor: "Compras", desc: "Negociar lote para o 4º trimestre.", refOp: null },
+    { id: "s6", title: "Data Limite OP-2026-005 (Bucha Bronze)", type: "prazo-op", date: "2026-09-18", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-005. 1000 unidades.", refOp: "OP-2026-005" },
+    { id: "s7", title: "Inventário cíclico — Almoxarifado", type: "compromisso", date: "2026-09-22", time: "08:00", duration: 300, setor: "Estoque", desc: "Contagem dos itens da curva A.", refOp: null },
+    { id: "s8", title: "Manutenção Corretiva — Fresa CNC 05", type: "manutencao", date: "2026-09-25", time: "13:00", duration: 240, setor: "Fresa CNC 05", desc: "Reparo no eixo Z após falha detectada.", refOp: null },
+    { id: "s9", title: "Auditoria externa ISO 9001", type: "urgente", date: "2026-09-29", time: "08:00", duration: 480, setor: "Qualidade", desc: "Auditoria de recertificação. Preparar toda a documentação.", refOp: null },
+
+    /* ================= OUTUBRO 2026 ================= */
+    { id: "o1", title: "Reunião de fechamento de setembro", type: "reuniao", date: "2026-10-01", time: "09:00", duration: 90, setor: "Produção", desc: "Análise de KPIs e desvios do mês anterior.", refOp: null },
+    { id: "o2", title: "Data Limite OP-2026-006 (Carcaça Motor)", type: "prazo-op", date: "2026-10-06", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-006. 250 unidades.", refOp: "OP-2026-006" },
+    { id: "o3", title: "Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-10-09", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Alinhamento de barramento e troca de óleo.", refOp: null },
+    { id: "o4", title: "Treinamento Lean Manufacturing", type: "treinamento", date: "2026-10-13", time: "08:30", duration: 300, setor: "Produção", desc: "Capacitação em melhoria contínua e 5S.", refOp: null },
+    { id: "o5", title: "Data Limite OP-2026-007 (Flange Alumínio)", type: "prazo-op", date: "2026-10-16", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-007. 600 unidades.", refOp: "OP-2026-007" },
+    { id: "o6", title: "Visita técnica — Cliente Metalúrgica Sul", type: "compromisso", date: "2026-10-20", time: "10:00", duration: 180, setor: "Comercial", desc: "Apresentar capacidade produtiva e novos produtos.", refOp: null },
+    { id: "o7", title: "Manutenção Preventiva — Caldeira 01", type: "manutencao", date: "2026-10-23", time: "07:00", duration: 480, setor: "Caldeira 01", desc: "Teste hidrostático e calibração de pressostatos.", refOp: null },
+    { id: "o8", title: "Data Limite OP-2026-008 (Pinhão Aço 1045)", type: "prazo-op", date: "2026-10-27", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-008. 400 unidades.", refOp: "OP-2026-008" },
+    { id: "o9", title: "Reunião de alinhamento — Logística", type: "reuniao", date: "2026-10-29", time: "14:00", duration: 60, setor: "Logística", desc: "Revisar rotas de entrega e prazos.", refOp: null },
+
+    /* ================= NOVEMBRO 2026 ================= */
+    { id: "n1", title: "Reunião de fechamento de outubro", type: "reuniao", date: "2026-11-03", time: "09:00", duration: 90, setor: "Produção", desc: "Análise de KPIs, OEE e refugo.", refOp: null },
+    { id: "n2", title: "Data Limite OP-2026-009 (Eixo Roscado)", type: "prazo-op", date: "2026-11-06", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-009. 180 unidades.", refOp: "OP-2026-009" },
+    { id: "n3", title: "Manutenção Preventiva — Fresa CNC 05", type: "manutencao", date: "2026-11-10", time: "07:00", duration: 480, setor: "Fresa CNC 05", desc: "Troca de fusos e revisão do sistema de refrigeração.", refOp: null },
+    { id: "n4", title: "Treinamento — Leitura e Interpretação de Desenho", type: "treinamento", date: "2026-11-12", time: "08:00", duration: 240, setor: "Produção", desc: "Capacitação para novos operadores.", refOp: null },
+    { id: "n5", title: "Data Limite OP-2026-010 (Acoplamento)", type: "prazo-op", date: "2026-11-17", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-010. 350 unidades.", refOp: "OP-2026-010" },
+    { id: "n6", title: "Reunião de planejamento — Black Friday Industrial", type: "reuniao", date: "2026-11-19", time: "10:00", duration: 90, setor: "Comercial", desc: "Definir estratégias de venda e estoque.", refOp: null },
+    { id: "n7", title: "Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-11-24", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Substituição de correias e revisão elétrica.", refOp: null },
+    { id: "n8", title: "Data Limite OP-2026-011 (Biela Forjada)", type: "prazo-op", date: "2026-11-26", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-011. 200 unidades.", refOp: "OP-2026-011" },
+    { id: "n9", title: "Inventário geral — Fim de ano", type: "urgente", date: "2026-11-30", time: "07:00", duration: 600, setor: "Estoque", desc: "Contagem completa do estoque físico x sistema.", refOp: null },
+
+    /* ================= DEZEMBRO 2026 ================= */
+    { id: "d1", title: "Reunião de fechamento de novembro", type: "reuniao", date: "2026-12-01", time: "09:00", duration: 90, setor: "Produção", desc: "Análise de KPIs e planejamento do fechamento anual.", refOp: null },
+    { id: "d2", title: "Data Limite OP-2026-012 (Tampa Vedação)", type: "prazo-op", date: "2026-12-04", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-012. 500 unidades.", refOp: "OP-2026-012" },
+    { id: "d3", title: "Manutenção Preventiva — Caldeira 01", type: "manutencao", date: "2026-12-08", time: "07:00", duration: 480, setor: "Caldeira 01", desc: "Revisão anual e emissão de laudo NR-13.", refOp: null },
+    { id: "d4", title: "Confraternização da equipe", type: "compromisso", date: "2026-12-11", time: "19:00", duration: 240, setor: "Geral", desc: "Confraternização de fim de ano com todos os setores.", refOp: null },
+    { id: "d5", title: "Data Limite OP-2026-013 (Rotor Ventilador)", type: "prazo-op", date: "2026-12-15", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-013. 150 unidades.", refOp: "OP-2026-013" },
+    { id: "d6", title: "Reunião de planejamento 2027", type: "reuniao", date: "2026-12-17", time: "09:00", duration: 180, setor: "Diretoria", desc: "Definir metas, orçamento e investimentos para 2027.", refOp: null },
+    { id: "d7", title: "Manutenção Preventiva — Torno CNC 02", type: "manutencao", date: "2026-12-21", time: "07:00", duration: 480, setor: "Torno CNC 02", desc: "Revisão geral antes das férias coletivas.", refOp: null },
+    { id: "d8", title: "Data Limite OP-2026-014 (Engrenagem Cônica)", type: "prazo-op", date: "2026-12-22", time: "18:00", duration: 0, setor: "Produção", desc: "Entrega final da OP-2026-014. 220 unidades.", refOp: "OP-2026-014" },
+    { id: "d9", title: "Fechamento contábil e fiscal do ano", type: "urgente", date: "2026-12-28", time: "08:00", duration: 480, setor: "Financeiro", desc: "Fechamento de balanço e obrigações fiscais.", refOp: null },
+    { id: "d10", title: "Parada geral — Início das férias coletivas", type: "compromisso", date: "2026-12-31", time: "12:00", duration: 0, setor: "Geral", desc: "Última produção do ano. Retorno em 05/01/2027.", refOp: null },
   ];
 }
 
@@ -93,6 +159,7 @@ function calFilteredEvents() {
   return calState.events.filter(e => e.type === calState.activeFilter);
 }
 
+/* ===== MÊS: 5 ou 6 linhas conforme couber ===== */
 function calRenderMonth() {
   const grid = document.getElementById("cal-grid-month");
   const year = calState.cursor.getFullYear();
@@ -103,11 +170,18 @@ function calRenderMonth() {
 
   const todayIso = calFmtISO(new Date());
   const events = calFilteredEvents();
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const offset = first.getDay();
+  const totalCellsNeeded = offset + daysInMonth;
+  const rows = totalCellsNeeded <= 35 ? 5 : 6;
+  const totalCells = rows * 7;
+
   let html = `<div class="cal-weekdays">`;
   WEEKDAYS_PT.forEach(w => html += `<div class="cal-weekday">${w}</div>`);
-  html += `</div><div class="cal-days">`;
+  html += `</div><div class="cal-days rows-${rows}">`;
 
-  for (let i = 0; i < 42; i++) {
+  for (let i = 0; i < totalCells; i++) {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
     const iso = calFmtISO(d);
@@ -116,19 +190,28 @@ function calRenderMonth() {
     const dayEvents = events.filter(e => e.date === iso);
     const showEvents = dayEvents.slice(0, MAX_EVENTS_PER_DAY);
     const remaining = dayEvents.length - MAX_EVENTS_PER_DAY;
-
     const hasUrgent = dayEvents.some(e => e.type === "urgente" || e.type === "prazo-op");
+    const dayCount = dayEvents.length;
+    const overload = dayCount > OVERLOAD_THRESHOLD;
 
-    html += `<div class="cal-day ${outside ? "outside" : ""} ${today ? "today" : ""} ${hasUrgent && !outside ? "has-urgent" : ""}" onclick="calOpenDay('${iso}')">
-      <div class="cal-day-num">${d.getDate()}</div>
-      ${showEvents.map(e => `<div class="cal-evt type-${e.type}" title="${escapeHtml(e.title)}" onclick="event.stopPropagation(); calEdit('${e.id}')"><i class="fa-regular fa-clock" style="font-size:9px"></i> ${escapeHtml(e.time || "")} ${escapeHtml(e.title)}</div>`).join("")}
-      ${remaining > 0 ? `<div class="cal-evt-more" onclick="event.stopPropagation(); calOpenDay('${iso}')"><i class="fa-solid fa-plus"></i> +${remaining} mais...</div>` : ""}
+    html += `<div class="cal-day ${outside ? "outside" : ""} ${today ? "today" : ""} ${hasUrgent && !outside ? "has-urgent" : ""}" onclick="calOpenDay('${iso}')" title="${dayCount} compromisso(s) — clique para ver todos">
+      <div class="cal-day-num-row">
+        <span class="cal-day-num">${d.getDate()}</span>
+        ${dayCount > 0 ? `<span class="cal-day-count ${overload ? "overload" : ""}" title="${dayCount} compromisso(s)">${dayCount}</span>` : ""}
+      </div>
+      ${showEvents.map(e => `
+        <div class="cal-evt type-${e.type}" title="${escapeHtml(e.title)} — ${e.time || "dia inteiro"}" onclick="event.stopPropagation(); calEdit('${e.id}')">
+          <span class="evt-time">${escapeHtml(e.time || "")}</span>
+          <span class="evt-title">${escapeHtml(e.title.trim())}</span>
+        </div>`).join("")}
+      ${remaining > 0 ? `<div class="cal-evt-more" onclick="event.stopPropagation(); calOpenDay('${iso}')"><i class="fa-solid fa-plus"></i> +${remaining} mais</div>` : ""}
     </div>`;
   }
   html += `</div>`;
   grid.innerHTML = html;
 }
 
+/* ===== SEMANA: com contagem e destaque de sobrecarga ===== */
 function calRenderWeek() {
   const grid = document.getElementById("cal-grid-week");
   const start = new Date(calState.cursor);
@@ -141,88 +224,124 @@ function calRenderWeek() {
     d.setDate(start.getDate() + i);
     const iso = calFmtISO(d);
     const dayEvents = events.filter(e => e.date === iso);
-    html += `<div class="cal-week-col">
-      <div class="cal-week-col-title">${WEEKDAYS_PT[d.getDay()]} ${calPad(d.getDate())}/${calPad(d.getMonth()+1)}</div>
-      ${dayEvents.map(e => `<div class="cal-evt type-${e.type}" style="margin-bottom:6px" onclick="calEdit('${e.id}')">${escapeHtml(e.time || "")} ${escapeHtml(e.title)}</div>`).join("") || '<div style="font-size:11px;color:var(--text-muted);font-style:italic">sem compromissos</div>'}
+    const count = dayEvents.length;
+    const overload = count > OVERLOAD_THRESHOLD;
+
+    html += `<div class="cal-week-col ${overload ? "has-overload" : ""}">
+      <div class="cal-week-col-title">
+        <span>${WEEKDAYS_PT[d.getDay()]} ${calPad(d.getDate())}/${calPad(d.getMonth()+1)}</span>
+        <span class="cal-week-count ${overload ? "overload" : ""}">${count}</span>
+      </div>
+      ${dayEvents.map(e => `
+        <div class="cal-evt type-${e.type}" style="margin-bottom:6px" onclick="calEdit('${e.id}')" title="${escapeHtml(e.title)}">
+          <span class="evt-time">${escapeHtml(e.time || "")}</span>
+          <span class="evt-title">${escapeHtml(e.title.trim())}</span>
+        </div>`).join("") || '<div style="font-size:11px;color:var(--text-muted);font-style:italic">sem compromissos</div>'}
     </div>`;
   }
   html += `</div>`;
   grid.innerHTML = html;
 }
 
+/* ===== DIA: com contagem total ===== */
 function calRenderDay() {
   const grid = document.getElementById("cal-grid-day");
   const iso = calFmtISO(calState.cursor);
   const dayEvents = calFilteredEvents().filter(e => e.date === iso);
+  const overload = dayEvents.length > OVERLOAD_THRESHOLD;
+
   grid.innerHTML = `
-    <div class="cal-week-col-title" style="font-size:14px;margin-bottom:14px">
-      ${WEEKDAYS_PT[calState.cursor.getDay()]}, ${calState.cursor.getDate()} de ${MONTHS_PT[calState.cursor.getMonth()]} de ${calState.cursor.getFullYear()}
+    <div class="cal-week-col-title" style="font-size:14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+      <span>${WEEKDAYS_PT[calState.cursor.getDay()]}, ${calState.cursor.getDate()} de ${MONTHS_PT[calState.cursor.getMonth()]} de ${calState.cursor.getFullYear()}</span>
+      <span class="cal-week-count ${overload ? "overload" : ""}" style="font-size:12px;padding:2px 10px">${dayEvents.length} compromisso(s)${overload ? " · sobrecarga" : ""}</span>
     </div>
     ${dayEvents.length === 0
       ? '<div style="text-align:center;color:var(--text-muted);padding:40px;font-style:italic">Nenhum compromisso nesta data.</div>'
       : dayEvents.map(e => `
         <div class="cal-side-item type-${e.type}" style="margin-bottom:10px;cursor:pointer" onclick="calEdit('${e.id}')">
-          <div class="cal-side-item-title">${escapeHtml(e.title)}</div>
+          <div class="cal-side-item-title">${escapeHtml(e.title.trim())}</div>
           <div class="cal-side-item-meta">
             <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
             ${e.setor ? `<span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor)}</span>` : ""}
           </div>
           ${e.desc ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:6px">${escapeHtml(e.desc)}</div>` : ""}
-        </div>`).join("")
+        </div>
+      `).join("")
     }`;
 }
 
+/* ===== KPIs: com período explícito ===== */
 function calRenderKPIs() {
   const today = new Date();
   today.setHours(0,0,0,0);
   const in7Days = new Date(today);
   in7Days.setDate(in7Days.getDate() + 7);
 
-  const total = calState.events.length;
-  const urgentes = calState.events.filter(e => e.type === "urgente").length;
+  const year = calState.cursor.getFullYear();
+  const month = calState.cursor.getMonth();
+  const monthLabel = `${MONTHS_PT[month]} ${year}`;
+  const monthPrefix = `${year}-${calPad(month+1)}`;
+
+  const monthEvents = calState.events.filter(e => e.date.startsWith(monthPrefix));
+  const total = monthEvents.length;
+  const urgentes = monthEvents.filter(e => e.type === "urgente").length;
   const semana = calState.events.filter(e => {
     const d = new Date(e.date + "T00:00:00");
     return d >= today && d <= in7Days;
   }).length;
-  const prazos = calState.events.filter(e => e.type === "prazo-op" || e.type === "manutencao").length;
+  const prazos = monthEvents.filter(e => e.type === "prazo-op" || e.type === "manutencao").length;
 
   document.getElementById("kpi-total").textContent = total;
   document.getElementById("kpi-urgentes").textContent = urgentes;
   document.getElementById("kpi-semana").textContent = semana;
   document.getElementById("kpi-prazos").textContent = prazos;
+
+  document.getElementById("kpi-total-period").textContent = monthLabel;
+  document.getElementById("kpi-urgentes-period").textContent = monthLabel;
+  document.getElementById("kpi-semana-period").textContent = `a partir de ${calFmtBR(calFmtISO(today))}`;
+  document.getElementById("kpi-prazos-period").textContent = monthLabel;
 }
 
+/* ===== PRÓXIMOS COMPROMISSOS ===== */
 function calRenderUpcoming() {
   const list = document.getElementById("cal-upcoming-list");
+  if (!list) return;
   const today = calFmtISO(new Date());
+
   const items = calFilteredEvents()
     .filter(e => e.date >= today)
-    .sort((a, b) => a.date.localeCompare(a.date))
+    .sort((a, b) => (a.date + " " + (a.time || "00:00")).localeCompare(b.date + " " + (b.time || "00:00")))
     .slice(0, 10);
 
   if (items.length === 0) {
     list.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic">Nenhum compromisso futuro.</div>`;
     return;
   }
+
   list.innerHTML = items.map(e => {
     const [y, m, d] = e.date.split("-");
+    const icon = `<i class="${TYPE_ICONS[e.type] || "fa-solid fa-calendar"}" style="margin-right:6px;font-size:12px"></i>`;
+    const label = TYPE_LABELS[e.type] || e.type;
 
     return `
       <div class="upcoming-item" onclick="calEdit('${e.id}')">
         <div class="upcoming-date">
           <div class="day">${parseInt(d)}</div>
-          <div class="month">${MONTHS_PT[parseInt(m)-1].slice(0,3)}</div>
+          <div class="month">${MONTHS_PT[parseInt(m) - 1].slice(0, 3)}</div>
         </div>
         <div class="upcoming-info">
-          <div class="upcoming-title">${escapeHtml(e.title)}</div>
+          <div class="upcoming-title">${icon}${escapeHtml(e.title.trim())}</div>
           <div class="upcoming-meta">
             <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
             <span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor || "Geral")}</span>
           </div>
         </div>
-        <span class="upcoming-tag tag-${e.type}">${e.type === "prazo-op" ? "Prazo OP" : e.type === "manutencao" ? "Manutenção" : e.type}</span>
+        <span class="upcoming-tag tag-${e.type}">${label}</span>
       </div>`;
   }).join("");
+
+  const search = document.getElementById("cal-search");
+  if (search && search.value) calFilterList(search.value);
 }
 
 function calFilterList(q) {
@@ -251,16 +370,21 @@ function calOpenDay(iso) {
     ? `<div style="text-align:center;color:var(--text-muted);padding:24px;font-style:italic">Nenhum compromisso.</div>`
     : dayEvents.map(e => `
         <div class="cal-side-item type-${e.type}" onclick="calEdit('${e.id}')" style="cursor:pointer">
-          <div class="cal-side-item-title">${escapeHtml(e.title)}</div>
+          <div class="cal-side-item-title">${escapeHtml(e.title.trim())}</div>
           <div class="cal-side-item-meta">
             <span><i class="fa-solid fa-clock"></i> ${e.time || "—"}</span>
             ${e.setor ? `<span><i class="fa-solid fa-industry"></i> ${escapeHtml(e.setor)}</span>` : ""}
+            ${e.refOp ? `<span><i class="fa-solid fa-flag-checkered"></i> ${escapeHtml(e.refOp)}</span>` : ""}
           </div>
         </div>`).join("");
   document.getElementById("cal-side-panel").classList.add("open");
 }
 
-function calNavMonth(delta) { calState.cursor.setMonth(calState.cursor.getMonth() + delta); calRender(); }
+function calNavMonth(delta) {
+  calState.cursor.setDate(1);
+  calState.cursor.setMonth(calState.cursor.getMonth() + delta);
+  calRender();
+}
 function calGoToday() { calState.cursor = new Date(); calRender(); }
 function calSetView(view, btn) {
   calState.view = view;
@@ -272,7 +396,7 @@ function calSetView(view, btn) {
 function calSelectType(type, btn) {
   calState.type = type;
   document.querySelectorAll(".cal-type-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
+  if (btn) btn.classList.add("active");
 }
 
 function calOpenNewEvent(dateIso = null) {
@@ -287,6 +411,7 @@ function calOpenNewEvent(dateIso = null) {
   document.getElementById("cal-modal-title").innerHTML = '<i class="fa-solid fa-calendar-plus" style="color:var(--primary);margin-right:8px"></i>Novo compromisso';
   document.getElementById("cal-btn-delete").style.display = "none";
   document.getElementById("cal-google-badge").style.display = "none";
+  document.getElementById("cal-side-panel").classList.remove("open");
   openModal("calEvento");
 }
 
@@ -294,7 +419,7 @@ function calEdit(id) {
   const e = calState.events.find(x => x.id === id);
   if (!e) return;
   document.getElementById("cal-evt-id").value = e.id;
-  document.getElementById("cal-evt-titulo").value = e.title;
+  document.getElementById("cal-evt-titulo").value = e.title.trim();
   document.getElementById("cal-evt-data").value = e.date;
   document.getElementById("cal-evt-hora").value = e.time || "09:00";
   document.getElementById("cal-evt-duracao").value = e.duration || 60;
@@ -326,10 +451,8 @@ async function calSaveEvent() {
 
   if (id) {
     const e = calState.events.find(x => x.id === id);
-    if (e) {
-      Object.assign(e, data);
-      await firebase.database().ref(CAL_STORAGE_PATH + '/' + id).set(data);
-    }
+    if (e) Object.assign(e, data);
+    await firebase.database().ref(CAL_STORAGE_PATH + '/' + id).set(data);
     showToast("Compromisso atualizado.", "success");
   } else {
     const newId = "e" + Date.now().toString(36);
@@ -361,7 +484,7 @@ function calImportGoogle() {
       client_id: GOOGLE_CLIENT_ID,
       scope: GOOGLE_SCOPES,
       callback: (resp) => {
-        if (resp.error) { showToast("Não foi possível autenticarr.", "error"); return; }
+        if (resp.error) { showToast("Não foi possível autenticar.", "error"); return; }
         googleAccessToken = resp.access_token;
         calFetchGoogleEvents();
       },
@@ -376,7 +499,7 @@ async function calFetchGoogleEvents() {
   showToast("Sincronizando com o Google Calendar...", "info");
   try {
     const timeMin = new Date(); timeMin.setMonth(timeMin.getMonth() - 1);
-    const timeMax = new Date(); timeMax.setMonth(timeMax + 3);
+    const timeMax = new Date(); timeMax.setMonth(timeMax.getMonth() + 3);
     const params = new URLSearchParams({ timeMin: timeMin.toISOString(), timeMax: timeMax.toISOString(), singleEvents: "true", orderBy: "startTime", maxResults: "250" });
     const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params.toString()}`, { headers: { Authorization: `Bearer ${googleAccessToken}` } });
     if (res.status === 401) { googleAccessToken = null; throw new Error("Sessão expirada."); }
@@ -393,10 +516,12 @@ async function calFetchGoogleEvents() {
       setor: "Geral",
       desc: ev.description || "",
       source: "google",
+      refOp: null,
     })).filter(e => e.date);
 
     calState.events = calState.events.filter(e => e.source !== "google");
     calState.events.push(...imported);
+    await calSave();
     calRender();
     showToast(`${imported.length} compromisso(s) importado(s) do Google Calendar.`, "success");
   } catch (err) { console.error(err); showToast("Não foi possível sincronizar.", "error"); }
@@ -413,7 +538,7 @@ function closeModal(id) { document.getElementById("modal-" + id).classList.remov
 
 function showToast(message, type = "info") {
   const container = document.getElementById("toastContainer");
-  const icons = { success: "fa-circle-check", error: "fa-circle-exclamation", warning: "fa-triangle-exclamation", info: "fa-circle-info" };
+  const icons = { success: "fa-circle-check", error: "fa-circle-xmark", warning: "fa-triangle-exclamation", info: "fa-circle-info" };
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   toast.innerHTML = `<i class="fas ${icons[type] || "fa-circle-info"}"></i><span>${escapeHtml(message)}</span>`;
@@ -425,9 +550,4 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") { closeModal("calEvento"); document.getElementById("cal-side-panel").classList.remove("open"); }
 });
 
-async function init() {
-  await calLoad();
-  calRender();
-}
-
-init();
+calLoad().then(() => calRender());

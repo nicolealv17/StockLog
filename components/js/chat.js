@@ -614,7 +614,7 @@
         '</div>' +
         '<div class="chatbot-messages" id="chatbot-messages"></div>' +
         '<div class="chatbot-input-area">' +
-          '<input type="text" id="chatbot-input" class="chatbot-input" placeholder="Digite uma dúvida sobre a fábrica, estoque ou sistema..." autocomplete="off" />' +
+          '<input type="text" id="chatbot-input" class="chatbot-input" placeholder="Digite uma dúvida..." autocomplete="off" />' +
           '<button class="chatbot-voice" id="chatbot-voice-btn" title="Falar por Voz"><i class="fa-solid fa-microphone"></i></button>' +
           '<button class="chatbot-send" id="chatbot-send-btn" title="Enviar Mensagem"><i class="fa-solid fa-paper-plane"></i></button>' +
         '</div>' +
@@ -767,12 +767,12 @@
 
       recognition.onerror = () => {
         voiceBtn.classList.remove("listening");
-        chatInput.placeholder = "Digite uma dúvida sobre a fábrica, estoque ou sistema...";
+        chatInput.placeholder = "Digite uma dúvida...";
       };
 
       recognition.onend = () => {
         voiceBtn.classList.remove("listening");
-        chatInput.placeholder = "Digite uma dúvida sobre a fábrica, estoque ou sistema...";
+        chatInput.placeholder = "Digite uma dúvida...";
       };
     } else {
       voiceBtn.style.display = "none";

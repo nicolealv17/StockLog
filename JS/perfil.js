@@ -83,7 +83,7 @@ function renderProfile(data) {
   setText('profile-setor',     data.setor || area || '—');
   setText('profile-cadastro',  formatarData(data.criadoEm));
   setText('profile-matricula', data.id || currentFuncId || '—');
-  setText('profile-nivel',     data.nivelAcesso || 'Funcionário');
+  setText('profile-nivel',     data.nivelAcesso || 'Gestão');
 
   // Modal de edição
   const editName  = document.getElementById('editName');
